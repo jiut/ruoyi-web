@@ -6,12 +6,9 @@ import { ChatLayout } from '@/views/chat/layout'
 import mjlayout from '@/views/mj/layout.vue'
 import lumalayout from '@/views/luma/layout.vue'
 import storelayout from '@/views/store/layout.vue'
-import fanyilayout from '@/views/fanyi/layout.vue'
 import pptlayout from '@/views/ppt/layout.vue'
 import musiclayout from '@/views/suno/layout.vue'
 import knowledgelayout from '@/views/knowledge/layout.vue'
-import wxlayout from '@/views/wxbot/layout.vue'
-
 
 const routes: RouteRecordRaw[] = [
   // 首页
@@ -29,19 +26,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: ':uuid?',
         name: 'Chat',
-        component: () => import('@/views/chat/index.vue'),
-      },
-    ],
-  },
-   {
-    path: '/g',
-    name: 'g',
-    component: ChatLayout,
-    redirect: '/g/g-2fkFE8rbu',
-    children: [
-      {
-        path: '/g/:gid',
-        name: 'GPTs',
         component: () => import('@/views/chat/index.vue'),
       },
     ],
@@ -77,20 +61,6 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-		path: "/fanyi",
-		name: "Fanyi",
-		component: fanyilayout,
-		redirect: "/fanyi/index",
-		children: [
-			{
-				path: "index",
-				name: "fanyi",
-				component: () => import("@/views/fanyi/index.vue"),
-			},
-		],
-	},
-
-  {
 		path: "/ppt",
 		name: "Ppt",
 		component: pptlayout,
@@ -99,7 +69,7 @@ const routes: RouteRecordRaw[] = [
 			{
 				path: "index",
 				name: "ppt",
-				component: () => import("@/views/ppt/index.vue"),
+				component: () => import('@/views/ppt/ppt.vue'),
 			},
 		],
 	},
@@ -127,7 +97,7 @@ const routes: RouteRecordRaw[] = [
 			{
 				path: "/music/:uuid?",
 				name: "music",
-				component: () => import("@/views/suno/music.vue"),
+				component: () => import('@/views/suno/music.vue'),
 			},
 		],
 	},
@@ -146,19 +116,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
-  {
-    path: '/wxbot',
-    name: 'Wxbot',
-    component: wxlayout,
-    redirect: '/wxbot/t',
-    children: [
-      {
-        path: 't',
-        name: 'wxbot1',
-        component: () => import('@/views/wxbot/bot.vue'),
-      },
-    ],
-  },
+
   {
     path: '/knowledge',
     name: 'Knowledge',
@@ -216,12 +174,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/regist',
     name: 'regist',
-    component: () => import('@/views/regist/index.vue'),
+    component: () => import('@/views/login/regist.vue'),
   },
   {
     path: '/resetpassword',
     name: 'resetpassword',
-    component: () => import('@/views/resetpassword/index.vue'),
+    component: () => import('@/views/login/reset.vue'),
   },
 
   {
