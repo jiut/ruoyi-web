@@ -12,13 +12,13 @@
 				<nav class="hidden md:flex space-x-8">
 					<a @click="scrollToSection('talent-pool')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="探索全球设计人才资源，寻找合适的设计师或工作机会">人才资源池</a>
+						title="探索全球设计人才资源，寻找合适的设计师或工作机会">未来设计师联盟</a>
 					<a @click="scrollToSection('ai-resources')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
 						title="体验前沿AI设计工具，提升创作效率">AI资源池</a>
 					<a @click="scrollToSection('task-system')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="发布或接取设计任务，智能匹配需求">任务交易系统</a>
+						title="发布或接取设计任务，智能匹配需求">创意速配中心</a>
 					<!-- <a @click="scrollToSection('data-dashboard')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
 						title="实时监控行业数据，把握市场动向">AIGC驾驶舱</a> -->
@@ -52,11 +52,11 @@
 			<div v-if="mobileMenuOpen" class="md:hidden bg-gray-900 py-4 px-6 shadow-lg">
 				<div class="flex flex-col space-y-4">
 					<a @click="scrollToSection('talent-pool'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">人才资源池</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">未来设计师联盟</a>
 					<a @click="scrollToSection('ai-resources'); mobileMenuOpen = false"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">AI资源池</a>
 					<a @click="scrollToSection('task-system'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">任务交易系统</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">创意速配中心</a>
 					<a @click="scrollToSection('data-dashboard'); mobileMenuOpen = false"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">数据驾驶舱</a>
 				</div>
@@ -72,7 +72,9 @@
 			<div class="container mx-auto px-6 z-10 flex flex-col md:flex-row items-center">
 				<div class="md:w-3/4 text-center md:text-left mb-12 md:mb-0">
 					<h1 class="text-6xl md:text-8xl font-bold leading-[1.25] md:leading-[1.15] mb-10">
-						<span class="text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">AI 驱动</span>
+						<span
+							class="text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">AI
+							驱动</span>
 						<br />设计未来
 					</h1>
 					<p class="text-2xl md:text-3xl text-gray-300 mb-14 leading-[2]">
@@ -81,11 +83,13 @@
 					</p>
 					<div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center md:justify-start">
 						<a-button type="primary" size="large"
-							class="!rounded-button text-xl bg-gradient-to-r from-blue-500 to-purple-600 border-none hover:opacity-90 transition-opacity duration-300 cursor-pointer whitespace-nowrap">
+							class="!rounded-button bg-gradient-to-r from-blue-500 to-purple-600 border-none hover:opacity-90 transition-opacity duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
+							:style="{ fontSize: '2rem', padding: '1.25rem 2.5rem', height: 'auto', lineHeight: '1.2' }">
 							立即加入
 						</a-button>
 						<a-button size="large"
-							class="!rounded-button text-xl text-white bg-transparent border border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap">
+							class="!rounded-button text-white bg-transparent border border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
+							:style="{ fontSize: '2rem', padding: '1.25rem 2.5rem', height: 'auto', lineHeight: '1.2' }">
 							了解更多
 						</a-button>
 					</div>
@@ -108,17 +112,18 @@
 					</p>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					<!-- 人才资源池 -->
+					<!-- 未来设计师联盟 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center mb-6">
 							<i class="fas fa-users text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">人才资源池</h3>
+						<h3 class="text-xl font-bold mb-3">未来设计师联盟</h3>
 						<p class="text-gray-400 mb-4">
 							汇聚全球设计师资源，连接院校、学生、企业，打造人才生态闭环
 						</p>
-						<a href="#talent-pool" class="text-blue-400 hover:text-blue-300 flex items-center cursor-pointer">
+						<a @click="scrollToSection('talent-pool')"
+							class="text-blue-400 hover:text-blue-300 flex items-center cursor-pointer">
 							<span>了解更多</span>
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
@@ -133,23 +138,24 @@
 						<p class="text-gray-400 mb-4">
 							整合前沿AI设计工具，提供行业资讯与教学案例，赋能设计创作
 						</p>
-						<a href="#ai-resources" class="text-purple-400 hover:text-purple-300 flex items-center cursor-pointer">
+						<a @click="scrollToSection('ai-resources')"
+							class="text-purple-400 hover:text-purple-300 flex items-center cursor-pointer">
 							<span>了解更多</span>
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
 					</div>
-					<!-- 任务交易系统 -->
+					<!-- 创意速配中心 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-cyan-600 flex items-center justify-center mb-6">
 							<i class="fas fa-exchange-alt text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">任务交易系统</h3>
+						<h3 class="text-xl font-bold mb-3">创意速配中心</h3>
 						<p class="text-gray-400 mb-4">
 							智能匹配设计需求与人才，提供全流程任务管理与支付保障
 						</p>
-						<a href="#task-system" class="text-cyan-400 hover:text-cyan-300 flex items-center cursor-pointer"
-							@click="showTaskSystem">
+						<a @click="scrollToSection('task-system')"
+							class="text-cyan-400 hover:text-cyan-300 flex items-center cursor-pointer">
 							<span>进入系统</span>
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
@@ -164,7 +170,8 @@
 						<p class="text-gray-400 mb-4">
 							可视化AI工具使用数据，展示AIGC设计趋势与效率提升
 						</p>
-						<a href="#data-dashboard" class="text-green-400 hover:text-green-300 flex items-center cursor-pointer">
+						<a @click="scrollToSection('data-dashboard')"
+							class="text-green-400 hover:text-green-300 flex items-center cursor-pointer">
 							<span>了解更多</span>
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
@@ -172,11 +179,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- 人才资源池 -->
+		<!-- 未来设计师联盟 -->
 		<section id="talent-pool" class="py-20 bg-gradient-to-b from-gray-900 to-indigo-950">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">人才资源池</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">未来设计师联盟</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						打造设计师与企业的桥梁，连接全球设计资源与市场需求
 					</p>
@@ -427,11 +434,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- 任务交易系统入口 -->
+		<!-- 创意速配中心入口 -->
 		<section id="task-system" class="py-20 bg-gradient-to-b from-gray-900 to-indigo-950">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">任务交易系统</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">创意速配中心</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						智能匹配设计需求与人才，提供全流程任务管理与支付保障
 					</p>
@@ -444,7 +451,7 @@
 								设计任务交易平台
 							</h3>
 							<p class="text-gray-300 mb-8">
-								亿思AI设计联盟平台提供业内领先的任务交易系统，连接企业需求与设计人才，实现高效精准匹配。
+								亿思AI设计联盟平台提供业内领先的创意速配中心，连接企业需求与设计人才，实现高效精准匹配。
 								通过AI智能推荐、标准化流程与安全支付，为双方创造无忧的合作体验。
 							</p>
 							<div class="grid grid-cols-2 gap-6 mb-8">
@@ -472,7 +479,7 @@
 									进入任务系统
 								</a-button>
 								<a-button size="large"
-									class="!rounded-button bg-transparent border border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap">
+									class="!rounded-button bg-transparent border text-white border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap">
 									查看使用指南
 								</a-button>
 							</div>
@@ -481,7 +488,7 @@
 					<div class="order-1 lg:order-2 flex justify-center">
 						<img
 							src="https://readdy.ai/api/search-image?query=Modern%20digital%20workspace%20showing%20professional%20design%20collaboration%20between%20AI%20and%20human%20designers%2C%20with%20flowing%20data%20visualization%2C%20project%20management%20interface%2C%20and%20payment%20system%20on%20dark%20themed%20UI%20with%20blue%20and%20purple%20accents%2C%20clean%20minimalist%20style&width=600&height=500&seq=task-system-img&orientation=landscape"
-							alt="任务交易系统" class="w-full max-w-lg rounded-xl shadow-2xl" />
+							alt="创意速配中心" class="w-full max-w-lg rounded-xl shadow-2xl" />
 					</div>
 				</div>
 			</div>
@@ -593,7 +600,7 @@
 									立即注册
 								</a-button>
 								<a-button size="large"
-									class="!rounded-button bg-transparent border border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap">
+									class="!rounded-button bg-transparent border text-white border-purple-500 hover:bg-purple-900 transition-colors duration-300 cursor-pointer whitespace-nowrap">
 									了解更多
 								</a-button>
 							</div>
@@ -654,11 +661,11 @@
 						<h4 class="font-bold mb-4">快速链接</h4>
 						<ul class="space-y-2">
 							<li><a @click="scrollToSection('talent-pool')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">人才资源池</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">未来设计师联盟</a></li>
 							<li><a @click="scrollToSection('ai-resources')"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AI资源池</a></li>
 							<li><a @click="scrollToSection('task-system')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">任务交易系统</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">创意速配中心</a></li>
 							<li><a @click="scrollToSection('data-dashboard')"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AIGC驾驶舱</a></li>
 						</ul>
@@ -681,15 +688,15 @@
 						<ul class="space-y-2">
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-map-marker-alt mr-2"></i>
-								<span>北京市海淀区中关村科技园</span>
+								<span>湖北省武汉市汉阳区绿地国博财富中心</span>
 							</li>
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-phone mr-2"></i>
-								<span>400-888-8888</span>
+								<span>150-7240-0560</span>
 							</li>
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-envelope mr-2"></i>
-								<span>contact@aidesignunion.com</span>
+								<span>1151386302@qq.com</span>
 							</li>
 						</ul>
 					</div>
@@ -709,7 +716,7 @@
 				</div>
 			</div>
 		</footer>
-		<!-- 任务交易系统弹窗 -->
+		<!-- 创意速配中心弹窗 -->
 		<a-modal v-model:visible="taskSystemVisible" :footer="null" width="90%" :bodyStyle="{ padding: '0' }"
 			:maskClosable="false">
 			<div class="bg-gray-900 text-white rounded-lg overflow-hidden">
@@ -727,7 +734,7 @@
 					<div class="flex items-center relative z-10">
 						<i class="fas fa-exchange-alt text-2xl mr-4 text-blue-400"></i>
 						<div>
-							<div class="text-2xl font-bold">任务交易系统</div>
+							<div class="text-2xl font-bold">创意速配中心</div>
 							<div class="text-sm text-gray-300 mt-1">智能匹配设计需求与人才</div>
 						</div>
 					</div>
@@ -1207,7 +1214,7 @@ const mobileMenuOpen = ref(false);
 const talentMapChart = ref<HTMLElement | null>(null);
 const toolsRankingChart = ref<HTMLElement | null>(null);
 const responseEfficiencyChart = ref<HTMLElement | null>(null);
-// 任务交易系统
+// 创意速配中心
 const taskSystemVisible = ref(false);
 const activeTaskTab = ref('marketplace');
 const myTasksFilter = ref('all');
