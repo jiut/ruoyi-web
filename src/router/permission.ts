@@ -1,10 +1,9 @@
-import type { Router } from 'vue-router'
-import { ref } from 'vue';
+// 直接使用 any 避免多版本 vue-router 类型冲突
 
 const whiteList = ['/login', '/regist','/resetpassword']; // 不重定向白名单
 
-export function setupPageGuard(router: Router) {
-  router.beforeEach(async (to, from, next) => {
+export function setupPageGuard(router: any) {
+  router.beforeEach(async (to: any, from: any, next: any) => {
     // 检查浏览器语言
     // const browserLanguage = navigator.language || navigator.language;
     // const isChineseLanguage = browserLanguage.includes('zh');

@@ -14,14 +14,20 @@ import wxlayout from '@/views/wxbot/layout.vue'
 
 
 const routes: RouteRecordRaw[] = [
+  // 首页
   {
     path: '/',
-    name: 'Root',
+    name: 'Home',
+    component: () => import('@/views/home/AllianceHome.vue'),
+  },
+  // Chat 模块
+  {
+    path: '/chat',
+    name: 'ChatRoot',
     component: ChatLayout,
-    redirect: '/chat',
     children: [
       {
-        path: '/chat/:uuid?',
+        path: ':uuid?',
         name: 'Chat',
         component: () => import('@/views/chat/index.vue'),
       },
@@ -56,7 +62,7 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-    
+
     path: '/draw',
     name: 'Rootdraw',
     component: mjlayout,
@@ -217,7 +223,7 @@ const routes: RouteRecordRaw[] = [
     name: 'resetpassword',
     component: () => import('@/views/resetpassword/index.vue'),
   },
-  
+
   {
     path: '/500',
     name: '500',

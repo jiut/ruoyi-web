@@ -6,6 +6,7 @@ import {LoginFrom,UserData} from "@/typings/user";
 import { doLogin,loginOut } from '@/api/user'
 import { removeToken,setToken,getToken } from '@/store/modules/auth/helper'
 import { to } from 'await-to-js';
+import { useAuthStore } from '@/store'
 
 const token = ref(getToken())
 
@@ -24,6 +25,7 @@ export const useUserStore = defineStore('user-store', {
         // token本地存储
         setToken(data.token);
         token.value = data.token;
+        useAuthStore().setToken(data.token);
         return Promise.resolve();
       }
       return Promise.reject(err);
@@ -31,6 +33,7 @@ export const useUserStore = defineStore('user-store', {
     // 二维码登录的方法
     async userQrLogin(token: string){
       setToken(token);
+      useAuthStore().setToken(token);
     },
 
     logout: async (): Promise<void> => {
@@ -38,7 +41,7 @@ export const useUserStore = defineStore('user-store', {
       token.value = '';
       removeToken();
     },
-   
+
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }
       this.recordState()
