@@ -34,10 +34,10 @@ import { useRoute } from "vue-router";
 import aiModel from "@/views/mj/aiModel.vue";
 import AiMic from "./aiMic.vue";
 import { useIconRender } from "@/hooks/useIconRender";
-import { Console } from "console";
+
 
 const { iconRender } = useIconRender();
-//import FormData from 'form-data'
+
 const route = useRoute();
 const chatStore = useChatStore();
 const emit = defineEmits([
@@ -119,11 +119,7 @@ const mvalue = computed({
     emit("update:modelValue", value);
   },
 });
-const chatTypeBn = computed({
-  get() {
-    return st.value.chatType ? "info" : "";
-  },
-});
+
 function selectFile(input: any) {
   const file = input.target.files[0];
   upFile(file);
@@ -179,7 +175,7 @@ const upFile = (file: any) => {
     formData.append("file", file);
     ms.info(t("mj.uploading"));
     st.value.isLoad = 1;
-    GptUploader("/v1/upload", formData)
+    GptUploader("/chat/upload", formData)
       .then((r) => {
         //mlog('上传成功', r);
         st.value.isLoad = 0;
@@ -522,7 +518,7 @@ function handleClear() {
                 >模型:{{
                   nGptStore.modelLabel
                     ? truncateText(nGptStore.modelLabel, 20)
-                    : "deepseek-ai/DeepSeek-R1"
+                    : "deepseek/deepseek-r1"
                 }}
                 {{
                   nGptStore.kid
