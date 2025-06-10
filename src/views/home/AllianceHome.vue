@@ -12,13 +12,13 @@
 				<nav class="hidden md:flex space-x-8">
 					<a @click="scrollToSection('talent-pool')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="探索全球设计人才资源，寻找合适的设计师或工作机会">未来设计师联盟</a>
+						title="探索全球设计人才资源，寻找合适的设计师或工作机会">星海人才</a>
 					<a @click="scrollToSection('ai-resources')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="体验前沿AI设计工具，提升创作效率">AI资源池</a>
+						title="体验前沿AI设计工具，提升创作效率">AI资讯</a>
 					<a @click="scrollToSection('task-system')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="发布或接取设计任务，智能匹配需求">创意速配中心</a>
+						title="发布或接取设计任务，智能匹配需求">创意速配</a>
 					<!-- <a @click="scrollToSection('data-dashboard')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
 						title="实时监控行业数据，把握市场动向">AIGC驾驶舱</a> -->
@@ -52,11 +52,11 @@
 			<div v-if="mobileMenuOpen" class="md:hidden bg-gray-900 py-4 px-6 shadow-lg">
 				<div class="flex flex-col space-y-4">
 					<a @click="scrollToSection('talent-pool'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">未来设计师联盟</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">星海人才</a>
 					<a @click="scrollToSection('ai-resources'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">AI资源池</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">AI资讯</a>
 					<a @click="scrollToSection('task-system'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">创意速配中心</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">创意速配</a>
 					<a @click="scrollToSection('data-dashboard'); mobileMenuOpen = false"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">数据驾驶舱</a>
 				</div>
@@ -112,13 +112,13 @@
 					</p>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					<!-- 未来设计师联盟 -->
+					<!-- 星海人才 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center mb-6">
 							<i class="fas fa-users text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">未来设计师联盟</h3>
+						<h3 class="text-xl font-bold mb-3">星海人才</h3>
 						<p class="text-gray-400 mb-4">
 							汇聚全球设计师资源，连接院校、学生、企业，打造人才生态闭环
 						</p>
@@ -128,13 +128,13 @@
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
 					</div>
-					<!-- AI资源池 -->
+					<!-- AI资讯 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-purple-600 flex items-center justify-center mb-6">
 							<i class="fas fa-robot text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">AI资源池</h3>
+						<h3 class="text-xl font-bold mb-3">AI资讯</h3>
 						<p class="text-gray-400 mb-4">
 							整合前沿AI设计工具，提供行业资讯与教学案例，赋能设计创作
 						</p>
@@ -144,13 +144,13 @@
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
 					</div>
-					<!-- 创意速配中心 -->
+					<!-- 创意速配 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-cyan-600 flex items-center justify-center mb-6">
 							<i class="fas fa-exchange-alt text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">创意速配中心</h3>
+						<h3 class="text-xl font-bold mb-3">创意速配</h3>
 						<p class="text-gray-400 mb-4">
 							智能匹配设计需求与人才，提供全流程任务管理与支付保障
 						</p>
@@ -179,11 +179,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- 未来设计师联盟 -->
+		<!-- 星海人才 -->
 		<section id="talent-pool" class="py-20 bg-gradient-to-b from-gray-900 to-indigo-950">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">未来设计师联盟</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">星海人才</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						打造设计师与企业的桥梁，连接全球设计资源与市场需求
 					</p>
@@ -316,11 +316,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- AI资源池 -->
+		<!-- AI资讯 -->
 		<section id="ai-resources" class="py-20 bg-gradient-to-b from-indigo-950 to-gray-900">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">AI资源池</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">AI资讯</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						整合前沿AI设计工具与资源，赋能设计师创作
 					</p>
@@ -434,11 +434,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- 创意速配中心入口 -->
+		<!-- 创意速配入口 -->
 		<section id="task-system" class="py-20 bg-gradient-to-b from-gray-900 to-indigo-950">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">创意速配中心</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">创意速配</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						智能匹配设计需求与人才，提供全流程任务管理与支付保障
 					</p>
@@ -451,7 +451,7 @@
 								设计任务交易平台
 							</h3>
 							<p class="text-gray-300 mb-8">
-								亿思AI设计联盟平台提供业内领先的创意速配中心，连接企业需求与设计人才，实现高效精准匹配。
+								亿思AI设计联盟平台提供业内领先的创意速配，连接企业需求与设计人才，实现高效精准匹配。
 								通过AI智能推荐、标准化流程与安全支付，为双方创造无忧的合作体验。
 							</p>
 							<div class="grid grid-cols-2 gap-6 mb-8">
@@ -488,7 +488,7 @@
 					<div class="order-1 lg:order-2 flex justify-center">
 						<img
 							src="https://readdy.ai/api/search-image?query=Modern%20digital%20workspace%20showing%20professional%20design%20collaboration%20between%20AI%20and%20human%20designers%2C%20with%20flowing%20data%20visualization%2C%20project%20management%20interface%2C%20and%20payment%20system%20on%20dark%20themed%20UI%20with%20blue%20and%20purple%20accents%2C%20clean%20minimalist%20style&width=600&height=500&seq=task-system-img&orientation=landscape"
-							alt="创意速配中心" class="w-full max-w-lg rounded-xl shadow-2xl" />
+							alt="创意速配" class="w-full max-w-lg rounded-xl shadow-2xl" />
 					</div>
 				</div>
 			</div>
@@ -661,11 +661,11 @@
 						<h4 class="font-bold mb-4">快速链接</h4>
 						<ul class="space-y-2">
 							<li><a @click="scrollToSection('talent-pool')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">未来设计师联盟</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">星海人才</a></li>
 							<li><a @click="scrollToSection('ai-resources')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AI资源池</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AI资讯</a></li>
 							<li><a @click="scrollToSection('task-system')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">创意速配中心</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">创意速配</a></li>
 							<li><a @click="scrollToSection('data-dashboard')"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AIGC驾驶舱</a></li>
 						</ul>
@@ -716,7 +716,7 @@
 				</div>
 			</div>
 		</footer>
-		<!-- 创意速配中心弹窗 -->
+		<!-- 创意速配弹窗 -->
 		<a-modal v-model:visible="taskSystemVisible" :footer="null" width="90%" :bodyStyle="{ padding: '0' }"
 			:maskClosable="false">
 			<div class="bg-gray-900 text-white rounded-lg overflow-hidden">
@@ -734,7 +734,7 @@
 					<div class="flex items-center relative z-10">
 						<i class="fas fa-exchange-alt text-2xl mr-4 text-blue-400"></i>
 						<div>
-							<div class="text-2xl font-bold">创意速配中心</div>
+							<div class="text-2xl font-bold">创意速配</div>
 							<div class="text-sm text-gray-300 mt-1">智能匹配设计需求与人才</div>
 						</div>
 					</div>
@@ -1214,7 +1214,7 @@ const mobileMenuOpen = ref(false);
 const talentMapChart = ref<HTMLElement | null>(null);
 const toolsRankingChart = ref<HTMLElement | null>(null);
 const responseEfficiencyChart = ref<HTMLElement | null>(null);
-// 创意速配中心
+// 创意速配
 const taskSystemVisible = ref(false);
 const activeTaskTab = ref('marketplace');
 const myTasksFilter = ref('all');
