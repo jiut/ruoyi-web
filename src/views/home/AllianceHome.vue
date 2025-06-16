@@ -222,10 +222,10 @@
 							展示新锐设计师作品，为企业提供新鲜创意与人才发掘渠道
 						</p>
 						<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-							<div v-for="i in 6" :key="`work-${i}`" class="aspect-square rounded-lg overflow-hidden cursor-pointer">
+							<div v-for="(image, index) in studentWorks" :key="`work-${index}`" class="aspect-square rounded-lg overflow-hidden cursor-pointer">
 								<img
-									:src="`https://readdy.ai/api/search-image?query=Modern%20minimalist%20design%20portfolio%20piece%20with%20clean%20lines%20and%20bold%20colors%2C%20showcasing%20creative%20talent%20with%20professional%20finish%2C%20abstract%20design%20elements%20with%20geometric%20shapes%20on%20dark%20background&width=200&height=200&seq=work-${i}&orientation=squarish`"
-									:alt="`学生作品${i}`"
+									:src="image.src"
+									:alt="image.alt"
 									class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
 							</div>
 						</div>
@@ -493,6 +493,184 @@
 				</div>
 			</div>
 		</section>
+
+		<!-- 能力评级和合同支付 -->
+		<section class="py-20 bg-gradient-to-b from-indigo-950 to-indigo-950">
+			<div class="container mx-auto px-6">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					<!-- 能力评级 -->
+					<div class="bg-gray-800 bg-opacity-50 rounded-xl p-8 shadow-xl">
+						<div class="flex items-center justify-between mb-6">
+							<h3 class="text-2xl font-bold">能力评级</h3>
+							<span class="px-3 py-1 bg-blue-500 bg-opacity-20 text-blue-400 text-sm rounded-full">平台认证体系</span>
+						</div>
+						<p class="text-gray-300 mb-6">基于任务完成质量、客户评价与专业评审，构建设计师能力评级体系</p>
+						<div class="mb-8">
+							<h4 class="font-medium mb-4 text-white">评级维度</h4>
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+								<div class="p-4 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg">
+									<div class="flex items-center mb-2">
+										<div class="w-8 h-8 flex items-center justify-center bg-blue-500 bg-opacity-20 rounded-full mr-3">
+											<i class="fas fa-star text-blue-400"></i>
+										</div>
+										<h5 class="font-medium text-white">专业技能</h5>
+									</div>
+									<p class="text-sm text-gray-400">评估设计师在特定领域的专业技能水平与创新能力</p>
+								</div>
+								<div class="p-4 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg">
+									<div class="flex items-center mb-2">
+										<div class="w-8 h-8 flex items-center justify-center bg-purple-500 bg-opacity-20 rounded-full mr-3">
+											<i class="fas fa-headset text-purple-400"></i>
+										</div>
+										<h5 class="font-medium text-white">服务质量</h5>
+									</div>
+									<p class="text-sm text-gray-400">评估设计师的沟通能力、响应速度与客户满意度</p>
+								</div>
+								<div class="p-4 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg">
+									<div class="flex items-center mb-2">
+										<div class="w-8 h-8 flex items-center justify-center bg-blue-500 bg-opacity-20 rounded-full mr-3">
+											<i class="fas fa-clock text-blue-400"></i>
+										</div>
+										<h5 class="font-medium text-white">交付能力</h5>
+									</div>
+									<p class="text-sm text-gray-400">评估设计师的项目管理能力与按时交付质量</p>
+								</div>
+								<div class="p-4 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg">
+									<div class="flex items-center mb-2">
+										<div class="w-8 h-8 flex items-center justify-center bg-purple-500 bg-opacity-20 rounded-full mr-3">
+											<i class="fas fa-users text-purple-400"></i>
+										</div>
+										<h5 class="font-medium text-white">协作能力</h5>
+									</div>
+									<p class="text-sm text-gray-400">评估设计师在团队协作中的表现与适应能力</p>
+								</div>
+							</div>
+							<h4 class="font-medium mb-4 text-white">设计师等级</h4>
+							<div class="flex items-center justify-between space-x-4">
+								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mx-auto mb-2">
+										<i class="fas fa-seedling text-gray-400"></i>
+									</div>
+									<h5 class="font-medium mb-1 text-white">新秀设计师</h5>
+									<p class="text-xs text-gray-500">初级认证</p>
+								</div>
+								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-10 h-10 flex items-center justify-center bg-blue-700 rounded-full mx-auto mb-2">
+										<i class="fas fa-award text-blue-400"></i>
+									</div>
+									<h5 class="font-medium mb-1 text-white">专业设计师</h5>
+									<p class="text-xs text-gray-500">中级认证</p>
+								</div>
+								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-10 h-10 flex items-center justify-center bg-purple-700 rounded-full mx-auto mb-2">
+										<i class="fas fa-crown text-purple-400"></i>
+									</div>
+									<h5 class="font-medium mb-1 text-white">资深设计师</h5>
+									<p class="text-xs text-gray-500">高级认证</p>
+								</div>
+								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-10 h-10 flex items-center justify-center bg-yellow-700 rounded-full mx-auto mb-2">
+										<i class="fas fa-gem text-yellow-400"></i>
+									</div>
+									<h5 class="font-medium mb-1 text-white">大师设计师</h5>
+									<p class="text-xs text-gray-500">顶级认证</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 合同支付 -->
+					<div class="bg-gray-800 bg-opacity-50 rounded-xl p-8 shadow-xl">
+						<div class="flex items-center justify-between mb-6">
+							<h3 class="text-2xl font-bold">合同支付</h3>
+							<span class="px-3 py-1 bg-purple-500 bg-opacity-20 text-purple-400 text-sm rounded-full">安全交易保障</span>
+						</div>
+						<p class="text-gray-300 mb-6">提供标准化合同模板与安全支付系统，保障交易双方权益</p>
+						<div class="mb-8">
+							<h4 class="font-medium mb-4 text-white">交易流程</h4>
+							<div class="relative">
+								<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700"></div>
+								<div class="relative z-10 flex mb-6">
+									<div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full mr-4">
+										<span class="text-white text-sm">1</span>
+									</div>
+									<div class="bg-gray-900 bg-opacity-50 p-4 rounded-lg flex-1">
+										<h5 class="font-medium mb-2 text-white">需求确认</h5>
+										<p class="text-sm text-gray-400">企业与设计师确认项目需求、交付内容、时间节点与报价</p>
+									</div>
+								</div>
+								<div class="relative z-10 flex mb-6">
+									<div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full mr-4">
+										<span class="text-white text-sm">2</span>
+									</div>
+									<div class="bg-gray-900 bg-opacity-50 p-4 rounded-lg flex-1">
+										<h5 class="font-medium mb-2 text-white">合同签署</h5>
+										<p class="text-sm text-gray-400">系统生成标准化合同，双方在线签署，明确权责与交付标准</p>
+									</div>
+								</div>
+								<div class="relative z-10 flex mb-6">
+									<div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full mr-4">
+										<span class="text-white text-sm">3</span>
+									</div>
+									<div class="bg-gray-900 bg-opacity-50 p-4 rounded-lg flex-1">
+										<h5 class="font-medium mb-2 text-white">款项托管</h5>
+										<p class="text-sm text-gray-400">企业将项目款项托管至平台，确保资金安全，设计师开始工作</p>
+									</div>
+								</div>
+								<div class="relative z-10 flex mb-6">
+									<div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full mr-4">
+										<span class="text-white text-sm">4</span>
+									</div>
+									<div class="bg-gray-900 bg-opacity-50 p-4 rounded-lg flex-1">
+										<h5 class="font-medium mb-2 text-white">成果交付</h5>
+										<p class="text-sm text-gray-400">设计师按约定交付设计成果，企业确认验收质量</p>
+									</div>
+								</div>
+								<div class="relative z-10 flex">
+									<div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full mr-4">
+										<span class="text-white text-sm">5</span>
+									</div>
+									<div class="bg-gray-900 bg-opacity-50 p-4 rounded-lg flex-1">
+										<h5 class="font-medium mb-2 text-white">款项结算</h5>
+										<p class="text-sm text-gray-400">企业确认验收后，平台将托管款项结算给设计师</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							<h4 class="font-medium mb-4 text-white">支付方式</h4>
+							<div class="flex flex-wrap gap-4">
+								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-8 h-8 flex items-center justify-center mr-3">
+										<i class="ri-alipay-fill text-blue-500 ri-lg"></i>
+									</div>
+									<span class="font-medium text-white">支付宝</span>
+								</div>
+								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-8 h-8 flex items-center justify-center mr-3">
+										<i class="ri-wechat-pay-fill text-green-500 ri-lg"></i>
+									</div>
+									<span class="font-medium text-white">微信支付</span>
+								</div>
+								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-8 h-8 flex items-center justify-center mr-3">
+										<i class="ri-bank-card-fill text-gray-700 ri-lg"></i>
+									</div>
+									<span class="font-medium text-white">银行转账</span>
+								</div>
+								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+									<div class="w-8 h-8 flex items-center justify-center mr-3">
+										<i class="ri-paypal-fill text-blue-700 ri-lg"></i>
+									</div>
+									<span class="font-medium text-white">PayPal</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<!-- AIGC驾驶舱 -->
 		<section id="data-dashboard" class="py-20 bg-gradient-to-b from-indigo-950 to-gray-900">
 			<div class="container mx-auto px-6">
@@ -688,7 +866,7 @@
 						<ul class="space-y-2">
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-map-marker-alt mr-2"></i>
-								<span>湖北省武汉市汉阳区绿地国博财富中心</span>
+								<span>湖北省武汉市洪山区和成中心</span>
 							</li>
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-phone mr-2"></i>
@@ -1212,6 +1390,34 @@ const router = useRouter();
 const swiperModules = [Pagination, Autoplay];
 const mobileMenuOpen = ref(false);
 const talentMapChart = ref<HTMLElement | null>(null);
+
+// 学生作品数据
+const studentWorks = ref([
+	{
+		src: '/src/assets/student-works/01.jpg',
+		alt: '现代洗衣房场景设计'
+	},
+	{
+		src: '/src/assets/student-works/02.jpg',
+		alt: '创意二维码设计'
+	},
+	{
+		src: '/src/assets/student-works/03.jpg',
+		alt: '时尚角色设计'
+	},
+	{
+		src: '/src/assets/student-works/04.jpg',
+		alt: '童话风格建筑设计'
+	},
+	{
+		src: '/src/assets/student-works/05.jpg',
+		alt: '奇幻角色设计'
+	},
+	{
+		src: '/src/assets/student-works/06.jpg',
+		alt: '森林魔法师角色设计'
+	}
+]);
 const toolsRankingChart = ref<HTMLElement | null>(null);
 const responseEfficiencyChart = ref<HTMLElement | null>(null);
 // 创意速配
