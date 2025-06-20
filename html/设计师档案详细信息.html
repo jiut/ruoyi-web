@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计师档案详情 - 星海人才</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0a84ff',secondary:'#bf5af2'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Noto Sans SC', sans-serif;
+background: #000000;
+color: #e2e8f0;
+min-height: 100vh;
+}
+.glass-card {
+background: rgba(28, 28, 30, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.glow-border {
+position: relative;
+}
+.glow-border::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+border-radius: inherit;
+box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+}
+.glow-border:hover::after {
+opacity: 1;
+}
+.card-hover {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.gradient-text {
+background: linear-gradient(45deg, #007AFF, #AF52DE, #FF2D92);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.neon-button {
+position: relative;
+overflow: hidden;
+transition: all 0.3s ease;
+}
+.neon-button::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(45deg, #007AFF, #AF52DE);
+opacity: 0;
+transition: opacity 0.3s ease;
+z-index: -1;
+}
+.neon-button:hover::before {
+opacity: 0.2;
+}
+.neon-button:active {
+transform: scale(0.98);
+}
+.skill-tag {
+background: rgba(10, 132, 255, 0.2);
+border: 1px solid rgba(10, 132, 255, 0.3);
+}
+.avatar-glow {
+box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+}
+.section-divider {
+height: 1px;
+background: linear-gradient(90deg, rgba(0, 122, 255, 0), rgba(0, 122, 255, 0.5), rgba(175, 82, 222, 0.5), rgba(0, 122, 255, 0));
+}
+.timeline-line {
+width: 2px;
+background: linear-gradient(to bottom, rgba(10, 132, 255, 0.8), rgba(191, 90, 242, 0.2));
+}
+.timeline-dot {
+border: 2px solid #0a84ff;
+box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+}
+.work-item {
+border-left: 3px solid #0a84ff;
+}
+.work-image-overlay {
+background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+}
+.tab-active {
+background: rgba(10, 132, 255, 0.2);
+color: #0a84ff;
+border-color: #0a84ff;
+}
+.search-input {
+background: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.2);
+}
+.search-input:focus {
+border-color: rgba(10, 132, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+</style>
+</head>
+<body>
+<div class="min-h-screen">
+<!-- 页面头部 -->
+<header class="py-4 glass-card sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<a href="https://readdy.ai/home/bb86dafc-cb55-4536-9b1d-6f4d83d459ef/d2471b29-7e02-49e1-bdb6-92cc651d6efc" data-readdy="true" class="flex items-center text-white hover:text-primary transition-colors">
+<i class="ri-arrow-left-line ri-lg mr-2"></i>
+<span>返回</span>
+</a>
+</div>
+<h1 class="text-xl font-bold">设计师档案详情</h1>
+<div class="flex space-x-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 hover:text-primary transition-colors">
+<i class="ri-share-line"></i>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 hover:text-primary transition-colors">
+<i class="ri-star-line"></i>
+</button>
+</div>
+</div>
+</div>
+</header>
+
+<!-- 设计师基本信息区 -->
+<section class="py-8 container mx-auto px-4">
+<div class="glass-card rounded-lg p-8">
+<div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+<div class="w-40 h-40 rounded-full overflow-hidden avatar-glow flex-shrink-0">
+<img src="https://readdy.ai/api/search-image?query=professional%2520portrait%2520of%2520a%2520young%2520Asian%2520female%2520designer%2520with%2520medium%2520length%2520black%2520hair%2520and%2520glasses%252C%2520warm%2520smile%252C%2520creative%2520appearance%252C%2520neutral%2520background%252C%2520professional%2520lighting%252C%2520high%2520quality%2520headshot&width=400&height=400&seq=avatar1&orientation=squarish" alt="陈雨晴" class="w-full h-full object-cover object-top">
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+<h2 class="text-3xl font-bold">陈雨晴</h2>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm">资深 UI/UX 设计师</span>
+<span class="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-sm">5 年经验</span>
+</div>
+</div>
+<p class="text-gray-300 mb-6">专注于用户体验与交互设计，擅长将复杂问题简化为直观易用的界面解决方案。热衷于研究用户行为与心理学，将理论与实践相结合，打造卓越的数字产品体验。</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+<i class="ri-map-pin-line"></i>
+</div>
+<div>
+<p class="text-sm text-gray-400">所在地</p>
+<p>上海</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+<i class="ri-mail-line"></i>
+</div>
+<div>
+<p class="text-sm text-gray-400">邮箱</p>
+<p>yuqing.chen@example.com</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+<i class="ri-phone-line"></i>
+</div>
+<div>
+<p class="text-sm text-gray-400">电话</p>
+<p>135****8899</p>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-3 mb-6">
+<span class="skill-tag px-3 py-1 rounded-full text-sm">Figma</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">Sketch</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">Adobe XD</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">Protopie</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">用户研究</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">交互设计</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">视觉设计</span>
+<span class="skill-tag px-3 py-1 rounded-full text-sm">设计系统</span>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="neon-button bg-primary text-white px-6 py-3 !rounded-button font-medium whitespace-nowrap">
+<i class="ri-chat-3-line mr-2"></i> 发起合作
+</button>
+<button class="neon-button bg-transparent border border-primary/30 text-primary px-6 py-3 !rounded-button font-medium whitespace-nowrap">
+<i class="ri-download-line mr-2"></i> 下载简历
+</button>
+<button class="neon-button bg-transparent border border-gray-600 text-gray-300 px-6 py-3 !rounded-button font-medium whitespace-nowrap">
+<i class="ri-user-add-line mr-2"></i> 添加关注
+</button>
+</div>
+</div>
+<div class="hidden md:flex flex-col items-center justify-center gap-3 border-l border-gray-700 pl-8">
+<div class="text-center">
+<p class="text-3xl font-bold gradient-text">92</p>
+<p class="text-sm text-gray-400">匹配度</p>
+</div>
+<div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full" style="width: 92%"></div>
+</div>
+<div class="text-center">
+<p class="text-3xl font-bold gradient-text">A+</p>
+<p class="text-sm text-gray-400">综合评级</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 技能评估与作品集区域 -->
+<section class="py-8 container mx-auto px-4">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- 技能评估雷达图 -->
+<div class="glass-card rounded-lg p-6 lg:col-span-1">
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+技能评估
+</h3>
+<div id="skillRadarChart" class="w-full h-80"></div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="bg-gray-800/50 rounded-lg p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm text-gray-300">设计理论</p>
+<p class="text-sm font-bold text-primary">92/100</p>
+</div>
+<div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="bg-gray-800/50 rounded-lg p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm text-gray-300">工具掌握</p>
+<p class="text-sm font-bold text-primary">95/100</p>
+</div>
+<div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div class="bg-gray-800/50 rounded-lg p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm text-gray-300">项目管理</p>
+<p class="text-sm font-bold text-primary">88/100</p>
+</div>
+<div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<div class="bg-gray-800/50 rounded-lg p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-sm text-gray-300">沟通协作</p>
+<p class="text-sm font-bold text-primary">90/100</p>
+</div>
+<div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 90%"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 作品集展示 -->
+<div class="glass-card rounded-lg p-6 lg:col-span-2">
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+作品集展示
+</h3>
+<div class="flex overflow-x-auto pb-2 mb-6 gap-2">
+<button class="px-4 py-2 rounded-full text-sm bg-primary/20 text-primary border border-primary/30 tab-active whitespace-nowrap">全部作品</button>
+<button class="px-4 py-2 rounded-full text-sm bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700/30 whitespace-nowrap">UI 设计</button>
+<button class="px-4 py-2 rounded-full text-sm bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700/30 whitespace-nowrap">交互设计</button>
+<button class="px-4 py-2 rounded-full text-sm bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700/30 whitespace-nowrap">品牌设计</button>
+<button class="px-4 py-2 rounded-full text-sm bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700/30 whitespace-nowrap">移动应用</button>
+<button class="px-4 py-2 rounded-full text-sm bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700/30 whitespace-nowrap">网页设计</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=UI%2520design%2520for%2520a%2520modern%2520finance%2520app%2520with%2520dark%2520theme%252C%2520clean%2520interface%252C%2520showing%2520dashboard%2520with%2520statistics%2520and%2520charts%252C%2520professional%2520design%252C%2520high%2520quality%252C%2520detailed%2520UI%2520elements&width=600&height=450&seq=work1&orientation=landscape" alt="金融应用界面设计" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">金融科技应用界面</h4>
+<p class="text-gray-300 text-sm">为某金融科技公司设计的移动应用界面，专注于数据可视化与用户体验</p>
+</div>
+</div>
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=UI%2520design%2520for%2520a%2520social%2520media%2520app%2520with%2520vibrant%2520colors%252C%2520showing%2520profile%2520page%2520and%2520feed%252C%2520modern%2520design%2520elements%252C%2520clean%2520interface%252C%2520high%2520quality%2520mockup&width=600&height=450&seq=work2&orientation=landscape" alt="社交媒体应用设计" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">社交媒体重设计</h4>
+<p class="text-gray-300 text-sm">对现有社交平台的界面重设计，提升用户互动体验与内容展示效果</p>
+</div>
+</div>
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=modern%2520e-commerce%2520website%2520design%2520with%2520product%2520showcase%252C%2520clean%2520layout%252C%2520showing%2520fashion%2520items%252C%2520professional%2520web%2520design%252C%2520high%2520quality%2520UI%252C%2520responsive%2520design&width=600&height=450&seq=work3&orientation=landscape" alt="电商网站设计" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">精品电商网站</h4>
+<p class="text-gray-300 text-sm">为高端时尚品牌设计的电商平台，注重视觉体验与转化率优化</p>
+</div>
+</div>
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=brand%2520identity%2520design%2520for%2520a%2520tech%2520startup%252C%2520showing%2520logo%252C%2520color%2520palette%252C%2520typography%252C%2520and%2520application%2520examples%252C%2520modern%2520minimal%2520design%252C%2520professional%2520branding&width=600&height=450&seq=work4&orientation=landscape" alt="品牌设计" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">科技初创品牌设计</h4>
+<p class="text-gray-300 text-sm">为人工智能初创公司打造的品牌识别系统，包含标志、色彩与应用规范</p>
+</div>
+</div>
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=UI%2520design%2520for%2520a%2520health%2520and%2520fitness%2520app%252C%2520showing%2520workout%2520tracking%2520and%2520nutrition%2520planning%2520features%252C%2520clean%2520interface%252C%2520modern%2520design%252C%2520high%2520quality%2520mockup&width=600&height=450&seq=work5&orientation=landscape" alt="健康应用设计" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">健康生活应用</h4>
+<p class="text-gray-300 text-sm">集健康管理、运动追踪与饮食规划于一体的综合应用界面设计</p>
+</div>
+</div>
+<div class="group relative rounded-lg overflow-hidden aspect-[4/3] card-hover">
+<img src="https://readdy.ai/api/search-image?query=dashboard%2520UI%2520design%2520for%2520data%2520analytics%2520platform%252C%2520showing%2520charts%252C%2520graphs%252C%2520and%2520data%2520visualization%252C%2520dark%2520theme%252C%2520professional%2520interface%252C%2520high%2520quality%2520UI&width=600&height=450&seq=work6&orientation=landscape" alt="数据分析平台" class="w-full h-full object-cover object-top">
+<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-gray-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<h4 class="text-white font-bold">数据分析平台</h4>
+<p class="text-gray-300 text-sm">企业级数据分析平台的界面设计，注重数据可视化与操作效率</p>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-6">
+<button class="px-6 py-3 bg-transparent border border-primary/30 text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors !rounded-button whitespace-nowrap">
+查看更多作品 <i class="ri-arrow-right-line ml-1"></i>
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 项目经历时间线 -->
+<section class="py-8 container mx-auto px-4">
+<div class="glass-card rounded-lg p-6">
+<h3 class="text-xl font-bold mb-6 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+项目经历时间线
+</h3>
+<div class="relative">
+<!-- 时间线 -->
+<div class="absolute left-0 md:left-1/2 top-0 bottom-0 transform md:-translate-x-1/2 timeline-line"></div>
+<!-- 项目节点 -->
+<div class="space-y-12">
+<!-- 项目 1 -->
+<div class="relative">
+<div class="flex flex-col md:flex-row items-start gap-4">
+<div class="flex md:flex-1 md:justify-end">
+<div class="md:text-right md:pr-8">
+<span class="inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-sm mb-2">2024年3月 - 2024年6月</span>
+<h4 class="text-lg font-bold mb-2">智慧城市数据可视化平台</h4>
+<p class="text-gray-300 mb-2">上海数字科技有限公司</p>
+<p class="text-gray-400 text-sm">担任 UI/UX 设计负责人，负责整体用户体验与界面设计</p>
+</div>
+</div>
+<div class="absolute left-0 md:left-1/2 top-0 transform md:-translate-x-1/2 w-6 h-6 bg-gray-900 rounded-full timeline-dot flex items-center justify-center">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<div class="md:flex-1 md:pl-8">
+<div class="bg-gray-800/30 rounded-lg p-4">
+<p class="text-sm text-gray-300 mb-3">为智慧城市项目设计数据可视化平台，整合多源数据并以直观方式呈现，帮助城市管理者做出决策。</p>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">数据可视化</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">大屏设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">交互设计</span>
+</div>
+<div class="text-sm text-gray-400">
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>设计了超过 20 种数据可视化组件，提升数据理解效率</span>
+</p>
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>优化了复杂数据筛选流程，减少用户操作步骤 40%</span>
+</p>
+<p class="flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>设计系统获得客户高度评价，并被推广至其他相关项目</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 项目 2 -->
+<div class="relative">
+<div class="flex flex-col md:flex-row items-start gap-4">
+<div class="flex md:flex-1 md:justify-end">
+<div class="md:text-right md:pr-8">
+<span class="inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-sm mb-2">2023年8月 - 2024年1月</span>
+<h4 class="text-lg font-bold mb-2">金融科技移动应用重设计</h4>
+<p class="text-gray-300 mb-2">某头部互联网金融公司</p>
+<p class="text-gray-400 text-sm">担任高级 UI 设计师，负责用户界面与交互设计</p>
+</div>
+</div>
+<div class="absolute left-0 md:left-1/2 top-0 transform md:-translate-x-1/2 w-6 h-6 bg-gray-900 rounded-full timeline-dot flex items-center justify-center">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<div class="md:flex-1 md:pl-8">
+<div class="bg-gray-800/30 rounded-lg p-4">
+<p class="text-sm text-gray-300 mb-3">对现有金融应用进行全面重设计，优化用户体验，提升转化率，同时建立完整设计系统。</p>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">移动应用设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">金融界面</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">设计系统</span>
+</div>
+<div class="text-sm text-gray-400">
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>重设计核心流程，用户任务完成时间减少 35%</span>
+</p>
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>建立包含 200+ 组件的设计系统，提升团队设计效率</span>
+</p>
+<p class="flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>新版本上线后，用户活跃度提升 28%，转化率提升 15%</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 项目 3 -->
+<div class="relative">
+<div class="flex flex-col md:flex-row items-start gap-4">
+<div class="flex md:flex-1 md:justify-end">
+<div class="md:text-right md:pr-8">
+<span class="inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-sm mb-2">2023年1月 - 2023年6月</span>
+<h4 class="text-lg font-bold mb-2">全球旅行社交平台</h4>
+<p class="text-gray-300 mb-2">旅行科技初创公司</p>
+<p class="text-gray-400 text-sm">担任产品设计师，负责用户体验与界面设计</p>
+</div>
+</div>
+<div class="absolute left-0 md:left-1/2 top-0 transform md:-translate-x-1/2 w-6 h-6 bg-gray-900 rounded-full timeline-dot flex items-center justify-center">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<div class="md:flex-1 md:pl-8">
+<div class="bg-gray-800/30 rounded-lg p-4">
+<p class="text-sm text-gray-300 mb-3">为旅行爱好者设计社交平台，帮助用户分享旅行经历、规划行程并与志同道合的旅行者建立联系。</p>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">社交平台</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">用户研究</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">原型设计</span>
+</div>
+<div class="text-sm text-gray-400">
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>进行了 30+ 用户访谈，识别关键痛点与需求</span>
+</p>
+<p class="flex items-start mb-1">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>设计创新的行程分享与协作功能，成为产品差异化亮点</span>
+</p>
+<p class="flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>设计的首个版本获得 90% 的用户满意度评价</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 教育背景与职业规划 -->
+<section class="py-8 container mx-auto px-4">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- 教育背景 -->
+<div class="glass-card rounded-lg p-6">
+<h3 class="text-xl font-bold mb-6 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+教育背景
+</h3>
+<div class="space-y-6">
+<div class="bg-gray-800/30 rounded-lg p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold">同济大学</h4>
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm">2015 - 2019</span>
+</div>
+<p class="text-gray-300 mb-2">设计学院 · 交互设计专业</p>
+<p class="text-gray-400 text-sm mb-3">本科学位，GPA 3.8/4.0，专业排名前 5%</p>
+<div class="flex flex-wrap gap-2">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">交互设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">用户研究</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">设计思维</span>
+</div>
+</div>
+<div class="bg-gray-800/30 rounded-lg p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-lg font-bold">加州艺术学院</h4>
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm">2020 - 2021</span>
+</div>
+<p class="text-gray-300 mb-2">设计学院 · 用户体验设计</p>
+<p class="text-gray-400 text-sm mb-3">交换项目，专注于用户体验设计与研究方法</p>
+<div class="flex flex-wrap gap-2">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">UX 设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">设计研究</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">产品思维</span>
+</div>
+</div>
+</div>
+<div class="mt-6">
+<h4 class="font-bold mb-3">证书与荣誉</h4>
+<div class="space-y-3">
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3 flex-shrink-0">
+<i class="ri-award-line"></i>
+</div>
+<div>
+<p class="font-medium">Google UX 设计专业证书</p>
+<p class="text-gray-400 text-sm">2022 年获得</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3 flex-shrink-0">
+<i class="ri-award-line"></i>
+</div>
+<div>
+<p class="font-medium">2023 年亚太设计大奖 - 移动应用类银奖</p>
+<p class="text-gray-400 text-sm">金融科技应用设计项目</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3 flex-shrink-0">
+<i class="ri-award-line"></i>
+</div>
+<div>
+<p class="font-medium">2022 年中国设计智造大奖入围作品</p>
+<p class="text-gray-400 text-sm">智慧城市数据可视化项目</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 职业规划 -->
+<div class="glass-card rounded-lg p-6">
+<h3 class="text-xl font-bold mb-6 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+职业规划
+</h3>
+<div class="space-y-6">
+<div class="bg-gray-800/30 rounded-lg p-4">
+<h4 class="text-lg font-bold mb-3">短期目标 (1-2 年)</h4>
+<div class="space-y-3">
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>深入研究用户体验设计方法论，特别是在复杂系统与企业级产品领域</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>提升数据分析能力，将定量研究与设计决策更紧密结合</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>担任设计团队负责人，带领 3-5 人的设计团队完成大型项目</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>获取国际认可的设计管理认证，提升项目管理能力</span>
+</p>
+</div>
+</div>
+<div class="bg-gray-800/30 rounded-lg p-4">
+<h4 class="text-lg font-bold mb-3">中长期规划 (3-5 年)</h4>
+<div class="space-y-3">
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>晋升为设计总监，负责产品设计战略与团队建设</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>建立完整的设计系统与方法论，提升组织设计能力</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>在设计与商业结合方面深入研究，将设计思维应用于业务决策</span>
+</p>
+<p class="text-sm text-gray-300 flex items-start">
+<i class="ri-checkbox-circle-line text-primary mr-2 mt-0.5"></i>
+<span>在行业内分享经验，参与设计社区建设，提升个人影响力</span>
+</p>
+</div>
+</div>
+<div class="bg-gray-800/30 rounded-lg p-4">
+<h4 class="text-lg font-bold mb-3">技能提升计划</h4>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="font-medium mb-2">正在学习</p>
+<div class="space-y-2">
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>服务设计方法论</span>
+</p>
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>数据可视化进阶</span>
+</p>
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>设计管理与领导力</span>
+</p>
+</div>
+</div>
+<div>
+<p class="font-medium mb-2">计划学习</p>
+<div class="space-y-2">
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>AI 辅助设计工具</span>
+</p>
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>前端开发基础</span>
+</p>
+<p class="text-sm text-gray-300 flex items-center">
+<i class="ri-arrow-right-circle-line text-primary mr-2"></i>
+<span>产品战略与商业分析</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 推荐匹配的企业需求 -->
+<section class="py-8 container mx-auto px-4">
+<div class="glass-card rounded-lg p-6">
+<h3 class="text-xl font-bold mb-6 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+推荐匹配的企业需求
+</h3>
+<div class="flex overflow-x-auto pb-4 gap-4">
+<!-- 企业需求卡片 1 -->
+<div class="glass-card rounded-lg p-4 min-w-[300px] max-w-[300px] card-hover">
+<div class="flex items-start gap-3 mb-3">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-500/20 text-white">
+<span class="text-lg font-bold">腾</span>
+</div>
+<div>
+<h4 class="font-bold">腾讯互娱</h4>
+<p class="text-gray-400 text-sm">资深交互设计师</p>
+</div>
+<div class="ml-auto">
+<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">匹配度 96%</span>
+</div>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">薪资范围</span>
+<span class="text-white">30K-45K</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作地点</span>
+<span class="text-white">上海</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作经验</span>
+<span class="text-white">5年以上</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">交互设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">游戏UI</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">用户体验</span>
+</div>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+<!-- 企业需求卡片 2 -->
+<div class="glass-card rounded-lg p-4 min-w-[300px] max-w-[300px] card-hover">
+<div class="flex items-start gap-3 mb-3">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-red-500/20 text-white">
+<span class="text-lg font-bold">阿</span>
+</div>
+<div>
+<h4 class="font-bold">阿里巴巴</h4>
+<p class="text-gray-400 text-sm">高级用户体验设计师</p>
+</div>
+<div class="ml-auto">
+<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">匹配度 94%</span>
+</div>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">薪资范围</span>
+<span class="text-white">35K-50K</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作地点</span>
+<span class="text-white">杭州</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作经验</span>
+<span class="text-white">5-7年</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">UX设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">设计系统</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">用户研究</span>
+</div>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+<!-- 企业需求卡片 3 -->
+<div class="glass-card rounded-lg p-4 min-w-[300px] max-w-[300px] card-hover">
+<div class="flex items-start gap-3 mb-3">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-green-500/20 text-white">
+<span class="text-lg font-bold">字</span>
+</div>
+<div>
+<h4 class="font-bold">字节跳动</h4>
+<p class="text-gray-400 text-sm">资深UI设计师</p>
+</div>
+<div class="ml-auto">
+<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">匹配度 92%</span>
+</div>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">薪资范围</span>
+<span class="text-white">30K-45K</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作地点</span>
+<span class="text-white">上海</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作经验</span>
+<span class="text-white">4年以上</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">UI设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">视觉设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">动效设计</span>
+</div>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+<!-- 企业需求卡片 4 -->
+<div class="glass-card rounded-lg p-4 min-w-[300px] max-w-[300px] card-hover">
+<div class="flex items-start gap-3 mb-3">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-purple-500/20 text-white">
+<span class="text-lg font-bold">网</span>
+</div>
+<div>
+<h4 class="font-bold">网易</h4>
+<p class="text-gray-400 text-sm">高级产品设计师</p>
+</div>
+<div class="ml-auto">
+<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">匹配度 90%</span>
+</div>
+</div>
+<div class="space-y-3 mb-4">
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">薪资范围</span>
+<span class="text-white">25K-40K</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作地点</span>
+<span class="text-white">杭州</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-400">工作经验</span>
+<span class="text-white">3-5年</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">产品设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">用户体验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">原型设计</span>
+</div>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+<div class="flex justify-center mt-4">
+<button class="px-6 py-3 bg-transparent border border-primary/30 text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors !rounded-button whitespace-nowrap">
+查看更多匹配职位 <i class="ri-arrow-right-line ml-1"></i>
+</button>
+</div>
+</div>
+</section>
+
+<!-- 页脚 -->
+<footer class="py-12 border-t border-gray-800">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<div>
+<h3 class="text-lg font-bold mb-4">星海人才</h3>
+<p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">功能模块</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">院校数据库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">学生作品库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">企业需求池</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">设计师档案</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">关于我们</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">公司介绍</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">加入我们</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">合作伙伴</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">联系我们</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">联系方式</h3>
+<ul class="space-y-2">
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-phone-line mr-2"></i> 400-888-9999
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
+</li>
+</ul>
+</div>
+</div>
+<div class="section-divider mb-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
+<div class="flex space-x-4">
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-weibo-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-wechat-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-linkedin-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-github-line"></i>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+<script id="skill-radar-chart">
+document.addEventListener('DOMContentLoaded', function() {
+  // 技能雷达图
+  const skillRadarChart = echarts.init(document.getElementById('skillRadarChart'));
+  const skillRadarOption = {
+    animation: false,
+    radar: {
+      indicator: [
+        { name: 'UI设计', max: 100 },
+        { name: '交互设计', max: 100 },
+        { name: '视觉设计', max: 100 },
+        { name: '用户研究', max: 100 },
+        { name: '前端开发', max: 100 },
+        { name: '项目管理', max: 100 }
+      ],
+      radius: '65%',
+      splitNumber: 4,
+      axisName: {
+        color: '#e2e8f0',
+        backgroundColor: 'rgba(15, 23, 42, 0.6)',
+        borderRadius: 3,
+        padding: [3, 5]
+      },
+      splitArea: {
+        areaStyle: {
+          color: ['rgba(10, 132, 255, 0.05)', 'rgba(10, 132, 255, 0.1)', 'rgba(10, 132, 255, 0.15)', 'rgba(10, 132, 255, 0.2)']
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(148, 163, 184, 0.2)'
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(148, 163, 184, 0.2)'
+        }
+      }
+    },
+    series: [{
+      name: '技能评估',
+      type: 'radar',
+      data: [{
+        value: [95, 90, 85, 88, 70, 88],
+        name: '技能水平',
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 1,
+            colorStops: [{
+              offset: 0, color: 'rgba(10, 132, 255, 0.3)'
+            }, {
+              offset: 1, color: 'rgba(191, 90, 242, 0.3)'
+            }]
+          }
+        },
+        lineStyle: {
+          width: 3,
+          color: 'rgba(10, 132, 255, 0.8)'
+        },
+        itemStyle: {
+          color: 'rgba(10, 132, 255, 1)'
+        }
+      }]
+    }],
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      borderColor: 'rgba(255, 255, 255, 0.8)',
+      textStyle: {
+        color: '#1f2937'
+      }
+    }
+  };
+  skillRadarChart.setOption(skillRadarOption);
+
+  // 窗口大小改变时重新调整图表大小
+  window.addEventListener('resize', function() {
+    skillRadarChart.resize();
+  });
+});
+</script>
+
+</body>
+</html>

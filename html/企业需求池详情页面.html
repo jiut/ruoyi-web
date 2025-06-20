@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企业需求池 - 设计人才招聘平台</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0a84ff',secondary:'#bf5af2'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Noto Sans SC', sans-serif;
+background: #000000;
+color: #e2e8f0;
+min-height: 100vh;
+}
+.glass-card {
+background: rgba(28, 28, 30, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.filter-card {
+background: rgba(28, 28, 30, 0.8);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.job-card {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+background: rgba(28, 28, 30, 0.7);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.job-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.search-input {
+background: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.2);
+}
+.search-input:focus {
+border-color: rgba(99, 102, 241, 0.5);
+box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+.gradient-text {
+background: linear-gradient(45deg, #007AFF, #AF52DE, #FF2D92);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.company-logo {
+background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
+border: 1px solid rgba(99, 99, 102, 0.1);
+}
+.skill-tag {
+background: rgba(10, 132, 255, 0.2);
+border: 1px solid rgba(10, 132, 255, 0.3);
+}
+.custom-checkbox {
+appearance: none;
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border: 2px solid rgba(148, 163, 184, 0.3);
+border-radius: 4px;
+background-color: transparent;
+display: inline-block;
+position: relative;
+margin-right: 8px;
+vertical-align: middle;
+cursor: pointer;
+}
+.custom-checkbox:checked {
+background-color: #0a84ff;
+border-color: #0a84ff;
+}
+.custom-checkbox:checked::after {
+content: '';
+position: absolute;
+left: 5px;
+top: 2px;
+width: 6px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-radio {
+appearance: none;
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border: 2px solid rgba(148, 163, 184, 0.3);
+border-radius: 50%;
+background-color: transparent;
+display: inline-block;
+position: relative;
+margin-right: 8px;
+vertical-align: middle;
+cursor: pointer;
+}
+.custom-radio:checked {
+border-color: #0a84ff;
+}
+.custom-radio:checked::after {
+content: '';
+position: absolute;
+left: 3px;
+top: 3px;
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background-color: #0a84ff;
+}
+.custom-range {
+-webkit-appearance: none;
+appearance: none;
+width: 100%;
+height: 6px;
+background: rgba(148, 163, 184, 0.2);
+border-radius: 3px;
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #0a84ff;
+cursor: pointer;
+border: 2px solid rgba(255, 255, 255, 0.8);
+box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #0a84ff;
+cursor: pointer;
+border: 2px solid rgba(255, 255, 255, 0.8);
+box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+margin-left: 8px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(148, 163, 184, 0.2);
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0a84ff;
+}
+input:checked + .switch-slider:before {
+transform: translateX(20px);
+}
+.custom-select {
+appearance: none;
+-webkit-appearance: none;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a1a1aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 0.5rem center;
+background-size: 1.5em 1.5em;
+padding-right: 2.5rem;
+background-color: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.2);
+}
+.custom-select:focus {
+border-color: rgba(10, 132, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+.job-detail-modal {
+background: rgba(15, 23, 42, 0.95);
+backdrop-filter: blur(16px);
+}
+.pagination-button {
+transition: all 0.2s ease;
+}
+.pagination-button:hover {
+background-color: rgba(10, 132, 255, 0.2);
+}
+.pagination-button.active {
+background-color: #0a84ff;
+color: white;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.glow-border {
+position: relative;
+}
+.glow-border::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+border-radius: inherit;
+box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+}
+.glow-border:hover::after {
+opacity: 1;
+}
+.card-hover {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.neon-button {
+position: relative;
+overflow: hidden;
+transition: all 0.3s ease;
+}
+.neon-button::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(45deg, #0a84ff, #bf5af2);
+opacity: 0;
+transition: opacity 0.3s ease;
+z-index: -1;
+}
+.neon-button:hover::before {
+opacity: 0.2;
+}
+.neon-button:active {
+transform: scale(0.98);
+}
+.section-divider {
+height: 1px;
+background: linear-gradient(90deg, rgba(0, 122, 255, 0), rgba(0, 122, 255, 0.5), rgba(175, 82, 222, 0.5), rgba(0, 122, 255, 0));
+}
+.nav-button {
+transition: all 0.2s ease;
+}
+.nav-button:hover {
+background: rgba(10, 132, 255, 0.1);
+color: #0a84ff;
+}
+.nav-button.active {
+background: rgba(10, 132, 255, 0.2);
+color: #0a84ff;
+}
+.dropdown-menu {
+display: none;
+position: absolute;
+background: rgba(28, 28, 30, 0.95);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+z-index: 50;
+}
+.dropdown-menu.show {
+display: block;
+}
+.breadcrumb-separator {
+color: rgba(148, 163, 184, 0.5);
+}
+</style>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+<!-- 统一顶栏组件 -->
+<header class="glass-card sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between h-16">
+
+<!-- 左侧：导航和面包屑 -->
+<div class="flex items-center space-x-4">
+<!-- 返回按钮 -->
+<a href="https://readdy.ai/home/bb86dafc-cb55-4536-9b1d-6f4d83d459ef/d2471b29-7e02-49e1-bdb6-92cc651d6efc" data-readdy="true" class="flex items-center text-gray-300 hover:text-primary transition-colors">
+<i class="ri-arrow-left-line ri-lg mr-2"></i>
+<span class="hidden sm:inline">返回</span>
+</a>
+
+<!-- 分隔线 -->
+<div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
+
+<!-- Logo -->
+<a href="/" class="flex items-center">
+<h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block">星海人才</h1>
+<h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden">星海</h1>
+</a>
+
+<!-- 面包屑导航 -->
+<nav class="hidden md:flex items-center space-x-2 text-sm">
+<a href="/" class="text-gray-400 hover:text-primary transition-colors">首页</a>
+<span class="breadcrumb-separator">/</span>
+<span class="text-white" id="currentPageTitle">企业需求池</span>
+</nav>
+</div>
+
+<!-- 中间：主导航菜单 -->
+<nav class="hidden lg:flex items-center space-x-6">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">设计师档案</a>
+</nav>
+
+<!-- 右侧：搜索和用户功能 -->
+<div class="flex items-center space-x-3">
+
+<!-- 搜索框 -->
+<div class="relative hidden md:block">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索职位、公司、技能..."
+class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+id="globalSearch">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端搜索按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden" id="mobileSearchBtn">
+<i class="ri-search-line"></i>
+</button>
+
+<!-- 通知 -->
+<div class="relative">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors" id="notificationBtn">
+<i class="ri-notification-3-line"></i>
+<!-- 未读消息小红点 -->
+<span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white" style="font-size: 10px;">3</span>
+</button>
+
+<!-- 通知下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-80" id="notificationDropdown">
+<div class="p-4 border-b border-gray-700">
+<h3 class="text-lg font-medium">通知中心</h3>
+</div>
+<div class="max-h-64 overflow-y-auto">
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">腾讯发布新的UI设计师职位</p>
+<p class="text-xs text-gray-400 mt-1">2分钟前</p>
+</div>
+</div>
+</div>
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">您的简历被字节跳动查看</p>
+<p class="text-xs text-gray-400 mt-1">1小时前</p>
+</div>
+</div>
+</div>
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">有3个新的职位匹配您的技能</p>
+<p class="text-xs text-gray-400 mt-1">3小时前</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-700 text-center">
+<a href="/notifications" class="text-sm text-primary hover:text-primary/80">查看所有通知</a>
+</div>
+</div>
+</div>
+
+<!-- 用户菜单 -->
+<div class="relative">
+<button class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors" id="userMenuBtn">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+张
+</div>
+<span class="hidden xl:inline text-white text-sm">张小明</span>
+<i class="ri-arrow-down-s-line text-gray-400 hidden xl:block"></i>
+</button>
+
+<!-- 用户下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-48" id="userDropdown">
+<div class="p-3 border-b border-gray-700">
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold mr-3">
+张
+</div>
+<div>
+<p class="text-sm font-medium">张小明</p>
+<p class="text-xs text-gray-400">求职者</p>
+</div>
+</div>
+</div>
+<div class="py-2">
+<a href="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-user-line mr-3"></i>
+个人资料
+</a>
+<a href="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-settings-3-line mr-3"></i>
+账户设置
+</a>
+<a href="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-bookmark-line mr-3"></i>
+我的收藏
+</a>
+<div class="border-t border-gray-700 mt-2"></div>
+<a href="/logout" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400">
+<i class="ri-logout-box-line mr-3"></i>
+退出登录
+</a>
+</div>
+</div>
+</div>
+
+<!-- 移动端菜单按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden" id="mobileMenuBtn">
+<i class="ri-menu-line"></i>
+</button>
+</div>
+</div>
+</div>
+
+<!-- 移动端搜索栏 -->
+<div class="hidden border-t border-gray-800 p-4 md:hidden" id="mobileSearchBar">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索职位、公司、技能..."
+class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端导航菜单 -->
+<div class="hidden border-t border-gray-800 p-4 lg:hidden" id="mobileNavMenu">
+<nav class="flex flex-col space-y-2">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">设计师档案</a>
+</nav>
+</div>
+</header>
+<!-- 页面标题区 -->
+<section class="py-12 relative">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-30"></div>
+<div class="container mx-auto px-4 relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+<div>
+<h1 class="text-4xl font-bold mb-2">企业需求池</h1>
+                <p class="text-gray-300 max-w-2xl">汇聚 1,856 家企业实时招聘需求，精准匹配设计人才，提供智能推荐服务</p>
+            </div>
+        </div>
+</div>
+</section>
+<!-- 主体内容区 -->
+<section class="flex-grow py-8">
+<div class="container mx-auto px-4">
+<div class="flex flex-col lg:flex-row gap-6">
+<!-- 左侧筛选栏 -->
+<div class="lg:w-1/4">
+<div class="filter-card rounded-lg p-6 sticky top-24 glow-border card-hover">
+
+<div class="space-y-6">
+<!-- 职位类型筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">职位类型</h3>
+<div class="space-y-2">
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>UI/UX 设计师</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>视觉设计师</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>交互设计师</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>产品设计师</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>3D 设计师</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>动效设计师</span>
+</label>
+</div>
+</div>
+<!-- 薪资范围筛选 -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-lg font-medium">薪资范围</h3>
+<span class="text-sm text-gray-400" id="salary-display">10K - 50K</span>
+</div>
+<div class="px-1">
+<input type="range" min="5" max="80" value="10" class="custom-range mb-2" id="min-salary">
+<input type="range" min="5" max="80" value="50" class="custom-range" id="max-salary">
+</div>
+</div>
+<!-- 工作地点筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">工作地点</h3>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>北京</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>上海</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>广州</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>深圳</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>杭州</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>成都</span>
+</label>
+</div>
+<button class="text-primary text-sm mt-2">更多城市</button>
+</div>
+<!-- 工作经验筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">工作经验</h3>
+<div class="space-y-2">
+<label class="flex items-center cursor-pointer">
+<input type="radio" name="experience" class="custom-radio">
+<span>应届毕业生</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="radio" name="experience" class="custom-radio" checked>
+<span>1-3 年</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="radio" name="experience" class="custom-radio">
+<span>3-5 年</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="radio" name="experience" class="custom-radio">
+<span>5-10 年</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="radio" name="experience" class="custom-radio">
+<span>10 年以上</span>
+</label>
+</div>
+</div>
+<!-- 工作类型筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">工作类型</h3>
+<div class="space-y-2">
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>全职</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>兼职</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>实习</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>远程</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>项目制</span>
+</label>
+</div>
+</div>
+<!-- 企业规模筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">企业规模</h3>
+<div class="space-y-2">
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>初创企业 (≤50人)</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>中小企业 (50-500人)</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox" checked>
+<span>大型企业 (500-2000人)</span>
+</label>
+<label class="flex items-center cursor-pointer">
+<input type="checkbox" class="custom-checkbox">
+<span>超大型企业 (>2000人)</span>
+</label>
+</div>
+</div>
+<!-- 更多筛选 -->
+<div>
+<h3 class="text-lg font-medium mb-3">更多筛选</h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span>急聘岗位</span>
+<label class="custom-switch">
+<input type="checkbox" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span>支持应届生</span>
+<label class="custom-switch">
+<input type="checkbox">
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span>周末双休</span>
+<label class="custom-switch">
+<input type="checkbox" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+</div>
+<!-- 筛选按钮 -->
+<div class="flex space-x-3 pt-2">
+<button class="flex-1 py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors !rounded-button whitespace-nowrap">
+重置筛选
+</button>
+<button class="neon-button flex-1 py-2.5 bg-primary text-white rounded-lg text-sm !rounded-button whitespace-nowrap">
+应用筛选
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 右侧内容区 -->
+<div class="lg:w-3/4">
+<!-- 排序和结果统计 -->
+<div class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center glow-border card-hover">
+<div class="mb-4 sm:mb-0">
+<p class="text-gray-300">找到 <span class="text-white font-medium">256</span> 个符合条件的职位</p>
+</div>
+<div class="flex items-center space-x-4 w-full sm:w-auto">
+<div class="relative flex-grow sm:flex-grow-0">
+<select class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8">
+<option value="latest">最新发布</option>
+<option value="salary-high">薪资从高到低</option>
+<option value="salary-low">薪资从低到高</option>
+<option value="hot">热门推荐</option>
+</select>
+</div>
+<div class="flex space-x-2">
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
+<i class="ri-layout-grid-line"></i>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50">
+<i class="ri-list-check-2"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- 职位列表 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<!-- 职位卡片 1 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="1">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">腾</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">高级交互设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">25K-35K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">腾讯互娱 · 深圳</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">5 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">交互设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户体验</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 3 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 2 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="2">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">阿</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">资深视觉设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">30K-45K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">阿里巴巴 · 杭州</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">3-5 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Photoshop</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">品牌设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">视觉系统</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 1 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 3 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="3">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">字</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">UI 设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">18K-25K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">字节跳动 · 北京</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">2-3 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Sketch</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">UI 设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">设计系统</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 2 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 4 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="4">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">网</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">游戏美术设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">20K-30K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">网易游戏 · 广州</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">3 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">3D Max</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">游戏美术</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">角色设计</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 5 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 5 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="5">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">百</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">产品设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">22K-35K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">百度 · 北京</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">3-5 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">产品设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户研究</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 2 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 6 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="6">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">小</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">动效设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">18K-28K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">小米 · 北京</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">2-4 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">After Effects</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">动效设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">Lottie</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 4 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 7 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="7">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">京</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">高级UI设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">25K-40K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">京东 · 北京</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">4-6 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Sketch</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">UI设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">电商设计</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 6 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 职位卡片 8 -->
+<div class="job-card rounded-lg glow-border card-hover" data-job-id="8">
+<div class="p-6">
+<div class="flex items-start">
+<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+<span class="text-lg font-bold text-primary">美</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="text-lg font-bold mb-1 truncate">品牌设计师</h3>
+<span class="text-green-400 font-medium whitespace-nowrap ml-2">20K-30K</span>
+</div>
+<p class="text-gray-400 text-sm mb-3">美团 · 北京</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">3-5 年经验</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">本科及以上</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">全职</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Illustrator</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">品牌设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">平面设计</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-gray-400 text-xs">发布于 7 天前</p>
+<button class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看详情
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 分页 -->
+<div class="flex justify-center mt-10 mb-6">
+<div class="flex space-x-2">
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50">
+<i class="ri-arrow-left-s-line"></i>
+</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">1</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 border border-gray-700/50">2</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 border border-gray-700/50">3</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 border border-gray-700/50">4</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 border border-gray-700/50">5</button>
+<button class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50">
+<i class="ri-arrow-right-s-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 职位详情模态框 -->
+<div id="job-detail-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+<div class="absolute inset-0 bg-black/70" id="modal-backdrop"></div>
+<div class="job-detail-modal relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-8 m-4">
+<button id="close-modal" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700/80 transition-colors">
+<i class="ri-close-line ri-lg"></i>
+</button>
+<div class="mb-8">
+<div class="flex items-start">
+<div class="w-16 h-16 company-logo rounded-lg flex items-center justify-center mr-5 flex-shrink-0">
+<span class="text-2xl font-bold text-primary">腾</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold mb-2">高级交互设计师</h2>
+<div class="flex flex-wrap gap-3 text-sm text-gray-300">
+<div class="flex items-center">
+<i class="ri-building-line mr-1"></i>
+<span>腾讯互娱</span>
+</div>
+<div class="flex items-center">
+<i class="ri-map-pin-line mr-1"></i>
+<span>深圳·南山区</span>
+</div>
+<div class="flex items-center">
+<i class="ri-money-cny-circle-line mr-1"></i>
+<span class="text-green-400 font-medium">25K-35K·14薪</span>
+</div>
+<div class="flex items-center">
+<i class="ri-user-star-line mr-1"></i>
+<span>5年经验</span>
+</div>
+<div class="flex items-center">
+<i class="ri-graduation-cap-line mr-1"></i>
+<span>本科及以上</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<!-- 职位描述 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+职位描述
+</h3>
+<div class="text-gray-300 space-y-3 pl-4">
+<p>负责腾讯游戏产品的交互设计工作，打造极致的用户体验。</p>
+<p>主导设计项目，参与产品需求分析、用户研究、交互设计方案制定与落地。</p>
+<p>与产品、开发、视觉等团队紧密合作，推动设计方案的实施与优化。</p>
+<p>持续关注用户反馈，不断迭代优化产品体验。</p>
+<p>参与建设和完善团队的设计规范与组件库。</p>
+</div>
+</div>
+<!-- 任职要求 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+任职要求
+</h3>
+<div class="text-gray-300 space-y-3 pl-4">
+<p>本科及以上学历，设计相关专业，5年以上互联网产品交互设计经验。</p>
+<p>精通用户体验设计方法论，能够独立完成用户研究、交互设计、原型设计等工作。</p>
+<p>熟练使用 Figma、Sketch、Axure 等设计工具，具备良好的设计表达能力。</p>
+<p>对数据敏感，能够基于数据分析进行设计决策。</p>
+<p>具备良好的沟通协作能力，能够与多角色团队高效合作。</p>
+<p>有游戏行业设计经验者优先。</p>
+</div>
+</div>
+<!-- 技能要求 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+技能要求
+</h3>
+<div class="flex flex-wrap gap-2 pl-4">
+<span class="px-3 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="px-3 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Sketch</span>
+<span class="px-3 py-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Axure RP</span>
+<span class="px-3 py-1.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">交互设计</span>
+<span class="px-3 py-1.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">原型设计</span>
+<span class="px-3 py-1.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户体验</span>
+<span class="px-3 py-1.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户研究</span>
+<span class="px-3 py-1.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">信息架构</span>
+</div>
+</div>
+<!-- 公司介绍 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+公司介绍
+</h3>
+<div class="text-gray-300 space-y-3 pl-4">
+<p>腾讯互动娱乐是腾讯集团旗下的游戏业务部门，是全球领先的游戏开发和发行商。</p>
+<p>我们致力于通过创新科技和优质内容，为全球玩家创造愉悦的互动娱乐体验。</p>
+<p>公司拥有多款知名游戏产品，包括《王者荣耀》、《和平精英》、《英雄联盟》等。</p>
+<p>我们提供具有市场竞争力的薪酬福利，完善的培训体系，以及广阔的职业发展空间。</p>
+</div>
+</div>
+<!-- 福利待遇 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+福利待遇
+</h3>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 pl-4">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/20 text-blue-400 mr-3">
+<i class="ri-health-book-line"></i>
+</div>
+<span class="text-gray-300">五险一金</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-purple-500/20 text-purple-400 mr-3">
+<i class="ri-calendar-check-line"></i>
+</div>
+<span class="text-gray-300">年假15天</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-pink-500/20 text-pink-400 mr-3">
+<i class="ri-award-line"></i>
+</div>
+<span class="text-gray-300">年终奖金</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-400 mr-3">
+<i class="ri-stock-line"></i>
+</div>
+<span class="text-gray-300">股票期权</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-yellow-500/20 text-yellow-400 mr-3">
+<i class="ri-user-heart-line"></i>
+</div>
+<span class="text-gray-300">带薪病假</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 mr-3">
+<i class="ri-restaurant-line"></i>
+</div>
+<span class="text-gray-300">免费三餐</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 mr-3">
+<i class="ri-bus-line"></i>
+</div>
+<span class="text-gray-300">班车接送</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/20 text-blue-400 mr-3">
+<i class="ri-hotel-bed-line"></i>
+</div>
+<span class="text-gray-300">免费住宿</span>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-purple-500/20 text-purple-400 mr-3">
+<i class="ri-game-line"></i>
+</div>
+<span class="text-gray-300">娱乐设施</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-10 flex justify-center">
+<button id="apply-job-btn" class="px-8 py-3 bg-primary text-white rounded-lg text-base font-medium !rounded-button whitespace-nowrap">
+立即申请
+</button>
+</div>
+</div>
+</div>
+<!-- 申请表单模态框 -->
+<div id="application-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+<div class="absolute inset-0 bg-black/70" id="application-modal-backdrop"></div>
+<div class="job-detail-modal relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl p-8 m-4">
+<button id="close-application-modal" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700/80 transition-colors">
+<i class="ri-close-line ri-lg"></i>
+</button>
+<div class="mb-8">
+<h2 class="text-2xl font-bold mb-2">申请职位：高级交互设计师</h2>
+<p class="text-gray-300">腾讯互娱 · 深圳</p>
+</div>
+<form id="job-application-form" class="space-y-6">
+<!-- 基本信息 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+基本信息
+</h3>
+<div class="space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-gray-300 mb-2">姓名</label>
+<input type="text" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="请输入姓名">
+</div>
+<div>
+<label class="block text-gray-300 mb-2">手机号码</label>
+<input type="tel" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="请输入手机号码">
+</div>
+</div>
+<div>
+<label class="block text-gray-300 mb-2">电子邮箱</label>
+<input type="email" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary" placeholder="请输入电子邮箱">
+</div>
+</div>
+</div>
+<!-- 工作经验 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+工作经验
+</h3>
+<div class="space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-gray-300 mb-2">工作年限</label>
+<select class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8">
+<option value="">请选择工作年限</option>
+<option value="0-1">应届/1年以内</option>
+<option value="1-3">1-3年</option>
+<option value="3-5">3-5年</option>
+<option value="5-10" selected>5-10年</option>
+<option value="10+">10年以上</option>
+</select>
+</div>
+<div>
+<label class="block text-gray-300 mb-2">当前状态</label>
+<select class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8">
+<option value="">请选择当前状态</option>
+<option value="在职">在职，看看机会</option>
+<option value="离职">离职，正在找工作</option>
+<option value="应届">应届毕业生</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-gray-300 mb-2">期望薪资</label>
+<select class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8">
+<option value="">请选择期望薪资</option>
+<option value="10k-">10k以下</option>
+<option value="10k-15k">10k-15k</option>
+<option value="15k-20k">15k-20k</option>
+<option value="20k-30k">20k-30k</option>
+<option value="30k-50k" selected>30k-50k</option>
+<option value="50k+">50k以上</option>
+</select>
+</div>
+</div>
+</div>
+<!-- 简历上传 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+简历上传
+</h3>
+<div class="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center">
+<div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+<i class="ri-upload-cloud-line ri-2x"></i>
+</div>
+<p class="text-gray-300 mb-2">点击或拖拽文件到此处上传</p>
+<p class="text-gray-500 text-sm">支持 PDF、Word 格式，文件大小不超过 10MB</p>
+<button class="mt-4 px-4 py-2 bg-gray-800 border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-colors !rounded-button whitespace-nowrap">
+选择文件
+</button>
+</div>
+</div>
+<!-- 自我介绍 -->
+<div>
+<h3 class="text-xl font-bold mb-4 flex items-center">
+<div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
+自我介绍
+</h3>
+<textarea class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary h-32" placeholder="请简要介绍自己的技能、经验和优势（选填）"></textarea>
+</div>
+<div class="mt-8 flex justify-center">
+<button type="submit" class="px-8 py-3 bg-primary text-white rounded-lg text-base font-medium !rounded-button whitespace-nowrap">
+提交申请
+</button>
+</div>
+</form>
+</div>
+</div>
+
+<!-- 页脚 -->
+<footer class="mt-16 py-12 border-t border-gray-800">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<div>
+<h3 class="text-lg font-bold mb-4">星海人才</h3>
+<p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">功能模块</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">院校数据库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">学生作品库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">企业需求池</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">设计师档案</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">关于我们</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">公司介绍</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">加入我们</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">合作伙伴</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">联系我们</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">联系方式</h3>
+<ul class="space-y-2">
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-phone-line mr-2"></i> 400-888-9999
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
+</li>
+</ul>
+</div>
+</div>
+<div class="section-divider mb-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
+<div class="flex space-x-4">
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-weibo-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-wechat-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-linkedin-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-github-line"></i>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+<script id="unified-header-script">
+document.addEventListener('DOMContentLoaded', function() {
+  // 通知下拉菜单
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationDropdown = document.getElementById('notificationDropdown');
+
+  if (notificationBtn && notificationDropdown) {
+    notificationBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      notificationDropdown.classList.toggle('show');
+      const userDropdown = document.getElementById('userDropdown');
+      if (userDropdown) userDropdown.classList.remove('show');
+    });
+  }
+
+  // 用户下拉菜单
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+
+  if (userMenuBtn && userDropdown) {
+    userMenuBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('show');
+      if (notificationDropdown) notificationDropdown.classList.remove('show');
+    });
+  }
+
+  // 移动端搜索
+  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+  const mobileSearchBar = document.getElementById('mobileSearchBar');
+  const mobileNavMenu = document.getElementById('mobileNavMenu');
+
+  if (mobileSearchBtn && mobileSearchBar) {
+    mobileSearchBtn.addEventListener('click', function() {
+      mobileSearchBar.classList.toggle('hidden');
+      if (mobileNavMenu) mobileNavMenu.classList.add('hidden');
+    });
+  }
+
+  // 移动端菜单
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+  if (mobileMenuBtn && mobileNavMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+      mobileNavMenu.classList.toggle('hidden');
+      if (mobileSearchBar) mobileSearchBar.classList.add('hidden');
+    });
+  }
+
+  // 点击外部关闭下拉菜单
+  document.addEventListener('click', function() {
+    if (notificationDropdown) notificationDropdown.classList.remove('show');
+    if (userDropdown) userDropdown.classList.remove('show');
+  });
+
+  // 搜索功能增强
+  const globalSearch = document.getElementById('globalSearch');
+  if (globalSearch) {
+    globalSearch.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = this.value.trim();
+        if (query) {
+          // 职位搜索功能
+          console.log('搜索职位:', query);
+          // 这里可以添加具体的搜索逻辑
+        }
+      }
+    });
+  }
+});
+</script>
+
+<script id="salary-range-script">
+document.addEventListener('DOMContentLoaded', function() {
+const minSalary = document.getElementById('min-salary');
+const maxSalary = document.getElementById('max-salary');
+const salaryDisplay = document.getElementById('salary-display');
+function updateSalaryDisplay() {
+const min = parseInt(minSalary.value);
+const max = parseInt(maxSalary.value);
+if (min > max) {
+maxSalary.value = min;
+}
+salaryDisplay.textContent = `${minSalary.value}K - ${maxSalary.value}K`;
+}
+minSalary.addEventListener('input', updateSalaryDisplay);
+maxSalary.addEventListener('input', updateSalaryDisplay);
+});
+</script>
+<script id="modal-control-script">
+document.addEventListener('DOMContentLoaded', function() {
+const jobDetailModal = document.getElementById('job-detail-modal');
+const applicationModal = document.getElementById('application-modal');
+const modalBackdrop = document.getElementById('modal-backdrop');
+const applicationModalBackdrop = document.getElementById('application-modal-backdrop');
+const closeModalBtn = document.getElementById('close-modal');
+const closeApplicationModalBtn = document.getElementById('close-application-modal');
+const applyJobBtn = document.getElementById('apply-job-btn');
+const viewJobBtns = document.querySelectorAll('.view-job-btn');
+// 打开职位详情模态框
+viewJobBtns.forEach(btn => {
+btn.addEventListener('click', function() {
+jobDetailModal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+});
+// 关闭职位详情模态框
+closeModalBtn.addEventListener('click', function() {
+jobDetailModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+modalBackdrop.addEventListener('click', function() {
+jobDetailModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+// 打开申请表单模态框
+applyJobBtn.addEventListener('click', function() {
+jobDetailModal.classList.add('hidden');
+applicationModal.classList.remove('hidden');
+});
+// 关闭申请表单模态框
+closeApplicationModalBtn.addEventListener('click', function() {
+applicationModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+applicationModalBackdrop.addEventListener('click', function() {
+applicationModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+// 表单提交
+const jobApplicationForm = document.getElementById('job-application-form');
+jobApplicationForm.addEventListener('submit', function(e) {
+e.preventDefault();
+alert('申请已提交，我们会尽快联系您！');
+applicationModal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+});
+</script>
+<script id="pagination-script">
+document.addEventListener('DOMContentLoaded', function() {
+const paginationButtons = document.querySelectorAll('.pagination-button');
+paginationButtons.forEach(button => {
+button.addEventListener('click', function() {
+if (!this.classList.contains('active') && !this.querySelector('i')) {
+document.querySelector('.pagination-button.active').classList.remove('active', 'bg-primary', 'text-white');
+document.querySelector('.pagination-button.active').classList.add('bg-gray-800/50', 'text-gray-300', 'border', 'border-gray-700/50');
+this.classList.add('active', 'bg-primary', 'text-white');
+this.classList.remove('bg-gray-800/50', 'text-gray-300', 'border', 'border-gray-700/50');
+}
+});
+});
+});
+</script>
+<script id="filter-script">
+document.addEventListener('DOMContentLoaded', function() {
+let jobCount = 256;
+const resultCountElement = document.querySelector('.text-gray-300 .text-white.font-medium');
+const applyFilterButton = document.querySelector('button.bg-primary.text-white:not(.pagination-button)');
+const checkboxes = document.querySelectorAll('.custom-checkbox');
+
+function updateJobCount() {
+let selectedFilters = 0;
+checkboxes.forEach(checkbox => {
+if (checkbox.checked) {
+selectedFilters++;
+}
+});
+
+const baseCount = 256;
+const newCount = Math.max(Math.floor(baseCount / (selectedFilters || 1)), selectedFilters * 15);
+jobCount = newCount;
+resultCountElement.textContent = newCount.toString();
+}
+
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+this.classList.toggle('checked');
+});
+});
+
+applyFilterButton.addEventListener('click', function() {
+updateJobCount();
+
+const jobCards = document.querySelectorAll('.job-card');
+jobCards.forEach(card => {
+card.style.opacity = '0';
+card.style.transform = 'translateY(20px)';
+});
+
+setTimeout(() => {
+jobCards.forEach(card => {
+card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+card.style.opacity = '1';
+card.style.transform = 'translateY(0)';
+});
+}, 300);
+});
+});
+</script>
+</body>
+</html>

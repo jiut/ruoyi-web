@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计师档案 - 星海人才</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0a84ff',secondary:'#bf5af2'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Noto Sans SC', sans-serif;
+background: #000000;
+color: #e2e8f0;
+min-height: 100vh;
+}
+.glass-card {
+background: rgba(28, 28, 30, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.glow-border {
+position: relative;
+}
+.glow-border::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+border-radius: inherit;
+box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+}
+.glow-border:hover::after {
+opacity: 1;
+}
+.card-hover {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.search-input {
+background: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.2);
+}
+.search-input:focus {
+border-color: rgba(10, 132, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+.gradient-text {
+background: linear-gradient(45deg, #007AFF, #AF52DE, #FF2D92);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.skill-tag {
+background: rgba(99, 102, 241, 0.2);
+border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.avatar-glow {
+box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+.section-divider {
+height: 1px;
+background: linear-gradient(90deg, rgba(0, 122, 255, 0), rgba(0, 122, 255, 0.5), rgba(175, 82, 222, 0.5), rgba(0, 122, 255, 0));
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-scrollbar::-webkit-scrollbar {
+width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+background: rgba(28, 28, 30, 0.6);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+background: rgba(10, 132, 255, 0.5);
+border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+background: rgba(10, 132, 255, 0.7);
+}
+.custom-checkbox {
+appearance: none;
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border: 1px solid rgba(99, 99, 102, 0.3);
+border-radius: 4px;
+background: rgba(28, 28, 30, 0.8);
+cursor: pointer;
+position: relative;
+}
+.custom-checkbox:checked {
+background: #0a84ff;
+border-color: #0a84ff;
+}
+.custom-checkbox:checked::after {
+content: '';
+position: absolute;
+left: 6px;
+top: 3px;
+width: 5px;
+height: 9px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-radio {
+appearance: none;
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border: 1px solid rgba(99, 99, 102, 0.3);
+border-radius: 50%;
+background: rgba(28, 28, 30, 0.8);
+cursor: pointer;
+position: relative;
+}
+.custom-radio:checked {
+border-color: #0a84ff;
+}
+.custom-radio:checked::after {
+content: '';
+position: absolute;
+width: 10px;
+height: 10px;
+background: #0a84ff;
+border-radius: 50%;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+.custom-range {
+-webkit-appearance: none;
+appearance: none;
+width: 100%;
+height: 6px;
+background: rgba(28, 28, 30, 0.8);
+border-radius: 3px;
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+background: #0a84ff;
+border-radius: 50%;
+cursor: pointer;
+box-shadow: 0 0 5px rgba(10, 132, 255, 0.5);
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+background: #0a84ff;
+border-radius: 50%;
+cursor: pointer;
+box-shadow: 0 0 5px rgba(10, 132, 255, 0.5);
+border: none;
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(28, 28, 30, 0.8);
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0a84ff;
+}
+input:checked + .switch-slider:before {
+transform: translateX(20px);
+}
+.tab-active {
+background: rgba(99, 102, 241, 0.2);
+color: #6366f1;
+border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.portfolio-item {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.portfolio-item:hover {
+transform: scale(1.02);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.drawer-overlay {
+background: rgba(0, 0, 0, 0.5);
+backdrop-filter: blur(4px);
+}
+.drawer {
+transition: transform 0.3s ease-in-out;
+}
+.drawer-open {
+transform: translateX(0);
+}
+.drawer-closed {
+transform: translateX(100%);
+}
+.neon-button {
+position: relative;
+overflow: hidden;
+transition: all 0.3s ease;
+}
+.neon-button::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(45deg, #0a84ff, #bf5af2);
+opacity: 0;
+transition: opacity 0.3s ease;
+z-index: -1;
+}
+.neon-button:hover::before {
+opacity: 0.2;
+}
+.neon-button:active {
+transform: scale(0.98);
+}
+.nav-button {
+transition: all 0.2s ease;
+}
+.nav-button:hover {
+background: rgba(10, 132, 255, 0.1);
+color: #0a84ff;
+}
+.nav-button.active {
+background: rgba(10, 132, 255, 0.2);
+color: #0a84ff;
+}
+.dropdown-menu {
+display: none;
+position: absolute;
+background: rgba(28, 28, 30, 0.95);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+z-index: 50;
+}
+.dropdown-menu.show {
+display: block;
+}
+.breadcrumb-separator {
+color: rgba(148, 163, 184, 0.5);
+}
+</style>
+</head>
+<body>
+<div class="min-h-screen">
+<!-- 统一顶栏组件 -->
+<header class="glass-card sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between h-16">
+
+<!-- 左侧：导航和面包屑 -->
+<div class="flex items-center space-x-4">
+<!-- 返回按钮 -->
+<a href="https://readdy.ai/home/bb86dafc-cb55-4536-9b1d-6f4d83d459ef/d2471b29-7e02-49e1-bdb6-92cc651d6efc" data-readdy="true" class="flex items-center text-gray-300 hover:text-primary transition-colors">
+<i class="ri-arrow-left-line ri-lg mr-2"></i>
+<span class="hidden sm:inline">返回</span>
+</a>
+
+<!-- 分隔线 -->
+<div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
+
+<!-- Logo -->
+<a href="/" class="flex items-center">
+<h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block">星海人才</h1>
+<h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden">星海</h1>
+</a>
+
+<!-- 面包屑导航 -->
+<nav class="hidden md:flex items-center space-x-2 text-sm">
+<a href="/" class="text-gray-400 hover:text-primary transition-colors">首页</a>
+<span class="breadcrumb-separator">/</span>
+<span class="text-white" id="currentPageTitle">设计师档案</span>
+</nav>
+</div>
+
+<!-- 中间：主导航菜单 -->
+<nav class="hidden lg:flex items-center space-x-6">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">设计师档案</a>
+</nav>
+
+<!-- 右侧：搜索和用户功能 -->
+<div class="flex items-center space-x-3">
+
+<!-- 搜索框 -->
+<div class="relative hidden md:block">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索设计师、技能、公司..."
+class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+id="globalSearch">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端搜索按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden" id="mobileSearchBtn">
+<i class="ri-search-line"></i>
+</button>
+
+<!-- 通知 -->
+<div class="relative">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors" id="notificationBtn">
+<i class="ri-notification-3-line"></i>
+<!-- 未读消息小红点 -->
+<span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white" style="font-size: 10px;">1</span>
+</button>
+
+<!-- 通知下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-80" id="notificationDropdown">
+<div class="p-4 border-b border-gray-700">
+<h3 class="text-lg font-medium">通知中心</h3>
+</div>
+<div class="max-h-64 overflow-y-auto">
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">林子豪更新了个人作品集</p>
+<p class="text-xs text-gray-400 mt-1">30分钟前</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-700 text-center">
+<a href="/notifications" class="text-sm text-primary hover:text-primary/80">查看所有通知</a>
+</div>
+</div>
+</div>
+
+<!-- 消息按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors">
+<i class="ri-message-3-line"></i>
+</button>
+
+<!-- 用户菜单 -->
+<div class="relative">
+<button class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors" id="userMenuBtn">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+林
+</div>
+<span class="hidden xl:inline text-white text-sm">林子豪</span>
+<i class="ri-arrow-down-s-line text-gray-400 hidden xl:block"></i>
+</button>
+
+<!-- 用户下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-48" id="userDropdown">
+<div class="p-3 border-b border-gray-700">
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold mr-3">
+林
+</div>
+<div>
+<p class="text-sm font-medium">林子豪</p>
+<p class="text-xs text-gray-400">UI/UX 设计师</p>
+</div>
+</div>
+</div>
+<div class="py-2">
+<a href="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-user-line mr-3"></i>
+个人资料
+</a>
+<a href="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-settings-3-line mr-3"></i>
+账户设置
+</a>
+<a href="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-bookmark-line mr-3"></i>
+我的收藏
+</a>
+<div class="border-t border-gray-700 mt-2"></div>
+<a href="/logout" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400">
+<i class="ri-logout-box-line mr-3"></i>
+退出登录
+</a>
+</div>
+</div>
+</div>
+
+<!-- 移动端菜单按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden" id="mobileMenuBtn">
+<i class="ri-menu-line"></i>
+</button>
+</div>
+</div>
+</div>
+
+<!-- 移动端搜索栏 -->
+<div class="hidden border-t border-gray-800 p-4 md:hidden" id="mobileSearchBar">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索设计师、技能、公司..."
+class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端导航菜单 -->
+<div class="hidden border-t border-gray-800 p-4 lg:hidden" id="mobileNavMenu">
+<nav class="flex flex-col space-y-2">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">设计师档案</a>
+</nav>
+</div>
+</header>
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 py-8 flex">
+<!-- 左侧筛选区 -->
+<div class="w-72 mr-6 flex-shrink-0">
+<div class="glass-card rounded-lg p-6 sticky top-8">
+<h2 class="text-xl font-bold mb-6">筛选条件</h2>
+
+<!-- 职业方向 -->
+<div class="mb-6">
+<label class="block text-sm text-gray-400 mb-2">职业方向</label>
+<div class="space-y-2">
+<label class="flex items-center">
+<input type="checkbox" class="custom-checkbox mr-2">
+<span class="text-sm">UI/UX 设计师</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="custom-checkbox mr-2">
+<span class="text-sm">视觉设计师</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="custom-checkbox mr-2">
+<span class="text-sm">交互设计师</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="custom-checkbox mr-2">
+<span class="text-sm">3D 设计师</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="custom-checkbox mr-2">
+<span class="text-sm">动效设计师</span>
+</label>
+</div>
+</div>
+<!-- 技能标签 -->
+<div class="mb-6">
+<label class="block text-sm text-gray-400 mb-2">技能标签</label>
+<div class="flex flex-wrap gap-2">
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Figma</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Sketch</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Adobe XD</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Photoshop</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Illustrator</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">After Effects</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Blender</span>
+<span class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30">Cinema 4D</span>
+</div>
+</div>
+<!-- 工作年限 -->
+<div class="mb-6">
+<label class="block text-sm text-gray-400 mb-2">工作年限</label>
+<div class="px-1">
+<input type="range" min="0" max="20" value="5" class="custom-range mb-2" id="experienceRange">
+<div class="flex justify-between text-xs text-gray-400">
+<span>0年</span>
+<span id="experienceValue">5年</span>
+<span>20年+</span>
+</div>
+</div>
+</div>
+<!-- 所在地区 -->
+<div class="mb-6">
+<label class="block text-sm text-gray-400 mb-2">所在地区</label>
+<div class="relative">
+<button class="w-full py-2 px-4 rounded-lg search-input text-white text-left text-sm flex justify-between items-center" id="regionButton">
+<span>选择地区</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+<div class="absolute left-0 right-0 mt-1 glass-card rounded-lg p-2 z-10 hidden" id="regionDropdown">
+<div class="max-h-40 overflow-y-auto custom-scrollbar">
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">北京</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">上海</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">广州</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">深圳</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">杭州</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">成都</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">武汉</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">南京</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 当前状态 -->
+<div class="mb-6">
+<label class="block text-sm text-gray-400 mb-2">当前状态</label>
+<div class="space-y-2">
+<label class="flex items-center">
+<input type="radio" name="status" class="custom-radio mr-2">
+<span class="text-sm">全部</span>
+</label>
+<label class="flex items-center">
+<input type="radio" name="status" class="custom-radio mr-2" checked>
+<span class="text-sm">在职</span>
+</label>
+<label class="flex items-center">
+<input type="radio" name="status" class="custom-radio mr-2">
+<span class="text-sm">求职中</span>
+</label>
+<label class="flex items-center">
+<input type="radio" name="status" class="custom-radio mr-2">
+<span class="text-sm">学生</span>
+</label>
+</div>
+</div>
+<!-- 高级筛选开关 -->
+<div class="mb-6">
+<div class="flex justify-between items-center">
+<label class="text-sm text-gray-400">高级筛选</label>
+<label class="custom-switch">
+<input type="checkbox">
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+<!-- 按钮组 -->
+<div class="flex space-x-3">
+<button class="neon-button flex-1 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+应用筛选
+</button>
+<button class="flex-1 py-2 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700/30 transition-colors !rounded-button whitespace-nowrap">
+重置
+</button>
+</div>
+</div>
+</div>
+<!-- 右侧内容区 -->
+<div class="flex-1">
+<!-- 顶部统计和排序 -->
+<div class="glass-card rounded-lg p-4 mb-6">
+<div class="flex justify-between items-center">
+<div>
+<h2 class="text-xl font-bold">设计师档案</h2>
+<p class="text-sm text-gray-400">共找到 <span class="text-primary">1,248</span> 位符合条件的设计师</p>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-2 px-3 py-1 rounded-lg bg-gray-800/50">
+<span class="text-sm text-gray-300">排序：</span>
+<div class="relative">
+<button class="text-sm text-white flex items-center" id="sortButton">
+最近活跃
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+<div class="absolute right-0 mt-1 glass-card rounded-lg p-2 z-10 w-32 hidden" id="sortDropdown">
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">最近活跃</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">工作年限</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">作品数量</div>
+<div class="p-1 hover:bg-gray-700/50 rounded cursor-pointer text-sm">最近活跃</div>
+</div>
+</div>
+</div>
+<div class="flex">
+<button class="w-9 h-9 flex items-center justify-center rounded-l-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-layout-grid-line"></i>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-r-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 border-l-0">
+<i class="ri-list-check-2"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 设计师列表 -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-w-[1024px]">
+<!-- 设计师卡片 1 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('1')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+陈
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">陈雨晴</h3>
+<p class="text-gray-400 text-sm mb-3">UI/UX 设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">交互设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户研究</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 42</span>
+<span>经验: 5年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 2 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('2')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+林
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">林子豪</h3>
+<p class="text-gray-400 text-sm mb-3">视觉设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Photoshop</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">品牌设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">插画</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 38</span>
+<span>经验: 7年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 3 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('3')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-white text-2xl font-bold">
+王
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">王梦琪</h3>
+<p class="text-gray-400 text-sm mb-3">3D 动画设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Blender</span>
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Cinema 4D</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">动效</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 26</span>
+<span>经验: 4年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 4 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('4')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-blue-500 to-primary flex items-center justify-center text-white text-2xl font-bold">
+赵
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">赵明宇</h3>
+<p class="text-gray-400 text-sm mb-3">产品设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Sketch</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">原型设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户体验</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 31</span>
+<span>经验: 6年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 5 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('5')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center text-white text-2xl font-bold">
+张
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">张嘉怡</h3>
+<p class="text-gray-400 text-sm mb-3">交互设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Adobe XD</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户体验</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">原型设计</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 29</span>
+<span>经验: 3年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 6 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('6')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-2xl font-bold">
+刘
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">刘天翔</h3>
+<p class="text-gray-400 text-sm mb-3">动效设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">After Effects</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">Lottie</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">动画</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 35</span>
+<span>经验: 5年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 7 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('7')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white text-2xl font-bold">
+杨
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">杨子琳</h3>
+<p class="text-gray-400 text-sm mb-3">UI 设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">界面设计</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">设计系统</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 47</span>
+<span>经验: 4年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+<!-- 设计师卡片 8 -->
+<div class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer" onclick="openDesignerDetail('8')">
+<div class="flex flex-col items-center">
+<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-2xl font-bold">
+李
+</div>
+</div>
+<h3 class="text-lg font-bold mb-1">李嘉诚</h3>
+<p class="text-gray-400 text-sm mb-3">品牌设计师</p>
+<div class="flex flex-wrap justify-center gap-2 mb-4">
+<span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Illustrator</span>
+<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">品牌标识</span>
+<span class="text-xs px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">视觉识别</span>
+</div>
+<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+<span>作品: 33</span>
+<span>经验: 8年</span>
+<span>活跃</span>
+</div>
+<button class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看档案
+</button>
+</div>
+</div>
+</div>
+<!-- 分页 -->
+<div class="flex justify-center mt-8">
+<div class="flex space-x-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-arrow-left-s-line"></i>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">
+1
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+2
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+3
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+...
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+12
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-arrow-right-s-line"></i>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- 设计师详情抽屉 -->
+<div class="fixed inset-0 drawer-overlay z-50 hidden" id="designerDetailOverlay">
+<div class="drawer drawer-closed fixed top-0 right-0 w-full md:w-2/3 lg:w-1/2 h-full glass-card overflow-y-auto custom-scrollbar" id="designerDetail">
+<div class="p-6">
+<!-- 抽屉头部 -->
+<div class="flex justify-between items-start mb-6">
+<h2 class="text-2xl font-bold">设计师档案</h2>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50" onclick="closeDesignerDetail()">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<!-- 基本信息区 -->
+<div class="flex items-start mb-8">
+<div class="w-24 h-24 rounded-full overflow-hidden mr-6 avatar-glow">
+<div class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
+陈
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-bold mb-1">陈雨晴</h3>
+<p class="text-gray-400 mb-2">UI/UX 设计师 @ 腾讯</p>
+<div class="flex items-center text-sm mb-2">
+<div class="flex items-center mr-4">
+<i class="ri-map-pin-line mr-1 text-gray-400"></i>
+<span>深圳</span>
+</div>
+<div class="flex items-center mr-4">
+<i class="ri-time-line mr-1 text-gray-400"></i>
+<span>5 年经验</span>
+</div>
+<div class="flex items-center">
+<i class="ri-time-line mr-1 text-gray-400"></i>
+<span>活跃状态</span>
+</div>
+</div>
+</div>
+<div class="flex space-x-2">
+<button class="neon-button px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+联系我
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-share-line"></i>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mt-3">
+<span class="text-xs px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Figma</span>
+<span class="text-xs px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">交互设计</span>
+<span class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">用户研究</span>
+<span class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">原型设计</span>
+<span class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">设计系统</span>
+</div>
+</div>
+</div>
+<!-- 个人简介 -->
+<div class="glass-card rounded-lg p-6 mb-8">
+<h3 class="text-lg font-bold mb-4">个人简介</h3>
+<p class="text-gray-300 text-sm leading-relaxed">
+拥有 5 年 UI/UX 设计经验，专注于移动应用和 Web 产品的用户体验设计。擅长用户研究、交互设计和视觉设计，能够从用户需求出发，打造直观易用的产品界面。曾主导腾讯多个核心产品的设计工作，包括社交、游戏和企业应用等领域。热衷于设计系统构建，善于协调设计与开发团队的协作，确保设计方案的高效落地。
+</p>
+</div>
+<!-- 技能评估 -->
+<div class="glass-card rounded-lg p-6 mb-8">
+<h3 class="text-lg font-bold mb-4">专业技能</h3>
+<div class="h-64" id="skillRadarChart"></div>
+<div class="grid grid-cols-2 gap-4 mt-4">
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-primary mr-2"></div>
+<span class="text-sm text-gray-300">用户研究</span>
+</div>
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-green-400 mr-2"></div>
+<span class="text-sm text-gray-300">交互设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></div>
+<span class="text-sm text-gray-300">视觉设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-red-400 mr-2"></div>
+<span class="text-sm text-gray-300">原型设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-purple-400 mr-2"></div>
+<span class="text-sm text-gray-300">设计系统</span>
+</div>
+<div class="flex items-center">
+<div class="w-2 h-2 rounded-full bg-blue-400 mr-2"></div>
+<span class="text-sm text-gray-300">团队协作</span>
+</div>
+</div>
+</div>
+<!-- 作品集 -->
+<div class="mb-8">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold">作品集</h3>
+<div class="flex space-x-1 bg-gray-800/50 rounded-full p-1">
+<button class="px-4 py-1 rounded-full tab-active text-xs">全部</button>
+<button class="px-4 py-1 rounded-full text-xs text-gray-300 hover:bg-gray-700/30">UI 设计</button>
+<button class="px-4 py-1 rounded-full text-xs text-gray-300 hover:bg-gray-700/30">交互设计</button>
+<button class="px-4 py-1 rounded-full text-xs text-gray-300 hover:bg-gray-700/30">产品设计</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mobile%2520app%2520UI%2520design%2520for%2520social%2520media%2520application%2520with%2520clean%2520minimal%2520interface%252C%2520showing%2520feed%2520screen%2520with%2520posts%2520and%2520stories%252C%2520professional%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui1&orientation=landscape" alt="社交媒体应用 UI 设计" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">社交媒体应用 UI 设计</h4>
+<p class="text-xs text-gray-400">移动应用界面设计</p>
+</div>
+</div>
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=dashboard%2520UI%2520design%2520for%2520analytics%2520platform%2520with%2520charts%2520and%2520data%2520visualization%252C%2520dark%2520mode%2520interface%2520with%2520purple%2520and%2520blue%2520accents%252C%2520professional%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui2&orientation=landscape" alt="数据分析仪表盘" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">数据分析仪表盘</h4>
+<p class="text-xs text-gray-400">Web 应用界面设计</p>
+</div>
+</div>
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=e-commerce%2520mobile%2520app%2520UI%2520design%2520showing%2520product%2520details%2520page%2520with%2520clean%2520layout%252C%2520product%2520images%252C%2520description%2520and%2520buy%2520button%252C%2520professional%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui3&orientation=landscape" alt="电商应用产品页" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">电商应用产品页</h4>
+<p class="text-xs text-gray-400">电子商务 UI 设计</p>
+</div>
+</div>
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=wireframes%2520and%2520user%2520flow%2520diagrams%2520for%2520mobile%2520application%252C%2520showing%2520screen%2520transitions%2520and%2520interaction%2520patterns%252C%2520professional%2520UX%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui4&orientation=landscape" alt="用户流程与线框图" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">用户流程与线框图</h4>
+<p class="text-xs text-gray-400">UX 设计流程</p>
+</div>
+</div>
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=design%2520system%2520components%2520showing%2520UI%2520kit%2520with%2520buttons%252C%2520inputs%252C%2520cards%2520and%2520typography%2520elements%252C%2520professional%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui5&orientation=landscape" alt="设计系统组件库" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">设计系统组件库</h4>
+<p class="text-xs text-gray-400">UI 组件设计</p>
+</div>
+</div>
+<div class="portfolio-item rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mobile%2520app%2520onboarding%2520screens%2520with%2520illustrations%2520and%2520clean%2520layout%252C%2520showing%2520welcome%2520flow%2520for%2520new%2520users%252C%2520professional%2520design%2520with%2520high%2520attention%2520to%2520detail%252C%2520on%2520plain%2520white%2520background&width=400&height=300&seq=ui6&orientation=landscape" alt="应用引导流程设计" class="w-full h-40 object-cover object-top">
+<div class="p-3 bg-gray-900/80">
+<h4 class="text-sm font-medium mb-1">应用引导流程设计</h4>
+<p class="text-xs text-gray-400">用户体验设计</p>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-4">
+<button class="px-4 py-2 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700/30 transition-colors !rounded-button whitespace-nowrap">
+查看全部作品 (42)
+</button>
+</div>
+</div>
+<!-- 工作经历 -->
+<div class="glass-card rounded-lg p-6 mb-8">
+<h3 class="text-lg font-bold mb-4">工作经历</h3>
+<div class="relative pl-6 border-l border-gray-700">
+<!-- 工作经历项 1 -->
+<div class="mb-6 relative">
+<div class="absolute -left-[25px] w-5 h-5 rounded-full bg-primary"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-base font-medium">腾讯</h4>
+<p class="text-sm text-gray-400">高级 UI/UX 设计师</p>
+</div>
+<span class="text-xs text-gray-400">2022年3月 - 至今</span>
+</div>
+<p class="text-sm text-gray-300">
+负责腾讯社交产品的用户体验设计，主导产品界面改版与优化，建立设计规范与组件库。参与用户研究与需求分析，提出基于数据的设计解决方案。
+</p>
+</div>
+<!-- 工作经历项 2 -->
+<div class="mb-6 relative">
+<div class="absolute -left-[25px] w-5 h-5 rounded-full bg-gray-600"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-base font-medium">字节跳动</h4>
+<p class="text-sm text-gray-400">UI 设计师</p>
+</div>
+<span class="text-xs text-gray-400">2020年6月 - 2022年2月</span>
+</div>
+<p class="text-sm text-gray-300">
+参与短视频应用的界面设计工作，负责功能迭代与视觉优化，协助建立设计规范。与产品和开发团队紧密合作，确保设计方案的顺利实现。
+</p>
+</div>
+<!-- 工作经历项 3 -->
+<div class="relative">
+<div class="absolute -left-[25px] w-5 h-5 rounded-full bg-gray-600"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-base font-medium">网易</h4>
+<p class="text-sm text-gray-400">初级 UI 设计师</p>
+</div>
+<span class="text-xs text-gray-400">2018年7月 - 2020年5月</span>
+</div>
+<p class="text-sm text-gray-300">
+参与网易音乐产品的界面设计，负责日常界面优化与活动页面设计。学习并实践设计规范，提升用户界面的一致性与易用性。
+</p>
+</div>
+</div>
+</div>
+<!-- 教育背景 -->
+<div class="glass-card rounded-lg p-6 mb-8">
+<h3 class="text-lg font-bold mb-4">教育背景</h3>
+<div class="relative pl-6 border-l border-gray-700">
+<!-- 教育经历项 1 -->
+<div class="mb-6 relative">
+<div class="absolute -left-[25px] w-5 h-5 rounded-full bg-blue-500"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-base font-medium">中国美术学院</h4>
+<p class="text-sm text-gray-400">设计学 · 硕士</p>
+</div>
+<span class="text-xs text-gray-400">2015年9月 - 2018年6月</span>
+</div>
+<p class="text-sm text-gray-300">
+专业方向：数字媒体艺术，研究方向：交互设计与用户体验
+</p>
+</div>
+<!-- 教育经历项 2 -->
+<div class="relative">
+<div class="absolute -left-[25px] w-5 h-5 rounded-full bg-gray-600"></div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-base font-medium">浙江大学</h4>
+<p class="text-sm text-gray-400">工业设计 · 学士</p>
+</div>
+<span class="text-xs text-gray-400">2011年9月 - 2015年6月</span>
+</div>
+<p class="text-sm text-gray-300">
+主修课程：设计基础、人机交互、产品设计、计算机辅助设计
+</p>
+</div>
+</div>
+</div>
+<!-- 获奖情况 -->
+<div class="glass-card rounded-lg p-6 mb-8">
+<h3 class="text-lg font-bold mb-4">获奖与认证</h3>
+<div class="space-y-4">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-500 mr-4">
+<i class="ri-award-line ri-lg"></i>
+</div>
+<div>
+<h4 class="text-base font-medium">2023 IF 设计奖</h4>
+<p class="text-sm text-gray-400">腾讯社交产品界面设计</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-500 mr-4">
+<i class="ri-verified-badge-line ri-lg"></i>
+</div>
+<div>
+<h4 class="text-base font-medium">Google UX 设计专业认证</h4>
+<p class="text-sm text-gray-400">2021年获得</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-500/20 text-green-500 mr-4">
+<i class="ri-award-line ri-lg"></i>
+</div>
+<div>
+<h4 class="text-base font-medium">2020 中国设计智造大奖 · 铜奖</h4>
+<p class="text-sm text-gray-400">字节跳动短视频应用界面设计</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 联系方式 -->
+<div class="glass-card rounded-lg p-6">
+<h3 class="text-lg font-bold mb-4">联系方式</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-3">
+<i class="ri-mail-line ri-lg"></i>
+</div>
+<div>
+<p class="text-xs text-gray-400">邮箱</p>
+<p class="text-sm">chenyu@example.com</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-3">
+<i class="ri-phone-line ri-lg"></i>
+</div>
+<div>
+<p class="text-xs text-gray-400">电话</p>
+<p class="text-sm">138****5678</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-3">
+<i class="ri-wechat-line ri-lg"></i>
+</div>
+<div>
+<p class="text-xs text-gray-400">微信</p>
+<p class="text-sm">chenyu_design</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-3">
+<i class="ri-global-line ri-lg"></i>
+</div>
+<div>
+<p class="text-xs text-gray-400">个人网站</p>
+<p class="text-sm">www.chenyudesign.com</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script id="unified-header-script">
+document.addEventListener('DOMContentLoaded', function() {
+  // 通知下拉菜单
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationDropdown = document.getElementById('notificationDropdown');
+
+  if (notificationBtn && notificationDropdown) {
+    notificationBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      notificationDropdown.classList.toggle('show');
+      const userDropdown = document.getElementById('userDropdown');
+      if (userDropdown) userDropdown.classList.remove('show');
+    });
+  }
+
+  // 用户下拉菜单
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+
+  if (userMenuBtn && userDropdown) {
+    userMenuBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('show');
+      if (notificationDropdown) notificationDropdown.classList.remove('show');
+    });
+  }
+
+  // 移动端搜索
+  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+  const mobileSearchBar = document.getElementById('mobileSearchBar');
+  const mobileNavMenu = document.getElementById('mobileNavMenu');
+
+  if (mobileSearchBtn && mobileSearchBar) {
+    mobileSearchBtn.addEventListener('click', function() {
+      mobileSearchBar.classList.toggle('hidden');
+      if (mobileNavMenu) mobileNavMenu.classList.add('hidden');
+    });
+  }
+
+  // 移动端菜单
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+  if (mobileMenuBtn && mobileNavMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+      mobileNavMenu.classList.toggle('hidden');
+      if (mobileSearchBar) mobileSearchBar.classList.add('hidden');
+    });
+  }
+
+  // 点击外部关闭下拉菜单
+  document.addEventListener('click', function() {
+    if (notificationDropdown) notificationDropdown.classList.remove('show');
+    if (userDropdown) userDropdown.classList.remove('show');
+  });
+
+  // 搜索功能增强
+  const globalSearch = document.getElementById('globalSearch');
+  if (globalSearch) {
+    globalSearch.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = this.value.trim();
+        if (query) {
+          // 设计师搜索功能
+          console.log('搜索设计师:', query);
+          // 这里可以添加具体的搜索逻辑
+        }
+      }
+    });
+  }
+});
+</script>
+
+<script id="dropdown-handlers">
+document.addEventListener('DOMContentLoaded', function() {
+// 地区下拉菜单
+const regionButton = document.getElementById('regionButton');
+const regionDropdown = document.getElementById('regionDropdown');
+if (regionButton && regionDropdown) {
+regionButton.addEventListener('click', function() {
+regionDropdown.classList.toggle('hidden');
+});
+// 点击地区选项
+const regionOptions = regionDropdown.querySelectorAll('div');
+regionOptions.forEach(option => {
+option.addEventListener('click', function() {
+regionButton.querySelector('span').textContent = this.textContent;
+regionDropdown.classList.add('hidden');
+});
+});
+// 点击其他地方关闭下拉菜单
+document.addEventListener('click', function(event) {
+if (!regionButton.contains(event.target) && !regionDropdown.contains(event.target)) {
+regionDropdown.classList.add('hidden');
+}
+});
+}
+// 排序下拉菜单
+const sortButton = document.getElementById('sortButton');
+const sortDropdown = document.getElementById('sortDropdown');
+if (sortButton && sortDropdown) {
+sortButton.addEventListener('click', function() {
+sortDropdown.classList.toggle('hidden');
+});
+// 点击排序选项
+const sortOptions = sortDropdown.querySelectorAll('div');
+sortOptions.forEach(option => {
+option.addEventListener('click', function() {
+sortButton.textContent = this.textContent;
+sortButton.appendChild(document.createElement('i')).className = 'ri-arrow-down-s-line ml-1';
+sortDropdown.classList.add('hidden');
+});
+});
+// 点击其他地方关闭下拉菜单
+document.addEventListener('click', function(event) {
+if (!sortButton.contains(event.target) && !sortDropdown.contains(event.target)) {
+sortDropdown.classList.add('hidden');
+}
+});
+}
+});
+</script>
+<script id="range-slider-handler">
+document.addEventListener('DOMContentLoaded', function() {
+const experienceRange = document.getElementById('experienceRange');
+const experienceValue = document.getElementById('experienceValue');
+if (experienceRange && experienceValue) {
+experienceRange.addEventListener('input', function() {
+experienceValue.textContent = this.value + '年';
+});
+}
+});
+</script>
+<script id="designer-detail-handler">
+function openDesignerDetail(id) {
+const overlay = document.getElementById('designerDetailOverlay');
+const drawer = document.getElementById('designerDetail');
+if (overlay && drawer) {
+overlay.classList.remove('hidden');
+setTimeout(() => {
+drawer.classList.remove('drawer-closed');
+drawer.classList.add('drawer-open');
+}, 10);
+// 初始化技能雷达图
+initSkillRadarChart();
+}
+}
+function closeDesignerDetail() {
+const overlay = document.getElementById('designerDetailOverlay');
+const drawer = document.getElementById('designerDetail');
+if (overlay && drawer) {
+drawer.classList.remove('drawer-open');
+drawer.classList.add('drawer-closed');
+setTimeout(() => {
+overlay.classList.add('hidden');
+}, 300);
+}
+}
+function initSkillRadarChart() {
+const skillRadarChart = echarts.init(document.getElementById('skillRadarChart'));
+const option = {
+animation: false,
+backgroundColor: 'transparent',
+radar: {
+indicator: [
+{ name: '用户研究', max: 100 },
+{ name: '交互设计', max: 100 },
+{ name: '视觉设计', max: 100 },
+{ name: '原型设计', max: 100 },
+{ name: '设计系统', max: 100 },
+{ name: '团队协作', max: 100 }
+],
+radius: 100,
+splitNumber: 4,
+axisName: {
+color: '#e2e8f0'
+},
+splitLine: {
+lineStyle: {
+color: 'rgba(148, 163, 184, 0.2)'
+}
+},
+splitArea: {
+show: true,
+areaStyle: {
+color: ['rgba(148, 163, 184, 0.05)', 'rgba(148, 163, 184, 0.1)']
+}
+},
+axisLine: {
+lineStyle: {
+color: 'rgba(148, 163, 184, 0.2)'
+}
+}
+},
+series: [{
+name: '技能掌握度',
+type: 'radar',
+data: [
+{
+value: [85, 90, 80, 88, 82, 85],
+name: '掌握程度',
+symbol: 'none',
+lineStyle: {
+width: 2,
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(87, 181, 231, 0.3)'
+}, {
+offset: 1, color: 'rgba(87, 181, 231, 0.1)'
+}]
+}
+}
+}
+]
+}]
+};
+skillRadarChart.setOption(option);
+// 窗口大小改变时重新调整图表大小
+window.addEventListener('resize', function() {
+skillRadarChart.resize();
+});
+}
+</script>
+</body>
+</html>

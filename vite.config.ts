@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: 1002,
       open: false,
-      allowedHosts: ['jiut.free.idcfengye.com'],
+      allowedHosts: ['jiut.free.idcfengye.com', 'vosai.ss5.tunnelfrp.com'],
       proxy: {
         '/api': {
           target: viteEnv.VITE_APP_API_BASE_URL,

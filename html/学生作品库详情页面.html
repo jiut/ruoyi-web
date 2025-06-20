@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学生作品库 - 星海人才</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0a84ff',secondary:'#bf5af2'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Noto Sans SC', sans-serif;
+background: #000000;
+color: #e2e8f0;
+min-height: 100vh;
+}
+.glass-card {
+background: rgba(28, 28, 30, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.search-input {
+background: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.2);
+}
+.search-input:focus {
+border-color: rgba(10, 132, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+.gradient-text {
+background: linear-gradient(45deg, #007AFF, #AF52DE, #FF2D92);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+}
+.card-hover {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.skill-tag {
+background: rgba(10, 132, 255, 0.2);
+border: 1px solid rgba(10, 132, 255, 0.3);
+}
+.section-divider {
+height: 1px;
+background: linear-gradient(90deg, rgba(0, 122, 255, 0), rgba(0, 122, 255, 0.5), rgba(175, 82, 222, 0.5), rgba(0, 122, 255, 0));
+}
+.masonry-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+grid-gap: 20px;
+grid-auto-flow: dense;
+}
+.work-card {
+position: relative;
+overflow: hidden;
+border-radius: 12px;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.work-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.work-card:hover .work-info {
+opacity: 1;
+}
+.work-info {
+background: rgba(28, 28, 30, 0.85);
+backdrop-filter: blur(5px);
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.category-nav::-webkit-scrollbar {
+height: 5px;
+}
+.category-nav::-webkit-scrollbar-track {
+background: rgba(28, 28, 30, 0.3);
+border-radius: 10px;
+}
+.category-nav::-webkit-scrollbar-thumb {
+background: rgba(10, 132, 255, 0.5);
+border-radius: 10px;
+}
+.modal-overlay {
+background-color: rgba(0, 0, 0, 0.75);
+backdrop-filter: blur(5px);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+position: relative;
+cursor: pointer;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+left: 0;
+height: 20px;
+width: 20px;
+background-color: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.3);
+border-radius: 4px;
+transition: all 0.2s ease;
+}
+.custom-checkbox:hover input ~ .checkmark {
+background-color: rgba(28, 28, 30, 1);
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #0a84ff;
+border-color: #0a84ff;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-checkbox .checkmark:after {
+left: 7px;
+top: 3px;
+width: 6px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-radio {
+position: relative;
+cursor: pointer;
+}
+.custom-radio input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+.radio-mark {
+position: absolute;
+top: 0;
+left: 0;
+height: 20px;
+width: 20px;
+background-color: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.3);
+border-radius: 50%;
+transition: all 0.2s ease;
+}
+.custom-radio:hover input ~ .radio-mark {
+background-color: rgba(28, 28, 30, 1);
+}
+.custom-radio input:checked ~ .radio-mark {
+background-color: rgba(28, 28, 30, 0.8);
+border-color: #0a84ff;
+}
+.radio-mark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-radio input:checked ~ .radio-mark:after {
+display: block;
+}
+.custom-radio .radio-mark:after {
+top: 5px;
+left: 5px;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: #0a84ff;
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(28, 28, 30, 0.8);
+border: 1px solid rgba(99, 99, 102, 0.3);
+transition: .4s;
+border-radius: 34px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 2px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0a84ff;
+border-color: #0a84ff;
+}
+input:checked + .switch-slider:before {
+transform: translateX(20px);
+}
+.custom-range {
+-webkit-appearance: none;
+width: 100%;
+height: 6px;
+border-radius: 5px;
+background: rgba(28, 28, 30, 0.8);
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #0a84ff;
+cursor: pointer;
+border: 2px solid white;
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #0a84ff;
+cursor: pointer;
+border: 2px solid white;
+}
+.nav-button {
+transition: all 0.2s ease;
+}
+.nav-button:hover {
+background: rgba(10, 132, 255, 0.1);
+color: #0a84ff;
+}
+.nav-button.active {
+background: rgba(10, 132, 255, 0.2);
+color: #0a84ff;
+}
+.dropdown-menu {
+display: none;
+position: absolute;
+background: rgba(28, 28, 30, 0.95);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(99, 99, 102, 0.2);
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+z-index: 50;
+}
+.dropdown-menu.show {
+display: block;
+}
+.breadcrumb-separator {
+color: rgba(148, 163, 184, 0.5);
+}
+</style>
+</head>
+<body>
+<div class="min-h-screen">
+<!-- 统一顶栏组件 -->
+<header class="glass-card sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between h-16">
+
+<!-- 左侧：导航和面包屑 -->
+<div class="flex items-center space-x-4">
+<!-- 返回按钮 -->
+<a href="https://readdy.ai/home/bb86dafc-cb55-4536-9b1d-6f4d83d459ef/d2471b29-7e02-49e1-bdb6-92cc651d6efc" data-readdy="true" class="flex items-center text-gray-300 hover:text-primary transition-colors">
+<i class="ri-arrow-left-line ri-lg mr-2"></i>
+<span class="hidden sm:inline">返回</span>
+</a>
+
+<!-- 分隔线 -->
+<div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
+
+<!-- Logo -->
+<a href="/" class="flex items-center">
+<h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block">星海人才</h1>
+<h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden">星海</h1>
+</a>
+
+<!-- 面包屑导航 -->
+<nav class="hidden md:flex items-center space-x-2 text-sm">
+<a href="/" class="text-gray-400 hover:text-primary transition-colors">首页</a>
+<span class="breadcrumb-separator">/</span>
+<span class="text-white" id="currentPageTitle">学生作品库</span>
+</nav>
+</div>
+
+<!-- 中间：主导航菜单 -->
+<nav class="hidden lg:flex items-center space-x-6">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">设计师档案</a>
+</nav>
+
+<!-- 右侧：搜索和用户功能 -->
+<div class="flex items-center space-x-3">
+
+<!-- 搜索框 -->
+<div class="relative hidden md:block">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索作品、设计师、院校..."
+class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+id="globalSearch">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端搜索按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden" id="mobileSearchBtn">
+<i class="ri-search-line"></i>
+</button>
+
+<!-- 通知 -->
+<div class="relative">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors" id="notificationBtn">
+<i class="ri-notification-3-line"></i>
+<!-- 未读消息小红点 -->
+<span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white" style="font-size: 10px;">2</span>
+</button>
+
+<!-- 通知下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-80" id="notificationDropdown">
+<div class="p-4 border-b border-gray-700">
+<h3 class="text-lg font-medium">通知中心</h3>
+</div>
+<div class="max-h-64 overflow-y-auto">
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">王梦琪的新作品获得热门推荐</p>
+<p class="text-xs text-gray-400 mt-1">1小时前</p>
+</div>
+</div>
+</div>
+<div class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800">
+<div class="flex items-start">
+<div class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3"></div>
+<div>
+<p class="text-sm">您关注的清华大学发布了新作品</p>
+<p class="text-xs text-gray-400 mt-1">3小时前</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-700 text-center">
+<a href="/notifications" class="text-sm text-primary hover:text-primary/80">查看所有通知</a>
+</div>
+</div>
+</div>
+
+<!-- 用户菜单 -->
+<div class="relative">
+<button class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors" id="userMenuBtn">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+张
+</div>
+<span class="hidden xl:inline text-white text-sm">张小明</span>
+<i class="ri-arrow-down-s-line text-gray-400 hidden xl:block"></i>
+</button>
+
+<!-- 用户下拉菜单 -->
+<div class="dropdown-menu rounded-lg mt-2 right-0 w-48" id="userDropdown">
+<div class="p-3 border-b border-gray-700">
+<div class="flex items-center">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold mr-3">
+张
+</div>
+<div>
+<p class="text-sm font-medium">张小明</p>
+<p class="text-xs text-gray-400">学生</p>
+</div>
+</div>
+</div>
+<div class="py-2">
+<a href="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-user-line mr-3"></i>
+个人资料
+</a>
+<a href="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-settings-3-line mr-3"></i>
+账户设置
+</a>
+<a href="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+<i class="ri-bookmark-line mr-3"></i>
+我的收藏
+</a>
+<div class="border-t border-gray-700 mt-2"></div>
+<a href="/logout" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400">
+<i class="ri-logout-box-line mr-3"></i>
+退出登录
+</a>
+</div>
+</div>
+</div>
+
+<!-- 移动端菜单按钮 -->
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden" id="mobileMenuBtn">
+<i class="ri-menu-line"></i>
+</button>
+</div>
+</div>
+</div>
+
+<!-- 移动端搜索栏 -->
+<div class="hidden border-t border-gray-800 p-4 md:hidden" id="mobileSearchBar">
+<div class="search-input flex items-center rounded-lg overflow-hidden">
+<input type="text"
+placeholder="搜索作品、设计师、院校..."
+class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm">
+<button class="w-10 h-10 flex items-center justify-center text-primary">
+<i class="ri-search-line"></i>
+</button>
+</div>
+</div>
+
+<!-- 移动端导航菜单 -->
+<div class="hidden border-t border-gray-800 p-4 lg:hidden" id="mobileNavMenu">
+<nav class="flex flex-col space-y-2">
+<a href="/schools" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">院校数据库</a>
+<a href="/works" class="nav-button px-3 py-2 rounded-lg text-sm font-medium active">学生作品库</a>
+<a href="/jobs" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">企业需求池</a>
+<a href="/designers" class="nav-button px-3 py-2 rounded-lg text-sm font-medium">设计师档案</a>
+</nav>
+</div>
+</header>
+<!-- 主体内容 -->
+<main class="container mx-auto px-4 py-8">
+<!-- 作品库统计信息 -->
+<section class="mb-8">
+<div class="glass-card rounded-lg p-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+<div>
+<h2 class="text-2xl font-bold mb-2">探索 <span class="gradient-text">68,423</span> 件优秀学生作品</h2>
+<p class="text-gray-400 text-sm">覆盖 UI/UX、平面设计、3D 建模、插画等多个领域</p>
+</div>
+<div class="mt-4 md:mt-0 flex space-x-3">
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-sm flex items-center !rounded-button whitespace-nowrap">
+<i class="ri-filter-3-line mr-2"></i>
+高级筛选
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 分类导航 -->
+<section class="mb-8">
+<div class="category-nav overflow-x-auto pb-2">
+<div class="flex space-x-2 min-w-max">
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-sm !rounded-button whitespace-nowrap">
+全部作品
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+UI/UX 设计
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+平面设计
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+3D 建模
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+插画设计
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+动效设计
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+品牌设计
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+游戏美术
+</button>
+<button class="px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+产品设计
+</button>
+</div>
+</div>
+</section>
+<!-- 筛选器和排序 -->
+<section class="mb-8">
+<div class="glass-card rounded-lg">
+<div class="flex justify-between items-center p-4 border-b border-gray-800/50">
+<div class="flex items-center space-x-4">
+<div class="flex items-center">
+<span class="text-sm text-gray-400 mr-2">排序方式：</span>
+<div class="relative">
+<button class="flex items-center space-x-1 px-3 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+<span>最新上传</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+</div>
+</div>
+<button class="text-primary text-sm">
+清除筛选
+</button>
+</div>
+<button id="toggleFilter" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-filter-3-line"></i>
+</button>
+</div>
+<div id="filterPanel" class="hidden p-6 border-t border-gray-800/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div>
+<h4 class="text-sm font-medium text-gray-300 mb-3">技能标签</h4>
+<div class="space-y-2">
+<label class="custom-checkbox flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="checkbox" checked>
+<span class="checkmark"></span>
+Figma
+</label>
+<label class="custom-checkbox flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="checkbox">
+<span class="checkmark"></span>
+Photoshop
+</label>
+<label class="custom-checkbox flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="checkbox">
+<span class="checkmark"></span>
+Illustrator
+</label>
+<label class="custom-checkbox flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="checkbox">
+<span class="checkmark"></span>
+Blender
+</label>
+<label class="custom-checkbox flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="checkbox">
+<span class="checkmark"></span>
+Cinema 4D
+</label>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-medium text-gray-300 mb-3">院校筛选</h4>
+<div class="relative">
+<button class="w-full flex items-center justify-between px-3 py-2 bg-gray-800/50 border border-gray-700/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
+<span>选择院校</span>
+<i class="ri-arrow-down-s-line"></i>
+</button>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-medium text-gray-300 mb-3">上传时间</h4>
+<div class="space-y-2">
+<label class="custom-radio flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="radio" name="time" checked>
+<span class="radio-mark"></span>
+全部时间
+</label>
+<label class="custom-radio flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="radio" name="time">
+<span class="radio-mark"></span>
+最近一周
+</label>
+<label class="custom-radio flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="radio" name="time">
+<span class="radio-mark"></span>
+最近一月
+</label>
+<label class="custom-radio flex items-center text-sm text-gray-400 pl-7 relative">
+<input type="radio" name="time">
+<span class="radio-mark"></span>
+最近三月
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 作品展示区 -->
+<section class="mb-12">
+<div class="masonry-grid">
+<!-- 作品卡片 1 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=modern%2520UI%2520design%2520for%2520mobile%2520app%2520with%2520clean%2520interface%2C%2520gradient%2520colors%2C%2520professional%2520layout%2C%2520high%2520quality%2520design%2520work%2520by%2520design%2520student%2C%2520simple%2520white%2520background%2520showcasing%2520the%2520interface&width=600&height=800&seq=work1&orientation=portrait" alt="UI设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">智能家居控制中心</h3>
+<p class="text-sm text-gray-300 mb-3">移动端 UI 设计，专注用户体验与交互流程</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+王
+</div>
+<span class="text-sm">王梦琪</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 128</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 2.4k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 2 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=creative%2520branding%2520design%2520with%2520logo%2520and%2520stationery%2520mockup%2C%2520professional%2520graphic%2520design%2520project%2C%2520clean%2520presentation%2520on%2520simple%2520background%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=500&seq=work2&orientation=landscape" alt="品牌设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">极简风格咖啡品牌</h3>
+<p class="text-sm text-gray-300 mb-3">品牌设计，包含 Logo 与视觉识别系统</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+林
+</div>
+<span class="text-sm">林子豪</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 156</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 3.1k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 3 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=3D%2520character%2520design%2520with%2520stylized%2520proportions%2C%2520vibrant%2520colors%2C%2520professional%2520modeling%2520and%2520texturing%2C%2520clean%2520presentation%2520on%2520simple%2520background%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=700&seq=work3&orientation=portrait" alt="3D建模作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">未来战士角色设计</h3>
+<p class="text-sm text-gray-300 mb-3">3D 角色建模，包含材质与骨骼动画</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center text-white text-xs font-bold">
+张
+</div>
+<span class="text-sm">张浩然</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 203</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 4.7k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 4 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=digital%2520illustration%2520with%2520fantasy%2520theme%2C%2520vibrant%2520colors%2C%2520detailed%2520artwork%2C%2520professional%2520composition%2C%2520clean%2520presentation%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=600&seq=work4&orientation=squarish" alt="插画设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">奇幻世界插画集</h3>
+<p class="text-sm text-gray-300 mb-3">数字插画，展现奇幻世界观与角色设定</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-blue-500 to-primary flex items-center justify-center text-white text-xs font-bold">
+陈
+</div>
+<span class="text-sm">陈雨晴</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 176</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 3.8k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 5 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=motion%2520design%2520keyframes%2520for%2520animation%2C%2520professional%2520sequence%2520layout%2C%2520clean%2520presentation%2520showing%2520movement%2520and%2520transitions%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=400&seq=work5&orientation=landscape" alt="动效设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">流体动效设计</h3>
+<p class="text-sm text-gray-300 mb-3">UI 动效设计，展现流畅的交互体验</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center text-white text-xs font-bold">
+刘
+</div>
+<span class="text-sm">刘思源</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 142</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 2.9k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 6 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=website%2520design%2520mockup%2520with%2520clean%2520layout%2C%2520modern%2520interface%2C%2520professional%2520web%2520design%2C%2520responsive%2520layout%2520presentation%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=450&seq=work6&orientation=landscape" alt="网页设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">极简主义电商平台</h3>
+<p class="text-sm text-gray-300 mb-3">响应式网页设计，注重用户体验与转化率</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold">
+赵
+</div>
+<span class="text-sm">赵明宇</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 189</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 4.2k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 7 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=product%2520design%2520concept%2520with%2520sketches%2520and%2520prototype%2C%2520professional%2520industrial%2520design%2520presentation%2C%2520clean%2520layout%2520showing%2520development%2520process%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=750&seq=work7&orientation=portrait" alt="产品设计作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">可持续设计智能水杯</h3>
+<p class="text-sm text-gray-300 mb-3">产品设计，从草图到原型的完整流程</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold">
+孙
+</div>
+<span class="text-sm">孙嘉怡</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 167</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 3.5k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 作品卡片 8 -->
+<div class="work-card card-hover">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=game%2520environment%2520design%2520with%2520concept%2520art%2C%2520professional%2520game%2520asset%2520presentation%2C%2520detailed%2520fantasy%2520world%2520building%2C%2520clean%2520layout%2520showing%2520the%2520artwork%2C%2520high%2520quality%2520student%2520portfolio%2520work&width=600&height=400&seq=work8&orientation=landscape" alt="游戏美术作品" class="w-full h-auto object-cover rounded-lg">
+<div class="work-info absolute inset-0 flex flex-col justify-end p-4 rounded-lg">
+<h3 class="text-lg font-bold mb-1">远古文明游戏场景</h3>
+<p class="text-sm text-gray-300 mb-3">游戏环境设计，包含概念图与3D模型</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+杨
+</div>
+<span class="text-sm">杨天宇</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-xs flex items-center"><i class="ri-heart-line mr-1"></i> 215</span>
+<span class="text-xs flex items-center"><i class="ri-eye-line mr-1"></i> 5.3k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 加载更多 -->
+<section class="flex justify-center mb-12">
+<button class="px-6 py-3 bg-transparent border border-primary/30 text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors flex items-center !rounded-button whitespace-nowrap">
+<i class="ri-refresh-line mr-2"></i>
+加载更多作品
+</button>
+</section>
+<!-- 热门院校作品 -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6 flex items-center">
+<span class="w-1 h-6 bg-primary rounded-full mr-3"></span>
+热门院校作品
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="glass-card rounded-lg p-6 glow-border card-hover">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-blue-500/20 text-white mr-4">
+<span class="text-lg font-bold">清</span>
+</div>
+<div>
+<h3 class="text-lg font-bold">清华大学</h3>
+<p class="text-sm text-gray-400">美术学院</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<img src="https://readdy.ai/api/search-image?query=minimalist%2520UI%2520design%2520concept%2C%2520clean%2520interface%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=thu1&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=creative%2520graphic%2520design%2520concept%2C%2520modern%2520style%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=thu2&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=3D%2520modeling%2520concept%2C%2520stylized%2520design%2C%2520professional%2520render%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=thu3&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm text-gray-400">4,286 件作品</p>
+</div>
+<button class="px-3 py-1.5 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看作品
+</button>
+</div>
+</div>
+<div class="glass-card rounded-lg p-6 glow-border card-hover">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-red-500/20 text-white mr-4">
+<span class="text-lg font-bold">中</span>
+</div>
+<div>
+<h3 class="text-lg font-bold">中央美术学院</h3>
+<p class="text-sm text-gray-400">设计学院</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<img src="https://readdy.ai/api/search-image?query=illustration%2520concept%2C%2520artistic%2520style%2C%2520professional%2520drawing%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=cafa1&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=branding%2520design%2520concept%2C%2520logo%2520presentation%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=cafa2&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=packaging%2520design%2520concept%2C%2520product%2520presentation%2C%2520professional%2520mockup%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=cafa3&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm text-gray-400">5,127 件作品</p>
+</div>
+<button class="px-3 py-1.5 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看作品
+</button>
+</div>
+</div>
+<div class="glass-card rounded-lg p-6 glow-border card-hover">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-lg bg-green-500/20 text-white mr-4">
+<span class="text-lg font-bold">同</span>
+</div>
+<div>
+<h3 class="text-lg font-bold">同济大学</h3>
+<p class="text-sm text-gray-400">设计创意学院</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<img src="https://readdy.ai/api/search-image?query=industrial%2520design%2520concept%2C%2520product%2520prototype%2C%2520professional%2520presentation%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=tongji1&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=architectural%2520design%2520concept%2C%2520building%2520model%2C%2520professional%2520rendering%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=tongji2&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+<img src="https://readdy.ai/api/search-image?query=UX%2520design%2520concept%2C%2520wireframe%2520presentation%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=100&height=100&seq=tongji3&orientation=squarish" alt="作品缩略图" class="w-full h-auto rounded-md">
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-sm text-gray-400">3,854 件作品</p>
+</div>
+<button class="px-3 py-1.5 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors !rounded-button whitespace-nowrap">
+查看作品
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- 页脚 -->
+<footer class="py-12 border-t border-gray-800">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<div>
+<h3 class="text-lg font-bold mb-4">星海人才</h3>
+<p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">功能模块</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">院校数据库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">学生作品库</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">企业需求池</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">设计师档案</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">关于我们</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">公司介绍</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">加入我们</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">合作伙伴</a></li>
+<li><a href="#" class="text-gray-400 text-sm hover:text-primary">联系我们</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">联系方式</h3>
+<ul class="space-y-2">
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-phone-line mr-2"></i> 400-888-9999
+</li>
+<li class="flex items-center text-gray-400 text-sm">
+<i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
+</li>
+</ul>
+</div>
+</div>
+<div class="section-divider mb-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
+<div class="flex space-x-4">
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-weibo-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-wechat-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-linkedin-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition-colors">
+<i class="ri-github-line"></i>
+</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script id="unified-header-script">
+document.addEventListener('DOMContentLoaded', function() {
+  // 通知下拉菜单
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationDropdown = document.getElementById('notificationDropdown');
+
+  if (notificationBtn && notificationDropdown) {
+    notificationBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      notificationDropdown.classList.toggle('show');
+      const userDropdown = document.getElementById('userDropdown');
+      if (userDropdown) userDropdown.classList.remove('show');
+    });
+  }
+
+  // 用户下拉菜单
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+
+  if (userMenuBtn && userDropdown) {
+    userMenuBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userDropdown.classList.toggle('show');
+      if (notificationDropdown) notificationDropdown.classList.remove('show');
+    });
+  }
+
+  // 移动端搜索
+  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+  const mobileSearchBar = document.getElementById('mobileSearchBar');
+  const mobileNavMenu = document.getElementById('mobileNavMenu');
+
+  if (mobileSearchBtn && mobileSearchBar) {
+    mobileSearchBtn.addEventListener('click', function() {
+      mobileSearchBar.classList.toggle('hidden');
+      if (mobileNavMenu) mobileNavMenu.classList.add('hidden');
+    });
+  }
+
+  // 移动端菜单
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+  if (mobileMenuBtn && mobileNavMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+      mobileNavMenu.classList.toggle('hidden');
+      if (mobileSearchBar) mobileSearchBar.classList.add('hidden');
+    });
+  }
+
+  // 点击外部关闭下拉菜单
+  document.addEventListener('click', function() {
+    if (notificationDropdown) notificationDropdown.classList.remove('show');
+    if (userDropdown) userDropdown.classList.remove('show');
+  });
+
+  // 搜索功能增强
+  const globalSearch = document.getElementById('globalSearch');
+  if (globalSearch) {
+    globalSearch.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = this.value.trim();
+        if (query) {
+          // 作品搜索功能
+          console.log('搜索作品:', query);
+          // 这里可以添加具体的搜索逻辑
+        }
+      }
+    });
+  }
+});
+</script>
+
+<!-- 作品详情弹窗 -->
+<div id="workDetailModal" class="fixed inset-0 z-50 hidden">
+<div class="modal-overlay absolute inset-0"></div>
+<div class="absolute inset-0 flex items-center justify-center p-4">
+<div class="glass-card rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+<div class="flex justify-between items-center p-4 border-b border-gray-800">
+<h3 class="text-xl font-bold">作品详情</h3>
+<button id="closeModal" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<div class="flex flex-col md:flex-row">
+<div class="w-full md:w-2/3 p-4">
+<div class="rounded-lg overflow-hidden">
+<img id="modalImage" src="https://readdy.ai/api/search-image?query=modern%2520UI%2520design%2520for%2520mobile%2520app%2520with%2520clean%2520interface%2C%2520gradient%2520colors%2C%2520professional%2520layout%2C%2520high%2520quality%2520design%2520work%2520by%2520design%2520student%2C%2520simple%2520white%2520background%2520showcasing%2520the%2520interface&width=800&height=1000&seq=work1_large&orientation=portrait" alt="作品大图" class="w-full h-auto object-contain">
+</div>
+</div>
+<div class="w-full md:w-1/3 p-4">
+<h2 id="modalTitle" class="text-2xl font-bold mb-3">智能家居控制中心</h2>
+<div class="flex items-center mb-4">
+<div class="w-10 h-10 rounded-full overflow-hidden mr-3 bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+王
+</div>
+<div>
+<h4 id="modalDesigner" class="font-medium">王梦琪</h4>
+<p class="text-sm text-gray-400">中央美术学院 · 2025 届</p>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-2">作品描述</h4>
+<p id="modalDescription" class="text-sm text-gray-300 leading-relaxed">
+这是一个智能家居控制中心的移动应用设计，专注于提供直观、简洁的用户界面，让用户能够轻松控制家中的各种智能设备。设计采用了渐变色调和简约的图标，强调了视觉层次和交互流畅性。
+<br><br>
+主要功能包括设备控制面板、场景模式切换、能源消耗监控以及智能助手交互界面。整个设计过程注重用户体验研究，通过多轮用户测试优化了交互流程。
+</p>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-2">技术说明</h4>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="skill-tag text-xs px-2 py-1 rounded-full">Figma</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">Protopie</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">交互设计</span>
+<span class="skill-tag text-xs px-2 py-1 rounded-full">UI设计</span>
+</div>
+<p class="text-sm text-gray-300">使用 Figma 进行界面设计，Protopie 制作高保真交互原型，包含完整的组件库和设计系统</p>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-gray-800">
+<h4 class="font-medium mb-4">相关推荐作品</h4>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="work-card card-hover">
+<img src="https://readdy.ai/api/search-image?query=mobile%2520app%2520UI%2520design%2520with%2520clean%2520interface%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=200&height=200&seq=related1&orientation=squarish" alt="相关作品" class="w-full h-auto rounded-md">
+</div>
+<div class="work-card card-hover">
+<img src="https://readdy.ai/api/search-image?query=dashboard%2520UI%2520design%2520with%2520data%2520visualization%2C%2520professional%2520layout%2C%2520student%2520work%2520thumbnail&width=200&height=200&seq=related2&orientation=squarish" alt="相关作品" class="w-full h-auto rounded-md">
+</div>
+<div class="work-card card-hover">
+<img src="https://readdy.ai/api/search-image?query=mobile%2520app%2520onboarding%2520screens%2C%2520professional%2520UI%2520design%2C%2520student%2520work%2520thumbnail&width=200&height=200&seq=related3&orientation=squarish" alt="相关作品" class="w-full h-auto rounded-md">
+</div>
+<div class="work-card card-hover">
+<img src="https://readdy.ai/api/search-image?query=smart%2520home%2520interface%2520design%2C%2520professional%2520UI%2520layout%2C%2520student%2520work%2520thumbnail&width=200&height=200&seq=related4&orientation=squarish" alt="相关作品" class="w-full h-auto rounded-md">
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-gray-800 flex justify-between items-center">
+<div class="flex space-x-4">
+<button class="flex items-center text-gray-300 hover:text-primary">
+<i class="ri-heart-line mr-1"></i>
+<span>收藏</span>
+</button>
+<button class="flex items-center text-gray-300 hover:text-primary">
+<i class="ri-share-line mr-1"></i>
+<span>分享</span>
+</button>
+</div>
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-sm !rounded-button whitespace-nowrap">
+联系设计师
+</button>
+</div>
+</div>
+</div>
+</div>
+<script id="modal-interaction">
+document.addEventListener('DOMContentLoaded', function() {
+const workCards = document.querySelectorAll('.work-card');
+const modal = document.getElementById('workDetailModal');
+const closeModal = document.getElementById('closeModal');
+workCards.forEach(card => {
+card.addEventListener('click', function() {
+modal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+});
+closeModal.addEventListener('click', function() {
+modal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+});
+// 点击模态框外部关闭
+modal.addEventListener('click', function(e) {
+if (e.target === modal.querySelector('.modal-overlay')) {
+modal.classList.add('hidden');
+document.body.style.overflow = 'auto';
+}
+});
+});
+</script>
+<script id="filter-interaction">
+document.addEventListener('DOMContentLoaded', function() {
+// 筛选面板切换
+const toggleFilter = document.getElementById('toggleFilter');
+const filterPanel = document.getElementById('filterPanel');
+toggleFilter.addEventListener('click', function() {
+filterPanel.classList.toggle('hidden');
+const icon = this.querySelector('i');
+if (filterPanel.classList.contains('hidden')) {
+icon.classList.remove('ri-close-line');
+icon.classList.add('ri-filter-3-line');
+} else {
+icon.classList.remove('ri-filter-3-line');
+icon.classList.add('ri-close-line');
+}
+});
+// 筛选按钮交互
+const filterButtons = document.querySelectorAll('.category-nav button');
+filterButtons.forEach(button => {
+button.addEventListener('click', function() {
+// 移除所有按钮的选中状态
+filterButtons.forEach(btn => {
+btn.classList.remove('bg-primary', 'text-white');
+btn.classList.add('bg-gray-800/50', 'border', 'border-gray-700/50', 'text-gray-300');
+});
+// 添加当前按钮的选中状态
+this.classList.remove('bg-gray-800/50', 'border', 'border-gray-700/50', 'text-gray-300');
+this.classList.add('bg-primary', 'text-white');
+});
+});
+// 自定义复选框交互
+const checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+// 这里可以添加筛选逻辑
+console.log('Checkbox changed:', this.checked);
+});
+});
+// 自定义单选框交互
+const radios = document.querySelectorAll('.custom-radio input[type="radio"]');
+radios.forEach(radio => {
+radio.addEventListener('change', function() {
+// 这里可以添加筛选逻辑
+console.log('Radio changed:', this.value);
+});
+});
+// 自定义开关交互
+const switches = document.querySelectorAll('.custom-switch input[type="checkbox"]');
+switches.forEach(switchEl => {
+switchEl.addEventListener('change', function() {
+// 这里可以添加筛选逻辑
+console.log('Switch changed:', this.checked);
+});
+});
+// 自定义滑块交互
+const ranges = document.querySelectorAll('.custom-range');
+ranges.forEach(range => {
+range.addEventListener('input', function() {
+// 这里可以添加筛选逻辑
+console.log('Range changed:', this.value);
+});
+});
+});
+</script>
+</body>
+</html>

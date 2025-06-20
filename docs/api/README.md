@@ -38,7 +38,7 @@
 ### 核心表结构
 
 1. **des_enterprise** - 企业信息表
-2. **des_school** - 院校信息表  
+2. **des_school** - 院校信息表
 3. **des_designer** - 设计师信息表
 4. **des_work** - 设计师作品表
 5. **des_job_posting** - 岗位招聘表
@@ -119,7 +119,8 @@ PUT    /designer/job                     # 修改岗位
 DELETE /designer/job/{ids}               # 删除岗位
 GET    /designer/job/enterprise/{id}     # 企业岗位查询
 GET    /designer/job/profession/{profession}  # 按职业查询岗位
-GET    /designer/job/skills              # 按技能查询岗位
+GET    /designer/job/skills              # 按技能查询岗位（精确匹配）
+GET    /designer/job/skills-any          # 按技能查询岗位（任意匹配）
 ```
 
 ### 岗位申请接口
@@ -146,6 +147,10 @@ GET    /designer/user/enterprise/profile # 获取企业档案
 GET    /designer/user/school/profile     # 获取院校档案
 PUT    /designer/user/unbind/{entityType} # 解绑身份
 POST   /designer/user/bind               # 管理员绑定用户实体
+GET    /designer/user/available/enterprises # 查看可绑定的企业列表
+POST   /designer/user/bind/enterprise    # 绑定到指定企业
+GET    /designer/user/available/schools  # 查看可绑定的院校列表
+POST   /designer/user/bind/school        # 绑定到指定院校
 ```
 
 ## 使用方法
@@ -201,6 +206,24 @@ Content-Type: application/json
 
 **注意：院校名称必须唯一，系统会自动检查重名并拒绝重复的院校名称。**
 
+#### 绑定已有企业
+```bash
+# 查看可绑定的企业列表
+GET /designer/user/available/enterprises?pageNum=1&pageSize=10&enterpriseName=科技
+
+# 绑定到指定企业
+POST /designer/user/bind/enterprise?enterpriseId=1&inviteCode=INVITE123
+```
+
+#### 绑定已有院校
+```bash
+# 查看可绑定的院校列表
+GET /designer/user/available/schools?pageNum=1&pageSize=10&schoolName=设计
+
+# 绑定到指定院校
+POST /designer/user/bind/school?schoolId=1&studentId=2020001234
+```
+
 ### 2. 用户档案查询
 
 #### 获取当前用户绑定信息
@@ -235,20 +258,20 @@ public void someMethod() {
     if (permissionUtils.isDesigner()) {
         // 设计师相关操作
     }
-    
+
     // 检查是否为企业用户
     if (permissionUtils.isEnterprise()) {
         // 企业相关操作
     }
-    
+
     // 检查是否为院校用户
     if (permissionUtils.isSchool()) {
         // 院校相关操作
     }
-    
+
     // 获取当前用户的设计师ID
     Long designerId = permissionUtils.getCurrentDesignerId();
-    
+
     // 检查用户权限
     if (permissionUtils.hasDesignerPermission(designerId)) {
         // 有权限操作该设计师信息
@@ -260,24 +283,71 @@ public void someMethod() {
 ```java
 @SaCheckPermission("designer:designer:edit")
 @PutMapping("/{designerId}")
-public R<Void> updateDesigner(@PathVariable Long designerId, 
+public R<Void> updateDesigner(@PathVariable Long designerId,
                               @RequestBody Designer designer) {
     // 检查用户是否有权限编辑该设计师
     if (!permissionUtils.hasDesignerPermission(designerId)) {
         return R.fail("无权限操作");
     }
-    
+
     return toAjax(designerService.updateDesigner(designer));
 }
 ```
 
-### 4. 数据过滤
+### 4. 技能查询接口使用
+
+#### 技能查询逻辑对比
+```bash
+# 精确匹配查询（交集查询 - AND逻辑）
+# 要求岗位必须同时包含所有指定技能
+GET /designer/job/skills?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+
+# 任意匹配查询（并集查询 - OR逻辑）
+# 要求岗位包含任意一个指定技能即可
+GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+```
+
+#### 支持的技能标签
+- **动效设计**: ANIMATION_DESIGN
+- **原型设计**: PROTOTYPE_DESIGN
+- **角色设计**: CHARACTER_DESIGN
+- **视觉设计**: VISUAL_DESIGN
+- **用户界面设计**: USER_INTERFACE_DESIGN
+- **用户体验设计**: USER_EXPERIENCE_DESIGN
+- **平面设计**: GRAPHIC_DESIGN
+- **品牌设计**: BRANDING_DESIGN
+- **插画**: ILLUSTRATION
+- **网页设计**: WEB_DESIGN
+- **移动设计**: MOBILE_DESIGN
+- **印刷设计**: PRINT_DESIGN
+
+#### 使用场景
+
+**宽松技能匹配**：
+```bash
+# 查找具备UI、UX或视觉设计任意一种技能的岗位
+GET /designer/job/skills-any?skillTags=USER_INTERFACE_DESIGN,USER_EXPERIENCE_DESIGN,VISUAL_DESIGN
+```
+
+**扩大搜索范围**：
+```bash
+# 当精确匹配结果太少时，使用任意匹配扩大搜索范围
+GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,ANIMATION_DESIGN
+```
+
+**相关技能探索**：
+```bash
+# 查找Web相关的设计岗位
+GET /designer/job/skills-any?skillTags=WEB_DESIGN,MOBILE_DESIGN,USER_INTERFACE_DESIGN
+```
+
+### 5. 数据过滤
 
 #### 基于用户绑定的数据查询
 ```java
 public List<Designer> getMyDesigners() {
     Long userId = LoginHelper.getUserId();
-    
+
     if (permissionUtils.isSchool()) {
         // 院校用户查看本校设计师
         Long schoolId = permissionUtils.getCurrentSchoolId();
@@ -291,7 +361,7 @@ public List<Designer> getMyDesigners() {
         Long designerId = permissionUtils.getCurrentDesignerId();
         return Arrays.asList(designerService.selectDesignerById(designerId));
     }
-    
+
     return Collections.emptyList();
 }
 ```
@@ -376,7 +446,7 @@ public List<Designer> getMyDesigners() {
 执行安全脚本后，检查以下内容：
 ```sql
 -- 检查必需的角色
-SELECT role_id, role_name, role_key FROM sys_role 
+SELECT role_id, role_name, role_key FROM sys_role
 WHERE role_key IN ('designer', 'enterprise', 'school');
 
 -- 检查用户绑定表
@@ -416,11 +486,11 @@ graph TB
     B --> C[业务服务层]
     C --> D[数据访问层]
     D --> E[数据库层]
-    
+
     B --> F[权限控制]
     C --> G[业务逻辑]
     D --> H[数据操作]
-    
+
     F --> I[用户角色绑定]
     I --> J[设计师角色]
     I --> K[企业角色]
@@ -483,4 +553,4 @@ graph TB
 
 ## 开发团队
 
-本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。 
+本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。

@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亿思AI设计联盟平台</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1a237e',secondary:'#00bcd4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Inter', sans-serif;
+}
+.hero-gradient {
+background: linear-gradient(135deg, rgba(26, 35, 126, 0.9), rgba(0, 188, 212, 0.7));
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 34px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 16px;
+width: 16px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #1a237e;
+}
+input:checked + .slider:before {
+transform: translateX(26px);
+}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<!-- 导航栏 -->
+<nav class="bg-white shadow-md fixed w-full z-50">
+<div class="container mx-auto px-6 py-3 flex justify-between items-center">
+<div class="flex items-center">
+<div class="flex items-center">
+<img src="https://static.readdy.ai/image/beab245664877a43ff0ae65d7e3defd5/a473f39df77406ec60f8579a0dcab1d1.png" alt="亿思AI" class="h-10">
+</div>
+<div class="hidden md:flex ml-10 space-x-8">
+<a href="#talent" class="text-gray-700 hover:text-primary font-medium transition">人才资源池</a>
+<a href="#ai-tools" class="text-gray-700 hover:text-primary font-medium transition">AI资源池</a>
+<a href="#tasks" class="text-gray-700 hover:text-primary font-medium transition">任务交易</a>
+<a href="#dashboard" class="text-gray-700 hover:text-primary font-medium transition">数据驾驶舱</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button id="loginBtn" class="px-4 py-2 text-primary border border-primary !rounded-button hover:bg-primary hover:text-white transition whitespace-nowrap">登录</button>
+
+<!-- 登录模态框 -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="flex justify-between items-center p-6 border-b">
+      <h3 class="text-xl font-semibold text-gray-800">登录账号</h3>
+      <button id="closeLoginModal" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+        <i class="ri-close-line ri-lg"></i>
+      </button>
+    </div>
+    <div class="p-6">
+      <form id="loginForm">
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名/邮箱</label>
+          <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入用户名或邮箱">
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+          <div class="relative">
+            <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入密码">
+            <button type="button" id="togglePassword" class="absolute right-3 top-2 w-6 h-6 flex items-center justify-center text-gray-400">
+              <i class="ri-eye-off-line"></i>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center">
+            <input type="checkbox" id="remember" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+            <label for="remember" class="ml-2 text-sm text-gray-600">记住我</label>
+          </div>
+          <a href="#" class="text-sm text-primary hover:underline">忘记密码？</a>
+        </div>
+        <button type="submit" class="w-full py-2 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">登录</button>
+      </form>
+      
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">或通过以下方式登录</span>
+          </div>
+        </div>
+        
+        <div class="mt-6 grid grid-cols-3 gap-3">
+          <button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50">
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-wechat-fill text-green-500"></i>
+            </div>
+          </button>
+          <button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50">
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-weibo-fill text-red-500"></i>
+            </div>
+          </button>
+          <button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50">
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-qq-fill text-blue-500"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          没有账号？<a href="#" class="text-primary hover:underline">立即注册</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 登录模态框功能
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const closeLoginModal = document.getElementById('closeLoginModal');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const loginForm = document.getElementById('loginForm');
+    
+    // 打开登录模态框
+    loginBtn.addEventListener('click', function() {
+      loginModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    // 关闭登录模态框
+    closeLoginModal.addEventListener('click', function() {
+      loginModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+    
+    // 点击模态框外部关闭
+    loginModal.addEventListener('click', function(e) {
+      if (e.target === loginModal) {
+        loginModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // 切换密码可见性
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.innerHTML = type === 'password' ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
+    });
+    
+    // 表单提交
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (!username || !password) {
+        // 显示错误提示
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg';
+        errorDiv.textContent = '请填写完整的登录信息';
+        
+        // 检查是否已有错误提示
+        const existingError = loginForm.querySelector('.text-red-700');
+        if (existingError) {
+          existingError.remove();
+        }
+        
+        loginForm.insertBefore(errorDiv, loginForm.firstChild);
+        return;
+      }
+      
+      // 这里可以添加实际的登录逻辑
+      console.log('登录信息:', { username, password });
+      
+      // 模拟登录成功
+      loginModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+<button class="px-4 py-2 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">免费注册</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-24 overflow-hidden">
+<div class="absolute inset-0" style="background-image: url('https://public.readdy.ai/ai/img_res/f5125dc5fe9af2e77ff839747e6d8220.jpg'); background-size: cover; background-position: center;">
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="container mx-auto px-6 py-24 relative z-10">
+<div class="flex flex-col md:flex-row items-center">
+<div class="w-full md:w-1/2 text-white mb-12 md:mb-0">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">亿思 AI 设计联盟平台</h1>
+<p class="text-xl md:text-2xl mb-8 opacity-90">连接设计师与 AI 技术，培育创意产业未来</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="px-8 py-3 bg-white text-primary font-semibold !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">探索平台</button>
+<button class="px-8 py-3 border-2 border-white text-white font-semibold !rounded-button hover:bg-white hover:bg-opacity-10 transition whitespace-nowrap">了解更多</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 核心功能概览 -->
+<section class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-4">核心功能模块</h2>
+<p class="text-gray-600 max-w-3xl mx-auto">我们打造了完整的AI设计生态系统，为设计师、企业和院校提供全方位的资源支持与协作平台</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- 人才资源池 -->
+<div class="bg-white rounded-lg shadow-lg p-8 transition duration-300 card-hover border border-gray-100">
+<div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-6">
+<i class="ri-user-search-line ri-xl text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">人才资源池</h3>
+<p class="text-gray-600 mb-6">汇聚优秀设计人才，连接院校与企业，打造人才成长与匹配的生态系统</p>
+<a href="#talent" class="text-primary font-medium flex items-center">
+了解更多
+<i class="ri-arrow-right-line ri-lg ml-1"></i>
+</a>
+</div>
+<!-- AI资源池 -->
+<div class="bg-white rounded-lg shadow-lg p-8 transition duration-300 card-hover border border-gray-100">
+<div class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mb-6">
+<i class="ri-robot-line ri-xl text-secondary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">AI 资源池</h3>
+<p class="text-gray-600 mb-6">精选 AI 设计工具，提供行业资讯与教学案例，助力设计师拥抱 AI 技术</p>
+<a href="#ai-tools" class="text-primary font-medium flex items-center">
+了解更多
+<i class="ri-arrow-right-line ri-lg ml-1"></i>
+</a>
+</div>
+<!-- 任务交易系统 -->
+<div class="bg-white rounded-lg shadow-lg p-8 transition duration-300 card-hover border border-gray-100">
+<div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-6">
+<i class="ri-exchange-funds-line ri-xl text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">任务交易系统</h3>
+<p class="text-gray-600 mb-6">智能匹配设计任务与人才，提供安全便捷的交易流程与能力评级体系</p>
+<a href="#tasks" class="text-primary font-medium flex items-center">
+了解更多
+<i class="ri-arrow-right-line ri-lg ml-1"></i>
+</a>
+</div>
+<!-- 数据驾驶舱 -->
+<div class="bg-white rounded-lg shadow-lg p-8 transition duration-300 card-hover border border-gray-100">
+<div class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mb-6">
+<i class="ri-dashboard-3-line ri-xl text-secondary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">数据驾驶舱</h3>
+<p class="text-gray-600 mb-6">可视化行业数据与平台运营指标，展示人才流动与需求响应效率</p>
+<a href="#dashboard" class="text-primary font-medium flex items-center">
+了解更多
+<i class="ri-arrow-right-line ri-lg ml-1"></i>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- 人才资源池 -->
+<section id="talent" class="py-20 bg-gray-50">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between mb-16">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold mb-4">人才资源池</h2>
+<p class="text-gray-600 max-w-2xl">连接设计院校、学生、企业与独立设计师，构建完整的设计人才生态系统</p>
+</div>
+<div class="mt-6 md:mt-0">
+<button class="px-6 py-3 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">加入人才库</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+<!-- 院校数据库 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">院校数据库</h3>
+<span class="px-3 py-1 bg-primary bg-opacity-10 text-primary text-sm rounded-full">128 所院校</span>
+</div>
+<p class="text-gray-600 mb-6">汇聚全国设计相关院校资源，提供专业设置、师资力量与教学特色等详细信息</p>
+<div class="mb-4">
+<div class="relative">
+<input type="text" placeholder="搜索院校或专业" class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+<div class="absolute right-3 top-2 w-6 h-6 flex items-center justify-center">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<div class="w-10 h-10 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+<i class="ri-building-4-line text-primary"></i>
+</div>
+<div>
+<h4 class="font-medium">中央美术学院</h4>
+<p class="text-sm text-gray-500">视觉传达、数字媒体艺术、产品设计</p>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<div class="w-10 h-10 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+<i class="ri-building-4-line text-primary"></i>
+</div>
+<div>
+<h4 class="font-medium">清华大学美术学院</h4>
+<p class="text-sm text-gray-500">工业设计、交互设计、信息设计</p>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<div class="w-10 h-10 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-4">
+<i class="ri-building-4-line text-primary"></i>
+</div>
+<div>
+<h4 class="font-medium">广州美术学院</h4>
+<p class="text-sm text-gray-500">视觉传达、数字媒体艺术、环境设计</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 学生作品库 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">学生作品库</h3>
+<span class="px-3 py-1 bg-secondary bg-opacity-10 text-secondary text-sm rounded-full">3,642 个作品</span>
+</div>
+<p class="text-gray-600 mb-6">展示优秀学生设计作品，为企业提供新锐创意，为学生提供展示平台</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="rounded-lg overflow-hidden group relative">
+<img src="https://public.readdy.ai/ai/img_res/fda8136dccabbc121fd6876cded2df9a.jpg" alt="学生作品" class="w-full h-40 object-cover">
+<div class="absolute inset-0 bg-primary bg-opacity-70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+<span class="text-white font-medium">UI 设计作品</span>
+</div>
+</div>
+<div class="rounded-lg overflow-hidden group relative">
+<img src="https://public.readdy.ai/ai/img_res/325d63ce4f6c0ce55eec99b39c27114a.jpg" alt="学生作品" class="w-full h-40 object-cover">
+<div class="absolute inset-0 bg-primary bg-opacity-70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+<span class="text-white font-medium">3D 角色设计</span>
+</div>
+</div>
+<div class="rounded-lg overflow-hidden group relative">
+<img src="https://public.readdy.ai/ai/img_res/cb0ec5d12663d33b94d12a402c7f8717.jpg" alt="学生作品" class="w-full h-40 object-cover">
+<div class="absolute inset-0 bg-primary bg-opacity-70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+<span class="text-white font-medium">品牌设计</span>
+</div>
+</div>
+<div class="rounded-lg overflow-hidden group relative">
+<img src="https://public.readdy.ai/ai/img_res/184b56f5720258c9b775148fadd305c1.jpg" alt="学生作品" class="w-full h-40 object-cover">
+<div class="absolute inset-0 bg-primary bg-opacity-70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+<span class="text-white font-medium">产品设计</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- 企业需求池 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">企业需求池</h3>
+<span class="px-3 py-1 bg-primary bg-opacity-10 text-primary text-sm rounded-full">86 个活跃需求</span>
+</div>
+<p class="text-gray-600 mb-6">汇总企业设计需求，提供精准匹配，促进校企合作与人才就业</p>
+<div class="space-y-4">
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-medium">UI/UX 设计师</h4>
+<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">高薪职位</span>
+</div>
+<p class="text-sm text-gray-600 mb-3">腾讯互娱 · 深圳</p>
+<p class="text-sm text-gray-600 mb-4">负责游戏界面设计，用户体验优化，需具备良好的视觉设计能力和交互设计思维</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Figma</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">3年+经验</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">本科及以上</span>
+</div>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-medium">品牌视觉设计师</h4>
+<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">实习机会</span>
+</div>
+<p class="text-sm text-gray-600 mb-3">阿里巴巴 · 杭州</p>
+<p class="text-sm text-gray-600 mb-4">负责品牌视觉形象设计，营销活动视觉设计，具备良好的创意思维和执行力</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Photoshop</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Illustrator</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">应届生</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 设计师档案 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">设计师档案</h3>
+<span class="px-3 py-1 bg-secondary bg-opacity-10 text-secondary text-sm rounded-full">1,256 位设计师</span>
+</div>
+<p class="text-gray-600 mb-6">专业设计师资源库，展示设计师作品集与专业技能，促进人才与机会对接</p>
+<div class="space-y-4">
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/bb12137e2b4ea635820df8a4f3975dd6.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">林雨晴</h4>
+<p class="text-sm text-gray-500">UI/UX 设计师 · 5年经验</p>
+</div>
+<div class="flex space-x-2">
+<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">AI 设计</span>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/9a7f20cd3896b9a369bb88b621b28dd7.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">张明宇</h4>
+<p class="text-sm text-gray-500">产品设计师 · 8年经验</p>
+</div>
+<div class="flex space-x-2">
+<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">3D 建模</span>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/2a409606c06bd32d448b35a2e35fab63.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">王思琪</h4>
+<p class="text-sm text-gray-500">品牌设计师 · 6年经验</p>
+</div>
+<div class="flex space-x-2">
+<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">插画设计</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI资源池 -->
+<section id="ai-tools" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between mb-16">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold mb-4">AI 资源池</h2>
+<p class="text-gray-600 max-w-2xl">汇聚前沿 AI 设计工具与资源，助力设计师提升效率与创新能力</p>
+</div>
+<div class="mt-6 md:mt-0">
+<button class="px-6 py-3 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">探索 AI 工具</button>
+</div>
+</div>
+<!-- AI工具库 -->
+<div class="mb-16">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-semibold">AI 工具库</h3>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<input type="text" placeholder="搜索工具" class="w-64 px-4 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+<div class="absolute right-3 top-2 w-6 h-6 flex items-center justify-center">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-sm text-gray-600">筛选：</span>
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+全部
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- 工具卡片 1 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition duration-300 hover:shadow-lg">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/f1feb28fb349fa968a813f2bfebc04c8.jpg" alt="AI 图像生成工具" class="w-full h-full object-cover">
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-lg font-semibold">Midjourney</h4>
+<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">热门推荐</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">AI 图像生成工具，通过文本描述创建高质量艺术作品与设计素材</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">图像生成</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">创意设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">概念艺术</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="flex">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-sm text-gray-500 ml-2">4.8</span>
+</div>
+<a href="#" class="text-primary text-sm font-medium">查看详情</a>
+</div>
+</div>
+</div>
+<!-- 工具卡片 2 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition duration-300 hover:shadow-lg">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/aebfc91717f2b76d37671030d25a428d.jpg" alt="AI UI 设计工具" class="w-full h-full object-cover">
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-lg font-semibold">Galileo AI</h4>
+<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">新上线</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">AI 驱动的 UI 设计工具，通过文本描述自动生成界面设计与原型</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">UI 设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">原型设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">界面生成</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="flex">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-yellow-400"></i>
+</div>
+<span class="text-sm text-gray-500 ml-2">4.2</span>
+</div>
+<a href="#" class="text-primary text-sm font-medium">查看详情</a>
+</div>
+</div>
+</div>
+<!-- 工具卡片 3 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition duration-300 hover:shadow-lg">
+<div class="h-48 overflow-hidden">
+<img src="https://public.readdy.ai/ai/img_res/69a55ad04270c829b4f9593d097b7de3.jpg" alt="AI 3D 建模工具" class="w-full h-full object-cover">
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<h4 class="text-lg font-semibold">Spline AI</h4>
+<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">专业工具</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">AI 辅助的 3D 设计工具，简化 3D 建模流程，支持快速创建 3D 资产</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">3D 建模</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">产品设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">场景构建</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="flex">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-sm text-gray-500 ml-2">4.6</span>
+</div>
+<a href="#" class="text-primary text-sm font-medium">查看详情</a>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center mt-8">
+<button class="px-6 py-2 border border-gray-300 !rounded-button text-gray-700 hover:bg-gray-50 transition whitespace-nowrap">查看更多工具</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- 行业资讯墙 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">行业资讯墙</h3>
+<a href="#" class="text-primary text-sm font-medium">查看全部</a>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img src="https://public.readdy.ai/ai/img_res/7926cb1f8105da8e37c1b0ffae76f08c.jpg" alt="行业活动" class="w-full h-full object-cover">
+</div>
+<div>
+<span class="text-xs text-gray-500">2025-04-02</span>
+<h4 class="font-medium mb-2">2025 全球 AI 设计峰会将于 5 月在上海举行</h4>
+<p class="text-sm text-gray-600 line-clamp-2">峰会将汇聚全球顶尖 AI 设计专家，探讨 AI 技术如何重塑设计行业未来，并展示最新的 AI 设计工具与应用案例。</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img src="https://public.readdy.ai/ai/img_res/9714200254a85bdaf69bed4e5a936532.jpg" alt="工具发布" class="w-full h-full object-cover">
+</div>
+<div>
+<span class="text-xs text-gray-500">2025-03-28</span>
+<h4 class="font-medium mb-2">Adobe 发布全新 AI 设计助手，革新创意工作流程</h4>
+<p class="text-sm text-gray-600 line-clamp-2">Adobe 最新发布的 AI 设计助手集成了多种智能功能，可自动生成设计方案、优化设计元素，大幅提升设计师工作效率。</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img src="https://public.readdy.ai/ai/img_res/492dc10edc38c772be51a53908c5eec8.jpg" alt="研究报告" class="w-full h-full object-cover">
+</div>
+<div>
+<span class="text-xs text-gray-500">2025-03-15</span>
+<h4 class="font-medium mb-2">最新研究：80% 的设计师已将 AI 工具纳入日常工作流程</h4>
+<p class="text-sm text-gray-600 line-clamp-2">根据最新行业调研，超过 80% 的专业设计师已经在日常工作中使用 AI 工具，主要应用于创意生成、图像处理和原型设计等环节。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 教学案例库 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">教学案例库</h3>
+<a href="#" class="text-primary text-sm font-medium">查看全部</a>
+</div>
+<div class="space-y-4">
+<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+<div class="flex items-center justify-between mb-3">
+<h4 class="font-medium flex items-center">
+<i class="ri-video-line mr-2 text-primary"></i>
+使用 Midjourney 创建品牌视觉系统
+</h4>
+<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">热门</span>
+</div>
+<p class="text-sm text-gray-600 mb-3">本教程详细讲解如何利用 AI 图像生成工具创建一套完整的品牌视觉系统，包括 logo、配色方案、图形元素等。</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<img src="https://public.readdy.ai/ai/img_res/c4a8068a8155b96957664e54deef237a.jpg" alt="讲师头像" class="w-8 h-8 rounded-full object-cover mr-2">
+<span class="text-sm text-gray-500">陈志远 · 资深品牌设计师</span>
+</div>
+<span class="text-sm text-gray-500">45 分钟</span>
+</div>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+<div class="flex items-center justify-between mb-3">
+<h4 class="font-medium flex items-center">
+<i class="ri-article-line mr-2 text-primary"></i>
+AI 辅助 UI 设计：从概念到原型
+</h4>
+<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">新课程</span>
+</div>
+<p class="text-sm text-gray-600 mb-3">探索如何将 AI 工具整合到 UI 设计流程中，提高设计效率与创新性，包含多个实际项目案例分析。</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<img src="https://public.readdy.ai/ai/img_res/2fbeb466a199188419479cc0c6e394b0.jpg" alt="讲师头像" class="w-8 h-8 rounded-full object-cover mr-2">
+<span class="text-sm text-gray-500">林雪梅 · UI/UX 设计总监</span>
+</div>
+<span class="text-sm text-gray-500">3 小时课程</span>
+</div>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+<div class="flex items-center justify-between mb-3">
+<h4 class="font-medium flex items-center">
+<i class="ri-file-paper-2-line mr-2 text-primary"></i>
+AI 与传统设计结合：案例分析与实践指南
+</h4>
+</div>
+<p class="text-sm text-gray-600 mb-3">通过多个成功案例，分析 AI 技术如何与传统设计方法结合，创造出更具创新性与效率的设计作品。</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<img src="https://public.readdy.ai/ai/img_res/aa7de1ae3be282df058acfb16adcbd38.jpg" alt="讲师头像" class="w-8 h-8 rounded-full object-cover mr-2">
+<span class="text-sm text-gray-500">王建国 · 创意总监</span>
+</div>
+<span class="text-sm text-gray-500">白皮书 · 32 页</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 任务交易系统 -->
+<section id="tasks" class="py-20 bg-gray-50">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between mb-16">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold mb-4">任务交易系统</h2>
+<p class="text-gray-600 max-w-2xl">连接企业需求与设计人才，提供安全高效的任务发布、匹配与交付平台</p>
+</div>
+<div class="mt-6 md:mt-0">
+<button class="px-6 py-3 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">发布任务</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+<!-- 任务发布 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">任务发布</h3>
+<span class="px-3 py-1 bg-primary bg-opacity-10 text-primary text-sm rounded-full">本周新增 42 个任务</span>
+</div>
+<p class="text-gray-600 mb-6">企业可快速发布设计需求，设置预算与时间要求，系统自动匹配合适人才</p>
+<div class="space-y-6">
+<div class="p-5 border border-gray-200 rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-medium mb-1">电商平台春季活动视觉设计</h4>
+<p class="text-sm text-gray-500">京东电商 · 3 天前发布</p>
+</div>
+<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">¥ 15,000</span>
+</div>
+<p class="text-sm text-gray-600 mb-4">设计京东电商平台 2025 年春季促销活动的整体视觉系统，包括首页 Banner、活动页面、商品详情页等，风格需统一，突出春季特色。</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">视觉设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">电商设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">活动设计</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<i class="ri-time-line text-gray-400 mr-1"></i>
+<span class="text-sm text-gray-500">截止时间：2025-04-20</span>
+</div>
+<button class="px-4 py-1 text-primary border border-primary !rounded-button text-sm hover:bg-primary hover:text-white transition whitespace-nowrap">查看详情</button>
+</div>
+</div>
+<div class="p-5 border border-gray-200 rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-medium mb-1">健康饮品品牌 VI 设计</h4>
+<p class="text-sm text-gray-500">元气森林 · 1 周前发布</p>
+</div>
+<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">¥ 30,000</span>
+</div>
+<p class="text-sm text-gray-600 mb-4">为元气森林新品类健康饮品设计完整的品牌视觉识别系统，包括 logo、包装设计、宣传物料等，风格清新自然，突出健康理念。</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">品牌设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">包装设计</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">VI 设计</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<i class="ri-time-line text-gray-400 mr-1"></i>
+<span class="text-sm text-gray-500">截止时间：2025-05-15</span>
+</div>
+<button class="px-4 py-1 text-primary border border-primary !rounded-button text-sm hover:bg-primary hover:text-white transition whitespace-nowrap">查看详情</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 智能匹配 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">智能匹配</h3>
+<span class="px-3 py-1 bg-secondary bg-opacity-10 text-secondary text-sm rounded-full">匹配成功率 92%</span>
+</div>
+<p class="text-gray-600 mb-6">基于 AI 算法，根据任务需求与设计师能力、风格、经验进行精准匹配</p>
+<div class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-medium">匹配因子分析</h4>
+<div class="flex items-center">
+<label class="custom-switch mr-2">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+<span class="text-sm text-gray-600">高级匹配</span>
+</div>
+</div>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm text-gray-600">技能匹配度</span>
+<span class="text-sm font-medium">85%</span>
+</div>
+<div class="w-full bg-gray-200 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm text-gray-600">风格契合度</span>
+<span class="text-sm font-medium">92%</span>
+</div>
+<div class="w-full bg-gray-200 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm text-gray-600">行业经验</span>
+<span class="text-sm font-medium">78%</span>
+</div>
+<div class="w-full bg-gray-200 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm text-gray-600">交付能力</span>
+<span class="text-sm font-medium">95%</span>
+</div>
+<div class="w-full bg-gray-200 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 95%"></div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h4 class="font-medium mb-4">为您推荐的设计师</h4>
+<div class="space-y-4">
+<div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/a0b845c95967c7b551cb8348e1e605d6.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">赵雅芝</h4>
+<p class="text-sm text-gray-500">电商视觉设计专家 · 8年经验</p>
+</div>
+<div class="flex items-center">
+<span class="px-2 py-1 bg-primary bg-opacity-10 text-primary text-xs rounded-full mr-2">匹配度 94%</span>
+<button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary">
+<i class="ri-message-2-line"></i>
+</button>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/eba80fdb952cc85a5b0702c54215a02b.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">刘天宇</h4>
+<p class="text-sm text-gray-500">品牌视觉设计师 · 6年经验</p>
+</div>
+<div class="flex items-center">
+<span class="px-2 py-1 bg-primary bg-opacity-10 text-primary text-xs rounded-full mr-2">匹配度 88%</span>
+<button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary">
+<i class="ri-message-2-line"></i>
+</button>
+</div>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+<img src="https://public.readdy.ai/ai/img_res/651e000a99f99f05bca82658361100e2.jpg" alt="设计师头像" class="w-12 h-12 rounded-full object-cover mr-4">
+<div class="flex-1">
+<h4 class="font-medium">周晓晴</h4>
+<p class="text-sm text-gray-500">UI/UX 设计师 · 5年经验</p>
+</div>
+<div class="flex items-center">
+<span class="px-2 py-1 bg-primary bg-opacity-10 text-primary text-xs rounded-full mr-2">匹配度 82%</span>
+<button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-primary">
+<i class="ri-message-2-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- 能力评级 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">能力评级</h3>
+<span class="px-3 py-1 bg-primary bg-opacity-10 text-primary text-sm rounded-full">平台认证体系</span>
+</div>
+<p class="text-gray-600 mb-6">基于任务完成质量、客户评价与专业评审，构建设计师能力评级体系</p>
+<div class="mb-8">
+<h4 class="font-medium mb-4">评级维度</h4>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-3">
+<i class="ri-star-line text-primary"></i>
+</div>
+<h5 class="font-medium">专业技能</h5>
+</div>
+<p class="text-sm text-gray-600">评估设计师在特定领域的专业技能水平与创新能力</p>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mr-3">
+<i class="ri-customer-service-2-line text-secondary"></i>
+</div>
+<h5 class="font-medium">服务质量</h5>
+</div>
+<p class="text-sm text-gray-600">评估设计师的沟通能力、响应速度与客户满意度</p>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mr-3">
+<i class="ri-time-line text-primary"></i>
+</div>
+<h5 class="font-medium">交付能力</h5>
+</div>
+<p class="text-sm text-gray-600">评估设计师的项目管理能力与按时交付质量</p>
+</div>
+<div class="p-4 border border-gray-200 rounded-lg">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mr-3">
+<i class="ri-group-line text-secondary"></i>
+</div>
+<h5 class="font-medium">协作能力</h5>
+</div>
+<p class="text-sm text-gray-600">评估设计师在团队协作中的表现与适应能力</p>
+</div>
+</div>
+<h4 class="font-medium mb-4">设计师等级</h4>
+<div class="flex items-center justify-between space-x-4">
+<div class="flex-1 p-3 border border-gray-200 rounded-lg text-center">
+<div class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full mx-auto mb-2">
+<i class="ri-seedling-line text-gray-600"></i>
+</div>
+<h5 class="font-medium mb-1">新秀设计师</h5>
+<p class="text-xs text-gray-500">初级认证</p>
+</div>
+<div class="flex-1 p-3 border border-gray-200 rounded-lg text-center">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full mx-auto mb-2">
+<i class="ri-award-line text-blue-600"></i>
+</div>
+<h5 class="font-medium mb-1">专业设计师</h5>
+<p class="text-xs text-gray-500">中级认证</p>
+</div>
+<div class="flex-1 p-3 border border-gray-200 rounded-lg text-center">
+<div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full mx-auto mb-2">
+<i class="ri-vip-crown-line text-purple-600"></i>
+</div>
+<h5 class="font-medium mb-1">资深设计师</h5>
+<p class="text-xs text-gray-500">高级认证</p>
+</div>
+<div class="flex-1 p-3 border border-gray-200 rounded-lg text-center">
+<div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full mx-auto mb-2">
+<i class="ri-vip-diamond-line text-yellow-600"></i>
+</div>
+<h5 class="font-medium mb-1">大师设计师</h5>
+<p class="text-xs text-gray-500">顶级认证</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 合同支付 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">合同支付</h3>
+<span class="px-3 py-1 bg-secondary bg-opacity-10 text-secondary text-sm rounded-full">安全交易保障</span>
+</div>
+<p class="text-gray-600 mb-6">提供标准化合同模板与安全支付系统，保障交易双方权益</p>
+<div class="mb-8">
+<h4 class="font-medium mb-4">交易流程</h4>
+<div class="relative">
+<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+<div class="relative z-10 flex mb-6">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full mr-4">
+<span class="text-white text-sm">1</span>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg flex-1">
+<h5 class="font-medium mb-2">需求确认</h5>
+<p class="text-sm text-gray-600">企业与设计师确认项目需求、交付内容、时间节点与报价</p>
+</div>
+</div>
+<div class="relative z-10 flex mb-6">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full mr-4">
+<span class="text-white text-sm">2</span>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg flex-1">
+<h5 class="font-medium mb-2">合同签署</h5>
+<p class="text-sm text-gray-600">系统生成标准化合同，双方在线签署，明确权责与交付标准</p>
+</div>
+</div>
+<div class="relative z-10 flex mb-6">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full mr-4">
+<span class="text-white text-sm">3</span>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg flex-1">
+<h5 class="font-medium mb-2">款项托管</h5>
+<p class="text-sm text-gray-600">企业将项目款项托管至平台，确保资金安全，设计师开始工作</p>
+</div>
+</div>
+<div class="relative z-10 flex mb-6">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full mr-4">
+<span class="text-white text-sm">4</span>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg flex-1">
+<h5 class="font-medium mb-2">成果交付</h5>
+<p class="text-sm text-gray-600">设计师按约定交付设计成果，企业确认验收质量</p>
+</div>
+</div>
+<div class="relative z-10 flex">
+<div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full mr-4">
+<span class="text-white text-sm">5</span>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg flex-1">
+<h5 class="font-medium mb-2">款项结算</h5>
+<p class="text-sm text-gray-600">企业确认验收后，平台将托管款项结算给设计师</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h4 class="font-medium mb-4">支付方式</h4>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center p-3 border border-gray-200 rounded-lg">
+<div class="w-8 h-8 flex items-center justify-center mr-3">
+<i class="ri-alipay-fill text-blue-500 ri-lg"></i>
+</div>
+<span class="font-medium">支付宝</span>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded-lg">
+<div class="w-8 h-8 flex items-center justify-center mr-3">
+<i class="ri-wechat-pay-fill text-green-500 ri-lg"></i>
+</div>
+<span class="font-medium">微信支付</span>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded-lg">
+<div class="w-8 h-8 flex items-center justify-center mr-3">
+<i class="ri-bank-card-fill text-gray-700 ri-lg"></i>
+</div>
+<span class="font-medium">银行转账</span>
+</div>
+<div class="flex items-center p-3 border border-gray-200 rounded-lg">
+<div class="w-8 h-8 flex items-center justify-center mr-3">
+<i class="ri-paypal-fill text-blue-700 ri-lg"></i>
+</div>
+<span class="font-medium">PayPal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 数据驾驶舱 -->
+<section id="dashboard" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between mb-16">
+<div>
+<h2 class="text-3xl md:text-4xl font-bold mb-4">数据驾驶舱</h2>
+<p class="text-gray-600 max-w-2xl">可视化展示平台运营数据与行业趋势，为决策提供数据支持</p>
+</div>
+<div class="mt-6 md:mt-0">
+<button class="px-6 py-3 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">查看完整报告</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-white rounded-lg shadow-lg p-6 border border-gray-100">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold">平台设计师</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-primary bg-opacity-10 rounded-full">
+<i class="ri-user-line text-primary"></i>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold">12,568</span>
+<span class="ml-2 text-green-500 flex items-center text-sm">
+<i class="ri-arrow-up-line mr-1"></i>
+12.4%
+</span>
+</div>
+<p class="text-gray-500 text-sm mt-2">较上月增长</p>
+</div>
+<div class="bg-white rounded-lg shadow-lg p-6 border border-gray-100">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold">完成任务</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full">
+<i class="ri-task-line text-secondary"></i>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold">3,842</span>
+<span class="ml-2 text-green-500 flex items-center text-sm">
+<i class="ri-arrow-up-line mr-1"></i>
+8.7%
+</span>
+</div>
+<p class="text-gray-500 text-sm mt-2">本季度累计</p>
+</div>
+<div class="bg-white rounded-lg shadow-lg p-6 border border-gray-100">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-semibold">交易金额</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-primary bg-opacity-10 rounded-full">
+<i class="ri-money-cny-circle-line text-primary"></i>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold">¥ 15.6M</span>
+<span class="ml-2 text-green-500 flex items-center text-sm">
+<i class="ri-arrow-up-line mr-1"></i>
+15.2%
+</span>
+</div>
+<p class="text-gray-500 text-sm mt-2">本季度累计</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+<!-- 人才流动热力图 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">人才流动热力图</h3>
+<div class="flex items-center space-x-2">
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+<span>全国</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+<span>近 30 天</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+</div>
+</div>
+<div class="h-80 bg-gray-50 rounded flex items-center justify-center" style="background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png'); background-size: cover; background-position: center;">
+<!-- 地图占位 -->
+</div>
+<div class="flex justify-between mt-4">
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+<span class="text-sm text-gray-600">UI/UX 设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+<span class="text-sm text-gray-600">产品设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+<span class="text-sm text-gray-600">视觉设计</span>
+</div>
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+<span class="text-sm text-gray-600">3D 设计</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 工具使用排行榜 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">AI 工具使用排行榜</h3>
+<div class="flex items-center space-x-2">
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+<span>近 30 天</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+</div>
+</div>
+<div id="tool-usage-chart" class="h-80"></div>
+</div>
+</div>
+</div>
+<!-- 需求响应效率看板 -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-semibold">需求响应效率看板</h3>
+<div class="flex items-center space-x-2">
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+<span>按行业</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+<div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center cursor-pointer">
+<span>近 90 天</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</div>
+</div>
+</div>
+<div id="response-efficiency-chart" class="h-80"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 加入我们 -->
+<section class="py-20 bg-primary text-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center">
+<h2 class="text-3xl md:text-4xl font-bold mb-6">加入 AI 设计联盟平台</h2>
+<p class="text-xl opacity-90 mb-10">连接设计人才与 AI 技术，共同探索设计行业的未来</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+<div class="bg-white bg-opacity-10 rounded-lg p-6">
+<div class="w-16 h-16 flex items-center justify-center bg-white bg-opacity-20 rounded-full mx-auto mb-6">
+<i class="ri-user-line ri-xl text-white"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">设计师</h3>
+<p class="opacity-80 mb-6">展示作品、接取任务、提升技能，拓展职业发展空间</p>
+<button class="px-6 py-2 bg-white text-primary font-medium !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">注册设计师账号</button>
+</div>
+<div class="bg-white bg-opacity-10 rounded-lg p-6">
+<div class="w-16 h-16 flex items-center justify-center bg-white bg-opacity-20 rounded-full mx-auto mb-6">
+<i class="ri-building-4-line ri-xl text-white"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">企业</h3>
+<p class="opacity-80 mb-6">发布需求、寻找人才、对接资源，提升设计效率与创新力</p>
+<button class="px-6 py-2 bg-white text-primary font-medium !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">注册企业账号</button>
+</div>
+<div class="bg-white bg-opacity-10 rounded-lg p-6">
+<div class="w-16 h-16 flex items-center justify-center bg-white bg-opacity-20 rounded-full mx-auto mb-6">
+<i class="ri-graduation-cap-line ri-xl text-white"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4">院校</h3>
+<p class="opacity-80 mb-6">展示学生作品、对接企业资源、提升教学质量</p>
+<button class="px-6 py-2 bg-white text-primary font-medium !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">注册院校账号</button>
+</div>
+</div>
+<div class="max-w-xl mx-auto">
+<h3 class="text-xl font-semibold mb-6">订阅平台动态</h3>
+<div class="flex">
+<input type="email" placeholder="输入您的邮箱地址" class="flex-1 px-4 py-3 rounded-l-lg focus:outline-none text-gray-800 border-none">
+<button class="px-6 py-3 bg-secondary text-white !rounded-r-lg !rounded-l-none hover:bg-opacity-90 transition whitespace-nowrap">订阅</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 页脚 -->
+<footer class="bg-gray-900 text-white py-12">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+<div>
+<div class="mb-6">
+<img src="https://static.readdy.ai/image/beab245664877a43ff0ae65d7e3defd5/a473f39df77406ec60f8579a0dcab1d1.png" alt="亿思AI" class="h-10">
+</div>
+<p class="text-gray-400 mb-6">亿思（湖北省）科技有限公司致力于连接设计师与 AI 技术，打造创新设计生态系统</p>
+<div class="flex space-x-4">
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+<i class="ri-weibo-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+<i class="ri-wechat-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+<i class="ri-linkedin-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+<i class="ri-instagram-fill"></i>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">平台功能</h4>
+<ul class="space-y-2">
+<li><a href="#talent" class="text-gray-400 hover:text-white transition">人才资源池</a></li>
+<li><a href="#ai-tools" class="text-gray-400 hover:text-white transition">AI 资源池</a></li>
+<li><a href="#tasks" class="text-gray-400 hover:text-white transition">任务交易系统</a></li>
+<li><a href="#dashboard" class="text-gray-400 hover:text-white transition">数据驾驶舱</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">行业资讯</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">关于我们</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition">平台介绍</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">团队成员</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">合作伙伴</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">加入我们</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">联系方式</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-4">帮助中心</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition">常见问题</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">使用指南</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">服务条款</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">隐私政策</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">投诉建议</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-500 mb-4 md:mb-0">© 2025 亿思（湖北省）科技有限公司. 保留所有权利.</p>
+<div class="flex space-x-6">
+<a href="#" class="text-gray-500 hover:text-white transition">服务条款</a>
+<a href="#" class="text-gray-500 hover:text-white transition">隐私政策</a>
+<a href="#" class="text-gray-500 hover:text-white transition">Cookie 政策</a>
+</div>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script>
+// 工具使用排行榜图表
+const toolUsageChart = echarts.init(document.getElementById('tool-usage-chart'));
+const toolUsageOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+axisPointer: {
+type: 'shadow'
+},
+backgroundColor: 'rgba(255, 255, 255, 0.9)',
+borderColor: '#f0f0f0',
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '3%',
+top: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+},
+splitLine: {
+lineStyle: {
+color: '#f0f0f0'
+}
+}
+},
+yAxis: {
+type: 'category',
+data: ['Spline AI', 'Adobe Firefly', 'Figma AI', 'Galileo AI', 'Midjourney', 'DALL-E 3', 'Stable Diffusion'],
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+}
+},
+series: [
+{
+name: '使用人数',
+type: 'bar',
+data: [2100, 2400, 3200, 3800, 4500, 5200, 6800],
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)',
+borderRadius: 4
+}
+}
+]
+};
+toolUsageChart.setOption(toolUsageOption);
+// 需求响应效率看板图表
+const responseEfficiencyChart = echarts.init(document.getElementById('response-efficiency-chart'));
+const responseEfficiencyOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.9)',
+borderColor: '#f0f0f0',
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+data: ['平均响应时间(小时)', '平均完成时间(天)', '客户满意度(%)'],
+bottom: 0,
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+left: '3%',
+right: '4%',
+bottom: '10%',
+top: '3%',
+containLabel: true
+},
+xAxis: {
+type: 'category',
+boundaryGap: false,
+data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月'],
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+}
+},
+yAxis: [
+{
+type: 'value',
+name: '时间',
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937',
+formatter: '{value}'
+},
+splitLine: {
+lineStyle: {
+color: '#f0f0f0'
+}
+}
+},
+{
+type: 'value',
+name: '满意度',
+min: 80,
+max: 100,
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937',
+formatter: '{value}%'
+},
+splitLine: {
+show: false
+}
+}
+],
+series: [
+{
+name: '平均响应时间(小时)',
+type: 'line',
+data: [4.2, 3.8, 3.5, 3.2, 2.8, 2.5, 2.3, 2.0, 1.8],
+smooth: true,
+lineStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+}, {
+offset: 1, color: 'rgba(87, 181, 231, 0.01)'
+}]
+}
+}
+},
+{
+name: '平均完成时间(天)',
+type: 'line',
+data: [7.8, 7.5, 7.2, 6.8, 6.5, 6.2, 5.8, 5.5, 5.2],
+smooth: true,
+lineStyle: {
+color: 'rgba(141, 211, 199, 1)'
+},
+itemStyle: {
+color: 'rgba(141, 211, 199, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(141, 211, 199, 0.2)'
+}, {
+offset: 1, color: 'rgba(141, 211, 199, 0.01)'
+}]
+}
+}
+},
+{
+name: '客户满意度(%)',
+type: 'line',
+yAxisIndex: 1,
+data: [88, 89, 90, 91, 92, 93, 94, 95, 96],
+smooth: true,
+lineStyle: {
+color: 'rgba(251, 191, 114, 1)'
+},
+itemStyle: {
+color: 'rgba(251, 191, 114, 1)'
+}
+}
+]
+};
+responseEfficiencyChart.setOption(responseEfficiencyOption);
+// 响应式调整图表大小
+window.addEventListener('resize', function() {
+toolUsageChart.resize();
+responseEfficiencyChart.resize();
+});
+</script>
+</body>
+</html>

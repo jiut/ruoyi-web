@@ -9,6 +9,7 @@ import storelayout from '@/views/store/layout.vue'
 import pptlayout from '@/views/ppt/layout.vue'
 import musiclayout from '@/views/suno/layout.vue'
 import knowledgelayout from '@/views/knowledge/layout.vue'
+import talentlayout from '@/views/talent/layout.vue'
 
 const routes: RouteRecordRaw[] = [
   // 首页
@@ -186,6 +187,56 @@ const routes: RouteRecordRaw[] = [
     path: '/500',
     name: '500',
     component: () => import('@/views/exception/500/index.vue'),
+  },
+
+  // 人才模块
+  {
+    path: '/talent',
+    name: 'TalentRoot',
+    component: talentlayout,
+    redirect: '/talent/works',
+    children: [
+      {
+        path: 'works',
+        name: 'Works',
+        component: () => import('@/views/talent/works/index.vue'),
+      },
+      {
+        path: 'works/:id',
+        name: 'WorkDetail',
+        component: () => import('@/views/talent/works/detail.vue'),
+      },
+      {
+        path: 'schools',
+        name: 'Schools',
+        component: () => import('@/views/talent/schools/index.vue'),
+      },
+      {
+        path: 'schools/:id',
+        name: 'SchoolDetail',
+        component: () => import('@/views/talent/schools/detail.vue'),
+      },
+      {
+        path: 'jobs',
+        name: 'Jobs',
+        component: () => import('@/views/talent/jobs/index.vue'),
+      },
+      {
+        path: 'jobs/:id',
+        name: 'JobDetail',
+        component: () => import('@/views/talent/jobs/detail.vue'),
+      },
+      {
+        path: 'designers',
+        name: 'Designers',
+        component: () => import('@/views/talent/designers/index.vue'),
+      },
+      {
+        path: 'designers/:id',
+        name: 'DesignerDetail',
+        component: () => import('@/views/talent/designers/detail.vue'),
+      },
+    ],
   },
 
   {
