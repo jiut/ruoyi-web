@@ -189,54 +189,95 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/exception/500/index.vue'),
   },
 
+  // 技能标签演示页面
+  {
+    path: '/test/skill-tags',
+    name: 'SkillTagDemo',
+    component: () => import('@/views/test/skill-tag-demo.vue'),
+    meta: { title: '技能标签演示' }
+  },
+
   // 人才模块
   {
     path: '/talent',
     name: 'TalentRoot',
-    component: talentlayout,
-    redirect: '/talent/works',
+    component: () => import('@/views/talent/layout.vue'),
+    redirect: '/talent/jobs',
     children: [
-      {
-        path: 'works',
-        name: 'Works',
-        component: () => import('@/views/talent/works/index.vue'),
-      },
-      {
-        path: 'works/:id',
-        name: 'WorkDetail',
-        component: () => import('@/views/talent/works/detail.vue'),
-      },
-      {
-        path: 'schools',
-        name: 'Schools',
-        component: () => import('@/views/talent/schools/index.vue'),
-      },
-      {
-        path: 'schools/:id',
-        name: 'SchoolDetail',
-        component: () => import('@/views/talent/schools/detail.vue'),
-      },
       {
         path: 'jobs',
         name: 'Jobs',
         component: () => import('@/views/talent/jobs/index.vue'),
+        meta: { title: '企业需求池' }
       },
       {
         path: 'jobs/:id',
         name: 'JobDetail',
         component: () => import('@/views/talent/jobs/detail.vue'),
+        meta: { title: '岗位详情' }
       },
       {
         path: 'designers',
         name: 'Designers',
         component: () => import('@/views/talent/designers/index.vue'),
+        meta: { title: '设计师档案' }
       },
       {
         path: 'designers/:id',
         name: 'DesignerDetail',
         component: () => import('@/views/talent/designers/detail.vue'),
+        meta: { title: '设计师详情' }
       },
-    ],
+      // {
+      //   path: 'works',
+      //   name: 'Works',
+      //   component: () => import('@/views/talent/works/index.vue'),
+      //   meta: { title: '学生作品库' }
+      // },
+      // {
+      //   path: 'works/:id',
+      //   name: 'WorkDetail',
+      //   component: () => import('@/views/talent/works/detail.vue'),
+      //   meta: { title: '作品详情' }
+      // },
+      // {
+      //   path: 'schools',
+      //   name: 'Schools',
+      //   component: () => import('@/views/talent/schools/index.vue'),
+      //   meta: { title: '院校数据库' }
+      // },
+      // {
+      //   path: 'schools/:id',
+      //   name: 'SchoolDetail',
+      //   component: () => import('@/views/talent/schools/detail.vue'),
+      //   meta: { title: '院校详情' }
+      // },
+      // {
+      //   path: 'profile',
+      //   name: 'Profile',
+      //   redirect: '/talent/profile/designer',
+      //   children: [
+      //     {
+      //       path: 'designer',
+      //       name: 'DesignerProfile',
+      //       component: () => import('@/views/talent/profile/designer.vue'),
+      //       meta: { title: '设计师档案' }
+      //     },
+      //     {
+      //       path: 'enterprise',
+      //       name: 'EnterpriseProfile',
+      //       component: () => import('@/views/talent/profile/enterprise.vue'),
+      //       meta: { title: '企业档案' }
+      //     },
+      //     {
+      //       path: 'school',
+      //       name: 'SchoolProfile',
+      //       component: () => import('@/views/talent/profile/school.vue'),
+      //       meta: { title: '院校档案' }
+      //     }
+      //   ]
+      // }
+    ]
   },
 
   {

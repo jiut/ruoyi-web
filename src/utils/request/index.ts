@@ -25,30 +25,59 @@ function http<T = any>(
 ) {
   const successHandler = (res: AxiosResponse<Response<T>>) => {
     const authStore = useAuthStore()
-    if (res.data.code === 200 ){
+    if (res.data.code === 200) {
       return res.data
-    }else{
+    } else if (res.data.code === 401) {
+      // 只有认证失败时才清除token和刷新页面
       authStore.removeToken()
       window.location.reload()
-    } 
-    return Promise.reject(res.data)
+    } else {
+      // 其他错误直接抛出，不刷新页面
+      return Promise.reject(res.data)
+          }
   }
 
   const failHandler = (error: Response<Error>) => {
-    alert("failHandler")
+    console.error('请求失败:', error)
     afterRequest?.()
-    return { error: true, message: error?.msg || 'Error' };
+
+    // 检查是否是网络错误或服务器错误
+    if (error.response) {
+      // 服务器响应了错误状态码
+      const { status, data } = error.response
+      if (status === 401) {
+        const authStore = useAuthStore()
+        authStore.removeToken()
+        window.location.reload()
+      }
+      return Promise.reject(data || error)
+    } else if (error.request) {
+      // 请求发出了但没有收到响应
+      return Promise.reject({ error: true, message: '网络请求失败，请检查网络连接' })
+    } else {
+      // 其他错误
+      return Promise.reject({ error: true, message: error.message || '请求失败' })
+    }
   }
 
   beforeRequest?.()
 
-  method = method || 'GET'
+  method = (method || 'GET').toUpperCase()
 
   const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
 
-  return method === 'GET'
-    ? request.get(url, { params, signal, onDownloadProgress }).then(successHandler, failHandler)
-    : request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+  if (method === 'GET') {
+    return request.get(url, { params, signal, onDownloadProgress }).then(successHandler, failHandler)
+  } else if (method === 'POST') {
+    return request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+  } else if (method === 'PUT') {
+    return request.put(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+  } else if (method === 'DELETE') {
+    return request.delete(url, { params, headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+  } else {
+    // 默认使用POST
+    return request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+  }
 }
 
 export function get<T = any>(

@@ -446,16 +446,6 @@ input[type="number"]::-webkit-outer-spin-button {
               <div class="dropdown-item">学生评分优先</div>
             </div>
           </div>
-          <div class="relative" id="viewDropdown">
-            <button class="flex items-center justify-between px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-sm text-gray-300 hover:bg-gray-700/50 !rounded-button whitespace-nowrap">
-              <span>视图</span>
-              <i class="ri-arrow-down-s-line ml-2"></i>
-            </button>
-            <div class="dropdown-content rounded-lg mt-2 right-0">
-              <div class="dropdown-item active">网格视图</div>
-              <div class="dropdown-item">列表视图</div>
-            </div>
-          </div>
           <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white !rounded-button whitespace-nowrap" title="收藏筛选条件">
             <i class="ri-bookmark-line"></i>
           </button>
@@ -1812,30 +1802,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownButton = sortDropdown.querySelector('button span');
 
     sortDropdown.addEventListener('click', function(e) {
-      if (e.target.closest('button')) {
-        dropdownContent.classList.toggle('show');
-        e.stopPropagation();
-      }
-    });
-
-    dropdownItems.forEach(item => {
-      item.addEventListener('click', function() {
-        dropdownButton.textContent = this.textContent;
-        dropdownItems.forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        dropdownContent.classList.remove('show');
-      });
-    });
-  }
-
-  // 视图下拉菜单
-  const viewDropdown = document.getElementById('viewDropdown');
-  if (viewDropdown) {
-    const dropdownContent = viewDropdown.querySelector('.dropdown-content');
-    const dropdownItems = dropdownContent.querySelectorAll('.dropdown-item');
-    const dropdownButton = viewDropdown.querySelector('button span');
-
-    viewDropdown.addEventListener('click', function(e) {
       if (e.target.closest('button')) {
         dropdownContent.classList.toggle('show');
         e.stopPropagation();

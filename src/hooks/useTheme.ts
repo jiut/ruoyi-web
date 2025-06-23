@@ -23,10 +23,16 @@ export function useTheme() {
   const themeOverrides = computed<GlobalThemeOverrides>(() => {
     if (isDark.value) {
       return {
-        common: {},
+        common: {
+          fontSize: '16px', // 覆盖默认的 14px
+        },
       }
     }
-    return {}
+    return {
+      common: {
+        fontSize: '16px', // 覆盖默认的 14px
+      },
+    }
   })
   const { isMobile } = useBasicLayout()
   watch(
@@ -52,3 +58,4 @@ export function useTheme() {
 
   return { theme, themeOverrides }
 }
+

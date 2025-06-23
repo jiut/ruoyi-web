@@ -1,0 +1,466 @@
+/* 人才模块专用样式 */
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css');
+
+/* Remixicon 图标基础样式 */
+:where([class^="ri-"])::before {
+  content: "\f3c2";
+}
+
+/* 基础样式 */
+.talent-page {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: #000000;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* 玻璃效果卡片 */
+.glass-card {
+  background: rgba(28, 28, 30, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 抽屉覆盖层 */
+.drawer-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* 抽屉样式 - 不带glass-card时的基础样式 */
+.drawer {
+  border-left: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* 抽屉的玻璃效果 - 当同时使用drawer和glass-card类时 */
+.drawer.glass-card {
+  background: rgba(28, 28, 30, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* 自定义滚动条 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(28, 28, 30, 0.5);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 99, 102, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 99, 102, 0.5);
+}
+
+/* 筛选卡片 */
+.filter-card {
+  background: rgba(28, 28, 30, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 职位卡片 */
+.job-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(28, 28, 30, 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 搜索输入框 */
+.search-input {
+  background: rgba(28, 28, 30, 0.8);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+}
+
+.search-input:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* 渐变文字 */
+.gradient-text {
+  background: linear-gradient(45deg, #007AFF, #AF52DE, #FF2D92);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 公司Logo */
+.company-logo {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
+  border: 1px solid rgba(99, 99, 102, 0.1);
+}
+
+/* 技能标签基础样式已移至 skill-tags.css，这里移除避免冲突 */
+
+/* 自定义复选框 */
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.custom-checkbox:checked {
+  background-color: #0a84ff;
+  border-color: #0a84ff;
+}
+
+.custom-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 自定义单选按钮 */
+.custom-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 50%;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.custom-radio:checked {
+  border-color: #0a84ff;
+}
+
+.custom-radio:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #0a84ff;
+}
+
+/* 自定义滑块 */
+.custom-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 3px;
+  outline: none;
+}
+
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0a84ff;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.custom-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0a84ff;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* 自定义开关 */
+.custom-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-left: 8px;
+}
+
+.custom-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(148, 163, 184, 0.2);
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .switch-slider {
+  background-color: #0a84ff;
+}
+
+input:checked + .switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* 自定义选择框 */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a1a1aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  background-color: rgba(28, 28, 30, 0.8);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+}
+
+.custom-select:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+
+/* 职位详情模态框 */
+.job-detail-modal {
+  background: rgba(15, 23, 42, 0.95);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* 分页按钮 */
+.pagination-button {
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(.active):not(:disabled) {
+  background-color: rgba(10, 132, 255, 0.2);
+}
+
+/* 发光边框效果 */
+.glow-border {
+  position: relative;
+}
+
+.glow-border::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glow-border:hover::after {
+  opacity: 1;
+}
+
+/* 卡片悬停效果 */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 霓虹按钮效果 */
+.neon-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.neon-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #0a84ff, #bf5af2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.neon-button:hover::before {
+  opacity: 0.2;
+}
+
+.neon-button:active {
+  transform: scale(0.98);
+}
+
+/* 分割线 */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0, 122, 255, 0), rgba(0, 122, 255, 0.5), rgba(175, 82, 222, 0.5), rgba(0, 122, 255, 0));
+}
+
+/* 导航按钮 */
+.nav-button {
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background: rgba(10, 132, 255, 0.1);
+  color: #0a84ff;
+}
+
+.nav-button.active {
+  background: rgba(10, 132, 255, 0.2);
+  color: #0a84ff;
+}
+
+/* 下拉菜单 */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background: rgba(28, 28, 30, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* 面包屑分隔符 */
+.breadcrumb-separator {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+/* 数字输入框样式修复 */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 响应式设计增强 */
+@media (max-width: 768px) {
+
+  .job-card {
+    margin-bottom: 1rem;
+  }
+
+  .filter-card {
+    position: static;
+    margin-bottom: 1.5rem;
+  }
+
+  .glass-card {
+    padding: 1rem;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Primary 颜色类定义 */
+.text-primary {
+  color: #0a84ff;
+}
+
+.bg-primary {
+  background-color: #0a84ff;
+}
+
+.bg-primary\/10 {
+  background-color: rgba(10, 132, 255, 0.1);
+}
+
+.bg-primary\/20 {
+  background-color: rgba(10, 132, 255, 0.2);
+}
+
+.border-primary {
+  border-color: #0a84ff;
+}
+
+.border-primary\/30 {
+  border-color: rgba(10, 132, 255, 0.3);
+}
+
+/* 技能标签颜色变体已移至 skill-tags.css，使用分类系统 */

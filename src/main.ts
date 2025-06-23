@@ -11,6 +11,7 @@ import 'ant-design-vue/dist/reset.css'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import '@/styles/skill-tags.css' // 导入技能标签样式
 
 async function bootstrap() {
   const app = createApp(App)

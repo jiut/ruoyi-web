@@ -1,30 +1,31 @@
 <template>
+  <!-- 统一顶栏组件 -->
   <header class="glass-card sticky top-0 z-50">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
         <!-- 左侧：导航和面包屑 -->
         <div class="flex items-center space-x-4">
           <!-- 返回按钮 -->
-          <router-link
-            to="/"
-            class="flex items-center text-gray-300 hover:text-primary transition-colors"
+          <button
+            @click="goBack"
+            class="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
           >
             <i class="ri-arrow-left-line ri-lg mr-2"></i>
             <span class="hidden sm:inline">返回</span>
-          </router-link>
+          </button>
 
           <!-- 分隔线 -->
           <div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
 
           <!-- Logo -->
           <router-link to="/" class="flex items-center">
-            <h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block">星海人才</h1>
-            <h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden">星海</h1>
+            <h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block mb-0">星海人才</h1>
+            <h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden mb-0">星海</h1>
           </router-link>
 
           <!-- 面包屑导航 -->
           <nav class="hidden md:flex items-center space-x-2 text-sm">
-            <router-link to="/" class="text-gray-400 hover:text-primary transition-colors">首页</router-link>
+            <router-link to="/" class="text-gray-400 hover:text-blue-400 transition-colors">首页</router-link>
             <span class="breadcrumb-separator">/</span>
             <span class="text-white">{{ currentPageTitle }}</span>
           </nav>
@@ -35,28 +36,28 @@
           <router-link
             to="/talent/schools"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            :class="{ active: $route.path.includes('/talent/schools') }"
+            active-class="active"
           >
             院校数据库
           </router-link>
           <router-link
             to="/talent/works"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            :class="{ active: $route.path.includes('/talent/works') }"
+            active-class="active"
           >
             学生作品库
           </router-link>
           <router-link
             to="/talent/jobs"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            :class="{ active: $route.path.includes('/talent/jobs') }"
+            active-class="active"
           >
             企业需求池
           </router-link>
           <router-link
             to="/talent/designers"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            :class="{ active: $route.path.includes('/talent/designers') }"
+            active-class="active"
           >
             设计师档案
           </router-link>
@@ -69,14 +70,14 @@
             <div class="search-input flex items-center rounded-lg overflow-hidden">
               <input
                 type="text"
-                :placeholder="searchPlaceholder"
-                class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
                 v-model="searchQuery"
                 @keypress.enter="handleSearch"
+                placeholder="搜索职位、公司、技能..."
+                class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
               >
               <button
-                class="w-10 h-10 flex items-center justify-center text-primary"
                 @click="handleSearch"
+                class="w-10 h-10 flex items-center justify-center text-blue-400"
               >
                 <i class="ri-search-line"></i>
               </button>
@@ -85,17 +86,17 @@
 
           <!-- 移动端搜索按钮 -->
           <button
-            class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden"
             @click="toggleMobileSearch"
+            class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden"
           >
             <i class="ri-search-line"></i>
           </button>
 
           <!-- 通知 -->
-          <div class="relative">
+          <div class="relative" ref="notificationRef">
             <button
+              @click="toggleNotifications"
               class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
-              @click="toggleNotification"
             >
               <i class="ri-notification-3-line"></i>
               <!-- 未读消息小红点 -->
@@ -109,98 +110,97 @@
             </button>
 
             <!-- 通知下拉菜单 -->
-            <transition name="dropdown">
-              <div
-                v-if="showNotification"
-                class="dropdown-menu rounded-lg mt-2 right-0 w-80"
-                @click.stop
-              >
-                <div class="p-4 border-b border-gray-700">
-                  <h3 class="text-lg font-medium">通知中心</h3>
-                </div>
-                <div class="max-h-64 overflow-y-auto">
-                  <div
-                    v-for="notification in notifications"
-                    :key="notification.id"
-                    class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800"
-                  >
-                    <div class="flex items-start">
-                      <div
-                        class="w-2 h-2 rounded-full mt-2 mr-3"
-                        :class="notification.read ? 'bg-gray-500' : 'bg-primary'"
-                      ></div>
-                      <div>
-                        <p class="text-sm">{{ notification.content }}</p>
-                        <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
-                      </div>
+            <div
+              v-show="showNotifications"
+              class="dropdown-menu rounded-lg mt-2 right-0 w-80"
+            >
+              <div class="p-4 border-b border-gray-700">
+                <h3 class="text-lg font-medium">通知中心</h3>
+              </div>
+              <div class="max-h-64 overflow-y-auto">
+                <div
+                  v-for="notification in notifications"
+                  :key="notification.id"
+                  class="p-3 hover:bg-gray-800/50 cursor-pointer border-b border-gray-800"
+                >
+                  <div class="flex items-start">
+                    <div
+                      class="w-2 h-2 rounded-full mt-2 mr-3"
+                      :class="notification.dotColor"
+                    ></div>
+                    <div>
+                      <p class="text-sm">{{ notification.message }}</p>
+                      <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
                     </div>
                   </div>
                 </div>
-                <div class="p-3 border-t border-gray-700 text-center">
-                  <a href="/notifications" class="text-sm text-primary hover:text-primary/80">查看所有通知</a>
-                </div>
               </div>
-            </transition>
+              <div class="p-3 border-t border-gray-700 text-center">
+                <router-link to="/notifications" class="text-sm text-blue-400 hover:text-blue-300">
+                  查看所有通知
+                </router-link>
+              </div>
+            </div>
           </div>
 
           <!-- 用户菜单 -->
-          <div class="relative">
+          <div class="relative" ref="userMenuRef">
             <button
-              class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors"
               @click="toggleUserMenu"
+              class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors"
             >
-              <div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                {{ userInitial }}
+              <div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                {{ userName.charAt(0) }}
               </div>
               <span class="hidden xl:inline text-white text-sm">{{ userName }}</span>
               <i class="ri-arrow-down-s-line text-gray-400 hidden xl:block"></i>
             </button>
 
             <!-- 用户下拉菜单 -->
-            <transition name="dropdown">
-              <div
-                v-if="showUserMenu"
-                class="dropdown-menu rounded-lg mt-2 right-0 w-48"
-                @click.stop
-              >
-                <div class="p-3 border-b border-gray-700">
-                  <div class="flex items-center">
-                    <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold mr-3">
-                      {{ userInitial }}
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium">{{ userName }}</p>
-                      <p class="text-xs text-gray-400">{{ userRole }}</p>
-                    </div>
+            <div
+              v-show="showUserMenu"
+              class="dropdown-menu rounded-lg mt-2 right-0 w-48"
+            >
+              <div class="p-3 border-b border-gray-700">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white font-bold mr-3">
+                    {{ userName.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium">{{ userName }}</p>
+                    <p class="text-xs text-gray-400">{{ userRole }}</p>
                   </div>
                 </div>
-                <div class="py-2">
-                  <a href="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                    <i class="ri-user-line mr-3"></i>
-                    个人资料
-                  </a>
-                  <a href="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                    <i class="ri-settings-3-line mr-3"></i>
-                    账户设置
-                  </a>
-                  <a href="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                    <i class="ri-bookmark-line mr-3"></i>
-                    我的收藏
-                  </a>
-                  <div class="border-t border-gray-700 mt-2"></div>
-                  <a href="/logout" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400">
-                    <i class="ri-logout-box-line mr-3"></i>
-                    退出登录
-                  </a>
-                </div>
               </div>
-            </transition>
+              <div class="py-2">
+                <router-link to="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+                  <i class="ri-user-line mr-3"></i>
+                  个人资料
+                </router-link>
+                <router-link to="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+                  <i class="ri-settings-3-line mr-3"></i>
+                  账户设置
+                </router-link>
+                <router-link to="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+                  <i class="ri-bookmark-line mr-3"></i>
+                  我的收藏
+                </router-link>
+                <div class="border-t border-gray-700 mt-2"></div>
+                <button
+                  @click="handleLogout"
+                  class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400 w-full text-left"
+                >
+                  <i class="ri-logout-box-line mr-3"></i>
+                  退出登录
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- 移动端菜单按钮 -->
           <button
-            class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden"
             @click="toggleMobileMenu"
+            class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden"
           >
             <i class="ri-menu-line"></i>
           </button>
@@ -209,134 +209,150 @@
     </div>
 
     <!-- 移动端搜索栏 -->
-    <transition name="slide-down">
-      <div v-if="showMobileSearch" class="border-t border-gray-800 p-4 md:hidden">
-        <div class="search-input flex items-center rounded-lg overflow-hidden">
-          <input
-            type="text"
-            :placeholder="searchPlaceholder"
-            class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
-            v-model="searchQuery"
-            @keypress.enter="handleSearch"
-          >
-          <button
-            class="w-10 h-10 flex items-center justify-center text-primary"
-            @click="handleSearch"
-          >
-            <i class="ri-search-line"></i>
-          </button>
-        </div>
+    <div
+      v-show="showMobileSearch"
+      class="border-t border-gray-800 p-4 md:hidden"
+    >
+      <div class="search-input flex items-center rounded-lg overflow-hidden">
+        <input
+          type="text"
+          v-model="mobileSearchQuery"
+          @keypress.enter="handleMobileSearch"
+          placeholder="搜索职位、公司、技能..."
+          class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+        >
+        <button
+          @click="handleMobileSearch"
+          class="w-10 h-10 flex items-center justify-center text-blue-400"
+        >
+          <i class="ri-search-line"></i>
+        </button>
       </div>
-    </transition>
+    </div>
 
     <!-- 移动端导航菜单 -->
-    <transition name="slide-down">
-      <div v-if="showMobileMenu" class="border-t border-gray-800 p-4 lg:hidden">
-        <nav class="flex flex-col space-y-2">
-          <router-link
-            to="/talent/schools"
-            class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            @click="showMobileMenu = false"
-          >
-            院校数据库
-          </router-link>
-          <router-link
-            to="/talent/works"
-            class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            @click="showMobileMenu = false"
-          >
-            学生作品库
-          </router-link>
-          <router-link
-            to="/talent/jobs"
-            class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            @click="showMobileMenu = false"
-          >
-            企业需求池
-          </router-link>
-          <router-link
-            to="/talent/designers"
-            class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
-            @click="showMobileMenu = false"
-          >
-            设计师档案
-          </router-link>
-        </nav>
-      </div>
-    </transition>
+    <div
+      v-show="showMobileMenu"
+      class="border-t border-gray-800 p-4 lg:hidden"
+    >
+      <nav class="flex flex-col space-y-2">
+        <router-link
+          to="/talent/schools"
+          class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
+          active-class="active"
+        >
+          院校数据库
+        </router-link>
+        <router-link
+          to="/talent/works"
+          class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
+          active-class="active"
+        >
+          学生作品库
+        </router-link>
+        <router-link
+          to="/talent/jobs"
+          class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
+          active-class="active"
+        >
+          企业需求池
+        </router-link>
+        <router-link
+          to="/talent/designers"
+          class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
+          active-class="active"
+        >
+          设计师档案
+        </router-link>
+      </nav>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
-interface Notification {
-  id: number
-  content: string
-  time: string
-  read: boolean
-}
-
-// Props
-interface Props {
-  currentPageTitle?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  currentPageTitle: '星海人才'
-})
-
-// Router
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
 
 // 响应式数据
 const searchQuery = ref('')
-const showNotification = ref(false)
+const mobileSearchQuery = ref('')
+const showNotifications = ref(false)
 const showUserMenu = ref(false)
 const showMobileSearch = ref(false)
 const showMobileMenu = ref(false)
 
 // 用户信息
 const userName = ref('张小明')
-const userRole = ref('学生')
-const userInitial = computed(() => userName.value.charAt(0))
+const userRole = ref('求职者')
+const unreadCount = ref(3)
+
+// 引用
+const notificationRef = ref<HTMLElement | null>(null)
+const userMenuRef = ref<HTMLElement | null>(null)
 
 // 通知数据
-const notifications = ref<Notification[]>([
-  { id: 1, content: '王梦琪的新作品获得热门推荐', time: '1小时前', read: false },
-  { id: 2, content: '您关注的清华大学发布了新作品', time: '3小时前', read: false }
+const notifications = ref([
+  {
+    id: 1,
+    message: '腾讯发布新的UI设计师职位',
+    time: '2分钟前',
+    dotColor: 'bg-blue-600'
+  },
+  {
+    id: 2,
+    message: '您的简历被字节跳动查看',
+    time: '1小时前',
+    dotColor: 'bg-green-500'
+  },
+  {
+    id: 3,
+    message: '有3个新的职位匹配您的技能',
+    time: '3小时前',
+    dotColor: 'bg-yellow-500'
+  }
 ])
 
-const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
-
-// 搜索占位符
-const searchPlaceholder = computed(() => {
-  if (route.path.includes('/works')) return '搜索作品、设计师、院校...'
-  if (route.path.includes('/schools')) return '搜索院校、专业...'
-  if (route.path.includes('/jobs')) return '搜索职位、公司...'
-  if (route.path.includes('/designers')) return '搜索设计师...'
-  return '搜索...'
+// 计算属性
+const currentPageTitle = computed(() => {
+  const routeMap: Record<string, string> = {
+    '/talent/jobs': '企业需求池',
+    '/talent/designers': '设计师档案',
+    '/talent/works': '学生作品库',
+    '/talent/schools': '院校数据库'
+  }
+  return routeMap[route.path] || '人才平台'
 })
 
 // 方法
+const goBack = () => {
+  router.go(-1)
+}
+
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    // 根据当前页面执行搜索
     console.log('搜索:', searchQuery.value)
-    // 可以在这里添加具体的搜索逻辑
+    // 这里可以添加搜索逻辑
   }
 }
 
-const toggleNotification = () => {
-  showNotification.value = !showNotification.value
+const handleMobileSearch = () => {
+  if (mobileSearchQuery.value.trim()) {
+    console.log('移动端搜索:', mobileSearchQuery.value)
+    // 这里可以添加搜索逻辑
+  }
+}
+
+const toggleNotifications = () => {
+  showNotifications.value = !showNotifications.value
   showUserMenu.value = false
 }
 
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
-  showNotification.value = false
+  showNotifications.value = false
 }
 
 const toggleMobileSearch = () => {
@@ -349,18 +365,29 @@ const toggleMobileMenu = () => {
   showMobileSearch.value = false
 }
 
-const closeDropdowns = () => {
-  showNotification.value = false
-  showUserMenu.value = false
+const handleLogout = () => {
+  // 这里添加退出登录逻辑
+  console.log('退出登录')
+  router.push('/login')
 }
 
-// 生命周期
+// 点击外部关闭下拉菜单
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (notificationRef.value && !(notificationRef.value as HTMLElement).contains(target)) {
+    showNotifications.value = false
+  }
+  if (userMenuRef.value && !(userMenuRef.value as HTMLElement).contains(target)) {
+    showUserMenu.value = false
+  }
+}
+
 onMounted(() => {
-  document.addEventListener('click', closeDropdowns)
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', closeDropdowns)
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -391,6 +418,7 @@ onUnmounted(() => {
 
 .nav-button {
   transition: all 0.2s ease;
+  border-radius: 16px;
 }
 
 .nav-button:hover {
