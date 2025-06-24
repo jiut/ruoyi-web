@@ -5,6 +5,7 @@ import type { JobApplicationData, SalaryRange, JobPosting } from '@/types/talent
 import { useMessage } from 'naive-ui'
 // 保持模拟数据导入以支持开发模式
 import { getMockJobs } from '@/data/mockJobs'
+import { ProfessionLabels } from '@/types/talent/designer'
 
 // 环境配置：可以通过环境变量控制是否使用模拟数据
 // 只有明确设置为 'true' 才使用模拟数据，否则使用后端API
@@ -86,14 +87,10 @@ export function useJobFilter() {
   const supportFreshGraduate = ref(false)
   const weekendOff = ref(false)
 
-  const professionOptions = [
-    { value: 'UI_DESIGNER', label: 'UI/UX 设计师' },
-    { value: 'GRAPHIC_DESIGNER', label: '视觉设计师' },
-    { value: 'INTERACTION_DESIGNER', label: '交互设计师' },
-    { value: 'PRODUCT_DESIGNER', label: '产品设计师' },
-    { value: 'MOTION_DESIGNER', label: '动效设计师' },
-    { value: 'BRAND_DESIGNER', label: '品牌设计师' }
-  ]
+  const professionOptions = Object.entries(ProfessionLabels).map(([value, label]) => ({
+    value,
+    label
+  }))
 
   const locationOptions = [
     { value: '北京', label: '北京' },

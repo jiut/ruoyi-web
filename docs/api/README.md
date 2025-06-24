@@ -119,8 +119,7 @@ PUT    /designer/job                     # 修改岗位
 DELETE /designer/job/{ids}               # 删除岗位
 GET    /designer/job/enterprise/{id}     # 企业岗位查询
 GET    /designer/job/profession/{profession}  # 按职业查询岗位
-GET    /designer/job/skills              # 按技能查询岗位（精确匹配）
-GET    /designer/job/skills-any          # 按技能查询岗位（任意匹配）
+GET    /designer/job/skills              # 按技能查询岗位
 ```
 
 ### 岗位申请接口
@@ -135,6 +134,53 @@ GET    /designer/application/job/{id}    # 岗位的申请列表
 GET    /designer/application/designer/{id} # 设计师的申请列表
 ```
 
+### 设计师作品管理接口
+
+```
+GET    /designer/work/list               # 查询作品列表
+GET    /designer/work/{id}               # 获取作品详情
+POST   /designer/work                    # 新增作品
+PUT    /designer/work                    # 修改作品
+DELETE /designer/work/{ids}              # 删除作品
+GET    /designer/work/designer/{id}      # 查询设计师作品列表
+PUT    /designer/work/{id}/featured      # 设置代表作品
+```
+
+### 工作经历管理接口
+
+```
+GET    /designer/work-experience/list    # 查询工作经历列表
+GET    /designer/work-experience/{id}    # 获取工作经历详情
+POST   /designer/work-experience         # 新增工作经历
+PUT    /designer/work-experience         # 修改工作经历
+DELETE /designer/work-experience/{ids}   # 删除工作经历
+GET    /designer/work-experience/designer/{id} # 查询设计师工作经历
+PUT    /designer/work-experience/{id}/current  # 设置当前工作
+```
+
+### 教育背景管理接口
+
+```
+GET    /designer/education/list          # 查询教育背景列表
+GET    /designer/education/{id}          # 获取教育背景详情
+POST   /designer/education               # 新增教育背景
+PUT    /designer/education               # 修改教育背景
+DELETE /designer/education/{ids}         # 删除教育背景
+GET    /designer/education/designer/{id} # 查询设计师教育背景
+```
+
+### 获奖记录管理接口
+
+```
+GET    /designer/award/list              # 查询获奖记录列表
+GET    /designer/award/{id}              # 获取获奖记录详情
+POST   /designer/award                   # 新增获奖记录
+PUT    /designer/award                   # 修改获奖记录
+DELETE /designer/award/{ids}             # 删除获奖记录
+GET    /designer/award/designer/{id}     # 查询设计师获奖记录
+PUT    /designer/award/{id}/sort         # 调整获奖记录排序
+```
+
 ### 用户注册绑定接口
 
 ```
@@ -147,10 +193,6 @@ GET    /designer/user/enterprise/profile # 获取企业档案
 GET    /designer/user/school/profile     # 获取院校档案
 PUT    /designer/user/unbind/{entityType} # 解绑身份
 POST   /designer/user/bind               # 管理员绑定用户实体
-GET    /designer/user/available/enterprises # 查看可绑定的企业列表
-POST   /designer/user/bind/enterprise    # 绑定到指定企业
-GET    /designer/user/available/schools  # 查看可绑定的院校列表
-POST   /designer/user/bind/school        # 绑定到指定院校
 ```
 
 ## 使用方法
@@ -206,24 +248,6 @@ Content-Type: application/json
 
 **注意：院校名称必须唯一，系统会自动检查重名并拒绝重复的院校名称。**
 
-#### 绑定已有企业
-```bash
-# 查看可绑定的企业列表
-GET /designer/user/available/enterprises?pageNum=1&pageSize=10&enterpriseName=科技
-
-# 绑定到指定企业
-POST /designer/user/bind/enterprise?enterpriseId=1&inviteCode=INVITE123
-```
-
-#### 绑定已有院校
-```bash
-# 查看可绑定的院校列表
-GET /designer/user/available/schools?pageNum=1&pageSize=10&schoolName=设计
-
-# 绑定到指定院校
-POST /designer/user/bind/school?schoolId=1&studentId=2020001234
-```
-
 ### 2. 用户档案查询
 
 #### 获取当前用户绑定信息
@@ -246,7 +270,110 @@ GET /designer/user/enterprise/profile
 GET /designer/user/school/profile
 ```
 
-### 3. 权限控制
+### 3. 设计师档案管理
+
+#### 管理工作经历
+```bash
+# 新增工作经历
+POST /designer/work-experience
+Content-Type: application/json
+
+{
+    "designerId": 1,
+    "company": "腾讯科技有限公司",
+    "position": "高级UI设计师",
+    "startDate": "2022-03-01",
+    "endDate": null,
+    "isCurrent": true,
+    "description": "负责腾讯社交产品的用户体验设计，主导产品界面改版与优化。",
+    "location": "深圳市南山区",
+    "industry": "互联网"
+}
+
+# 查询设计师工作经历
+GET /designer/work-experience/designer/1
+
+# 设置当前工作
+PUT /designer/work-experience/1/current
+```
+
+#### 管理教育背景
+```bash
+# 新增教育背景
+POST /designer/education
+Content-Type: application/json
+
+{
+    "designerId": 1,
+    "school": "中国美术学院",
+    "degree": "硕士",
+    "major": "设计学",
+    "startDate": "2015-09-01",
+    "endDate": "2018-06-30",
+    "isCurrent": false,
+    "description": "专业方向：数字媒体艺术，研究方向：交互设计与用户体验",
+    "gpa": 3.8
+}
+
+# 查询设计师教育背景
+GET /designer/education/designer/1
+```
+
+#### 管理获奖记录
+```bash
+# 新增获奖记录
+POST /designer/award
+Content-Type: application/json
+
+{
+    "designerId": 1,
+    "title": "2023 iF 设计奖",
+    "organization": "iF International Forum Design",
+    "year": "2023",
+    "level": "优秀奖",
+    "category": "产品设计",
+    "workTitle": "腾讯社交产品界面设计",
+    "description": "该作品在用户体验和视觉设计方面表现出色",
+    "sort": 1
+}
+
+# 查询设计师获奖记录
+GET /designer/award/designer/1
+
+# 调整获奖记录排序
+PUT /designer/award/1/sort
+Content-Type: application/json
+
+{
+    "sort": 1
+}
+```
+
+#### 管理作品集
+```bash
+# 新增作品
+POST /designer/work
+Content-Type: application/json
+
+{
+    "designerId": 1,
+    "title": "社交媒体应用 UI 设计",
+    "description": "移动应用界面设计，采用现代化的设计语言",
+    "workType": "image",
+    "fileUrl": "https://example.com/work/design.jpg",
+    "thumbnailUrl": "https://example.com/work/design_thumb.jpg",
+    "tags": "[\"UI设计\", \"移动应用\", \"用户体验\"]",
+    "isFeatured": "1"
+}
+
+# 查询设计师作品列表
+GET /designer/work/designer/1
+
+# 设置代表作品
+PUT /designer/work/1/featured
+```
+
+### 4. 权限控制
 
 #### 使用权限工具类
 ```java
@@ -294,54 +421,7 @@ public R<Void> updateDesigner(@PathVariable Long designerId,
 }
 ```
 
-### 4. 技能查询接口使用
-
-#### 技能查询逻辑对比
-```bash
-# 精确匹配查询（交集查询 - AND逻辑）
-# 要求岗位必须同时包含所有指定技能
-GET /designer/job/skills?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
-
-# 任意匹配查询（并集查询 - OR逻辑）
-# 要求岗位包含任意一个指定技能即可
-GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
-```
-
-#### 支持的技能标签
-- **动效设计**: ANIMATION_DESIGN
-- **原型设计**: PROTOTYPE_DESIGN
-- **角色设计**: CHARACTER_DESIGN
-- **视觉设计**: VISUAL_DESIGN
-- **用户界面设计**: USER_INTERFACE_DESIGN
-- **用户体验设计**: USER_EXPERIENCE_DESIGN
-- **平面设计**: GRAPHIC_DESIGN
-- **品牌设计**: BRANDING_DESIGN
-- **插画**: ILLUSTRATION
-- **网页设计**: WEB_DESIGN
-- **移动设计**: MOBILE_DESIGN
-- **印刷设计**: PRINT_DESIGN
-
-#### 使用场景
-
-**宽松技能匹配**：
-```bash
-# 查找具备UI、UX或视觉设计任意一种技能的岗位
-GET /designer/job/skills-any?skillTags=USER_INTERFACE_DESIGN,USER_EXPERIENCE_DESIGN,VISUAL_DESIGN
-```
-
-**扩大搜索范围**：
-```bash
-# 当精确匹配结果太少时，使用任意匹配扩大搜索范围
-GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,ANIMATION_DESIGN
-```
-
-**相关技能探索**：
-```bash
-# 查找Web相关的设计岗位
-GET /designer/job/skills-any?skillTags=WEB_DESIGN,MOBILE_DESIGN,USER_INTERFACE_DESIGN
-```
-
-### 5. 数据过滤
+### 4. 数据过滤
 
 #### 基于用户绑定的数据查询
 ```java
@@ -397,6 +477,10 @@ public List<Designer> getMyDesigners() {
 
 ### 权限码规范
 - `designer:designer:*` - 设计师管理权限
+- `designer:work:*` - 作品管理权限
+- `designer:work-experience:*` - 工作经历管理权限
+- `designer:education:*` - 教育背景管理权限
+- `designer:award:*` - 获奖记录管理权限
 - `designer:school:*` - 院校管理权限
 - `designer:enterprise:*` - 企业管理权限
 - `designer:job:*` - 岗位管理权限
@@ -421,6 +505,11 @@ public List<Designer> getMyDesigners() {
 |------|------------|---------|------------|------------|
 | 查看所有设计师 | ✓ | ✗ | ✓(公开信息) | ✓(本校) |
 | 编辑设计师信息 | ✓ | ✓(自己) | ✗ | ✗ |
+| 管理作品集 | ✓ | ✓(自己) | ✗ | ✗ |
+| 管理工作经历 | ✓ | ✓(自己) | ✗ | ✗ |
+| 管理教育背景 | ✓ | ✓(自己) | ✗ | ✗ |
+| 管理获奖记录 | ✓ | ✓(自己) | ✗ | ✗ |
+| 查看设计师档案 | ✓ | ✓(公开信息) | ✓(公开信息) | ✓(本校详细) |
 | 发布岗位 | ✓ | ✗ | ✓ | ✗ |
 | 申请岗位 | ✓ | ✓ | ✗ | ✗ |
 | 处理申请 | ✓ | ✗ | ✓ | ✗ |
@@ -464,12 +553,22 @@ SHOW COLUMNS FROM des_designer LIKE 'user_id';
 - `UserBinding` - 用户绑定关系实体
 - `UserEntityType` - 用户实体类型枚举
 - `UserProfileVo` - 用户档案视图对象
+- `WorkExperience` - 工作经历实体
+- `Education` - 教育背景实体
+- `Award` - 获奖记录实体
+- `WorkStatus` - 工作状态枚举
 
 #### 新增服务
 - `IUserBindingService` - 用户绑定服务接口
 - `UserBindingServiceImpl` - 用户绑定服务实现
 - `IEnterpriseService` - 企业服务接口
 - `EnterpriseServiceImpl` - 企业服务实现
+- `IWorkExperienceService` - 工作经历服务接口
+- `WorkExperienceServiceImpl` - 工作经历服务实现
+- `IEducationService` - 教育背景服务接口
+- `EducationServiceImpl` - 教育背景服务实现
+- `IAwardService` - 获奖记录服务接口
+- `AwardServiceImpl` - 获奖记录服务实现
 
 #### 新增控制器
 - `UserRegistrationController` - 用户注册绑定控制器
@@ -513,22 +612,28 @@ graph TB
 
 ## 扩展功能
 
-### 1. 作品评分系统
-- 设计师作品可以被评分和评论
-- 建立作品质量评估体系
+### 1. 设计师档案增强
+- **作品评分系统**：设计师作品可以被评分和评论，建立作品质量评估体系
+- **简历导入导出**：支持从主流简历平台导入数据，导出PDF格式简历
+- **档案完整度检测**：自动检测档案信息完整度，提供改进建议
+- **工作经历验证**：与企业HR系统对接，验证工作经历真实性
+- **证书管理**：支持上传和管理各类设计证书、认证文件
 
-### 2. 技能认证系统
-- 引入技能认证机制
-- 与外部认证机构对接
+### 2. 智能推荐系统
+- **基于机器学习的人才推荐**：分析设计师技能、作品质量和工作经历，为企业推荐最合适的候选人
+- **岗位匹配度算法**：根据设计师档案信息计算与岗位的匹配度分数
+- **职业发展建议**：基于行业趋势和个人背景，为设计师提供职业发展建议
 
-### 3. 推荐算法优化
-- 基于机器学习的人才推荐
-- 岗位匹配度算法优化
+### 3. 技能认证体系
+- **技能标签验证**：引入技能认证机制，与外部认证机构对接
+- **作品技能分析**：通过AI分析作品内容，自动标注技能标签
+- **技能发展轨迹**：记录设计师技能成长历程，可视化展示技能发展
 
-### 4. 数据分析功能
-- 就业趋势分析
-- 薪资水平统计
-- 技能需求分析
+### 4. 数据分析与统计
+- **就业趋势分析**：分析不同专业、技能的就业趋势和薪资水平
+- **院校就业报告**：为院校提供毕业生就业质量报告
+- **行业技能需求**：分析当前设计行业最热门的技能需求
+- **个人数据洞察**：为设计师提供个人档案数据分析报告
 
 ### 5. 用户系统扩展
 - **SSO集成**：与企业SSO系统集成，实现统一登录
@@ -553,4 +658,4 @@ graph TB
 
 ## 开发团队
 
-本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。
+本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。 

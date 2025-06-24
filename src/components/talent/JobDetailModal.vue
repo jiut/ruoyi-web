@@ -27,7 +27,7 @@
 
             <div v-else-if="job" class="space-y-8">
               <!-- 岗位基本信息 -->
-              <div class="rounded-lg p-6 mb-8">
+              <div class="rounded-lg p-6">
                 <div class="flex items-start mb-8">
                   <div class="w-16 h-16 company-logo rounded-lg flex items-center justify-center mr-5 flex-shrink-0">
                     <img v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName" class="w-full h-full object-cover rounded-lg">
@@ -89,7 +89,7 @@
               </div>
 
               <!-- 职位描述 -->
-              <div class="glass-card rounded-lg p-6 mb-8">
+              <div class="glass-card rounded-lg p-6 mb-8" style="margin-top: 0px;">
                 <h3 class="text-lg font-bold mb-4">职位描述</h3>
                 <div class="text-gray-300 text-sm leading-relaxed" v-html="formatDescription(job.description)"></div>
               </div>

@@ -40,7 +40,7 @@
       <!-- 统计信息 -->
       <div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
         <span>作品: {{ designer.works?.length || 0 }}</span>
-        <span>经验: {{ designer.experience || 0 }}年</span>
+        <span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
         <span class="flex items-center">
           <div
             :class="[

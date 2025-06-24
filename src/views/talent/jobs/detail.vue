@@ -2,7 +2,7 @@
   <div class="job-detail-page">
     <TalentHeader />
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-4">
       <div v-if="loading" class="flex justify-center items-center min-h-[400px]">
         <div class="text-center">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -11,18 +11,22 @@
       </div>
 
       <div v-else-if="job" class="max-w-4xl mx-auto">
-        <!-- 返回按钮 -->
-        <button
-          @click="$router.go(-1)"
-          class="flex items-center text-blue-400 hover:text-blue-300 mb-6"
-        >
-          <i class="ri-arrow-left-line mr-2"></i>
-          返回
-        </button>
+        <!-- 面包屑导航 -->
+        <section class="py-2 mb-4">
+          <div class="container mx-auto px-4">
+            <nav class="flex items-center space-x-2 text-sm">
+              <router-link to="/" class="text-gray-400 hover:text-primary transition-colors">首页</router-link>
+              <span class="text-gray-500">/</span>
+              <router-link to="/talent/jobs" class="text-gray-400 hover:text-primary transition-colors">企业需求池</router-link>
+              <span class="text-gray-500">/</span>
+              <span class="text-white">{{ job?.title || '岗位详情' }}</span>
+            </nav>
+          </div>
+        </section>
 
         <div class="space-y-8">
           <!-- 岗位基本信息 -->
-          <div class="rounded-lg p-4 sm:p-6 mb-8">
+          <div class="glass-card rounded-lg p-4 sm:p-6 mb-8">
             <!-- 手机端垂直布局 -->
             <div class="block sm:hidden">
               <!-- 公司头像居中 -->

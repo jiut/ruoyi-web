@@ -197,6 +197,22 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '技能标签演示' }
   },
 
+  // Mock数据测试页面
+  {
+    path: '/test/mock-data',
+    name: 'MockDataTest',
+    component: () => import('@/views/test/mock-data-test.vue'),
+    meta: { title: 'Mock数据测试' }
+  },
+
+  // 设计师数据调试页面
+  {
+    path: '/debug/designers',
+    name: 'DesignersDebug',
+    component: () => import('@/views/talent/designers/debug.vue'),
+    meta: { title: '设计师数据调试' }
+  },
+
   // 人才模块
   {
     path: '/talent',

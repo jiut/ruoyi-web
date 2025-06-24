@@ -8,7 +8,7 @@
  * 3. 按照分类显示不同颜色（tool/field/skill）
  */
 
-import { computed } from 'vue'
+import { computed, ref, unref, type Ref, type ComputedRef } from 'vue'
 import SkillTagUtils, { type SkillTagCategory, type SkillTagData, type CategoryStats } from '@/utils/skillTagUtils'
 
 export interface UseSkillTagsOptions {
@@ -238,6 +238,55 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
     })
   }
 
+  /**
+   * 按分类排序技能标签（输入英文简写数组）
+   * @param tags - 英文简写标签数组
+   * @param sortOrder - 排序顺序
+   * @returns 排序后的技能标签数组
+   */
+  const sortTagsByCategory = (tags: string[], sortOrder: 'asc' | 'desc' = 'asc'): string[] => {
+    return SkillTagUtils.sortTagsByCategory(tags, sortOrder)
+  }
+
+  /**
+   * 按分类分组并排序技能标签（输入英文简写数组）
+   * @param tags - 英文简写标签数组
+   * @param sortOrder - 排序顺序
+   * @returns 分组并排序后的技能标签对象
+   */
+  const groupAndSortTagsByCategory = (tags: string[], sortOrder: 'asc' | 'desc' = 'asc'): Record<SkillTagCategory, string[]> => {
+    return SkillTagUtils.groupAndSortTagsByCategory(tags, sortOrder)
+  }
+
+  /**
+   * 获取排序后的分类顺序
+   * @param sortOrder - 排序顺序
+   * @returns 排序后的分类数组
+   */
+  const getSortedCategories = (sortOrder: 'asc' | 'desc' = 'asc'): SkillTagCategory[] => {
+    return SkillTagUtils.getSortedCategories(sortOrder)
+  }
+
+  /**
+   * 创建排序后的技能标签数组（响应式）
+   * @param tags - 响应式的技能标签数组
+   * @param sortOrder - 排序顺序
+   * @returns 排序后的计算属性
+   */
+  const createSortedTags = (tags: Ref<string[]> | ComputedRef<string[]>, sortOrder: 'asc' | 'desc' = 'asc') => {
+    return computed(() => sortTagsByCategory(unref(tags), sortOrder))
+  }
+
+  /**
+   * 创建分组排序后的技能标签对象（响应式）
+   * @param tags - 响应式的技能标签数组
+   * @param sortOrder - 排序顺序
+   * @returns 分组排序后的计算属性
+   */
+  const createGroupedSortedTags = (tags: Ref<string[]> | ComputedRef<string[]>, sortOrder: 'asc' | 'desc' = 'asc') => {
+    return computed(() => groupAndSortTagsByCategory(unref(tags), sortOrder))
+  }
+
   return {
     // 核心方法
     getTagCategory,
@@ -266,7 +315,14 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
     categoryNames,
     categoryDescriptions,
     categoryColors,
-    predefinedTags
+    predefinedTags,
+
+    // 新方法
+    sortTagsByCategory,
+    groupAndSortTagsByCategory,
+    getSortedCategories,
+    createSortedTags,
+    createGroupedSortedTags
   }
 }
 

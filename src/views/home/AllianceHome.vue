@@ -250,7 +250,7 @@
 										class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors duration-300 cursor-pointer">
 										<div class="flex justify-between items-start mb-3">
 											<div>
-												<h4 class="font-bold">{{ ['UI设计师', '平面设计师', '3D建模师', '动效设计师', '产品设计师'][i - 1] }}</h4>
+												<h4 class="font-bold">{{ professionDisplayNames[i - 1] || '设计师' }}</h4>
 												<p class="text-sm text-gray-400">{{ ['科技公司', '广告机构', '游戏工作室', '设计工作室', '互联网企业'][i - 1] }}</p>
 											</div>
 											<span class="text-xs bg-blue-900 text-blue-300 px-2 py-1 rounded">{{ ['全职', '兼职', '项目制', '全职',
@@ -298,7 +298,7 @@
 								</div>
 								<div class="flex-1">
 									<h4 class="font-bold text-sm">{{ ['张设计', '李创意', '王艺术', '刘视觉'][i - 1] }}</h4>
-									<p class="text-xs text-gray-400 mb-2">{{ ['UI/UX设计师', '品牌设计师', '插画师', '交互设计师'][i - 1] }}</p>
+									<p class="text-xs text-gray-400 mb-2">{{ designerRoles[i - 1] }}</p>
 									<div class="flex flex-wrap gap-1">
 										<span v-for="(tag, index) in [
 											['Figma', 'UI设计', '用户研究'],
@@ -1385,6 +1385,7 @@ import * as echarts from 'echarts';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store';
 import { UserAvatar } from '@/components/common';
+import { ProfessionLabels } from '@/types/talent/designer'
 
 const router = useRouter();
 const swiperModules = [Pagination, Autoplay];
@@ -1675,6 +1676,10 @@ onMounted(() => {
 		});
 	}
 });
+
+// 示例数据常量
+const professionDisplayNames = Object.values(ProfessionLabels)
+const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互设计师']
 </script>
 <style scoped>
 /* 自定义滚动条 */

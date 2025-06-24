@@ -1,4 +1,6 @@
 // 岗位相关类型定义
+import type { Profession, Designer } from './designer'
+
 export interface JobPosting {
   id: number
   title: string
@@ -55,18 +57,6 @@ export enum ApplicationStatus {
   WITHDRAWN = 'WITHDRAWN'
 }
 
-export enum Profession {
-  ILLUSTRATOR = 'ILLUSTRATOR',
-  INTERACTION_DESIGNER = 'INTERACTION_DESIGNER',
-  BRAND_DESIGNER = 'BRAND_DESIGNER',
-  UI_DESIGNER = 'UI_DESIGNER',
-  UX_DESIGNER = 'UX_DESIGNER',
-  GRAPHIC_DESIGNER = 'GRAPHIC_DESIGNER',
-  PRODUCT_DESIGNER = 'PRODUCT_DESIGNER',
-  WEB_DESIGNER = 'WEB_DESIGNER',
-  MOTION_DESIGNER = 'MOTION_DESIGNER'
-}
-
 export enum SkillTag {
   ANIMATION_DESIGN = 'ANIMATION_DESIGN',
   PROTOTYPE_DESIGN = 'PROTOTYPE_DESIGN',
@@ -94,25 +84,6 @@ export interface Enterprise {
   email: string
   phone: string
   userId: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Designer {
-  id: number
-  designerName: string
-  profession: Profession
-  email: string
-  phone: string
-  skillTags: string
-  socialLinks: string
-  portfolio: string
-  description: string
-  avatar: string
-  schoolId?: number
-  enterpriseId?: number
-  userId: number
-  status: string
   createdAt: string
   updatedAt: string
 }

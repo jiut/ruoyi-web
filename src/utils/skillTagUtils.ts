@@ -458,6 +458,83 @@ class SkillTagUtils {
       .map(([tag]) => tag)
     return this.convertToTagData(tags)
   }
+
+  /**
+   * 获取分类的排序优先级
+   * @param category - 分类
+   * @returns 排序优先级（数字越小优先级越高）
+   */
+  private static getCategoryPriority(category: SkillTagCategory): number {
+    switch (category) {
+      case 'tool': return 1    // 🔵 工具类优先
+      case 'field': return 2   // 🟣 专业领域次之
+      case 'skill': return 3   // 🩷 技能方法最后
+      default: return 999
+    }
+  }
+
+  /**
+   * 按分类排序技能标签
+   * @param tags - 英文简写标签数组
+   * @param sortOrder - 排序顺序 'asc' | 'desc'
+   * @returns 排序后的技能标签数组
+   */
+  static sortTagsByCategory(tags: string[], sortOrder: 'asc' | 'desc' = 'asc'): string[] {
+    return [...tags].sort((a, b) => {
+      const categoryA = this.getTagCategory(a)
+      const categoryB = this.getTagCategory(b)
+
+      const priorityA = this.getCategoryPriority(categoryA)
+      const priorityB = this.getCategoryPriority(categoryB)
+
+      // 首先按分类排序
+      if (priorityA !== priorityB) {
+        return sortOrder === 'asc' ? priorityA - priorityB : priorityB - priorityA
+      }
+
+      // 分类相同时按中文显示名称排序
+      const nameA = this.getTagDisplayName(a)
+      const nameB = this.getTagDisplayName(b)
+
+      return sortOrder === 'asc'
+        ? nameA.localeCompare(nameB, 'zh-CN')
+        : nameB.localeCompare(nameA, 'zh-CN')
+    })
+  }
+
+  /**
+   * 按分类分组并排序技能标签
+   * @param tags - 英文简写标签数组
+   * @param sortOrder - 排序顺序 'asc' | 'desc'
+   * @returns 分组并排序后的技能标签对象
+   */
+  static groupAndSortTagsByCategory(tags: string[], sortOrder: 'asc' | 'desc' = 'asc'): Record<SkillTagCategory, string[]> {
+    const grouped = this.groupTagsByCategory(tags)
+
+    // 对每个分组内的标签进行排序
+    Object.keys(grouped).forEach(category => {
+      const categoryKey = category as SkillTagCategory
+      grouped[categoryKey] = grouped[categoryKey].sort((a, b) => {
+        const nameA = this.getTagDisplayName(a)
+        const nameB = this.getTagDisplayName(b)
+        return sortOrder === 'asc'
+          ? nameA.localeCompare(nameB, 'zh-CN')
+          : nameB.localeCompare(nameA, 'zh-CN')
+      })
+    })
+
+    return grouped
+  }
+
+  /**
+   * 获取排序后的分类顺序
+   * @param sortOrder - 排序顺序 'asc' | 'desc'
+   * @returns 排序后的分类数组
+   */
+  static getSortedCategories(sortOrder: 'asc' | 'desc' = 'asc'): SkillTagCategory[] {
+    const categories: SkillTagCategory[] = ['tool', 'field', 'skill']
+    return sortOrder === 'asc' ? categories : [...categories].reverse()
+  }
 }
 
 export default SkillTagUtils

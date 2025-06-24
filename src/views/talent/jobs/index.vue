@@ -19,7 +19,7 @@
     </section>
 
     <!-- 主体内容区 -->
-    <section class="flex-grow py-8">
+    <section class="flex-grow pb-8">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row gap-6">
           <!-- 左侧筛选栏 -->
@@ -422,6 +422,7 @@ import { SkillTag } from '@/components/common'
 import { useJob } from '@/composables/talent/useJob'
 import { useSkillTags } from '@/composables/useSkillTags'
 import type { JobPosting } from '@/types/talent/job'
+import { ProfessionLabels } from '@/types/talent/designer'
 
 const router = useRouter()
 const { jobs, loading, fetchJobs } = useJob()
@@ -482,14 +483,10 @@ const showJobApplication = ref(false)
 const selectedJob = ref<JobPosting | null>(null)
 
 // 筛选选项
-const jobTypes = [
-  { value: 'UI_DESIGNER', label: 'UI/UX 设计师' },
-  { value: 'VISUAL_DESIGNER', label: '视觉设计师' },
-  { value: 'INTERACTION_DESIGNER', label: '交互设计师' },
-  { value: 'PRODUCT_DESIGNER', label: '产品设计师' },
-  { value: 'MOTION_DESIGNER', label: '动效设计师' },
-  { value: 'GRAPHIC_DESIGNER', label: '平面设计师' }
-]
+const jobTypes = Object.entries(ProfessionLabels).map(([value, label]) => ({
+  value,
+  label
+}))
 
 const cities = ['北京', '上海', '广州', '深圳', '杭州', '成都']
 const workTypes = ['全职', '兼职', '实习', '远程', '项目制']

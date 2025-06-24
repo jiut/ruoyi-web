@@ -19,6 +19,13 @@ export interface Designer {
   workStatus?: WorkStatus
   createdAt: string
   updatedAt: string
+  gender?: string // 性别字段
+  birthDate?: string // 出生日期
+  workYears?: number // 工作年限
+  graduationDate?: string // 毕业日期
+  joinDate?: string // 入职日期
+  company?: string // 公司名称
+  wechat?: string // 微信号
   // 关联数据
   school?: School
   enterprise?: Enterprise
@@ -29,6 +36,8 @@ export interface Designer {
 }
 
 export enum Profession {
+  UI_DESIGNER = 'UI_DESIGNER',
+  UX_DESIGNER = 'UX_DESIGNER',
   UI_UX_DESIGNER = 'UI_UX_DESIGNER',
   VISUAL_DESIGNER = 'VISUAL_DESIGNER',
   INTERACTION_DESIGNER = 'INTERACTION_DESIGNER',
@@ -41,38 +50,74 @@ export enum Profession {
   ILLUSTRATOR = 'ILLUSTRATOR'
 }
 
+// 更新为英文简写格式，匹配mock数据
 export enum SkillTag {
-  FIGMA = 'FIGMA',
-  SKETCH = 'SKETCH',
-  ADOBE_XD = 'ADOBE_XD',
-  PHOTOSHOP = 'PHOTOSHOP',
-  ILLUSTRATOR = 'ILLUSTRATOR',
-  AFTER_EFFECTS = 'AFTER_EFFECTS',
-  BLENDER = 'BLENDER',
-  CINEMA_4D = 'CINEMA_4D',
-  USER_RESEARCH = 'USER_RESEARCH',
-  INTERACTION_DESIGN = 'INTERACTION_DESIGN',
-  PROTOTYPE_DESIGN = 'PROTOTYPE_DESIGN',
-  VISUAL_DESIGN = 'VISUAL_DESIGN',
-  BRAND_DESIGN = 'BRAND_DESIGN',
-  ANIMATION_DESIGN = 'ANIMATION_DESIGN',
-  UI_DESIGN = 'UI_DESIGN',
-  UX_DESIGN = 'UX_DESIGN',
-  DESIGN_SYSTEM = 'DESIGN_SYSTEM',
-  USER_INTERFACE_DESIGN = 'USER_INTERFACE_DESIGN',
-  USER_EXPERIENCE_DESIGN = 'USER_EXPERIENCE_DESIGN',
-  BRANDING_DESIGN = 'BRANDING_DESIGN',
-  CHARACTER_DESIGN = 'CHARACTER_DESIGN',
-  WEB_DESIGN = 'WEB_DESIGN',
-  MOBILE_DESIGN = 'MOBILE_DESIGN',
-  PRINT_DESIGN = 'PRINT_DESIGN'
+  // 设计工具类
+  figma = 'figma',
+  sketch = 'sketch',
+  adobe_xd = 'adobe_xd',
+  photoshop = 'photoshop',
+  illustrator = 'illustrator',
+  after_effects = 'after_effects',
+  blender = 'blender',
+  cinema_4d = 'cinema_4d',
+  axure_rp = 'axure_rp',
+  invision = 'invision',
+  framer = 'framer',
+  principle = 'principle',
+  zeplin = 'zeplin',
+  abstract = 'abstract',
+  lottie = 'lottie',
+  maya = 'maya',
+  '3d_max' = '3d_max',
+
+  // 专业领域类
+  interaction_design = 'interaction_design',
+  ui_design = 'ui_design',
+  brand_design = 'brand_design',
+  product_design = 'product_design',
+  motion_design = 'motion_design',
+  game_art = 'game_art',
+  web_design = 'web_design',
+  mobile_design = 'mobile_design',
+  graphic_design = 'graphic_design',
+  logo_design = 'logo_design',
+  interface_design = 'interface_design',
+  brand_identity = 'brand_identity',
+  animation_design = 'animation_design',
+  branding = 'branding',
+
+  // 技能方法类
+  user_experience = 'user_experience',
+  user_research = 'user_research',
+  prototype_design = 'prototype_design',
+  design_system = 'design_system',
+  information_architecture = 'information_architecture',
+  visual_system = 'visual_system',
+  wireframing = 'wireframing',
+  user_testing = 'user_testing',
+  persona_design = 'persona_design',
+  journey_mapping = 'journey_mapping',
+  usability_testing = 'usability_testing',
+  visual_design = 'visual_design',
+  typography = 'typography',
+  color_theory = 'color_theory',
+  illustration = 'illustration',
+  character_design = 'character_design',
+  scene_design = 'scene_design',
+  visual_identity = 'visual_identity',
+  animation = 'animation',
+  effects = 'effects',
+  '3d_modeling' = '3d_modeling',
+  photography = 'photography',
+  video_editing = 'video_editing'
 }
 
 export enum WorkStatus {
   EMPLOYED = 'EMPLOYED',
-  JOB_SEEKING = 'JOB_SEEKING',
-  STUDENT = 'STUDENT',
-  FREELANCER = 'FREELANCER'
+  FREELANCER = 'FREELANCER',
+  SEEKING = 'SEEKING',
+  STUDENT = 'STUDENT'
 }
 
 export interface Work {
@@ -82,6 +127,14 @@ export interface Work {
   imageUrl: string
   category: string
   designerId: number
+  workType?: string // 作品类型
+  fileUrl?: string // 文件URL
+  thumbnailUrl?: string // 缩略图URL
+  tags?: string // JSON格式的标签数组
+  likeCount?: number // 点赞数
+  viewCount?: number // 查看数
+  isFeatured?: string // 是否推荐
+  status?: string // 状态
   createdAt: string
   updatedAt: string
 }
@@ -95,6 +148,8 @@ export interface WorkExperience {
   description: string
   isCurrent: boolean
   designerId: number
+  location?: string // 工作地点
+  industry?: string // 行业
 }
 
 export interface Education {
@@ -106,6 +161,10 @@ export interface Education {
   endDate: string
   description?: string
   designerId: number
+  gpa?: number // 绩点
+  ranking?: number // 排名
+  totalStudents?: number // 总学生数
+  isCurrent?: boolean // 是否在读
 }
 
 export interface Award {
@@ -115,6 +174,10 @@ export interface Award {
   year: string
   description?: string
   designerId: number
+  level?: string // 奖项等级
+  category?: string // 奖项分类
+  workTitle?: string // 获奖作品
+  sort?: number // 排序
 }
 
 export interface School {
@@ -146,50 +209,24 @@ export interface DesignerQueryParams {
 
 // 职业显示名称映射
 export const ProfessionLabels: Record<Profession, string> = {
-  [Profession.UI_UX_DESIGNER]: 'UI/UX 设计师',
+  [Profession.UI_DESIGNER]: 'UI设计师',
+  [Profession.UX_DESIGNER]: 'UX设计师',
+  [Profession.UI_UX_DESIGNER]: 'UI/UX设计师',
   [Profession.VISUAL_DESIGNER]: '视觉设计师',
   [Profession.INTERACTION_DESIGNER]: '交互设计师',
   [Profession.PRODUCT_DESIGNER]: '产品设计师',
   [Profession.BRAND_DESIGNER]: '品牌设计师',
   [Profession.MOTION_DESIGNER]: '动效设计师',
-  [Profession.THREE_D_DESIGNER]: '3D 设计师',
+  [Profession.THREE_D_DESIGNER]: '3D设计师',
   [Profession.GRAPHIC_DESIGNER]: '平面设计师',
   [Profession.WEB_DESIGNER]: '网页设计师',
   [Profession.ILLUSTRATOR]: '插画师'
 }
 
-// 技能标签显示名称映射
-export const SkillTagLabels: Record<SkillTag, string> = {
-  [SkillTag.FIGMA]: 'Figma',
-  [SkillTag.SKETCH]: 'Sketch',
-  [SkillTag.ADOBE_XD]: 'Adobe XD',
-  [SkillTag.PHOTOSHOP]: 'Photoshop',
-  [SkillTag.ILLUSTRATOR]: 'Illustrator',
-  [SkillTag.AFTER_EFFECTS]: 'After Effects',
-  [SkillTag.BLENDER]: 'Blender',
-  [SkillTag.CINEMA_4D]: 'Cinema 4D',
-  [SkillTag.USER_RESEARCH]: '用户研究',
-  [SkillTag.INTERACTION_DESIGN]: '交互设计',
-  [SkillTag.PROTOTYPE_DESIGN]: '原型设计',
-  [SkillTag.VISUAL_DESIGN]: '视觉设计',
-  [SkillTag.BRAND_DESIGN]: '品牌设计',
-  [SkillTag.ANIMATION_DESIGN]: '动画设计',
-  [SkillTag.UI_DESIGN]: 'UI设计',
-  [SkillTag.UX_DESIGN]: 'UX设计',
-  [SkillTag.DESIGN_SYSTEM]: '设计系统',
-  [SkillTag.USER_INTERFACE_DESIGN]: '界面设计',
-  [SkillTag.USER_EXPERIENCE_DESIGN]: '用户体验设计',
-  [SkillTag.BRANDING_DESIGN]: '品牌设计',
-  [SkillTag.CHARACTER_DESIGN]: '角色设计',
-  [SkillTag.WEB_DESIGN]: '网页设计',
-  [SkillTag.MOBILE_DESIGN]: '移动端设计',
-  [SkillTag.PRINT_DESIGN]: '印刷设计'
-}
-
 // 工作状态显示名称映射
 export const WorkStatusLabels: Record<WorkStatus, string> = {
   [WorkStatus.EMPLOYED]: '在职',
-  [WorkStatus.JOB_SEEKING]: '求职中',
-  [WorkStatus.STUDENT]: '学生',
-  [WorkStatus.FREELANCER]: '自由职业'
+  [WorkStatus.FREELANCER]: '自由职业',
+  [WorkStatus.SEEKING]: '求职中',
+  [WorkStatus.STUDENT]: '学生'
 }

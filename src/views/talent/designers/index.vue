@@ -8,9 +8,9 @@
       <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
       <div class="container mx-auto px-4 relative z-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
+          <div class="flex-1">
             <h1 class="text-4xl font-bold mb-2 text-white">设计师档案</h1>
-            <p class="text-gray-300 max-w-2xl">
+            <p class="text-gray-300 max-w-2xl mb-4">
               汇聚 {{ designerCount.toLocaleString() }} 位优秀设计师，提供全方位设计人才展示与匹配服务
             </p>
           </div>
@@ -19,7 +19,7 @@
     </section>
 
     <!-- 主体内容区 -->
-    <section class="flex-grow py-8">
+    <section class="flex-grow pb-8">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row gap-6">
           <!-- 左侧筛选栏 -->
@@ -30,14 +30,14 @@
                 <div>
                   <h3 class="text-lg font-medium mb-3">职业方向</h3>
                   <div class="space-y-2">
-                    <label v-for="profession in professions" :key="profession.value" class="flex items-center cursor-pointer">
+                    <label v-for="profession in professions" :key="getProfessionKey(profession)" class="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
                         class="custom-checkbox"
-                        :checked="selectedProfessions.includes(profession.value)"
-                        @change="toggleProfession(profession.value)"
+                        :checked="selectedProfessions.includes(getProfessionValue(profession))"
+                        @change="toggleProfession(getProfessionValue(profession))"
                       >
-                      <span>{{ profession.label }}</span>
+                      <span>{{ getProfessionDisplayLabel(profession) }}</span>
                     </label>
                   </div>
                 </div>
@@ -49,11 +49,14 @@
                     <span
                       v-for="tag in skillTags"
                       :key="tag"
-                      class="skill-tag text-xs px-3 py-1 rounded-full cursor-pointer hover:bg-primary/30"
-                      :class="{ 'bg-primary/30': selectedSkillTags.includes(tag) }"
+                      :class="[
+                        'skill-tag text-xs px-3 py-1 rounded-full cursor-pointer transition-colors border',
+                        getSkillTagClasses(tag),
+                        selectedSkillTags.includes(tag) ? 'selected' : ''
+                      ]"
                       @click="toggleSkillTag(tag)"
                     >
-                      {{ tag }}
+                      {{ getSkillTagDisplayName(tag) }}
                     </span>
                   </div>
                 </div>
@@ -130,7 +133,9 @@
             <!-- 排序和结果统计 -->
             <div class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div class="mb-4 sm:mb-0">
-                <p class="text-gray-300">找到 <span class="text-white font-medium">{{ filteredDesignerCount }}</span> 位符合条件的设计师</p>
+                <p class="text-gray-300">
+                  找到 <span class="text-white font-medium">{{ filteredDesignerCount }}</span> 位符合条件的设计师
+                </p>
               </div>
               <div class="flex items-center space-x-4 w-full sm:w-auto">
                 <div class="relative flex-grow sm:flex-grow-0">
@@ -147,15 +152,21 @@
               </div>
             </div>
 
+            <!-- 加载状态 -->
+            <div v-if="loading" class="flex justify-center items-center py-12">
+              <div class="loading-spinner w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span class="ml-2 text-gray-400">加载中...</span>
+            </div>
+
             <!-- 设计师列表 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
               <div
                 v-for="designer in paginatedDesigners"
                 :key="designer.id"
                 :class="[
                   'designer-card rounded-lg glow-border card-hover cursor-pointer',
                   isMobile ? 'mobile-card' : 'desktop-card',
-                  navigating && selectedDesigner?.id === designer.id ? 'navigating' : ''
+                  navigating && selectedDesignerId === designer.id ? 'navigating' : ''
                 ]"
                 @click="handleViewDetail(designer.id)"
               >
@@ -180,23 +191,20 @@
                     <p class="text-gray-400 text-sm mb-3 text-center">{{ getProfessionLabel(designer.profession) }}</p>
 
                     <!-- 技能标签 -->
-                    <div class="flex flex-wrap justify-center gap-2 mb-4">
-                      <span
-                        v-for="skill in getDesignerSkills(designer)"
+                    <div class="skill-tags-container flex justify-center gap-2 my-2">
+                      <SkillTag
+                        v-for="skill in getSortedDesignerSkills(designer)"
                         :key="skill"
-                        :class="[
-                          'text-xs px-2 py-1 rounded-full border transition-colors',
-                          getSkillTagStyle(skill)
-                        ]"
-                      >
-                        {{ skill }}
-                      </span>
+                        :tag="skill"
+                        size="sm"
+                        :show-category="false"
+                      />
                     </div>
 
                     <!-- 统计信息 -->
                     <div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
                       <span>作品: {{ getDesignerWorksCount(designer.id) }}</span>
-                      <span>经验: {{ designer.experience || 0 }}年</span>
+                      <span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
                       <span class="flex items-center">
                         <div
                           :class="[
@@ -204,7 +212,7 @@
                             getStatusColor(designer.workStatus)
                           ]"
                         />
-                        {{ getWorkStatusLabel(designer.workStatus || 'EMPLOYED') }}
+                        {{ getWorkStatusLabel(designer.workStatus || 'EMPLOYED' as WorkStatus) }}
                       </span>
                     </div>
 
@@ -261,7 +269,7 @@
     <DesignerDetailDrawer
       v-if="!isMobile"
       :visible="showDesignerDetail"
-      :designer="selectedDesigner"
+      :designer-id="selectedDesignerId"
       @update:visible="showDesignerDetail = $event"
     />
 
@@ -330,17 +338,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
 import DesignerDetailDrawer from '@/components/talent/DesignerDetailDrawer.vue'
-import { SkillTag } from '@/components/common'
+import SkillTag from '@/components/common/SkillTag/index.vue'
+import { useSkillTags } from '@/composables/useSkillTags'
 import { useDesigner } from '@/composables/talent/useDesigner'
 import type { Designer, Profession, WorkStatus } from '@/types/talent/designer'
-import { mockDesigners, mockWorks } from '@/data/mockDesigners'
+import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
 
 const router = useRouter()
-const { designers, loading, fetchDesigners } = useDesigner()
+
+// 使用设计师组合式函数
+const {
+  designers,
+  loading,
+  total,
+  professions,
+  skillTags,
+  regions,
+  workStatuses,
+  queryParams,
+  fetchDesigners,
+  resetSearch,
+  getDesignerWorksCount
+} = useDesigner()
+
+// 技能标签组合式函数
+const {
+  getTagDisplayName: getSkillTagDisplayName,
+  getTagClasses: getSkillTagClasses,
+  getTagCategory,
+  parseSkillTags,
+  getAllTags,
+  sortTagsByCategory
+} = useSkillTags()
 
 // 设备检测和导航状态
 const isMobile = ref(false)
@@ -374,43 +407,43 @@ const itemsPerPage = ref(12)
 
 // 模态框状态
 const showDesignerDetail = ref(false)
-const selectedDesigner = ref<Designer | null>(null)
-
-// 筛选选项
-const professions = [
-  { value: 'UI_UX_DESIGNER', label: 'UI/UX 设计师' },
-  { value: 'VISUAL_DESIGNER', label: '视觉设计师' },
-  { value: 'INTERACTION_DESIGNER', label: '交互设计师' },
-  { value: 'PRODUCT_DESIGNER', label: '产品设计师' },
-  { value: 'THREE_D_DESIGNER', label: '3D 设计师' },
-  { value: 'BRAND_DESIGNER', label: '品牌设计师' }
-]
-
-const skillTags = ['Figma', 'Sketch', 'Adobe XD', 'Photoshop', 'Illustrator', 'After Effects', 'Blender', 'Cinema 4D']
-const cities = ['北京', '上海', '广州', '深圳', '杭州', '成都', '武汉', '南京']
-
-const workStatuses = [
-  { value: '', label: '全部' },
-  { value: 'EMPLOYED', label: '在职' },
-  { value: 'FREELANCER', label: '自由职业' },
-  { value: 'SEEKING', label: '求职中' },
-  { value: 'STUDENT', label: '学生' }
-]
+const selectedDesignerId = ref<number | null>(null)
 
 // 计算属性
-const designerCount = computed(() => mockDesigners.length || 1248)
+const designerCount = computed(() => total.value)
+
+const cities = computed(() => {
+  return regions.value || []
+})
 
 const filteredDesigners = computed(() => {
-  let filtered = [...mockDesigners]
+  let filtered = [...designers.value]
 
   // 职业筛选
   if (selectedProfessions.value.length > 0) {
     filtered = filtered.filter(designer => selectedProfessions.value.includes(designer.profession))
   }
 
+  // 技能标签筛选
+  if (selectedSkillTags.value.length > 0) {
+    filtered = filtered.filter(designer => {
+      try {
+        const designerSkills = parseSkillTags(designer.skillTags)
+        return selectedSkillTags.value.some(tag => designerSkills.includes(tag))
+      } catch (error) {
+        console.error('解析技能标签失败:', error)
+        return false
+      }
+    })
+  }
+
   // 城市筛选
   if (selectedCities.value.length > 0) {
-    filtered = filtered.filter(designer => selectedCities.value.includes(designer.location))
+    filtered = filtered.filter(designer => {
+      if (!designer.location) return false
+      const cityName = designer.location.split('市')[0] + '市'
+      return selectedCities.value.includes(cityName)
+    })
   }
 
   // 工作状态筛选
@@ -420,7 +453,7 @@ const filteredDesigners = computed(() => {
 
   // 工作年限筛选
   if (experienceRange.value < 20) {
-    filtered = filtered.filter(designer => designer.experience <= experienceRange.value)
+            filtered = filtered.filter(designer => (designer.workYears || designer.experience || 0) <= experienceRange.value)
   }
 
   return filtered
@@ -431,7 +464,7 @@ const sortedDesigners = computed(() => {
 
   switch (sortBy.value) {
     case 'experience':
-      sorted.sort((a, b) => b.experience - a.experience)
+      sorted.sort((a, b) => (b.experience || 0) - (a.experience || 0))
       break
     case 'works':
       sorted.sort((a, b) => getDesignerWorksCount(b.id) - getDesignerWorksCount(a.id))
@@ -504,6 +537,7 @@ const resetFilters = () => {
   selectedCities.value = []
   selectedWorkStatus.value = ''
   experienceRange.value = 10
+  resetSearch()
 }
 
 const prevPage = () => {
@@ -523,9 +557,9 @@ const goToPage = (page: number) => {
 }
 
 const handleViewDetail = async (designerId: number) => {
-  const designer = mockDesigners.find(d => d.id === designerId)
+  const designer = designers.value.find(d => d.id === designerId)
   if (designer) {
-    selectedDesigner.value = designer
+    selectedDesignerId.value = designerId
 
     if (isMobile.value) {
       navigating.value = true
@@ -547,24 +581,92 @@ const getDesignerInitial = (name: string) => {
 }
 
 const getProfessionLabel = (profession: Profession) => {
-  const prof = professions.find(p => p.value === profession)
-  return prof ? prof.label : profession
+  return ProfessionLabels[profession] || profession
+}
+
+// 处理职业方向的工具方法，兼容对象和枚举两种格式
+const getProfessionKey = (profession: any) => {
+  return profession.value || profession
+}
+
+const getProfessionValue = (profession: any) => {
+  return profession.value || profession
+}
+
+const getProfessionDisplayLabel = (profession: any) => {
+  if (profession.label) {
+    return profession.label
+  }
+  const professionKey = profession as Profession
+  return ProfessionLabels[professionKey] || profession
 }
 
 const getWorkStatusLabel = (status: WorkStatus) => {
-  const statusObj = workStatuses.find(s => s.value === status)
+  const statusObj = workStatuses.value.find(s => s.value === status)
   return statusObj ? statusObj.label : '未知'
 }
 
-const getDesignerWorksCount = (designerId: number) => {
-  return mockWorks.filter(work => work.designerId === designerId).length
-}
-
+// 使用工具类解析技能标签 - 每个分类显示一个
 const getDesignerSkills = (designer: Designer) => {
   try {
-    const skills = JSON.parse(designer.skillTags || '[]')
-    return Array.isArray(skills) ? skills.slice(0, 3) : []
-  } catch {
+    const skills = parseSkillTags(designer.skillTags || '[]')
+
+    // 开发环境下输出调试信息
+    if (import.meta.env.DEV) {
+      console.log(`🏷️ 设计师 ${designer.designerName} 解析技能标签:`, {
+        原始数据: designer.skillTags,
+        解析结果: skills,
+        是否数组: Array.isArray(skills)
+      })
+    }
+
+    if (!Array.isArray(skills) || skills.length === 0) {
+      return []
+    }
+
+    // 按分类分组标签
+    const categoryGroups: Record<string, string[]> = {
+      'tool': [],
+      'field': [],
+      'skill': []
+    }
+
+    skills.forEach(skill => {
+      const category = getTagCategory(skill)
+      if (category && categoryGroups[category]) {
+        categoryGroups[category].push(skill)
+      } else if (import.meta.env.DEV) {
+        console.warn(`未知分类的技能标签: ${skill} -> ${category}`)
+      }
+    })
+
+    // 从每个分类中选择一个最短的标签
+    const selectedSkills: string[] = []
+    Object.keys(categoryGroups).forEach(category => {
+      const categorySkills = categoryGroups[category]
+      if (categorySkills.length > 0) {
+        // 按长度排序，选择最短的（按中文显示名称长度）
+        const shortest = categorySkills.sort((a, b) => {
+          const nameA = getSkillTagDisplayName(a)
+          const nameB = getSkillTagDisplayName(b)
+          return nameA.length - nameB.length
+        })[0]
+        selectedSkills.push(shortest)
+      }
+    })
+
+    // 开发环境下输出调试信息
+    if (import.meta.env.DEV) {
+      console.log(`🏷️ 设计师 ${designer.designerName} 的最终技能标签:`, {
+        分组结果: categoryGroups,
+        选中标签: selectedSkills,
+        显示名称: selectedSkills.map(tag => getSkillTagDisplayName(tag))
+      })
+    }
+
+    return selectedSkills // 最多3个标签，每个分类一个
+  } catch (error) {
+    console.error(`解析设计师 ${designer.designerName} 技能标签失败:`, error)
     return []
   }
 }
@@ -587,35 +689,6 @@ const getAvatarGradient = (name: string) => {
   return gradients[hash % gradients.length]
 }
 
-// 获取技能标签样式
-const getSkillTagStyle = (skill: string) => {
-  const skillStyles: Record<string, string> = {
-    'Figma': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    'Sketch': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    'Adobe XD': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    'Photoshop': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    'Illustrator': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    'After Effects': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    'Blender': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    'Cinema 4D': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    '交互设计': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    '用户研究': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '品牌设计': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    '插画': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '动效': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '原型设计': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '用户体验': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '界面设计': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    '设计系统': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '品牌标识': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    '视觉识别': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    'Lottie': 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-    '动画': 'bg-pink-500/20 text-pink-400 border-pink-500/30'
-  }
-
-  return skillStyles[skill] || 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-}
-
 // 获取工作状态颜色
 const getStatusColor = (status: WorkStatus | undefined) => {
   const statusColors: Record<string, string> = {
@@ -628,10 +701,53 @@ const getStatusColor = (status: WorkStatus | undefined) => {
   return statusColors[status || ''] || 'bg-gray-500'
 }
 
-onMounted(() => {
+const getSortedDesignerSkills = (designer: Designer) => {
+  const skills = getDesignerSkills(designer)
+  // 按固定顺序排列：工具 -> 领域 -> 技能
+  return sortTagsByCategory(skills, 'asc')
+}
+
+// 监听筛选条件变化，自动应用筛选
+watch([selectedProfessions, selectedSkillTags, selectedCities, selectedWorkStatus, experienceRange], () => {
+  // 重置到第一页
+  currentPage.value = 1
+
+  // 更新查询参数
+  queryParams.profession = selectedProfessions.value[0] as Profession || undefined
+  queryParams.skillTags = selectedSkillTags.value.join(',') || undefined
+  queryParams.location = selectedCities.value[0] || undefined
+  queryParams.workStatus = selectedWorkStatus.value as WorkStatus || undefined
+  queryParams.maxExperience = experienceRange.value < 20 ? experienceRange.value : undefined
+}, { deep: true })
+
+onMounted(async () => {
   console.log('🎯 设计师档案页面挂载完成')
+  console.log('🔍 环境变量调试信息:', {
+    VITE_USE_MOCK_DATA: import.meta.env.VITE_USE_MOCK_DATA,
+    实际使用Mock模式: import.meta.env.VITE_USE_MOCK_DATA === 'true'
+  })
+
   checkDevice()
   window.addEventListener('resize', handleResize)
+
+  // 初始化数据
+  await fetchDesigners(true)
+
+  // 等待一下确保数据已经加载完成
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  // 调试筛选选项数据
+  console.log('🔍 筛选选项调试信息:', {
+    设计师数据数量: designers.value?.length || 0,
+    职业方向数量: professions.value?.length || 0,
+    职业方向数据: professions.value,
+    技能标签数量: skillTags.value?.length || 0,
+    技能标签前10个: skillTags.value?.slice(0, 10),
+    地区数量: regions.value?.length || 0,
+    地区数据: regions.value,
+    工作状态数量: workStatuses.value?.length || 0,
+    工作状态数据: workStatuses.value
+  })
 })
 
 onUnmounted(() => {
@@ -689,6 +805,32 @@ onUnmounted(() => {
 /* 头像发光效果 */
 .avatar-glow {
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+/* 技能标签容器固定高度 - 单行显示 */
+.skill-tags-container {
+  min-height: 32px; /* 单行标签的高度 */
+  max-height: 32px; /* 限制最大高度 */
+  overflow: hidden; /* 隐藏超出部分 */
+  align-items: center; /* 垂直居中 */
+  flex-wrap: nowrap; /* 禁止换行，强制单行显示 */
+  line-height: 1.2; /* 优化行高 */
+}
+
+/* 技能标签文本截断 */
+.skill-tags-container .skill-tag {
+  max-width: 100px; /* 限制单个标签最大宽度 */
+  white-space: nowrap; /* 防止换行 */
+  overflow: hidden; /* 隐藏超出文本 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  display: inline-block; /* 确保 text-overflow 生效 */
+}
+
+/* 技能标签选中状态 */
+.skill-tag.selected {
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(var(--color-primary), 0.5);
+  transform: scale(1.05);
 }
 
 /* 自定义复选框 */
@@ -866,6 +1008,15 @@ onUnmounted(() => {
 
   .designer-card:active {
     border-color: rgba(10, 132, 255, 0.5);
+  }
+
+  .skill-tags-container {
+    min-height: 28px; /* 移动端单行高度 */
+    max-height: 28px;
+  }
+
+  .skill-tags-container .skill-tag {
+    max-width: 80px; /* 移动端减少标签最大宽度 */
   }
 }
 

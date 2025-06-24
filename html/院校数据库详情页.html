@@ -580,24 +580,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
       <!-- 右侧内容区 -->
       <div class="lg:w-3/4">
-        <!-- 数据概览卡片 -->
-        <div class="glass-card rounded-lg p-6 mb-6">
-          <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-            <h3 class="text-xl font-bold mb-4 md:mb-0">院校数据概览</h3>
-            <div class="flex space-x-2">
-              <button class="px-3 py-1 rounded-full bg-gray-800/50 text-xs text-gray-300 border border-gray-700/50 hover:bg-gray-700/50 transition-colors">
-                按就业率
-              </button>
-              <button class="px-3 py-1 rounded-full bg-primary/20 text-xs text-primary border border-primary/30 hover:bg-primary/30 transition-colors">
-                按师资力量
-              </button>
-              <button class="px-3 py-1 rounded-full bg-gray-800/50 text-xs text-gray-300 border border-gray-700/50 hover:bg-gray-700/50 transition-colors">
-                按学生评分
-              </button>
-            </div>
-          </div>
-          <div id="schoolComparisonChart" class="w-full h-80"></div>
-        </div>
+
 
         <!-- 院校列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1356,159 +1339,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 <script id="charts-initialization">
 document.addEventListener('DOMContentLoaded', function() {
-  // 院校比较图表
-  const schoolComparisonChart = echarts.init(document.getElementById('schoolComparisonChart'));
-  const schoolComparisonOption = {
-    animation: false,
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      borderColor: 'rgba(255, 255, 255, 0.8)',
-      textStyle: {
-        color: '#1f2937'
-      }
-    },
-    legend: {
-      data: ['清华大学', '中央美术学院', '同济大学', '浙江大学', '广州美术学院'],
-      textStyle: {
-        color: '#e2e8f0'
-      }
-    },
-    radar: {
-      indicator: [
-        { name: '师资力量', max: 5 },
-        { name: '就业率', max: 5 },
-        { name: '学生评分', max: 5 },
-        { name: '国际影响力', max: 5 },
-        { name: '科研成果', max: 5 },
-        { name: '产学研合作', max: 5 }
-      ],
-      splitArea: {
-        areaStyle: {
-          color: ['rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.2)', 'rgba(15, 23, 42, 0.1)', 'rgba(15, 23, 42, 0)']
-        }
-      },
-      axisLine: {
-        lineStyle: {
-          color: 'rgba(148, 163, 184, 0.2)'
-        }
-      },
-      splitLine: {
-        lineStyle: {
-          color: 'rgba(148, 163, 184, 0.2)'
-        }
-      },
-      name: {
-        textStyle: {
-          color: '#e2e8f0'
-        }
-      }
-    },
-    series: [
-      {
-        name: '院校综合评分',
-        type: 'radar',
-        data: [
-          {
-            value: [5.0, 4.8, 4.9, 4.7, 4.9, 4.8],
-            name: '清华大学',
-            itemStyle: { color: 'rgba(87, 181, 231, 1)' },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(87, 181, 231, 0.2)'
-                }, {
-                  offset: 1, color: 'rgba(87, 181, 231, 0.01)'
-                }]
-              }
-            }
-          },
-          {
-            value: [4.9, 4.7, 4.8, 4.6, 4.5, 4.4],
-            name: '中央美术学院',
-            itemStyle: { color: 'rgba(141, 211, 199, 1)' },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(141, 211, 199, 0.2)'
-                }, {
-                  offset: 1, color: 'rgba(141, 211, 199, 0.01)'
-                }]
-              }
-            }
-          },
-          {
-            value: [4.8, 4.7, 4.7, 4.5, 4.8, 4.9],
-            name: '同济大学',
-            itemStyle: { color: 'rgba(251, 191, 114, 1)' },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(251, 191, 114, 0.2)'
-                }, {
-                  offset: 1, color: 'rgba(251, 191, 114, 0.01)'
-                }]
-              }
-            }
-          },
-          {
-            value: [4.7, 4.6, 4.6, 4.4, 4.7, 4.6],
-            name: '浙江大学',
-            itemStyle: { color: 'rgba(252, 141, 98, 1)' },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(252, 141, 98, 0.2)'
-                }, {
-                  offset: 1, color: 'rgba(252, 141, 98, 0.01)'
-                }]
-              }
-            }
-          },
-          {
-            value: [4.6, 4.6, 4.7, 4.3, 4.4, 4.5],
-            name: '广州美术学院',
-            itemStyle: { color: 'rgba(179, 162, 199, 1)' },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                  offset: 0, color: 'rgba(179, 162, 199, 0.2)'
-                }, {
-                  offset: 1, color: 'rgba(179, 162, 199, 0.01)'
-                }]
-              }
-            }
-          }
-        ]
-      }
-    ]
-  };
-  schoolComparisonChart.setOption(schoolComparisonOption);
 
   // 弹窗内的行业分布图表
   const industryChart = echarts.init(document.getElementById('industryChart'));
@@ -1778,7 +1608,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // 窗口大小改变时重新调整图表大小
   window.addEventListener('resize', function() {
-    schoolComparisonChart.resize();
     if (document.getElementById('industryChart').offsetParent !== null) {
       industryChart.resize();
     }

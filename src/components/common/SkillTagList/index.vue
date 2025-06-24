@@ -1,65 +1,60 @@
 <template>
-  <div :class="containerClasses">
-    <!-- 普通列表模式 -->
-    <template v-if="!grouped">
+  <div class="skill-tag-list">
+    <!-- 简单排序模式 -->
+    <div v-if="!groupByCategory" class="skill-tags-container" :class="containerClass">
       <SkillTag
-        v-for="(tag, index) in tags"
+        v-for="tag in sortedTags"
         :key="tag"
         :tag="tag"
         :size="size"
         :clickable="clickable"
-        :show-category="showCategory"
         :selected="selectedTags.includes(tag)"
-        :class="animationEnabled ? { 'animate-fade-in': true } : {}"
-        :style="animationEnabled ? { 'animation-delay': `${index * 50}ms` } : {}"
+        :disabled="disabled"
+        :show-category="showCategory"
         @click="handleTagClick"
       />
-    </template>
+    </div>
 
-    <!-- 分组模式 -->
-    <template v-else>
-      <div class="skill-tags-grouped">
-        <div
-          v-for="[category, categoryTags] in Object.entries(groupedTags)"
-          :key="category"
-          class="skill-tag-group"
+    <!-- 分组排序模式 -->
+    <div v-else class="skill-tags-grouped" :class="containerClass">
+      <div
+        v-for="category in sortedCategories"
+        :key="category"
+        class="skill-tag-group"
+      >
+        <h4
+          v-if="showGroupTitle && groupedSortedTags[category]?.length > 0"
+          class="skill-tag-group-title"
         >
-          <h4 v-if="showGroupTitles" class="skill-tag-group-title">
-            {{ categoryNames[category as SkillTagCategory] }}
-          </h4>
-          <div class="skill-tag-group-content">
-            <SkillTag
-              v-for="tag in categoryTags"
-              :key="tag"
-              :tag="tag"
-              :size="size"
-              :clickable="clickable"
-              :show-category="showCategory"
-              :selected="selectedTags.includes(tag)"
-              @click="handleTagClick"
-            />
-          </div>
+          {{ categoryNames[category] }}
+          <span class="count">({{ groupedSortedTags[category].length }})</span>
+        </h4>
+        <div class="skill-tag-group-content">
+          <SkillTag
+            v-for="tag in groupedSortedTags[category]"
+            :key="tag"
+            :tag="tag"
+            :size="size"
+            :clickable="clickable"
+            :selected="selectedTags.includes(tag)"
+            :disabled="disabled"
+            :show-category="showCategory"
+            @click="handleTagClick"
+          />
         </div>
       </div>
-    </template>
+    </div>
 
     <!-- 统计信息 -->
-    <div v-if="showStats" class="skill-tags-stats mt-4">
-      <div class="grid grid-cols-3 gap-4">
-        <div
-          v-for="[category, count] in Object.entries(stats)"
-          :key="category"
-          class="text-center p-2 rounded-lg"
-          :class="getCategoryStatsClasses(category as SkillTagCategory)"
-        >
-          <div class="font-bold text-lg">
-            {{ count }}
-          </div>
-          <div class="text-xs">
-            {{ categoryNames[category as SkillTagCategory] }}
-          </div>
-        </div>
-      </div>
+    <div v-if="showStats" class="skill-tag-stats">
+      <span class="text-sm text-gray-500">
+        共 {{ tags.length }} 个标签
+        <span v-if="groupByCategory">
+          - 🔵 工具: {{ stats.tool }} 个
+          - 🟣 领域: {{ stats.field }} 个
+          - 🩷 技能: {{ stats.skill }} 个
+        </span>
+      </span>
     </div>
   </div>
 </template>
@@ -71,101 +66,92 @@ import { useSkillTags } from '@/composables/useSkillTags'
 import type { SkillTagCategory } from '@/utils/skillTagUtils'
 
 interface Props {
-  /** 英文简写标签数组（如 ['figma', 'interaction_design']） */
+  /** 英文简写标签数组 */
   tags: string[]
+  /** 是否按分类分组显示 */
+  groupByCategory?: boolean
+  /** 标签尺寸 */
   size?: 'sm' | 'md' | 'lg'
-  grouped?: boolean
-  showGroupTitles?: boolean
-  showStats?: boolean
+  /** 是否可点击 */
   clickable?: boolean
-  showCategory?: boolean
-  animationEnabled?: boolean
+  /** 选中的标签 */
   selectedTags?: string[]
-  maxDisplay?: number
-  gap?: 'sm' | 'md' | 'lg'
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否显示分类信息 */
+  showCategory?: boolean
+  /** 是否显示分组标题 */
+  showGroupTitle?: boolean
+  /** 是否显示统计信息 */
+  showStats?: boolean
+  /** 排序顺序 */
+  sortOrder?: 'asc' | 'desc'
+  /** 容器样式类 */
+  containerClass?: string
 }
 
 interface Emits {
-  (e: 'tag-click', tag: string, category: SkillTagCategory, displayName: string): void
+  (e: 'tagClick', tag: string, category: SkillTagCategory, displayName: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  groupByCategory: false,
   size: 'md',
-  grouped: false,
-  showGroupTitles: true,
-  showStats: false,
   clickable: false,
-  showCategory: false,
-  animationEnabled: false,
   selectedTags: () => [],
-  maxDisplay: 0,
-  gap: 'md'
+  disabled: false,
+  showCategory: false,
+  showGroupTitle: true,
+  showStats: false,
+  sortOrder: 'asc',
+  containerClass: ''
 })
 
 const emit = defineEmits<Emits>()
 
 const {
-  categoryNames,
-  groupTagsByCategory,
-  getCategoryStats
+  sortTagsByCategory,
+  groupAndSortTagsByCategory,
+  getSortedCategories,
+  getCategoryStats,
+  categoryNames
 } = useSkillTags()
 
-// 处理显示的标签数量限制
-const displayTags = computed(() => {
-  if (props.maxDisplay > 0) {
-    return props.tags.slice(0, props.maxDisplay)
-  }
-  return props.tags
+// 计算排序后的标签
+const sortedTags = computed(() => {
+  return sortTagsByCategory(props.tags, props.sortOrder)
 })
 
-// 分组标签（从英文简写自动分类）
-const groupedTags = computed(() => {
-  if (!props.grouped) return {}
-  return groupTagsByCategory(displayTags.value)
+// 计算分组排序后的标签
+const groupedSortedTags = computed(() => {
+  return groupAndSortTagsByCategory(props.tags, props.sortOrder)
 })
 
-// 统计信息（从英文简写自动统计）
+// 计算排序后的分类
+const sortedCategories = computed(() => {
+  return getSortedCategories(props.sortOrder)
+})
+
+// 计算统计信息
 const stats = computed(() => {
-  return getCategoryStats(displayTags.value)
+  return getCategoryStats(props.tags)
 })
 
-// 容器样式类
-const containerClasses = computed(() => {
-  const gapMap = {
-    sm: 'gap-1',
-    md: 'gap-2',
-    lg: 'gap-3'
-  }
-
-  let classes = 'skill-tags-container'
-
-  if (!props.grouped) {
-    classes += ` flex flex-wrap ${gapMap[props.gap]}`
-  }
-
-  if (props.animationEnabled) {
-    classes += ' animate-stagger'
-  }
-
-  return classes
-})
-
-// 获取分类统计的样式类
-const getCategoryStatsClasses = (category: SkillTagCategory): string => {
-  const categoryColorMap = {
-    tool: 'bg-blue-500/10 text-blue-400',
-    field: 'bg-purple-500/10 text-purple-400',
-    skill: 'bg-pink-500/10 text-pink-400'
-  }
-  return categoryColorMap[category] || categoryColorMap.skill
-}
-
-// 处理标签点击事件
+// 处理标签点击
 const handleTagClick = (tag: string, category: SkillTagCategory, displayName: string) => {
-  emit('tag-click', tag, category, displayName)
+  if (props.clickable && !props.disabled) {
+    emit('tagClick', tag, category, displayName)
+  }
 }
 </script>
 
 <style scoped>
 /* 样式通过全局CSS文件 skill-tags.css 控制 */
+.skill-tag-stats {
+  @apply mt-3 pt-2 border-t border-gray-200 dark:border-gray-700;
+}
+
+.count {
+  @apply text-xs opacity-70 ml-1;
+}
 </style>
