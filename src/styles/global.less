@@ -2,13 +2,20 @@ html,
 body,
 #app {
 	height: 100%;
+	font-family: 'Noto Sans SC', sans-serif;
 }
 
 body {
 	padding-bottom: constant(safe-area-inset-bottom);
 	padding-bottom: env(safe-area-inset-bottom);
+	font-family: 'Noto Sans SC', sans-serif !important;
 }
 
 .active{
     color: #4b9e5f;
+}
+
+/* 确保 Naive UI 全局样式被覆盖 */
+.n-global * {
+	font-family: 'Noto Sans SC', sans-serif !important;
 }

@@ -1,0 +1,920 @@
+<template>
+  <div class="talent-page">
+    <!-- 统一顶栏 -->
+    <TalentHeader />
+
+    <!-- 页面标题区 -->
+    <section class="py-12 relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 class="text-4xl font-bold mb-2 text-white">院校数据库</h1>
+            <p class="text-gray-300 max-w-2xl">
+              汇聚 {{ schoolCount.toLocaleString() }} 所优质院校，涵盖设计教育全链路信息
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主体内容区 -->
+    <section class="flex-grow pb-8">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- 左侧筛选栏 -->
+          <div class="lg:w-1/4">
+            <div class="filter-card rounded-lg p-6 sticky top-24">
+              <div class="space-y-6">
+                <!-- 院校类型筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">院校类型</h3>
+                  <div class="space-y-2">
+                    <label v-for="type in schoolTypes" :key="type.value" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="custom-checkbox"
+                        :checked="selectedSchoolTypes.includes(type.value)"
+                        @change="toggleSchoolType(type.value)"
+                      >
+                      <span>{{ type.label }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 地区筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">所在地区</h3>
+                  <div class="grid grid-cols-2 gap-2">
+                    <label v-for="region in regions" :key="region" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="custom-checkbox"
+                        :checked="selectedRegions.includes(region)"
+                        @change="toggleRegion(region)"
+                      >
+                      <span>{{ region }}</span>
+                    </label>
+                  </div>
+                  <button class="text-blue-400 text-sm mt-2">更多地区</button>
+                </div>
+
+                <!-- 院校层次筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">院校层次</h3>
+                  <div class="space-y-2">
+                    <label v-for="level in schoolLevels" :key="level.value" class="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="level"
+                        class="custom-radio"
+                        :value="level.value"
+                        v-model="selectedLevel"
+                      >
+                      <span>{{ level.label }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 办学性质筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">办学性质</h3>
+                  <div class="space-y-2">
+                    <label v-for="nature in schoolNatures" :key="nature" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="custom-checkbox"
+                        :checked="selectedNatures.includes(nature)"
+                        @change="toggleNature(nature)"
+                      >
+                      <span>{{ nature }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 特殊标识筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">特殊标识</h3>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span>985院校</span>
+                      <label class="custom-switch">
+                        <input type="checkbox" v-model="is985">
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>211院校</span>
+                      <label class="custom-switch">
+                        <input type="checkbox" v-model="is211">
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>双一流</span>
+                      <label class="custom-switch">
+                        <input type="checkbox" v-model="isDoubleFirst">
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 筛选按钮 -->
+                <div class="flex space-x-3 pt-2">
+                  <button
+                    @click="resetFilters"
+                    class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors"
+                  >
+                    重置筛选
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧内容区 -->
+          <div class="lg:w-3/4">
+            <!-- 排序和结果统计 -->
+            <div class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div class="mb-4 sm:mb-0">
+                <p class="text-gray-300">找到 <span class="text-white font-medium">{{ filteredSchoolCount }}</span> 所符合条件的院校</p>
+              </div>
+              <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="relative flex-grow sm:flex-grow-0">
+                  <select
+                    v-model="sortBy"
+                    class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8 bg-gray-800/80 border border-gray-700"
+                  >
+                    <option value="ranking">综合排名</option>
+                    <option value="established-year">建校时间</option>
+                    <option value="student-count">学生数量</option>
+                    <option value="name">院校名称</option>
+                    <option value="latest">最新更新</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 院校列表 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <SchoolCard
+                v-for="school in paginatedSchools"
+                :key="school.id"
+                :school="school"
+                @click="handleViewDetail"
+                @detail="handleViewDetail"
+              />
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex justify-center mt-10 mb-6">
+              <div class="flex space-x-2">
+                <button
+                  @click="prevPage"
+                  :disabled="currentPage === 1"
+                  class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
+                >
+                  <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button
+                  v-for="page in visiblePages"
+                  :key="page"
+                  @click="goToPage(page)"
+                  :class="[
+                    'pagination-button w-10 h-10 flex items-center justify-center rounded-lg',
+                    currentPage === page
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-800/50 text-gray-300 border border-gray-700/50 hover:bg-blue-600/20'
+                  ]"
+                >
+                  {{ page }}
+                </button>
+                <button
+                  @click="nextPage"
+                  :disabled="currentPage === totalPages"
+                  class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
+                >
+                  <i class="ri-arrow-right-s-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 院校详情模态框 - 仅在桌面端显示 -->
+    <SchoolDetailModal
+      v-if="!isMobile && selectedSchool"
+      :visible="showSchoolDetail"
+      :school="selectedSchool"
+      @update:visible="showSchoolDetail = $event"
+    />
+
+
+
+    <!-- 页脚 -->
+    <footer class="mt-16 py-12 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-bold mb-4">星海人才</h3>
+            <p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">功能模块</h3>
+            <ul class="space-y-2">
+              <li><router-link to="/talent/schools" class="text-gray-400 text-sm hover:text-blue-400">院校数据库</router-link></li>
+              <li><router-link to="/talent/works" class="text-gray-400 text-sm hover:text-blue-400">学生作品库</router-link></li>
+              <li><router-link to="/talent/jobs" class="text-gray-400 text-sm hover:text-blue-400">企业需求池</router-link></li>
+              <li><router-link to="/talent/designers" class="text-gray-400 text-sm hover:text-blue-400">设计师档案</router-link></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">关于我们</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">联系方式</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
+              </li>
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-phone-line mr-2"></i> 400-888-9999
+              </li>
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-divider mb-8"></div>
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+              <i class="ri-weibo-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+              <i class="ri-wechat-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+              <i class="ri-linkedin-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+              <i class="ri-github-line"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import TalentHeader from '@/components/talent/TalentHeader.vue'
+import SchoolDetailModal from '@/components/talent/SchoolDetailModal.vue'
+import SchoolCard from '@/components/talent/SchoolCard.vue'
+import { useSchool } from '@/composables/talent/useSchool'
+import type { School } from '@/types/talent/school'
+
+const router = useRouter()
+const { schools, loading, fetchSchools } = useSchool({ autoLoad: false })
+
+// 设备检测和导航状态
+const isMobile = ref(false)
+const navigating = ref(false)
+
+const checkDevice = () => {
+  const screenWidth = window.innerWidth
+  const userAgent = navigator.userAgent
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
+  isMobile.value = screenWidth < 1024 ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) ||
+    (isTouchDevice && screenWidth < 1200)
+
+  console.log('📱 设备检测结果:', {
+    screenWidth,
+    isTouchDevice,
+    userAgent: userAgent.substring(0, 50) + '...',
+    isMobile: isMobile.value
+  })
+}
+
+const handleResize = () => {
+  checkDevice()
+}
+
+// 筛选条件
+const selectedSchoolTypes = ref<string[]>([])
+const selectedRegions = ref<string[]>([])
+const selectedLevel = ref('')
+const selectedNatures = ref<string[]>([])
+const is985 = ref(false)
+const is211 = ref(false)
+const isDoubleFirst = ref(false)
+const sortBy = ref('ranking')
+
+// 分页
+const currentPage = ref(1)
+const itemsPerPage = ref(8)
+
+// 模态框状态
+const showSchoolDetail = ref(false)
+const selectedSchool = ref<School | null>(null)
+
+// 筛选选项
+const schoolTypes = [
+  { value: 'COMPREHENSIVE', label: '综合类' },
+  { value: 'SCIENCE_ENGINEERING', label: '理工类' },
+  { value: 'ART_DESIGN', label: '艺术设计类' },
+  { value: 'NORMAL', label: '师范类' },
+  { value: 'FINANCE', label: '财经类' },
+  { value: 'MEDICAL', label: '医学类' }
+]
+
+const regions = ['北京', '上海', '广州', '深圳', '杭州', '南京', '成都', '西安']
+
+const schoolLevels = [
+  { value: 'UNDERGRADUATE', label: '本科院校' },
+  { value: 'JUNIOR_COLLEGE', label: '专科院校' },
+  { value: 'GRADUATE', label: '研究生院' }
+]
+
+const schoolNatures = ['公办', '民办', '中外合作']
+
+// 计算属性
+const schoolCount = computed(() => schools.value.length || 1256)
+
+const filteredSchools = computed(() => {
+  let filtered = [...schools.value]
+
+  // 院校类型筛选
+  if (selectedSchoolTypes.value.length > 0) {
+    filtered = filtered.filter(school => selectedSchoolTypes.value.includes(school.schoolType))
+  }
+
+  // 地区筛选
+  if (selectedRegions.value.length > 0) {
+    filtered = filtered.filter(school =>
+      selectedRegions.value.some(region => school.location.includes(region))
+    )
+  }
+
+  // 特殊标识筛选
+  if (is985.value) {
+    filtered = filtered.filter(school => school.is985)
+  }
+  if (is211.value) {
+    filtered = filtered.filter(school => school.is211)
+  }
+  if (isDoubleFirst.value) {
+    filtered = filtered.filter(school => school.isDoubleFirst)
+  }
+
+  return filtered
+})
+
+const sortedSchools = computed(() => {
+  let sorted = [...filteredSchools.value]
+
+  switch (sortBy.value) {
+    case 'ranking':
+      sorted.sort((a, b) => (a.ranking || 999) - (b.ranking || 999))
+      break
+    case 'established-year':
+      // 建校年份排序已移除
+      break
+    case 'student-count':
+      sorted.sort((a, b) => (b.totalStudents || 0) - (a.totalStudents || 0))
+      break
+    case 'name':
+      sorted.sort((a, b) => a.schoolName.localeCompare(b.schoolName))
+      break
+    case 'latest':
+    default:
+      break
+  }
+
+  return sorted
+})
+
+const totalPages = computed(() => Math.ceil(sortedSchools.value.length / itemsPerPage.value))
+
+const paginatedSchools = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return sortedSchools.value.slice(start, end)
+})
+
+const filteredSchoolCount = computed(() => filteredSchools.value.length)
+
+const visiblePages = computed(() => {
+  const pages = []
+  const maxVisiblePages = 5
+  const startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
+  const endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1)
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i)
+  }
+
+  return pages
+})
+
+// 方法
+const toggleSchoolType = (type: string) => {
+  const index = selectedSchoolTypes.value.indexOf(type)
+  if (index > -1) {
+    selectedSchoolTypes.value.splice(index, 1)
+  } else {
+    selectedSchoolTypes.value.push(type)
+  }
+}
+
+const toggleRegion = (region: string) => {
+  const index = selectedRegions.value.indexOf(region)
+  if (index > -1) {
+    selectedRegions.value.splice(index, 1)
+  } else {
+    selectedRegions.value.push(region)
+  }
+}
+
+const toggleNature = (nature: string) => {
+  const index = selectedNatures.value.indexOf(nature)
+  if (index > -1) {
+    selectedNatures.value.splice(index, 1)
+  } else {
+    selectedNatures.value.push(nature)
+  }
+}
+
+const resetFilters = () => {
+  selectedSchoolTypes.value = []
+  selectedRegions.value = []
+  selectedLevel.value = ''
+  selectedNatures.value = []
+  is985.value = false
+  is211.value = false
+  isDoubleFirst.value = false
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+}
+
+const handleViewDetail = async (school: School) => {
+  console.log('🎯 点击院校卡片:', school.schoolName, school.id)
+  console.log('📱 当前设备类型:', isMobile.value ? '移动端' : '桌面端')
+
+  if (school) {
+    selectedSchool.value = school
+    console.log('✅ 设置选中院校:', selectedSchool.value?.schoolName)
+
+    if (isMobile.value) {
+      // 移动端：跳转到独立页面
+      console.log('📱 移动端跳转到详情页面')
+      navigating.value = true
+      try {
+        await router.push(`/talent/schools/${school.id}`)
+      } catch (error) {
+        console.error('Navigation failed:', error)
+        navigating.value = false
+      }
+    } else {
+      // 桌面端：打开模态框
+      console.log('💻 桌面端打开模态框')
+      showSchoolDetail.value = true
+      console.log('📋 模态框状态:', showSchoolDetail.value)
+    }
+  } else {
+    console.error('❌ 院校数据为空')
+  }
+}
+
+// 工具方法
+
+onMounted(() => {
+  console.log('🎯 院校页面挂载完成，开始获取院校数据')
+  fetchSchools()
+  checkDevice()
+  window.addEventListener('resize', handleResize)
+})
+
+// 观察模态框状态变化
+watch(showSchoolDetail, (newVal) => {
+  console.log('🔄 模态框状态变化:', newVal)
+})
+
+watch(selectedSchool, (newVal) => {
+  console.log('🔄 选中院校变化:', newVal?.schoolName)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+</script>
+
+<style>
+@import '@/styles/talent.css';
+
+.talent-page {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: #000000;
+  color: #e2e8f0;
+  min-height: 100vh;
+  font-size: 16px !important;
+}
+
+.talent-page p {
+  margin-bottom: 0;
+}
+
+/* 玻璃效果卡片 */
+.glass-card {
+  background: rgba(28, 28, 30, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 筛选卡片 */
+.filter-card {
+  background: rgba(28, 28, 30, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 院校卡片 */
+.school-card {
+  background: rgba(28, 28, 30, 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 99, 102, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.school-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 院校Logo */
+.school-logo {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
+  border: 1px solid rgba(99, 99, 102, 0.1);
+}
+
+/* 技能标签 */
+.skill-tag {
+  background: rgba(10, 132, 255, 0.2);
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  color: #60a5fa;
+}
+
+/* 自定义复选框 */
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.custom-checkbox:checked {
+  background-color: #0a84ff;
+  border-color: #0a84ff;
+}
+
+.custom-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 自定义单选按钮 */
+.custom-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 50%;
+  background-color: transparent;
+  display: inline-block;
+  position: relative;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.custom-radio:checked {
+  border-color: #0a84ff;
+}
+
+.custom-radio:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #0a84ff;
+}
+
+/* 自定义开关 */
+.custom-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-left: 8px;
+}
+
+.custom-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(148, 163, 184, 0.2);
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .switch-slider {
+  background-color: #0a84ff;
+}
+
+input:checked + .switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* 自定义选择框 */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a1a1aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+.custom-select:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+
+/* 悬浮效果 */
+.glow-border {
+  position: relative;
+}
+
+.glow-border::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glow-border:hover::after {
+  opacity: 1;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 分页按钮 */
+.pagination-button {
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(.active):not(:disabled) {
+  background-color: rgba(10, 132, 255, 0.2);
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+}
+
+/* 分割线 */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.2), transparent);
+}
+
+/* 混合导航模式样式 */
+.mobile-card {
+  position: relative;
+}
+
+.mobile-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid rgba(148, 163, 184, 0.4);
+  border-right: 2px solid rgba(148, 163, 184, 0.4);
+  transform: translateY(-50%) rotate(45deg);
+  transition: all 0.3s ease;
+}
+
+.mobile-card:hover::after {
+  border-color: rgba(10, 132, 255, 0.6);
+  transform: translateY(-50%) rotate(45deg) scale(1.1);
+}
+
+.desktop-card {
+  position: relative;
+}
+
+.desktop-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(10, 132, 255, 0.05), rgba(191, 90, 242, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.desktop-card:hover::before {
+  opacity: 1;
+}
+
+.mobile-view-btn {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(191, 90, 242, 0.15));
+  border: 1px solid rgba(10, 132, 255, 0.3);
+}
+
+.mobile-view-btn:hover {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.25), rgba(191, 90, 242, 0.25));
+  transform: translateX(2px);
+}
+
+.desktop-view-btn:hover {
+  background: rgba(10, 132, 255, 0.2);
+  border-color: rgba(10, 132, 255, 0.5);
+}
+
+/* 触摸反馈 */
+@media (hover: none) and (pointer: coarse) {
+  .mobile-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  .mobile-view-btn:active {
+    transform: translateX(2px) scale(0.95);
+  }
+}
+
+/* 确保模态框不被其他元素覆盖 */
+.talent-page {
+  position: relative;
+  z-index: 1;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .filter-card {
+    position: static !important;
+  }
+
+  .glass-card {
+    margin: 0.5rem 0;
+  }
+
+  .school-card {
+    border: 1px solid rgba(99, 99, 102, 0.3);
+  }
+
+  .school-card:active {
+    border-color: rgba(10, 132, 255, 0.5);
+  }
+}
+
+/* 导航加载状态 */
+.navigating {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.navigating::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid rgba(10, 132, 255, 0.3);
+  border-top: 2px solid #0a84ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 大屏幕优化 */
+@media (min-width: 1024px) {
+  .desktop-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .desktop-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .desktop-card.navigating:hover {
+    transform: none;
+  }
+}
+</style>

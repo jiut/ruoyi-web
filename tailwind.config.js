@@ -16,6 +16,12 @@ module.exports = {
           '50%': { 'background-color': 'transparent' },
         },
       },
+      borderRadius: {
+        'lg': '16px',
+      },
+      fontFamily: {
+        'sans': ['Noto Sans SC', 'sans-serif'],
+      },
     },
   },
   plugins: [],

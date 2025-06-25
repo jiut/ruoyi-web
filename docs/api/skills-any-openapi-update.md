@@ -5,7 +5,7 @@
 本次更新为 `/designer/job/skills-any` 接口添加了完整的 OpenAPI 文档注解，使其能够在 Swagger UI 中正确显示和测试。
 
 ## 🔧 更新内容
-
+****
 ### 1. 接口信息更新
 
 - **接口路径**: `GET /designer/job/skills-any`
@@ -77,7 +77,7 @@ parameters:
 ### 支持的技能标签
 
 - **动效设计**: ANIMATION_DESIGN
-- **原型设计**: PROTOTYPE_DESIGN  
+- **原型设计**: PROTOTYPE_DESIGN
 - **角色设计**: CHARACTER_DESIGN
 - **视觉设计**: VISUAL_DESIGN
 - **用户界面设计**: USER_INTERFACE_DESIGN
@@ -159,4 +159,4 @@ GET /designer/job/skills-any?skillTags=WEB_DESIGN,MOBILE_DESIGN,USER_INTERFACE_D
 
 **更新完成时间**: 2024年12月
 **更新文件**: `JobPostingController.java`
-**影响接口**: `GET /designer/job/skills-any` 
+**影响接口**: `GET /designer/job/skills-any`

@@ -772,15 +772,16 @@ const handleResize = () => {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(28, 28, 30, 0.6);
+  background: rgba(28, 28, 30, 0.5);
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(10, 132, 255, 0.5);
+  background: rgba(99, 99, 102, 0.3);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(10, 132, 255, 0.7);
+  background: rgba(99, 99, 102, 0.5);
 }
 </style>

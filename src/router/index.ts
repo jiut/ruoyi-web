@@ -240,18 +240,18 @@ const routes: RouteRecordRaw[] = [
       //   component: () => import('@/views/talent/works/detail.vue'),
       //   meta: { title: '作品详情' }
       // },
-      // {
-      //   path: 'schools',
-      //   name: 'Schools',
-      //   component: () => import('@/views/talent/schools/index.vue'),
-      //   meta: { title: '院校数据库' }
-      // },
-      // {
-      //   path: 'schools/:id',
-      //   name: 'SchoolDetail',
-      //   component: () => import('@/views/talent/schools/detail.vue'),
-      //   meta: { title: '院校详情' }
-      // },
+      {
+        path: 'schools',
+        name: 'Schools',
+        component: () => import('@/views/talent/schools/index.vue'),
+        meta: { title: '院校数据库' }
+      },
+      {
+        path: 'schools/:id',
+        name: 'SchoolDetail',
+        component: () => import('@/views/talent/schools/detail.vue'),
+        meta: { title: '院校详情' }
+      },
       // {
       //   path: 'profile',
       //   name: 'Profile',
