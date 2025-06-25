@@ -34,8 +34,7 @@ export default {
 
   chat: {
     newChatButton: '新建聊天',
-    //placeholder: '来说点什么吧...（Shift + Enter = 换行，"/" 触发提示词）',
-    placeholder: '可输入说点什么，也可贴截图或拖拽文件（Shift + Enter = 换行，"/" 触发提示词）',
+    placeholder: '可输入说点什么，也可贴截图或拖拽文件（Shift + Enter = 换行）',
     placeholderMobile: '来说点什么...',
     copy: '复制',
     copied: '复制成功',
@@ -57,8 +56,8 @@ export default {
     showRawText: '显示原文',
     annouce: '公告',
     annouceContent: '本网站为网站所有内容，由用户自行承担。;本网站仅供学习之用。;使用本网站产生的任何问题由用户自行承担。',
-    helpTitle: '今天我能为您做些什么呢?',
-    helpcontent: '作为你的智慧伙伴，我不仅可以写文案、出点子，还可以和你聊天、回答问题。想知道我还能做些什么吗? 你可以这样问我:',
+		helpTitle: '今天我能为您做些什么呢?作为你的智慧伙伴，我不仅可以写文案、出点子、还可以和你聊天，想知道我还能做些什么吗? 你可以这样问我: ',
+		helpcontent: '1. 请给我讲讲量子力学的基本原理;2. 人工智能领域有哪些热门的研究方向;3. 怎样才能提高睡眠质量;',
     used: '使用',
     refresh: '刷新',
     like: '点赞',
@@ -71,6 +70,8 @@ export default {
     invalid_account: "账号格式不正确",
     empty_verification_code: "验证码不能为空",
     registration_success: "注册成功",
+    send_success: "发送成功",
+    registration_failed: "注册失败",
     get_verification_code: "获取验证码",
     seconds_retry: " 秒后重试",
     register: "注册",
@@ -410,7 +411,7 @@ export default {
     ,uploadSuccess:'上传成功'
     ,uploadFail:'上传失败:'
     ,upPdf:'<span>上传图片、附件<br/>能上传图片、PDF、EXCEL等文档</span><p>支持拖拽</p>'
-    ,upImg:'<span><b>上传图片</b><br/>会自动调用 gpt-4-vision-preview 模型<br>注意：会有额外的图片费用<br/>格式: jpeg jpg png gif</span><p>支持拖拽</p> <p class="pt-2"><b>上传MP3 MP4</b> <br>会自动直接调用 whisper-1 模型<br>格式有：mp3 mp4 mpeg mpga m4a wav webm</p>'
+    ,upImg:'<span><b>上传图片</b><br/>注意：会有额外的图片费用<br/>格式: jpeg jpg png gif</span><p>支持拖拽</p> <p class="pt-2"><b>上传MP3 MP4</b> <br>会自动直接调用 whisper-1 模型<br>格式有：mp3 mp4 mpeg mpga m4a wav webm</p>'
     ,clearAll:'清参数'
     ,czoom:'自定义'
     ,customTitle:'自定义变焦'
@@ -560,6 +561,7 @@ export default {
 			moody: "情绪化",
 		},
 		versionList: {
+      mjV7: "MJ V7",
 			mjV6: "MJ V6",
 			mjV52: "MJ V5.2",
 			mjV51: "MJ V5.1",

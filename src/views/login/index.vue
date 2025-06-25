@@ -12,7 +12,6 @@ import {
   LogInOutline,
 } from '@vicons/ionicons5';
 
-
 import { useUserStore } from "@/store/modules/user";
 import { useI18n } from "vue-i18n";
 
@@ -84,7 +83,6 @@ const navigateToRegister = () => {
 };
 
 
-
 // 计算背景样式，适配暗黑模式
 const brandSectionStyle = computed(() => {
   const isDark = themeVars.value.bodyColor.startsWith('#1') ||
@@ -97,7 +95,6 @@ const brandSectionStyle = computed(() => {
       : 'linear-gradient(135deg, #1867c0, #5cbbf6)'
   };
 });
-
 
 </script>
 
@@ -171,7 +168,7 @@ const brandSectionStyle = computed(() => {
                 {{ $t("login.login") }}
               </NButton>
             </div>
-
+            
             <!-- 注册提示 -->
             <div class="register-prompt">
               还没有账号？
@@ -184,6 +181,7 @@ const brandSectionStyle = computed(() => {
         </div>
       </div>
     </NSpin>
+
 
   </div>
 </template>
