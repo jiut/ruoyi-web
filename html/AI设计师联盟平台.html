@@ -115,7 +115,7 @@ transform: translateX(26px);
         </div>
         <button type="submit" class="w-full py-2 bg-primary text-white !rounded-button hover:bg-opacity-90 transition whitespace-nowrap">登录</button>
       </form>
-      
+
       <div class="mt-6">
         <div class="relative">
           <div class="absolute inset-0 flex items-center">
@@ -125,7 +125,7 @@ transform: translateX(26px);
             <span class="px-2 bg-white text-gray-500">或通过以下方式登录</span>
           </div>
         </div>
-        
+
         <div class="mt-6 grid grid-cols-3 gap-3">
           <button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50">
             <div class="w-5 h-5 flex items-center justify-center">
@@ -144,7 +144,7 @@ transform: translateX(26px);
           </button>
         </div>
       </div>
-      
+
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
           没有账号？<a href="#" class="text-primary hover:underline">立即注册</a>
@@ -163,19 +163,19 @@ transform: translateX(26px);
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
     const loginForm = document.getElementById('loginForm');
-    
+
     // 打开登录模态框
     loginBtn.addEventListener('click', function() {
       loginModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     });
-    
+
     // 关闭登录模态框
     closeLoginModal.addEventListener('click', function() {
       loginModal.classList.add('hidden');
       document.body.style.overflow = '';
     });
-    
+
     // 点击模态框外部关闭
     loginModal.addEventListener('click', function(e) {
       if (e.target === loginModal) {
@@ -183,39 +183,39 @@ transform: translateX(26px);
         document.body.style.overflow = '';
       }
     });
-    
+
     // 切换密码可见性
     togglePassword.addEventListener('click', function() {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
       togglePassword.innerHTML = type === 'password' ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
     });
-    
+
     // 表单提交
     loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      
+
       if (!username || !password) {
         // 显示错误提示
         const errorDiv = document.createElement('div');
         errorDiv.className = 'p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg';
         errorDiv.textContent = '请填写完整的登录信息';
-        
+
         // 检查是否已有错误提示
         const existingError = loginForm.querySelector('.text-red-700');
         if (existingError) {
           existingError.remove();
         }
-        
+
         loginForm.insertBefore(errorDiv, loginForm.firstChild);
         return;
       }
-      
+
       // 这里可以添加实际的登录逻辑
       console.log('登录信息:', { username, password });
-      
+
       // 模拟登录成功
       loginModal.classList.add('hidden');
       document.body.style.overflow = '';

@@ -4,7 +4,7 @@
     <TalentHeader />
 
     <!-- 主内容区 -->
-    <main class="container mx-auto px-4 py-4 pb-8">
+    <main class="container mx-auto px-4 py-4 pb-8 mt-20 md:mt-16">
 			<!-- 面包屑导航 -->
 			<section class="py-2 mb-4">
 				<div class="container mx-auto px-4">

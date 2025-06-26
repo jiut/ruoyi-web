@@ -1,340 +1,414 @@
 <template>
-  <div class="talent-page">
-    <!-- 统一顶栏 -->
-    <TalentHeader />
+	<div class="talent-page">
+		<!-- 统一顶栏 -->
+		<TalentHeader />
 
-    <!-- 页面标题区 -->
-    <section class="py-12 relative">
-      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
-      <div class="container mx-auto px-4 relative z-10">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div class="flex-1">
-            <h1 class="text-4xl font-bold mb-2 text-white">设计师档案</h1>
-            <p class="text-gray-300 max-w-2xl mb-4">
-              汇聚 {{ designerCount.toLocaleString() }} 位优秀设计师，提供全方位设计人才展示与匹配服务
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+		<!-- 页面标题区 -->
+		<section class="py-6 md:py-12 relative mt-20 md:mt-16">
+			<div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
+			<div class="container mx-auto px-10 relative z-10 title-section-container">
+				<div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+					<div class="flex-1">
+						<h1 class="text-4xl font-bold mb-2 text-white">设计师档案</h1>
+						<p class="text-gray-300 max-w-2xl mb-4">
+							汇聚 {{ designerCount.toLocaleString() }} 位优秀设计师，提供全方位设计人才展示与匹配服务
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
 
-    <!-- 主体内容区 -->
-    <section class="flex-grow pb-8">
-      <div class="container mx-auto px-4">
-        <div class="flex flex-col lg:flex-row gap-6">
-          <!-- 左侧筛选栏 -->
-          <div class="lg:w-1/4">
-            <div class="filter-card rounded-lg p-6 sticky top-24">
-              <div class="space-y-6">
-                <!-- 职业方向筛选 -->
-                <div>
-                  <h3 class="text-lg font-medium mb-3">职业方向</h3>
-                  <div class="space-y-2">
-                    <label v-for="profession in professions" :key="getProfessionKey(profession)" class="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        class="custom-checkbox"
-                        :checked="selectedProfessions.includes(getProfessionValue(profession))"
-                        @change="toggleProfession(getProfessionValue(profession))"
-                      >
-                      <span>{{ getProfessionDisplayLabel(profession) }}</span>
-                    </label>
-                  </div>
-                </div>
+		<!-- 主体内容区 -->
+		<section class="flex-grow pb-8">
+			<div class="container mx-auto px-4">
+				<div class="flex flex-col lg:flex-row gap-6">
+					<!-- 左侧筛选栏 - 桌面端显示 -->
+					<div class="lg:w-1/4 hidden lg:block">
+						<div class="filter-card rounded-lg p-6 sticky top-24">
+							<div class="space-y-6">
+								<!-- 职业方向筛选 -->
+								<div>
+									<h3 class="text-lg font-medium mb-3">职业方向</h3>
+									<div class="space-y-2">
+										<label v-for="profession in professions" :key="getProfessionKey(profession)"
+											class="flex items-center cursor-pointer">
+											<input type="checkbox" class="custom-checkbox"
+												:checked="selectedProfessions.includes(getProfessionValue(profession))"
+												@change="toggleProfession(getProfessionValue(profession))">
+											<span>{{ getProfessionDisplayLabel(profession) }}</span>
+										</label>
+									</div>
+								</div>
 
-                <!-- 技能标签筛选 -->
-                <div>
-                  <h3 class="text-lg font-medium mb-3">技能标签</h3>
-                  <div class="flex flex-wrap gap-2">
-                    <span
-                      v-for="tag in skillTags"
-                      :key="tag"
-                      :class="[
+								<!-- 技能标签筛选 -->
+								<div>
+									<h3 class="text-lg font-medium mb-3">技能标签</h3>
+									<div class="flex flex-wrap gap-2">
+										<span v-for="tag in skillTags" :key="tag" :class="[
                         'skill-tag text-xs px-3 py-1 rounded-full cursor-pointer transition-colors border',
                         getSkillTagClasses(tag),
                         selectedSkillTags.includes(tag) ? 'selected' : ''
-                      ]"
-                      @click="toggleSkillTag(tag)"
-                    >
-                      {{ getSkillTagDisplayName(tag) }}
-                    </span>
-                  </div>
-                </div>
+                      ]" @click="toggleSkillTag(tag)">
+											{{ getSkillTagDisplayName(tag) }}
+										</span>
+									</div>
+								</div>
 
-                <!-- 工作年限筛选 -->
-                <div>
-                  <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-lg font-medium mb-0">工作年限</h3>
-                    <span class="text-sm text-gray-400">{{ experienceRange }}年</span>
-                  </div>
-                  <div class="px-1 py-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="20"
-                      v-model="experienceRange"
-                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                    >
-                    <div class="flex justify-between text-xs text-gray-400 mt-1">
-                      <span>0年</span>
-                      <span>20年+</span>
-                    </div>
-                  </div>
-                </div>
+								<!-- 工作年限筛选 -->
+								<div>
+									<div class="flex justify-between items-center mb-3">
+										<h3 class="text-lg font-medium mb-0">工作年限</h3>
+										<span class="text-sm text-gray-400">{{ experienceRange }}年</span>
+									</div>
+									<div class="px-1 py-2">
+										<input type="range" min="0" max="20" v-model="experienceRange"
+											class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+										<div class="flex justify-between text-xs text-gray-400 mt-1">
+											<span>0年</span>
+											<span>20年+</span>
+										</div>
+									</div>
+								</div>
 
-                <!-- 所在地区筛选 -->
-                <div>
-                  <h3 class="text-lg font-medium mb-3">所在地区</h3>
-                  <div class="grid grid-cols-2 gap-2">
-                    <label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        class="custom-checkbox"
-                        :checked="selectedCities.includes(city)"
-                        @change="toggleCity(city)"
-                      >
-                      <span>{{ city }}</span>
-                    </label>
-                  </div>
-                </div>
+								<!-- 所在地区筛选 -->
+								<div>
+									<h3 class="text-lg font-medium mb-3">所在地区</h3>
+									<div class="grid grid-cols-2 gap-2">
+										<label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
+											<input type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
+												@change="toggleCity(city)">
+											<span>{{ city }}</span>
+										</label>
+									</div>
+								</div>
 
-                <!-- 工作状态筛选 -->
-                <div>
-                  <h3 class="text-lg font-medium mb-3">工作状态</h3>
-                  <div class="space-y-2">
-                    <label v-for="status in workStatuses" :key="status.value" class="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="workStatus"
-                        class="custom-radio"
-                        :value="status.value"
-                        v-model="selectedWorkStatus"
-                      >
-                      <span>{{ status.label }}</span>
-                    </label>
-                  </div>
-                </div>
+								<!-- 工作状态筛选 -->
+								<div>
+									<h3 class="text-lg font-medium mb-3">工作状态</h3>
+									<div class="space-y-2">
+										<label v-for="status in workStatuses" :key="status.value" class="flex items-center cursor-pointer">
+											<input type="radio" name="workStatus" class="custom-radio" :value="status.value"
+												v-model="selectedWorkStatus">
+											<span>{{ status.label }}</span>
+										</label>
+									</div>
+								</div>
 
-                <!-- 筛选按钮 -->
-                <div class="flex space-x-3 pt-2">
-                  <button
-                    @click="resetFilters"
-                    class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors"
-                  >
-                    重置筛选
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+								<!-- 筛选按钮 -->
+								<div class="flex space-x-3 pt-2">
+									<button @click="resetFilters"
+										class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors">
+										重置筛选
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 
-          <!-- 右侧内容区 -->
-          <div class="lg:w-3/4">
-            <!-- 排序和结果统计 -->
-            <div class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-              <div class="mb-4 sm:mb-0">
-                <p class="text-gray-300">
-                  找到 <span class="text-white font-medium">{{ filteredDesignerCount }}</span> 位符合条件的设计师
-                </p>
-              </div>
-              <div class="flex items-center space-x-4 w-full sm:w-auto">
-                <div class="relative flex-grow sm:flex-grow-0">
-                  <select
-                    v-model="sortBy"
-                    class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8 bg-gray-800/80 border border-gray-700"
-                  >
-                    <option value="latest">最近活跃</option>
-                    <option value="experience">工作年限</option>
-                    <option value="works">作品数量</option>
-                    <option value="popularity">人气推荐</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+					<!-- 右侧内容区 -->
+					<div class="lg:w-3/4 w-full">
+						<!-- 排序和结果统计 -->
+						<div
+							class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+							<div class="mb-4 sm:mb-0">
+								<p class="text-gray-300">
+									找到 <span class="text-white font-medium">{{ filteredDesignerCount }}</span> 位符合条件的设计师
+								</p>
+							</div>
+							<div class="flex items-center space-x-4 w-full sm:w-auto">
+								<div class="relative flex-grow sm:flex-grow-0">
+									<select v-model="sortBy"
+										class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8 bg-gray-800/80 border border-gray-700">
+										<option value="latest">最近活跃</option>
+										<option value="experience">工作年限</option>
+										<option value="works">作品数量</option>
+										<option value="popularity">人气推荐</option>
+									</select>
+								</div>
+							</div>
+						</div>
 
-            <!-- 加载状态 -->
-            <div v-if="loading" class="flex justify-center items-center py-12">
-              <div class="loading-spinner w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <span class="ml-2 text-gray-400">加载中...</span>
-            </div>
+						<!-- 加载状态 -->
+						<div v-if="loading" class="flex justify-center items-center py-12">
+							<div
+								class="loading-spinner w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin">
+							</div>
+							<span class="ml-2 text-gray-400">加载中...</span>
+						</div>
 
-            <!-- 设计师列表 -->
-            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              <div
-                v-for="designer in paginatedDesigners"
-                :key="designer.id"
-                :class="[
+						<!-- 设计师列表 -->
+						<div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+							<div v-for="designer in paginatedDesigners" :key="designer.id" :class="[
                   'designer-card rounded-lg glow-border card-hover cursor-pointer',
                   isMobile ? 'mobile-card' : 'desktop-card',
                   navigating && selectedDesignerId === designer.id ? 'navigating' : ''
-                ]"
-                @click="handleViewDetail(designer.id)"
-              >
-                <div class="p-6">
-                  <div class="flex flex-col items-center">
-                    <!-- 设计师头像 -->
-                    <div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
-                      <img v-if="designer.avatar" :src="designer.avatar" :alt="designer.designerName" class="w-full h-full object-cover">
-                      <div
-                        v-else
-                        :class="[
+                ]" @click="handleViewDetail(designer.id)">
+								<div class="p-6">
+									<div class="flex flex-col items-center">
+										<!-- 设计师头像 -->
+										<div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+											<img v-if="designer.avatar" :src="designer.avatar" :alt="designer.designerName"
+												class="w-full h-full object-cover">
+											<div v-else :class="[
                           'w-full h-full flex items-center justify-center text-white text-2xl font-bold',
                           getAvatarGradient(designer.designerName)
-                        ]"
-                      >
-                        {{ getDesignerInitial(designer.designerName) }}
-                      </div>
-                    </div>
+                        ]">
+												{{ getDesignerInitial(designer.designerName) }}
+											</div>
+										</div>
 
-                    <!-- 设计师信息 -->
-                    <h3 class="text-lg font-bold mb-1 text-center">{{ designer.designerName }}</h3>
-                    <p class="text-gray-400 text-sm mb-3 text-center">{{ getProfessionLabel(designer.profession) }}</p>
+										<!-- 设计师信息 -->
+										<h3 class="text-lg font-bold mb-1 text-center">{{ designer.designerName }}</h3>
+										<p class="text-gray-400 text-sm mb-3 text-center">{{ getProfessionLabel(designer.profession) }}</p>
 
-                    <!-- 技能标签 -->
-                    <div class="skill-tags-container flex justify-center gap-2 my-2">
-                      <SkillTag
-                        v-for="skill in getSortedDesignerSkills(designer)"
-                        :key="skill"
-                        :tag="skill"
-                        size="sm"
-                        :show-category="false"
-                      />
-                    </div>
+										<!-- 技能标签 -->
+										<div class="skill-tags-container flex justify-center gap-2 my-2">
+											<SkillTag v-for="skill in getSortedDesignerSkills(designer)" :key="skill" :tag="skill" size="sm"
+												:show-category="false" />
+										</div>
 
-                    <!-- 统计信息 -->
-                    <div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
-                      <span>作品: {{ getDesignerWorksCount(designer.id) }}</span>
-                      <span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
-                      <span class="flex items-center">
-                        <div
-                          :class="[
+										<!-- 统计信息 -->
+										<div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+											<span>作品: {{ getDesignerWorksCount(designer.id) }}</span>
+											<span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
+											<span class="flex items-center">
+												<div :class="[
                             'w-2 h-2 rounded-full mr-1',
                             getStatusColor(designer.workStatus)
-                          ]"
-                        />
-                        {{ getWorkStatusLabel(designer.workStatus || 'EMPLOYED' as WorkStatus) }}
-                      </span>
-                    </div>
+                          ]" />
+												{{ getWorkStatusLabel(designer.workStatus || 'EMPLOYED' as WorkStatus) }}
+											</span>
+										</div>
 
-                    <!-- 查看档案按钮 -->
-                    <button
-                      @click.stop="handleViewDetail(designer.id)"
-                      class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors neon-button"
-                    >
-                      查看档案
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+										<!-- 查看档案按钮 -->
+										<button @click.stop="handleViewDetail(designer.id)"
+											class="w-full py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors neon-button">
+											查看档案
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
 
-            <!-- 分页 -->
-            <div class="flex justify-center mt-10 mb-6">
-              <div class="flex space-x-2">
-                <button
-                  @click="prevPage"
-                  :disabled="currentPage === 1"
-                  class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
-                >
-                  <i class="ri-arrow-left-s-line"></i>
-                </button>
-                <button
-                  v-for="page in visiblePages"
-                  :key="page"
-                  @click="goToPage(page)"
-                  :class="[
+						<!-- 分页 -->
+						<div class="flex justify-center mt-10 mb-6">
+							<div class="flex space-x-2">
+								<button @click="prevPage" :disabled="currentPage === 1"
+									class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50">
+									<i class="ri-arrow-left-s-line"></i>
+								</button>
+								<button v-for="page in visiblePages" :key="page" @click="goToPage(page)" :class="[
                     'pagination-button w-10 h-10 flex items-center justify-center rounded-lg',
                     currentPage === page
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-800/50 text-gray-300 border border-gray-700/50 hover:bg-blue-600/20'
-                  ]"
-                >
-                  {{ page }}
-                </button>
-                <button
-                  @click="nextPage"
-                  :disabled="currentPage === totalPages"
-                  class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
-                >
-                  <i class="ri-arrow-right-s-line"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                  ]">
+									{{ page }}
+								</button>
+								<button @click="nextPage" :disabled="currentPage === totalPages"
+									class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50">
+									<i class="ri-arrow-right-s-line"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-    <!-- 设计师详情抽屉 - 仅在桌面端显示 -->
-    <DesignerDetailDrawer
-      v-if="!isMobile"
-      :visible="showDesignerDetail"
-      :designer-id="selectedDesignerId"
-      @update:visible="showDesignerDetail = $event"
-    />
+		<!-- 设计师详情抽屉 - 仅在桌面端显示 -->
+		<DesignerDetailDrawer v-if="!isMobile" :visible="showDesignerDetail" :designer-id="selectedDesignerId"
+			@update:visible="showDesignerDetail = $event" />
 
-    <!-- 页脚 -->
-    <footer class="mt-16 py-12 border-t border-gray-800">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <h3 class="text-lg font-bold mb-4">星海人才</h3>
-            <p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold mb-4">功能模块</h3>
-            <ul class="space-y-2">
-              <li><router-link to="/talent/schools" class="text-gray-400 text-sm hover:text-blue-400">院校数据库</router-link></li>
-              <li><router-link to="/talent/works" class="text-gray-400 text-sm hover:text-blue-400">学生作品库</router-link></li>
-              <li><router-link to="/talent/jobs" class="text-gray-400 text-sm hover:text-blue-400">企业需求池</router-link></li>
-              <li><router-link to="/talent/designers" class="text-gray-400 text-sm hover:text-blue-400">设计师档案</router-link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold mb-4">关于我们</h3>
-            <ul class="space-y-2">
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold mb-4">联系方式</h3>
-            <ul class="space-y-2">
-              <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
-              </li>
-              <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-phone-line mr-2"></i> 400-888-9999
-              </li>
-              <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="section-divider mb-8"></div>
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
-          <div class="flex space-x-4">
-            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-              <i class="ri-weibo-line"></i>
-            </a>
-            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-              <i class="ri-wechat-line"></i>
-            </a>
-            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-              <i class="ri-linkedin-line"></i>
-            </a>
-            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-              <i class="ri-github-line"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
+		<!-- 移动端悬浮筛选按钮 -->
+		<button v-if="isMobile" @click="toggleFilterDrawer"
+			class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-out z-40 lg:hidden flex items-center justify-center floating-filter-btn"
+			:class="{ 'scale-110': showFilterDrawer }">
+			<i class="ri-filter-3-line text-xl"></i>
+			<!-- 活跃筛选条件徽章 -->
+			<span v-if="activeFiltersCount > 0"
+				class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-medium border-2 border-white">
+				{{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
+			</span>
+		</button>
+
+		<!-- 移动端筛选抽屉 -->
+		<div v-if="showFilterDrawer" class="fixed inset-0 z-50 lg:hidden overflow-hidden filter-drawer-container"
+			style="margin: 0; padding: 0; width: 100vw; height: 100vh;" @click="closeFilterDrawer">
+			<!-- 遮罩层 -->
+			<div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+			<!-- 抽屉内容 -->
+			<div
+				class="absolute top-0 bottom-0 filter-card filter-drawer transform transition-transform duration-300 ease-out flex flex-col"
+				:class="filterDrawerOpen ? 'translate-x-0' : 'translate-x-full'" style="right: 0px; width: min(320px, 85vw);"
+				@click.stop>
+				<!-- 抽屉头部 -->
+				<div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
+					<h3 class="text-lg font-medium">筛选条件</h3>
+					<button @click="closeFilterDrawer"
+						class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 transition-colors">
+						<i class="ri-close-line"></i>
+					</button>
+				</div>
+
+				<!-- 抽屉内容区 -->
+				<div class="flex-1 overflow-y-auto filter-drawer-content">
+					<div class="p-6">
+						<div class="space-y-6">
+							<!-- 职业方向筛选 -->
+							<div>
+								<h3 class="text-lg font-medium mb-3">职业方向</h3>
+								<div class="space-y-2">
+									<label v-for="profession in professions" :key="getProfessionKey(profession)"
+										class="flex items-center cursor-pointer">
+										<input type="checkbox" class="custom-checkbox"
+											:checked="selectedProfessions.includes(getProfessionValue(profession))"
+											@change="toggleProfession(getProfessionValue(profession))">
+										<span>{{ getProfessionDisplayLabel(profession) }}</span>
+									</label>
+								</div>
+							</div>
+
+							<!-- 技能标签筛选 -->
+							<div>
+								<h3 class="text-lg font-medium mb-3">技能标签</h3>
+								<div class="flex flex-wrap gap-2">
+									<span v-for="tag in skillTags" :key="tag" :class="[
+                      'skill-tag text-xs px-3 py-1 rounded-full cursor-pointer transition-colors border',
+                      getSkillTagClasses(tag),
+                      selectedSkillTags.includes(tag) ? 'selected' : ''
+                    ]" @click="toggleSkillTag(tag)">
+										{{ getSkillTagDisplayName(tag) }}
+									</span>
+								</div>
+							</div>
+
+							<!-- 工作年限筛选 -->
+							<div>
+								<div class="flex justify-between items-center mb-3">
+									<h3 class="text-lg font-medium mb-0">工作年限</h3>
+									<span class="text-sm text-gray-400">{{ experienceRange }}年</span>
+								</div>
+								<div class="px-1 py-2">
+									<input type="range" min="0" max="20" v-model="experienceRange"
+										class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+									<div class="flex justify-between text-xs text-gray-400 mt-1">
+										<span>0年</span>
+										<span>20年+</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- 所在地区筛选 -->
+							<div>
+								<h3 class="text-lg font-medium mb-3">所在地区</h3>
+								<div class="grid grid-cols-2 gap-2">
+									<label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
+										<input type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
+											@change="toggleCity(city)">
+										<span>{{ city }}</span>
+									</label>
+								</div>
+							</div>
+
+							<!-- 工作状态筛选 -->
+							<div>
+								<h3 class="text-lg font-medium mb-3">工作状态</h3>
+								<div class="space-y-2">
+									<label v-for="status in workStatuses" :key="status.value" class="flex items-center cursor-pointer">
+										<input type="radio" name="workStatus-mobile" class="custom-radio" :value="status.value"
+											v-model="selectedWorkStatus">
+										<span>{{ status.label }}</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 抽屉底部按钮 -->
+				<div class="border-t border-gray-700/50 p-6 flex-shrink-0">
+					<div class="flex space-x-3">
+						<button @click="resetFilters"
+							class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors">
+							重置筛选
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 页脚 -->
+		<footer class="mt-16 py-12 border-t border-gray-800">
+			<div class="container mx-auto px-4">
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+					<div>
+						<h3 class="text-lg font-bold mb-4">星海人才</h3>
+						<p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
+					</div>
+					<div>
+						<h3 class="text-lg font-bold mb-4">功能模块</h3>
+						<ul class="space-y-2">
+							<li><router-link to="/talent/schools"
+									class="text-gray-400 text-sm hover:text-blue-400">院校数据库</router-link></li>
+							<li><router-link to="/talent/works" class="text-gray-400 text-sm hover:text-blue-400">学生作品库</router-link>
+							</li>
+							<li><router-link to="/talent/jobs" class="text-gray-400 text-sm hover:text-blue-400">企业需求池</router-link>
+							</li>
+							<li><router-link to="/talent/designers"
+									class="text-gray-400 text-sm hover:text-blue-400">设计师档案</router-link></li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="text-lg font-bold mb-4">关于我们</h3>
+						<ul class="space-y-2">
+							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
+							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
+							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
+							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="text-lg font-bold mb-4">联系方式</h3>
+						<ul class="space-y-2">
+							<li class="flex items-center text-gray-400 text-sm">
+								<i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
+							</li>
+							<li class="flex items-center text-gray-400 text-sm">
+								<i class="ri-phone-line mr-2"></i> 400-888-9999
+							</li>
+							<li class="flex items-center text-gray-400 text-sm">
+								<i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="section-divider mb-8"></div>
+				<div class="flex flex-col md:flex-row justify-between items-center">
+					<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
+					<div class="flex space-x-4">
+						<a href="#"
+							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+							<i class="ri-weibo-line"></i>
+						</a>
+						<a href="#"
+							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+							<i class="ri-wechat-line"></i>
+						</a>
+						<a href="#"
+							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+							<i class="ri-linkedin-line"></i>
+						</a>
+						<a href="#"
+							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+							<i class="ri-github-line"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -408,6 +482,10 @@ const itemsPerPage = ref(12)
 // 模态框状态
 const showDesignerDetail = ref(false)
 const selectedDesignerId = ref<number | null>(null)
+
+// 抽屉状态
+const showFilterDrawer = ref(false)
+const filterDrawerOpen = ref(false)
 
 // 计算属性
 const designerCount = computed(() => total.value)
@@ -501,6 +579,17 @@ const visiblePages = computed(() => {
   }
 
   return pages
+})
+
+// 活跃筛选条件数量
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (selectedProfessions.value.length > 0) count += selectedProfessions.value.length
+  if (selectedSkillTags.value.length > 0) count += selectedSkillTags.value.length
+  if (selectedCities.value.length > 0) count += selectedCities.value.length
+  if (selectedWorkStatus.value) count += 1
+  if (experienceRange.value < 20) count += 1
+  return count
 })
 
 // 方法
@@ -707,6 +796,35 @@ const getSortedDesignerSkills = (designer: Designer) => {
   return sortTagsByCategory(skills, 'asc')
 }
 
+// 抽屉相关方法
+const toggleFilterDrawer = () => {
+  if (showFilterDrawer.value) {
+    closeFilterDrawer()
+  } else {
+    openFilterDrawer()
+  }
+}
+
+const openFilterDrawer = () => {
+  showFilterDrawer.value = true
+  // 使用 nextTick 确保DOM更新后再添加动画类
+  setTimeout(() => {
+    filterDrawerOpen.value = true
+  }, 10)
+
+  // 阻止背景滚动
+  document.body.style.overflow = 'hidden'
+}
+
+const closeFilterDrawer = () => {
+  filterDrawerOpen.value = false
+  // 等待动画完成后隐藏抽屉
+  setTimeout(() => {
+    showFilterDrawer.value = false
+    document.body.style.overflow = ''
+  }, 300)
+}
+
 // 监听筛选条件变化，自动应用筛选
 watch([selectedProfessions, selectedSkillTags, selectedCities, selectedWorkStatus, experienceRange], () => {
   // 重置到第一页
@@ -752,6 +870,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  // 确保页面卸载时恢复body滚动
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -1048,5 +1168,254 @@ onUnmounted(() => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* 悬浮筛选按钮样式 */
+.floating-filter-btn {
+  /* 添加更明显的阴影效果 */
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  /* 按钮脉冲动画 */
+  animation: float 3s ease-in-out infinite;
+}
+
+.floating-filter-btn:hover {
+  /* 悬停时的阴影效果 */
+  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  transform: translateY(-2px);
+}
+
+.floating-filter-btn:active {
+  transform: translateY(-2px) scale(0.95);
+}
+
+/* 悬浮动画 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 徽章脉冲动画 */
+.floating-filter-btn .bg-red-500 {
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 抽屉打开时按钮状态 */
+.floating-filter-btn.scale-110 {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
+  transform: scale(1.1) rotate(180deg);
+  animation: none;
+}
+
+.floating-filter-btn.scale-110:hover {
+  transform: scale(1.15) rotate(180deg) translateY(-2px);
+}
+
+/* 防止悬浮按钮遮挡内容 */
+@media (max-width: 1023px) {
+  .pagination-button,
+  .designer-card:last-child {
+    margin-bottom: 5rem;
+  }
+}
+
+/* 抽屉内容滚动条样式 */
+.filter-drawer-content {
+  /* 确保滚动容器可以滚动 */
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  /* 在移动端启用平滑滚动 */
+  scroll-behavior: smooth;
+  /* 确保有明确的高度 */
+  min-height: 0;
+  flex: 1;
+}
+
+.filter-drawer-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-track {
+  background: rgba(75, 85, 99, 0.2);
+  border-radius: 3px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.5);
+  border-radius: 3px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+/* 确保抽屉使用正确的flexbox布局 */
+.filter-drawer {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+}
+
+/* 移动端优化 */
+@media (max-width: 1023px) {
+  .filter-toggle-btn {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .filter-card {
+    box-shadow: none;
+    border: 1px solid rgba(99, 99, 102, 0.3);
+  }
+
+  /* 移动端抽屉滚动优化 */
+  .filter-drawer-content {
+    /* 解决iOS Safari滚动问题 */
+    -webkit-overflow-scrolling: touch !important;
+    /* 确保触摸滚动生效 */
+    touch-action: pan-y !important;
+    /* 防止滚动时的弹性效果影响用户体验 */
+    overscroll-behavior: contain;
+  }
+
+  /* 确保抽屉内容区域有正确的尺寸 */
+  .filter-drawer {
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+  }
+
+  /* 为滚动内容添加内边距，避免被底部按钮遮挡 */
+  .filter-drawer-content .p-6 {
+    padding-bottom: 2rem !important;
+  }
+
+  /* 移动端悬浮按钮位置优化 */
+  .floating-filter-btn {
+    /* 确保在小屏幕上位置合适 */
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    /* 在移动端使用稍小的尺寸 */
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+  }
+
+  /* 超小屏幕优化 */
+  @media (max-width: 400px) {
+    .floating-filter-btn {
+      bottom: 1rem !important;
+      right: 1rem !important;
+      width: 3rem !important;
+      height: 3rem !important;
+    }
+
+    .floating-filter-btn i {
+      font-size: 1.125rem !important;
+    }
+
+    .floating-filter-btn .bg-red-500 {
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      font-size: 0.625rem !important;
+    }
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .floating-filter-btn {
+    /* 移动端禁用悬浮动画，避免性能问题 */
+    animation: none;
+  }
+
+  .floating-filter-btn:active {
+    background: rgba(29, 78, 216, 0.9);
+    transform: scale(0.9);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+  }
+
+  /* 触摸反馈优化 */
+  .floating-filter-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  }
+
+  .custom-checkbox:active,
+  .custom-radio:active {
+    transform: scale(1.1);
+  }
+}
+
+/* 确保抽屉覆盖层完全覆盖页面 */
+.talent-page {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 移动端确保页面没有水平滚动条影响抽屉定位 */
+@media (max-width: 1023px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .talent-page {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* 彻底解决抽屉右边空隙问题 */
+  .filter-drawer {
+    position: absolute !important;
+    right: 0 !important;
+    transform-origin: 100% 50% !important;
+  }
+
+  /* 确保抽屉在translate时不会偏移 */
+  .filter-drawer.translate-x-0 {
+    transform: translateX(0) !important;
+  }
+
+  .filter-drawer.translate-x-full {
+    transform: translateX(100%) !important;
+  }
+}
+
+/* 修复可能的容器边距影响 */
+@media (max-width: 1023px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* 页面标题区特定padding */
+  .title-section-container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  /* 抽屉容器额外样式 */
+  .filter-drawer-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }
 </style>

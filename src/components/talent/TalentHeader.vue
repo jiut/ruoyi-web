@@ -1,7 +1,7 @@
 <template>
   <!-- 统一顶栏组件 -->
-  <header class="glass-card sticky top-0 z-50">
-    <div class="container mx-auto px-4">
+  <header class="glass-card fixed top-0 left-0 right-0 z-50 py-0">
+    <div class="container mx-auto px-2 md:px-4">
       <div class="flex items-center justify-between h-16">
         <!-- 左侧：导航和面包屑 -->
         <div class="flex items-center space-x-4">
@@ -84,7 +84,7 @@
             </div>
           </div>
 
-          <!-- 移动端搜索按钮 -->
+                    <!-- 移动端搜索按钮 -->
           <button
             @click="toggleMobileSearch"
             class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden"
@@ -97,17 +97,17 @@
             <button
               @click="toggleNotifications"
               class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
-            >
-              <i class="ri-notification-3-line"></i>
-              <!-- 未读消息小红点 -->
-              <span
-                v-if="unreadCount > 0"
-                class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white"
-                style="font-size: 10px;"
-              >
-                {{ unreadCount }}
-              </span>
-            </button>
+                          >
+                <i class="ri-notification-3-line"></i>
+                <!-- 未读消息小红点 -->
+                <span
+                  v-if="unreadCount > 0"
+                  class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white"
+                  style="font-size: 10px;"
+                >
+                  {{ unreadCount }}
+                </span>
+              </button>
 
             <!-- 通知下拉菜单 -->
             <div
@@ -397,6 +397,14 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   border: 1px solid rgba(99, 99, 102, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 覆盖全局样式，确保header在手机端适当的padding，并且没有margin */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 0.25rem 1rem !important;
+    margin: 0 !important;
+  }
 }
 
 .search-input {

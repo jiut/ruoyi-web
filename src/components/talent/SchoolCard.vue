@@ -3,7 +3,7 @@
     class="glass-card rounded-lg glow-border card-hover cursor-pointer"
     @click="handleCardClick"
   >
-    <div class="p-6">
+    <div class="p-2 md:p-6">
       <!-- 顶部：Logo、名称和收藏按钮 -->
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center">

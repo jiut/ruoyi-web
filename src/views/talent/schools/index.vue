@@ -4,9 +4,9 @@
     <TalentHeader />
 
     <!-- 页面标题区 -->
-    <section class="py-12 relative">
+    <section class="py-6 md:py-12 relative mt-20 md:mt-16">
       <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
-      <div class="container mx-auto px-4 relative z-10">
+      <div class="container mx-auto px-10 relative z-10 title-section-container">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
             <h1 class="text-4xl font-bold mb-2 text-white">院校数据库</h1>
@@ -22,8 +22,8 @@
     <section class="flex-grow pb-8">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row gap-6">
-          <!-- 左侧筛选栏 -->
-          <div class="lg:w-1/4">
+          <!-- 左侧筛选栏 - 桌面端显示 -->
+          <div class="lg:w-1/4 hidden lg:block">
             <div class="filter-card rounded-lg p-6 sticky top-24">
               <div class="space-y-6">
                 <!-- 院校类型筛选 -->
@@ -134,7 +134,9 @@
           </div>
 
           <!-- 右侧内容区 -->
-          <div class="lg:w-3/4">
+          <div class="lg:w-3/4 w-full">
+
+
             <!-- 排序和结果统计 -->
             <div class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div class="mb-4 sm:mb-0">
@@ -157,7 +159,7 @@
             </div>
 
             <!-- 院校列表 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-6 mb-8">
               <SchoolCard
                 v-for="school in paginatedSchools"
                 :key="school.id"
@@ -211,6 +213,166 @@
       :school="selectedSchool"
       @update:visible="showSchoolDetail = $event"
     />
+
+    <!-- 移动端悬浮筛选按钮 -->
+    <button
+      v-if="isMobile"
+      @click="toggleFilterDrawer"
+      class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-out z-40 lg:hidden flex items-center justify-center floating-filter-btn"
+      :class="{ 'scale-110': showFilterDrawer }"
+    >
+      <i class="ri-filter-3-line text-xl"></i>
+      <!-- 活跃筛选条件徽章 -->
+      <span
+        v-if="activeFiltersCount > 0"
+        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-medium border-2 border-white"
+      >
+        {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
+      </span>
+    </button>
+
+    <!-- 移动端筛选抽屉 -->
+    <div
+      v-if="showFilterDrawer"
+      class="fixed inset-0 z-50 lg:hidden overflow-hidden filter-drawer-container"
+      style="margin: 0; padding: 0; width: 100vw; height: 100vh;"
+      @click="closeFilterDrawer"
+    >
+      <!-- 遮罩层 -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+      <!-- 抽屉内容 -->
+      <div
+        class="absolute top-0 bottom-0 filter-card filter-drawer transform transition-transform duration-300 ease-out flex flex-col"
+        :class="filterDrawerOpen ? 'translate-x-0' : 'translate-x-full'"
+        style="right: 0px; width: min(320px, 85vw);"
+        @click.stop
+      >
+        <!-- 抽屉头部 -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
+          <h3 class="text-lg font-medium">筛选条件</h3>
+          <button
+            @click="closeFilterDrawer"
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 transition-colors"
+          >
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <!-- 抽屉内容区 -->
+        <div class="flex-1 overflow-y-auto filter-drawer-content">
+          <div class="p-6">
+            <div class="space-y-6">
+            <!-- 院校类型筛选 -->
+            <div>
+              <h3 class="text-lg font-medium mb-3">院校类型</h3>
+              <div class="space-y-2">
+                <label v-for="type in schoolTypes" :key="type.value" class="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="custom-checkbox"
+                    :checked="selectedSchoolTypes.includes(type.value)"
+                    @change="toggleSchoolType(type.value)"
+                  >
+                  <span>{{ type.label }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 地区筛选 -->
+            <div>
+              <h3 class="text-lg font-medium mb-3">所在地区</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <label v-for="region in regions" :key="region" class="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="custom-checkbox"
+                    :checked="selectedRegions.includes(region)"
+                    @change="toggleRegion(region)"
+                  >
+                  <span>{{ region }}</span>
+                </label>
+              </div>
+              <button class="text-blue-400 text-sm mt-2">更多地区</button>
+            </div>
+
+            <!-- 院校层次筛选 -->
+            <div>
+              <h3 class="text-lg font-medium mb-3">院校层次</h3>
+              <div class="space-y-2">
+                <label v-for="level in schoolLevels" :key="level.value" class="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="level-mobile"
+                    class="custom-radio"
+                    :value="level.value"
+                    v-model="selectedLevel"
+                  >
+                  <span>{{ level.label }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 办学性质筛选 -->
+            <div>
+              <h3 class="text-lg font-medium mb-3">办学性质</h3>
+              <div class="space-y-2">
+                <label v-for="nature in schoolNatures" :key="nature" class="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="custom-checkbox"
+                    :checked="selectedNatures.includes(nature)"
+                    @change="toggleNature(nature)"
+                  >
+                  <span>{{ nature }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 特殊标识筛选 -->
+            <div>
+              <h3 class="text-lg font-medium mb-3">特殊标识</h3>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span>985院校</span>
+                  <label class="custom-switch">
+                    <input type="checkbox" v-model="is985">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>211院校</span>
+                  <label class="custom-switch">
+                    <input type="checkbox" v-model="is211">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>双一流</span>
+                  <label class="custom-switch">
+                    <input type="checkbox" v-model="isDoubleFirst">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- 抽屉底部按钮 -->
+        <div class="border-t border-gray-700/50 p-6 flex-shrink-0">
+          <div class="flex space-x-3">
+            <button
+              @click="resetFilters"
+              class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors"
+            >
+              重置筛选
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
 
@@ -344,6 +506,10 @@ const itemsPerPage = ref(8)
 const showSchoolDetail = ref(false)
 const selectedSchool = ref<School | null>(null)
 
+// 抽屉状态
+const showFilterDrawer = ref(false)
+const filterDrawerOpen = ref(false)
+
 // 筛选选项
 const schoolTypes = [
   { value: 'COMPREHENSIVE', label: '综合类' },
@@ -450,6 +616,19 @@ const visiblePages = computed(() => {
   return pages
 })
 
+// 活跃筛选条件数量
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (selectedSchoolTypes.value.length > 0) count += selectedSchoolTypes.value.length
+  if (selectedRegions.value.length > 0) count += selectedRegions.value.length
+  if (selectedLevel.value) count += 1
+  if (selectedNatures.value.length > 0) count += selectedNatures.value.length
+  if (is985.value) count += 1
+  if (is211.value) count += 1
+  if (isDoubleFirst.value) count += 1
+  return count
+})
+
 // 方法
 const toggleSchoolType = (type: string) => {
   const index = selectedSchoolTypes.value.indexOf(type)
@@ -533,6 +712,40 @@ const handleViewDetail = async (school: School) => {
   }
 }
 
+// 抽屉相关方法
+const toggleFilterDrawer = () => {
+  if (showFilterDrawer.value) {
+    closeFilterDrawer()
+  } else {
+    openFilterDrawer()
+  }
+}
+
+const openFilterDrawer = () => {
+  showFilterDrawer.value = true
+  // 使用 nextTick 确保DOM更新后再添加动画类
+  setTimeout(() => {
+    filterDrawerOpen.value = true
+  }, 10)
+
+  // 阻止背景滚动
+  document.body.style.overflow = 'hidden'
+}
+
+const closeFilterDrawer = () => {
+  filterDrawerOpen.value = false
+  // 等待动画完成后隐藏抽屉
+  setTimeout(() => {
+    showFilterDrawer.value = false
+    document.body.style.overflow = ''
+  }, 300)
+}
+
+const applyFiltersAndClose = () => {
+  // 这里可以添加应用筛选的逻辑
+  closeFilterDrawer()
+}
+
 // 工具方法
 
 onMounted(() => {
@@ -559,6 +772,8 @@ watch(selectedSchool, (newVal) => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  // 确保页面卸载时恢复body滚动
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -593,6 +808,65 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   border: 1px solid rgba(99, 99, 102, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 移动端抽屉中的筛选卡片 */
+@media (max-width: 1023px) {
+  .filter-card {
+    background: rgba(28, 28, 30, 0.6);
+    border-left: 1px solid rgba(99, 99, 102, 0.3);
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 确保抽屉完全贴合右边缘 */
+  .filter-drawer {
+    right: 0 !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    transform-origin: right center;
+  }
+
+  /* 确保没有额外的外边距或内边距 */
+  .filter-drawer-container {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 强制抽屉贴合右边缘 */
+  .filter-drawer-container .filter-drawer {
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-right: none !important;
+    transform-origin: right center !important;
+  }
+
+  /* 确保抽屉完全占满右侧空间 */
+  .filter-drawer {
+    box-sizing: border-box !important;
+    min-width: 320px;
+    max-width: 85vw;
+  }
+
+  /* 移除可能的容器限制 */
+  .filter-drawer-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
 }
 
 /* 院校卡片 */
@@ -939,6 +1213,268 @@ input:checked + .switch-slider:before {
 
   .desktop-card.navigating:hover {
     transform: none;
+  }
+}
+
+/* 悬浮筛选按钮样式 */
+.floating-filter-btn {
+  /* 添加更明显的阴影效果 */
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  /* 按钮脉冲动画 */
+  animation: float 3s ease-in-out infinite;
+}
+
+.floating-filter-btn:hover {
+  /* 悬停时的阴影效果 */
+  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  transform: translateY(-2px);
+}
+
+.floating-filter-btn:active {
+  transform: translateY(-2px) scale(0.95);
+}
+
+/* 悬浮动画 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 徽章脉冲动画 */
+.floating-filter-btn .bg-red-500 {
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 抽屉打开时按钮状态 */
+.floating-filter-btn.scale-110 {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
+  transform: scale(1.1) rotate(180deg);
+  animation: none;
+}
+
+.floating-filter-btn.scale-110:hover {
+  transform: scale(1.15) rotate(180deg) translateY(-2px);
+}
+
+/* 防止悬浮按钮遮挡内容 */
+@media (max-width: 1023px) {
+  .pagination-button,
+  .school-card:last-child {
+    margin-bottom: 5rem;
+  }
+}
+
+/* 抽屉进入和离开动画 */
+.drawer-enter-active, .drawer-leave-active {
+  transition: all 0.3s ease;
+}
+
+.drawer-enter-from, .drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-to, .drawer-leave-from {
+  opacity: 1;
+}
+
+/* 抽屉内容滚动条样式 */
+.filter-drawer-content {
+  /* 确保滚动容器可以滚动 */
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  /* 在移动端启用平滑滚动 */
+  scroll-behavior: smooth;
+  /* 确保有明确的高度 */
+  min-height: 0;
+  flex: 1;
+}
+
+.filter-drawer-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-track {
+  background: rgba(75, 85, 99, 0.2);
+  border-radius: 3px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.5);
+  border-radius: 3px;
+}
+
+.filter-drawer-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+/* 确保抽屉使用正确的flexbox布局 */
+.filter-drawer {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+}
+
+/* 移动端优化 */
+@media (max-width: 1023px) {
+  .filter-toggle-btn {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .filter-card {
+    box-shadow: none;
+    border: 1px solid rgba(99, 99, 102, 0.3);
+  }
+
+  /* 移动端抽屉滚动优化 */
+  .filter-drawer-content {
+    /* 解决iOS Safari滚动问题 */
+    -webkit-overflow-scrolling: touch !important;
+    /* 确保触摸滚动生效 */
+    touch-action: pan-y !important;
+    /* 防止滚动时的弹性效果影响用户体验 */
+    overscroll-behavior: contain;
+  }
+
+  /* 确保抽屉内容区域有正确的尺寸 */
+  .filter-drawer {
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+  }
+
+  /* 为滚动内容添加内边距，避免被底部按钮遮挡 */
+  .filter-drawer-content .p-6 {
+    padding-bottom: 2rem !important;
+  }
+
+  /* 移动端悬浮按钮位置优化 */
+  .floating-filter-btn {
+    /* 确保在小屏幕上位置合适 */
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    /* 在移动端使用稍小的尺寸 */
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+  }
+
+  /* 超小屏幕优化 */
+  @media (max-width: 400px) {
+    .floating-filter-btn {
+      bottom: 1rem !important;
+      right: 1rem !important;
+      width: 3rem !important;
+      height: 3rem !important;
+    }
+
+    .floating-filter-btn i {
+      font-size: 1.125rem !important;
+    }
+
+    .floating-filter-btn .bg-red-500 {
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      font-size: 0.625rem !important;
+    }
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .floating-filter-btn {
+    /* 移动端禁用悬浮动画，避免性能问题 */
+    animation: none;
+  }
+
+  .floating-filter-btn:active {
+    background: rgba(29, 78, 216, 0.9);
+    transform: scale(0.9);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+  }
+
+  /* 触摸反馈优化 */
+  .floating-filter-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  }
+
+  .custom-checkbox:active,
+  .custom-radio:active {
+    transform: scale(1.1);
+  }
+}
+
+/* 确保抽屉覆盖层完全覆盖页面 */
+.talent-page {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 移动端确保页面没有水平滚动条影响抽屉定位 */
+@media (max-width: 1023px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .talent-page {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* 彻底解决抽屉右边空隙问题 */
+  .filter-drawer {
+    position: absolute !important;
+    right: 0 !important;
+    transform-origin: 100% 50% !important;
+  }
+
+  /* 确保抽屉在translate时不会偏移 */
+  .filter-drawer.translate-x-0 {
+    transform: translateX(0) !important;
+  }
+
+  .filter-drawer.translate-x-full {
+    transform: translateX(100%) !important;
+  }
+}
+
+/* 修复可能的容器边距影响 */
+@media (max-width: 1023px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* 页面标题区特定padding */
+  .title-section-container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  /* 抽屉容器额外样式 */
+  .filter-drawer-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
 </style>

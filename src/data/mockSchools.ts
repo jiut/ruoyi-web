@@ -1604,6 +1604,156 @@ export function getMockAwardWorks(schoolId?: number) {
   return mockAwardWorksBySchool[1]
 }
 
+// 模拟相关院校数据 - 按学校ID分类
+export const mockRelatedSchoolsBySchool: Record<number, School[]> = {
+  1: [ // 清华大学的相关院校
+    {
+      id: 2,
+      schoolName: '中央美术学院',
+      schoolType: 'ART' as SchoolType,
+      location: '北京市朝阳区',
+      province: '北京市',
+      city: '北京市',
+      level: 'UNDERGRADUATE' as SchoolLevel,
+      ranking: 1,
+      description: '中华人民共和国教育部直属的唯一一所高等美术学校',
+      logo: '',
+      website: 'https://www.cafa.edu.cn',
+      address: '北京市朝阳区花家地南街8号',
+      phone: '010-64771056',
+      email: 'info@cafa.edu.cn',
+      totalStudents: 4500,
+      totalTeachers: 572,
+      facultyCount: 8,
+      majorCount: 15,
+      status: 'ACTIVE',
+      isKey: true,
+      is985: false,
+      is211: false,
+      isDoubleFirst: true,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-27T00:00:00.000Z'
+    },
+    {
+      id: 3,
+      schoolName: '同济大学',
+      schoolType: 'COMPREHENSIVE' as SchoolType,
+      location: '上海市杨浦区',
+      province: '上海市',
+      city: '上海市',
+      level: 'UNDERGRADUATE' as SchoolLevel,
+      ranking: 20,
+      description: '同济大学设计创意学院是国内最具影响力的设计学院之一',
+      logo: '',
+      website: 'https://www.tongji.edu.cn',
+      address: '上海市杨浦区四平路1239号',
+      phone: '021-65982200',
+      email: 'info@tongji.edu.cn',
+      totalStudents: 35000,
+      totalTeachers: 2804,
+      facultyCount: 12,
+      majorCount: 96,
+      status: 'ACTIVE',
+      isKey: true,
+      is985: true,
+      is211: true,
+      isDoubleFirst: true,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-27T00:00:00.000Z'
+    },
+    {
+      id: 4,
+      schoolName: '中国美术学院',
+      schoolType: 'ART' as SchoolType,
+      location: '浙江省杭州市',
+      province: '浙江省',
+      city: '杭州市',
+      level: 'UNDERGRADUATE' as SchoolLevel,
+      ranking: 2,
+      description: '中国第一所综合性的国立高等艺术学府',
+      logo: '',
+      website: 'https://www.caa.edu.cn',
+      address: '浙江省杭州市上城区南山路218号',
+      phone: '0571-87164630',
+      email: 'info@caa.edu.cn',
+      totalStudents: 9000,
+      totalTeachers: 900,
+      facultyCount: 18,
+      majorCount: 26,
+      status: 'ACTIVE',
+      isKey: true,
+      is985: false,
+      is211: false,
+      isDoubleFirst: true,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-27T00:00:00.000Z'
+    },
+    {
+      id: 5,
+      schoolName: '广州美术学院',
+      schoolType: 'ART' as SchoolType,
+      location: '广东省广州市',
+      province: '广东省',
+      city: '广州市',
+      level: 'UNDERGRADUATE' as SchoolLevel,
+      ranking: 3,
+      description: '华南地区唯一一所高等美术学府',
+      logo: '',
+      website: 'https://www.gzarts.edu.cn',
+      address: '广东省广州市海珠区昌岗东路257号',
+      phone: '020-84017740',
+      email: 'info@gzarts.edu.cn',
+      totalStudents: 8000,
+      totalTeachers: 700,
+      facultyCount: 12,
+      majorCount: 31,
+      status: 'ACTIVE',
+      isKey: true,
+      is985: false,
+      is211: false,
+      isDoubleFirst: false,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-27T00:00:00.000Z'
+    },
+    {
+      id: 6,
+      schoolName: '江南大学',
+      schoolType: 'COMPREHENSIVE' as SchoolType,
+      location: '江苏省无锡市',
+      province: '江苏省',
+      city: '无锡市',
+      level: 'UNDERGRADUATE' as SchoolLevel,
+      ranking: 41,
+      description: '国内工业设计教育的重要基地',
+      logo: '',
+      website: 'https://www.jiangnan.edu.cn',
+      address: '江苏省无锡市蠡湖大道1800号',
+      phone: '0510-85913669',
+      email: 'info@jiangnan.edu.cn',
+      totalStudents: 20000,
+      totalTeachers: 1500,
+      facultyCount: 8,
+      majorCount: 55,
+      status: 'ACTIVE',
+      isKey: true,
+      is985: false,
+      is211: true,
+      isDoubleFirst: true,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-27T00:00:00.000Z'
+    }
+  ]
+}
+
+// 获取相关院校数据
+export function getMockRelatedSchools(schoolId?: number) {
+  if (schoolId && mockRelatedSchoolsBySchool[schoolId]) {
+    return mockRelatedSchoolsBySchool[schoolId]
+  }
+  // 返回清华大学的相关院校作为默认值
+  return mockRelatedSchoolsBySchool[1] || []
+}
+
 // SchoolCard组件所需的格式化数据
 interface SchoolCardStatsData {
   employmentRates: string[]

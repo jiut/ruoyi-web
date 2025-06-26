@@ -4,7 +4,7 @@
     <TalentHeader />
 
     <!-- 主内容区 -->
-    <main class="container mx-auto px-4 py-4 pb-8">
+    <main class="container mx-auto px-4 py-4 pb-8 mt-20 md:mt-16">
       <!-- 面包屑导航 -->
       <section class="py-2 mb-4">
         <div class="container mx-auto px-4">
@@ -232,12 +232,17 @@ import SchoolStudents from '@/components/talent/SchoolStudents.vue'
 import SchoolStudentWorks from '@/components/talent/SchoolStudentWorks.vue'
 import SchoolEmployment from '@/components/talent/SchoolEmployment.vue'
 import SchoolAchievements from '@/components/talent/SchoolAchievements.vue'
-import { useSchool } from '@/composables/talent/useSchool'
-import type { School } from '@/types/talent/school'
+import { useSchoolStore } from '@/stores/talent/school'
+import {
+  getMockSchoolById,
+  getMockRelatedSchools
+} from '@/data/mockSchools'
+import { SchoolTypeLabels } from '@/types/talent/school'
+import type { School, SchoolType } from '@/types/talent/school'
 
 const route = useRoute()
 const router = useRouter()
-const { schools, loading, fetchSchoolDetail, toggleFavorite: toggleSchoolFavorite, isFavorited: checkFavorited } = useSchool()
+const schoolStore = useSchoolStore()
 
 // 环境配置
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
@@ -245,12 +250,12 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
 
 const school = ref<School | null>(null)
 const activeTab = ref('majors')
+const loading = ref(false)
 const isFavorited = ref(false)
 const relatedSchools = ref<School[]>([])
 
 // 标签页配置
 const tabs = [
-
   { key: 'majors', label: '专业设置', icon: 'ri-book-line' },
   { key: 'faculty', label: '师资力量', icon: 'ri-user-star-line' },
   { key: 'students', label: '学生信息', icon: 'ri-team-line' },
@@ -275,66 +280,25 @@ const getSchoolInfo = async () => {
       // 使用模拟数据
       console.log('🔧 使用模拟数据 - 院校详情页面')
 
-      // 模拟院校数据
-      school.value = {
-        id,
-        schoolName: '清华大学美术学院',
-        schoolType: 'ART_DESIGN',
-        location: '北京市海淀区',
-        ranking: 1,
-        description: '清华大学美术学院是中国最著名的设计艺术院校之一，前身为中央工艺美术学院。学院致力于培养具有国际视野和创新精神的设计人才。',
-        logo: 'https://via.placeholder.com/150x150?text=清华美院',
-        totalStudents: 3200,
-        totalTeachers: 280,
-        majorCount: 24,
-        is985: true,
-        is211: true,
-        isDoubleFirst: true
-      }
+      // 从mockSchools获取院校数据
+      school.value = getMockSchoolById(id) || null
 
-      // 模拟相关院校
-      relatedSchools.value = [
-        {
-          id: 2,
-          schoolName: '中央美术学院',
-          location: '北京市朝阳区',
-          logo: '',
-          is985: false,
-          is211: true,
-          isDoubleFirst: true
-        },
-        {
-          id: 3,
-          schoolName: '中国美术学院',
-          location: '浙江省杭州市',
-          logo: '',
-          is985: false,
-          is211: false,
-          isDoubleFirst: true
-        },
-        {
-          id: 4,
-          schoolName: '广州美术学院',
-          location: '广东省广州市',
-          logo: '',
-          is985: false,
-          is211: false,
-          isDoubleFirst: false
-        }
-      ]
+      // 从mockSchools获取相关院校
+      relatedSchools.value = getMockRelatedSchools(id)
 
-      isFavorited.value = checkFavorited(id)
+      // 初始化收藏状态
+      isFavorited.value = false
     } else {
       // 使用后端API
       console.log('🚀 使用后端API - 院校详情页面')
-      const result = await fetchSchoolDetail(id)
+      const result = await schoolStore.fetchSchoolDetail(id)
       school.value = result
-      isFavorited.value = checkFavorited(id)
+      isFavorited.value = false
 
       // 获取相关院校（同类型或同地区）
-      const allSchools = schools.value
+      const allSchools = schoolStore.schools
       relatedSchools.value = allSchools
-        .filter(s => s.id !== id && (s.schoolType === school.value?.schoolType || s.location === school.value?.location))
+        .filter((s: School) => s.id !== id && (s.schoolType === school.value?.schoolType || s.location === school.value?.location))
         .slice(0, 6)
     }
   } catch (error) {
@@ -350,23 +314,15 @@ const getSchoolInitial = (schoolName: string) => {
   return schoolName.charAt(0).toUpperCase()
 }
 
-const getSchoolTypeLabel = (type: string) => {
-  const labels = {
-    'COMPREHENSIVE': '综合类',
-    'SCIENCE_ENGINEERING': '理工类',
-    'ART_DESIGN': '艺术设计类',
-    'NORMAL': '师范类',
-    'FINANCE': '财经类',
-    'MEDICAL': '医学类'
-  }
-  return labels[type] || type
+const getSchoolTypeLabel = (type: SchoolType) => {
+  return SchoolTypeLabels[type] || type
 }
 
 const toggleFavorite = async () => {
   if (!school.value) return
 
   try {
-    await toggleSchoolFavorite(school.value.id)
+    // 简单的本地切换，实际项目中应该调用后端API
     isFavorited.value = !isFavorited.value
   } catch (error) {
     console.error('收藏操作失败:', error)

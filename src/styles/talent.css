@@ -1,7 +1,7 @@
 /* 人才模块专用样式 */
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css');
+@import url('../assets/fonts/pacifico.css');
+@import url('../assets/fonts/noto-sans-sc.css');
+@import url('../assets/icons/remixicon.min.css');
 
 /* Remixicon 图标基础样式 */
 :where([class^="ri-"])::before {

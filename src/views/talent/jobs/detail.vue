@@ -2,7 +2,7 @@
   <div class="job-detail-page">
     <TalentHeader />
 
-    <div class="container mx-auto px-4 py-4">
+    <div class="container mx-auto px-4 py-4 mt-20 md:mt-16">
       <div v-if="loading" class="flex justify-center items-center min-h-[400px]">
         <div class="text-center">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

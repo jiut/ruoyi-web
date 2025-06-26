@@ -746,6 +746,24 @@ export function useSchool(options?: {
     schoolList.initialize()
   }
 
+  // 院校详情相关功能
+  const schoolStore = useSchoolStore()
+
+  // 获取院校详情
+  const fetchSchoolDetail = async (schoolId: number) => {
+    // 环境配置
+    const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+      (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+    if (USE_MOCK_DATA) {
+      const { getMockSchoolById } = await import('@/data/mockSchools')
+      return getMockSchoolById(schoolId)
+    } else {
+      // 调用后端API
+      return await schoolStore.fetchSchoolDetail(schoolId)
+    }
+  }
+
   // 组合返回所有功能
   return {
     // 基础数据
@@ -784,6 +802,7 @@ export function useSchool(options?: {
 
     // 交互功能
     toggleFavorite: schoolInteraction.toggleFavorite,
+    isFavorited: schoolInteraction.isFavorited,
     shareSchool: schoolInteraction.shareSchool,
     downloadDetail: schoolInteraction.downloadDetail,
 
@@ -805,6 +824,7 @@ export function useSchool(options?: {
 
     // 基础方法
     fetchSchools: schoolList.initialize,
+    fetchSchoolDetail,
     refresh: schoolList.refresh,
     loadMore: schoolList.loadMore
   }
