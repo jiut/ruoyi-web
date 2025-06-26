@@ -23,7 +23,7 @@
             <span v-else>{{ getSchoolInitial(school.schoolName) }}</span>
           </div>
           <div>
-            <h3 class="text-lg font-bold">{{ school.schoolName }}</h3>
+            <h3 class="text-lg font-bold mb-0">{{ school.schoolName }}</h3>
             <p class="text-gray-400 text-sm">{{ getSchoolSubtitle(school) }}</p>
           </div>
         </div>
@@ -50,7 +50,7 @@
           {{ formatSchoolType(school.schoolType) }}
         </span>
 
-        <!-- 特殊标识标签 -->
+        <!-- 特殊标识标签 (优先级: 985>211>双一流，只显示最高等级) -->
         <span
           v-if="school.is985"
           class="text-xs px-2 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
@@ -58,14 +58,14 @@
           985
         </span>
         <span
-          v-if="school.is211"
-          class="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"
+          v-else-if="school.is211"
+          class="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20"
         >
           211
         </span>
         <span
-          v-if="school.isDoubleFirst"
-          class="text-xs px-2 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20"
+          v-else-if="school.isDoubleFirst"
+          class="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"
         >
           双一流
         </span>
@@ -116,6 +116,12 @@
 <script setup lang="ts">
 import type { School, SchoolType } from '@/types/talent/school'
 import { useSchoolFormatter, useSchoolInteraction } from '@/composables/talent/useSchool'
+import {
+  getMockEmploymentRate,
+  getMockFacultyStrength,
+  getMockStudentScore,
+  getMockAdvantagePrograms
+} from '@/data/mockSchools'
 
 interface Props {
   school: School
@@ -131,6 +137,14 @@ const emit = defineEmits<{
 // 使用组合式函数
 const { formatSchoolType } = useSchoolFormatter()
 const { isFavorited, toggleFavorite: toggleFav } = useSchoolInteraction()
+
+// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+console.log('🔍 SchoolCard 环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
 
 // 处理卡片点击
 const handleCardClick = () => {
@@ -186,16 +200,55 @@ const getSchoolSubtitle = (school: School) => {
   }
 }
 
-// 获取院校类型标签样式
+// 获取院校类型标签样式 - 完整的颜色主题配置
 const getSchoolTypeTagStyle = (schoolType: SchoolType) => {
   const styleMap: Record<string, string> = {
-    'COMPREHENSIVE': 'bg-primary/10 text-primary border border-primary/20',
-    'ART': 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
-    'ENGINEERING': 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
-    'NORMAL': 'bg-green-500/10 text-green-400 border border-green-500/20',
-    'FINANCE': 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+    // 综合类 - 蓝色主题（主色调）
+    'COMPREHENSIVE': 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
+
+    // 艺术类 - 紫色主题
+    'ART': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+    'ART_DESIGN': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+
+    // 理工类 - 深蓝色主题
+    'ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+    'SCIENCE': 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
+    'SCIENCE_ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+
+    // 师范类 - 绿色主题
+    'NORMAL': 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
+
+    // 财经类 - 橙色主题
+    'FINANCE': 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
+
+    // 医学类 - 红色主题
+    'MEDICAL': 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
+
+    // 文科类 - 粉色主题
+    'LIBERAL_ARTS': 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
+
+    // 农林类 - 绿色主题
+    'AGRICULTURE': 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
+
+    // 体育类 - 黄绿色主题
+    'SPORTS': 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
+
+    // 政法类 - 深灰色主题
+    'POLITICS_LAW': 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
+
+    // 民族类 - 琥珀色主题
+    'ETHNIC': 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
+
+    // 军事类 - 深绿色主题
+    'MILITARY': 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
+
+    // 职业院校 - 橙色主题
+    'VOCATIONAL': 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
+
+    // 独立学院 - 灰蓝色主题
+    'INDEPENDENT': 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border'
   }
-  return styleMap[schoolType] || 'bg-gray-700/50 text-gray-300'
+  return styleMap[schoolType] || 'school-tag school-tag-default bg-gray-700/50 text-gray-300 border'
 }
 
 // 格式化地区信息
@@ -206,43 +259,44 @@ const formatLocation = (school: School) => {
   return school.location || school.province || school.city || '未知'
 }
 
-// 格式化就业率
+// 格式化就业率 - 根据环境变量切换数据源
 const formatEmploymentRate = (school: School) => {
-  // 模拟就业率数据，实际应该从API获取
-  const rates = ['96.8%', '95.2%', '92.8%', '91.5%', '89.3%', '87.6%']
-  const hash = school.id % rates.length
-  return rates[hash]
-}
-
-// 格式化师资力量评分
-const formatFacultyStrength = (school: School) => {
-  // 模拟师资力量评分，实际应该从API获取
-  const scores = ['5.0', '4.9', '4.8', '4.7', '4.6', '4.5']
-  const hash = (school.id + 1) % scores.length
-  return scores[hash]
-}
-
-// 格式化学生评分
-const formatStudentScore = (school: School) => {
-  // 模拟学生评分，实际应该从API获取
-  const scores = ['4.9', '4.8', '4.7', '4.6', '4.5', '4.4']
-  const hash = (school.id + 2) % scores.length
-  return scores[hash]
-}
-
-// 获取优势专业
-const getAdvantagePrograms = (school: School) => {
-  // 根据院校类型和特点生成优势专业
-  const programsByType: Record<string, string[]> = {
-    'COMPREHENSIVE': ['UI/UX设计', '视觉传达'],
-    'ART': ['视觉传达', '产品设计'],
-    'ENGINEERING': ['工业设计', '数字媒体'],
-    'NORMAL': ['艺术教育', '美术学'],
-    'FINANCE': ['品牌设计', '广告设计']
+  if (USE_MOCK_DATA) {
+    return getMockEmploymentRate(school.id)
+  } else {
+    // TODO: 调用后端API获取真实数据
+    return '请配置后端API'
   }
+}
 
-  const programs = programsByType[school.schoolType] || ['设计学', '艺术学']
-  return programs.join('、')
+// 格式化师资力量评分 - 根据环境变量切换数据源
+const formatFacultyStrength = (school: School) => {
+  if (USE_MOCK_DATA) {
+    return getMockFacultyStrength(school.id)
+  } else {
+    // TODO: 调用后端API获取真实数据
+    return '请配置后端API'
+  }
+}
+
+// 格式化学生评分 - 根据环境变量切换数据源
+const formatStudentScore = (school: School) => {
+  if (USE_MOCK_DATA) {
+    return getMockStudentScore(school.id)
+  } else {
+    // TODO: 调用后端API获取真实数据
+    return '请配置后端API'
+  }
+}
+
+// 获取优势专业 - 根据环境变量切换数据源
+const getAdvantagePrograms = (school: School) => {
+  if (USE_MOCK_DATA) {
+    return getMockAdvantagePrograms(school)
+  } else {
+    // TODO: 调用后端API获取真实数据
+    return '请配置后端API'
+  }
 }
 </script>
 
@@ -291,5 +345,75 @@ const getAdvantagePrograms = (school: School) => {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* 修复院校类型标签边框颜色被全局样式覆盖的问题 */
+.school-tag {
+  position: relative;
+}
+
+/* 院校类型标签边框颜色 */
+.school-tag-comprehensive {
+  border-color: rgba(10, 132, 255, 0.2) !important;
+}
+
+.school-tag-art {
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.school-tag-engineering {
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.school-tag-science {
+  border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+.school-tag-normal {
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.school-tag-finance {
+  border-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+.school-tag-medical {
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.school-tag-liberal {
+  border-color: rgba(236, 72, 153, 0.2) !important;
+}
+
+.school-tag-agriculture {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.school-tag-sports {
+  border-color: rgba(132, 204, 22, 0.2) !important;
+}
+
+.school-tag-law {
+  border-color: rgba(100, 116, 139, 0.2) !important;
+}
+
+.school-tag-ethnic {
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.school-tag-military {
+  border-color: rgba(22, 101, 52, 0.2) !important;
+}
+
+.school-tag-vocational {
+  border-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+.school-tag-independent {
+  border-color: rgba(107, 114, 128, 0.2) !important;
+}
+
+.school-tag-default {
+  border-color: rgba(107, 114, 128, 0.6) !important;
 }
 </style>

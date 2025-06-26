@@ -64,7 +64,7 @@
             type="primary"
             ghost
             @click.stop="$emit('view-detail', job.id)"
-            class="hover:bg-primary/20 custom-detail-button"
+            class="hover:bg-primary/20"
           >
             查看详情
           </n-button>
@@ -168,14 +168,5 @@ const handleSkillTagClick = (tag: string, category: SkillTagCategory, displayNam
 .company-logo {
   background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
   border: 1px solid rgba(99, 99, 102, 0.1);
-}
-
-/* 自定义按钮样式 - 使用深度选择器穿透 Naive UI 组件样式 */
-.custom-detail-button :deep(.n-button) {
-  border-radius: 8px !important;
-}
-
-.custom-detail-button :deep(.n-button__content) {
-  border-radius: 8px !important;
 }
 </style>

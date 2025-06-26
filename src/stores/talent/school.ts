@@ -30,7 +30,7 @@ import {
   schoolInteractionApi,
   statisticsApi
 } from '@/api/talent/school'
-import { mockSchools } from '@/data/mockSchools'
+import { mockSchools, getMockSchools } from '@/data/mockSchools'
 
 // API响应类型定义
 interface ApiResponse<T> {
@@ -42,15 +42,24 @@ interface ApiResponse<T> {
 }
 
 export const useSchoolStore = defineStore('school', () => {
+  // 环境配置：根据VITE_USE_MOCK_DATA切换数据源
+  const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+    (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+  console.log('🔍 院校Store环境变量调试信息:')
+  console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+  console.log('  DEV:', import.meta.env.DEV)
+  console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
   // 状态
   const loading = ref(false)
   const detailLoading = ref(false)
 
   // 院校相关状态
-  const schools = ref<School[]>(mockSchools)
+  const schools = ref<School[]>([])
   const currentSchool = ref<School | null>(null)
-  const totalSchools = ref(mockSchools.length)
-  const schoolCount = ref(mockSchools.length)
+  const totalSchools = ref(0)
+  const schoolCount = ref(0)
 
   // 专业相关状态
   const majors = ref<Major[]>([])
@@ -229,30 +238,60 @@ export const useSchoolStore = defineStore('school', () => {
     }
   }
 
-  // 院校相关操作 - 原有版本（保持向后兼容）
+  // 院校相关操作 - 支持Mock数据切换
   const fetchSchools = async (params?: Partial<SchoolQueryParams>) => {
     try {
       loading.value = true
       const queryParams = { ...filters.value, ...params }
-      const response = await schoolApi.list(queryParams) as ApiResponse<School>
 
-      if (params?.pageNum === 1) {
-        schools.value = response.rows || []
+      if (USE_MOCK_DATA) {
+        console.log('🔧 使用Mock数据 - fetchSchools')
+        // 使用模拟数据
+        const mockResponse = getMockSchools({
+          pageNum: queryParams.pageNum,
+          pageSize: queryParams.pageSize,
+          schoolName: queryParams.schoolName,
+          schoolType: queryParams.schoolType,
+          province: queryParams.province,
+          city: queryParams.city,
+          level: queryParams.level,
+          isKey: queryParams.isKey,
+          is985: queryParams.is985,
+          is211: queryParams.is211,
+          isDoubleFirst: queryParams.isDoubleFirst
+        })
+
+        if (params?.pageNum === 1) {
+          schools.value = mockResponse.rows
+        } else {
+          schools.value.push(...mockResponse.rows)
+        }
+
+        totalSchools.value = mockResponse.total
+        schoolCount.value = mockResponse.total
       } else {
-        schools.value.push(...(response.rows || []))
-      }
+        console.log('🚀 使用后端API - fetchSchools')
+        const response = await schoolApi.list(queryParams) as ApiResponse<School>
 
-      totalSchools.value = response.total || 0
-      schoolCount.value = response.total || 0
+        if (params?.pageNum === 1) {
+          schools.value = response.rows || []
+        } else {
+          schools.value.push(...(response.rows || []))
+        }
+
+        totalSchools.value = response.total || 0
+        schoolCount.value = response.total || 0
+      }
 
       // 更新筛选条件
       Object.assign(filters.value, queryParams)
     } catch (error) {
       console.error('获取院校列表失败:', error)
       // 使用模拟数据作为后备
-      schools.value = mockSchools
-      totalSchools.value = mockSchools.length
-      schoolCount.value = mockSchools.length
+      const mockResponse = getMockSchools()
+      schools.value = mockResponse.rows
+      totalSchools.value = mockResponse.total
+      schoolCount.value = mockResponse.total
     } finally {
       loading.value = false
     }
@@ -261,11 +300,20 @@ export const useSchoolStore = defineStore('school', () => {
   const fetchSchoolDetail = async (id: number) => {
     try {
       detailLoading.value = true
-      const response = await schoolApi.get(id) as ApiResponse<School>
-      currentSchool.value = response.data || null
+
+      if (USE_MOCK_DATA) {
+        console.log('🔧 使用Mock数据 - fetchSchoolDetail', id)
+        // 使用模拟数据
+        const mockSchool = mockSchools.find(school => school.id === id)
+        currentSchool.value = mockSchool || null
+      } else {
+        console.log('🚀 使用后端API - fetchSchoolDetail', id)
+        const response = await schoolApi.get(id) as ApiResponse<School>
+        currentSchool.value = response.data || null
+      }
 
       // 添加到访问历史
-      if (!viewHistory.value.includes(id)) {
+      if (currentSchool.value && !viewHistory.value.includes(id)) {
         viewHistory.value.unshift(id)
         // 限制历史记录数量
         if (viewHistory.value.length > 50) {
@@ -285,12 +333,25 @@ export const useSchoolStore = defineStore('school', () => {
   const searchSchools = async (keyword: string) => {
     try {
       loading.value = true
-      const response = await schoolApi.search(keyword) as ApiResponse<School>
-      schools.value = response.data ? [response.data] : (response.rows || [])
-      totalSchools.value = schools.value.length
+
+      if (USE_MOCK_DATA) {
+        console.log('🔧 使用Mock数据 - searchSchools', keyword)
+        // 模拟搜索逻辑
+        const filteredMockSchools = mockSchools.filter(school =>
+          school.schoolName.includes(keyword) ||
+          school.description.includes(keyword)
+        )
+        schools.value = filteredMockSchools
+        totalSchools.value = filteredMockSchools.length
+      } else {
+        console.log('🚀 使用后端API - searchSchools', keyword)
+        const response = await schoolApi.search(keyword) as ApiResponse<School>
+        schools.value = response.data ? [response.data] : (response.rows || [])
+        totalSchools.value = schools.value.length
+      }
     } catch (error) {
       console.error('搜索院校失败:', error)
-      // 模拟搜索逻辑
+      // 模拟搜索逻辑作为后备
       const filteredMockSchools = mockSchools.filter(school =>
         school.schoolName.includes(keyword) ||
         school.description.includes(keyword)

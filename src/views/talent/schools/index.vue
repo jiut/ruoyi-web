@@ -286,8 +286,19 @@ import SchoolDetailModal from '@/components/talent/SchoolDetailModal.vue'
 import SchoolCard from '@/components/talent/SchoolCard.vue'
 import { useSchool } from '@/composables/talent/useSchool'
 import type { School } from '@/types/talent/school'
+import { mockSchools } from '@/data/mockSchools'
 
 const router = useRouter()
+
+// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+console.log('🔍 院校页面环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  DEV:', import.meta.env.DEV)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
 const { schools, loading, fetchSchools } = useSchool({ autoLoad: false })
 
 // 设备检测和导航状态
@@ -354,10 +365,17 @@ const schoolLevels = [
 const schoolNatures = ['公办', '民办', '中外合作']
 
 // 计算属性
-const schoolCount = computed(() => schools.value.length || 1256)
+const schoolCount = computed(() => {
+  if (USE_MOCK_DATA) {
+    return mockSchools.length || 1256
+  }
+  return schools.value.length || 1256
+})
 
 const filteredSchools = computed(() => {
-  let filtered = [...schools.value]
+  // 根据环境变量选择数据源
+  const sourceData = USE_MOCK_DATA ? mockSchools : schools.value
+  let filtered = [...sourceData]
 
   // 院校类型筛选
   if (selectedSchoolTypes.value.length > 0) {
@@ -519,7 +537,13 @@ const handleViewDetail = async (school: School) => {
 
 onMounted(() => {
   console.log('🎯 院校页面挂载完成，开始获取院校数据')
-  fetchSchools()
+  console.log('📊 数据源:', USE_MOCK_DATA ? 'Mock数据' : '后端API')
+
+  if (!USE_MOCK_DATA) {
+    // 只有在非Mock模式下才调用API
+    fetchSchools()
+  }
+
   checkDevice()
   window.addEventListener('resize', handleResize)
 })

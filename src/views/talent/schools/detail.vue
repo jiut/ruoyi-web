@@ -152,10 +152,7 @@
 
           <!-- 标签页内容 -->
           <div class="tab-content">
-            <!-- 院校概览 -->
-            <div v-if="activeTab === 'overview'">
-              <SchoolOverview :school="school" />
-            </div>
+
 
             <!-- 专业设置 -->
             <div v-if="activeTab === 'majors'">
@@ -228,7 +225,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
-import SchoolOverview from '@/components/talent/SchoolOverview.vue'
+
 import SchoolMajors from '@/components/talent/SchoolMajors.vue'
 import SchoolFaculty from '@/components/talent/SchoolFaculty.vue'
 import SchoolStudents from '@/components/talent/SchoolStudents.vue'
@@ -247,13 +244,13 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
   (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
 const school = ref<School | null>(null)
-const activeTab = ref('overview')
+const activeTab = ref('majors')
 const isFavorited = ref(false)
 const relatedSchools = ref<School[]>([])
 
 // 标签页配置
 const tabs = [
-  { key: 'overview', label: '院校概览', icon: 'ri-building-line' },
+
   { key: 'majors', label: '专业设置', icon: 'ri-book-line' },
   { key: 'faculty', label: '师资力量', icon: 'ri-user-star-line' },
   { key: 'students', label: '学生信息', icon: 'ri-team-line' },

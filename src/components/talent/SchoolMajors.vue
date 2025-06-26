@@ -1,7 +1,13 @@
 <template>
   <div class="school-majors space-y-6">
+    <!-- 加载状态 -->
+    <div v-if="loading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <span class="ml-2 text-gray-400">加载专业信息...</span>
+    </div>
+
     <!-- 专业分类展示 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div v-for="category in majorCategories" :key="category.name" class="glass-card rounded-lg p-4">
         <h4 class="text-lg font-bold mb-3 flex items-center">
           <i :class="category.icon" class="mr-2 text-primary"></i>
@@ -21,10 +27,10 @@
     </div>
 
     <!-- 课程体系 -->
-    <div class="glass-card rounded-lg p-4">
+    <div v-if="!loading" class="glass-card rounded-lg p-4">
       <h4 class="text-lg font-bold mb-4">课程体系</h4>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div v-for="courseGroup in courseSystem" :key="courseGroup.name">
+      <div class="flex flex-wrap gap-4">
+        <div v-for="courseGroup in courseSystem" :key="courseGroup.name" class="flex-auto min-w-0">
           <h5 class="text-sm font-bold mb-2 text-primary">{{ courseGroup.name }}</h5>
           <ul class="space-y-1 text-sm text-gray-300">
             <li v-for="course in courseGroup.courses" :key="course">
@@ -38,7 +44,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { schoolApi } from '@/api/talent/school'
 
 interface Props {
   schoolId: number
@@ -48,76 +55,47 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
+const majorCategories = ref<any[]>([])
+const courseSystem = ref<any[]>([])
 
-// 专业分类数据
-const majorCategories = computed(() => [
-  {
-    name: '视觉传达设计',
-    icon: 'ri-palette-line',
-    description: '培养具备视觉传达设计基本理论、知识和技能，能在设计机构、企事业单位从事视觉传达设计及研究的专业人才。',
-    skills: ['平面设计', '品牌设计', '信息设计', '广告设计']
-  },
-  {
-    name: '数字媒体艺术',
-    icon: 'ri-computer-line',
-    description: '培养具备数字媒体艺术设计理论知识与实践技能，能在数字媒体相关行业从事设计、制作、研究和管理的专业人才。',
-    skills: ['交互设计', 'UI/UX设计', '数字影像', '新媒体艺术']
-  },
-  {
-    name: '产品设计',
-    icon: 'ri-lightbulb-line',
-    description: '培养具备产品设计基本理论、知识和技能，能在企事业单位、专业设计机构从事产品设计及研究的专业人才。',
-    skills: ['工业设计', '家具设计', '交通工具设计', '智能产品设计']
-  },
-  {
-    name: '环境设计',
-    icon: 'ri-building-line',
-    description: '培养具备环境设计基本理论、知识和技能，能在设计机构、企事业单位从事环境设计及研究的专业人才。',
-    skills: ['室内设计', '展示设计', '景观设计', '公共空间设计']
+// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+console.log('🔍 专业模块环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  DEV:', import.meta.env.DEV)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
+// 加载专业数据
+const loadMajorData = async () => {
+  try {
+    loading.value = true
+    const response = await schoolApi.getSchoolMajors(props.schoolId)
+
+    if (USE_MOCK_DATA) {
+      // 使用模拟数据时的数据结构
+      const mockResponse = response as { majorCategories: any[]; courseSystem: any[] }
+      majorCategories.value = mockResponse.majorCategories || []
+      courseSystem.value = mockResponse.courseSystem || []
+    } else {
+      // 使用后端API时的数据结构
+      const apiResponse = response as { data?: { majorCategories?: any[]; courseSystem?: any[] } }
+      majorCategories.value = apiResponse.data?.majorCategories || []
+      courseSystem.value = apiResponse.data?.courseSystem || []
+    }
+  } catch (error) {
+    console.error('加载专业数据失败:', error)
+    // 发生错误时使用默认数据
+    majorCategories.value = []
+    courseSystem.value = []
+  } finally {
+    loading.value = false
   }
-])
+}
 
-// 课程体系
-const courseSystem = computed(() => [
-  {
-    name: '基础课程',
-    courses: [
-      '设计素描',
-      '色彩构成',
-      '平面构成',
-      '立体构成',
-      '设计史论',
-      '设计方法学'
-    ]
-  },
-  {
-    name: '专业核心课程',
-    courses: [
-      '设计思维与创新',
-      '用户研究方法',
-      '品牌设计策略',
-      '交互设计原理',
-      '数字媒体技术',
-      '服务设计'
-    ]
-  },
-  {
-    name: '实践课程',
-    courses: [
-      '设计工作坊',
-      '企业项目实践',
-      '毕业设计',
-      '专业实习',
-      '国际交流项目',
-      '创新创业实践'
-    ]
-  }
-])
-
-onMounted(async () => {
-  // 这里可以调用API加载专业数据
-  // const data = await loadSchoolMajors(props.schoolId)
-  // majors.value = data
+onMounted(() => {
+  loadMajorData()
 })
 </script>
 

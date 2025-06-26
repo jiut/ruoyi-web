@@ -25,6 +25,7 @@ import {
   MajorCategoryLabels,
   AwardLevelLabels
 } from '@/types/talent/school'
+import { achievementApi } from '@/api/talent/school'
 
 // 院校列表管理
 export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
@@ -601,6 +602,124 @@ export function useSchoolComparison() {
     clearCompare,
     isInCompare,
     canAddMore
+  }
+}
+
+// 学生成果数据结构
+interface AchievementStats {
+  internationalAwards: number
+  nationalAwards: number
+  provincialAwards: number
+  patents: number
+  description: string
+}
+
+interface TrendData {
+  years: string[]
+  internationalData: number[]
+  nationalData: number[]
+  provincialData: number[]
+}
+
+interface AwardWork {
+  id: number
+  title: string
+  award: string
+  description: string
+}
+
+// 学生成果数据管理
+export const useSchoolAchievements = (schoolId: number) => {
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const achievementStats = ref<AchievementStats>({
+    internationalAwards: 0,
+    nationalAwards: 0,
+    provincialAwards: 0,
+    patents: 0,
+    description: ''
+  })
+
+  const trendData = ref<TrendData>({
+    years: [],
+    internationalData: [],
+    nationalData: [],
+    provincialData: []
+  })
+
+  const awardWorks = ref<AwardWork[]>([])
+
+  // 加载获奖统计数据
+  const loadAchievementStats = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await achievementApi.getAwardStats(schoolId)
+      if (response.data) {
+        achievementStats.value = response.data
+      }
+    } catch (err) {
+      error.value = '获取获奖统计数据失败'
+      console.error('获取获奖统计数据失败:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 加载趋势数据
+  const loadTrendData = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await achievementApi.getTrendData(schoolId)
+      if (response.data) {
+        trendData.value = response.data
+      }
+    } catch (err) {
+      error.value = '获取趋势数据失败'
+      console.error('获取趋势数据失败:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 加载获奖作品数据
+  const loadAwardWorks = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await achievementApi.getAwardWorks(schoolId)
+      if (response.data) {
+        awardWorks.value = response.data
+      }
+    } catch (err) {
+      error.value = '获取获奖作品数据失败'
+      console.error('获取获奖作品数据失败:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 初始化所有数据
+  const initAchievements = async () => {
+    await Promise.all([
+      loadAchievementStats(),
+      loadTrendData(),
+      loadAwardWorks()
+    ])
+  }
+
+  return {
+    loading,
+    error,
+    achievementStats,
+    trendData,
+    awardWorks,
+    loadAchievementStats,
+    loadTrendData,
+    loadAwardWorks,
+    initAchievements
   }
 }
 
