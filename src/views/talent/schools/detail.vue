@@ -40,7 +40,7 @@
               <div class="w-20 h-20 rounded-lg overflow-hidden avatar-glow">
                 <img v-if="school.logo" :src="school.logo" :alt="school.schoolName" class="w-full h-full object-cover">
                 <div v-else class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
-                  {{ getSchoolInitial(school.schoolName) }}
+                  {{ getNameInitial(school.schoolName) }}
                 </div>
               </div>
             </div>
@@ -115,7 +115,7 @@
             <div class="w-24 h-24 rounded-lg overflow-hidden mr-6 avatar-glow flex-shrink-0">
               <img v-if="school.logo" :src="school.logo" :alt="school.schoolName" class="w-full h-full object-cover">
               <div v-else class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
-                {{ getSchoolInitial(school.schoolName) }}
+                {{ getNameInitial(school.schoolName) }}
               </div>
             </div>
             <div class="flex-1 min-w-0">
@@ -347,10 +347,8 @@ const getSchoolInfo = async () => {
   }
 }
 
-// 工具方法
-const getSchoolInitial = (schoolName: string) => {
-  return schoolName.charAt(0).toUpperCase()
-}
+// 导入统一的工具方法
+import { getNameInitial } from '@/utils/styleGenerator'
 
 const getSchoolTypeLabel = (type: SchoolType) => {
   return SchoolTypeLabels[type] || type

@@ -361,3 +361,48 @@ export function contactDesigner(designerId: number, message: string) {
     })
   }
 }
+
+// 设计师完整详情数据类型
+export interface DesignerCompleteDetail {
+  designer: Designer
+  works: Work[]
+  workExperience: WorkExperience[]
+  education: Education[]
+  awards: Award[]
+}
+
+// 获取设计师完整详情（聚合API）
+export function getDesignerComplete(designerId: number): Promise<{ data: DesignerCompleteDetail }> {
+  if (USE_MOCK_DATA) {
+    console.log('🔧 使用模拟数据 - 设计师完整详情')
+
+    const designer = mockDesigners.find(d => d.id === designerId)
+    const works = mockWorks.filter(w => w.designerId === designerId)
+    const workExp = mockWorkExperience.filter(w => w.designerId === designerId)
+      .sort((a: WorkExperience, b: WorkExperience) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      )
+    const education = mockEducation.filter(e => e.designerId === designerId)
+      .sort((a: Education, b: Education) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      )
+    const awards = mockAwards.filter(a => a.designerId === designerId)
+      .sort((a: Award, b: Award) => (b.sort || 0) - (a.sort || 0))
+
+    return Promise.resolve({
+      data: {
+        designer: designer || null,
+        works,
+        workExperience: workExp,
+        education,
+        awards
+      }
+    })
+  } else {
+    console.log('🚀 使用后端API - 设计师完整详情')
+    return request({
+      url: `/designer/designer/${designerId}/complete`,
+      method: 'get'
+    })
+  }
+}

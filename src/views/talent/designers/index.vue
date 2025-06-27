@@ -153,7 +153,7 @@
                           'w-full h-full flex items-center justify-center text-white text-2xl font-bold',
                           getAvatarGradient(designer.designerName)
                         ]">
-												{{ getDesignerInitial(designer.designerName) }}
+												{{ getNameInitial(designer.designerName) }}
 											</div>
 										</div>
 
@@ -421,6 +421,7 @@ import { useSkillTags } from '@/composables/useSkillTags'
 import { useDesigner } from '@/composables/talent/useDesigner'
 import type { Designer, Profession, WorkStatus } from '@/types/talent/designer'
 import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
+import { getNameInitial } from '@/utils/styleGenerator'
 
 const router = useRouter()
 
@@ -664,10 +665,7 @@ const handleViewDetail = async (designerId: number) => {
   }
 }
 
-// 工具方法
-const getDesignerInitial = (name: string) => {
-  return name.charAt(0).toUpperCase()
-}
+
 
 const getProfessionLabel = (profession: Profession) => {
   return ProfessionLabels[profession] || profession

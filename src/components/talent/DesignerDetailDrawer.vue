@@ -375,13 +375,20 @@ import SkillTag from '@/components/common/SkillTag/index.vue'
 import type { Designer, Profession, WorkStatus, Work, WorkExperience, Education, Award } from '@/types/talent/designer'
 import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
 import {
-  getDesigner,
-  getDesignerWorks,
-  getDesignerWorkExperience,
-  getDesignerEducation,
-  getDesignerAwards
+  getDesignerComplete,
+  type DesignerCompleteDetail
 } from '@/api/talent/designer'
 import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
+
+// 环境配置：可以通过环境变量控制是否使用模拟数据
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
+  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+
+console.log('🔍 设计师详情弹窗环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  DEV:', import.meta.env.DEV)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
 
 interface Props {
   visible: boolean
@@ -399,14 +406,7 @@ const emit = defineEmits<{
   share: [designer: Designer]
 }>()
 
-// 环境配置：可以通过环境变量控制是否使用模拟数据
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
-console.log('🔍 设计师详情弹窗环境变量调试信息:')
-console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
 
 // 技能标签组合式函数
 const {
@@ -438,56 +438,47 @@ const loadDesignerData = async (designerId: number) => {
   loading.value = true
   try {
     if (USE_MOCK_DATA) {
-      // 使用模拟数据
+      // 使用模拟数据（组件层面的直接处理，更快速的开发体验）
       console.log('🔧 使用模拟数据 - 设计师详情弹窗')
 
       const designerData = mockDesigners.find(d => d.id === designerId)
       const worksData = mockWorks.filter(w => w.designerId === designerId)
       const workExpData = mockWorkExperience.filter(w => w.designerId === designerId)
+        .sort((a: WorkExperience, b: WorkExperience) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        )
       const educationData = mockEducation.filter(e => e.designerId === designerId)
+        .sort((a: Education, b: Education) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        )
       const awardsData = mockAwards.filter(a => a.designerId === designerId)
+        .sort((a: Award, b: Award) => (b.sort || 0) - (a.sort || 0))
 
       designer.value = designerData || null
       portfolioWorks.value = worksData
-      workExperience.value = workExpData.sort((a: WorkExperience, b: WorkExperience) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      educationBackground.value = educationData.sort((a: Education, b: Education) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      awardsAndCertifications.value = awardsData.sort((a: Award, b: Award) =>
-        (b.sort || 0) - (a.sort || 0)
-      )
+      workExperience.value = workExpData
+      educationBackground.value = educationData
+      awardsAndCertifications.value = awardsData
     } else {
-      // 使用后端API
-      console.log('🚀 使用后端API - 设计师详情弹窗')
+      // 使用聚合API调用后端接口
+      console.log('🚀 使用聚合API - 设计师完整详情')
 
-      // 并行请求所有数据
-      const [
-        designerRes,
-        worksRes,
-        workExpRes,
-        educationRes,
-        awardsRes
-      ] = await Promise.all([
-        getDesigner(designerId),
-        getDesignerWorks(designerId),
-        getDesignerWorkExperience(designerId),
-        getDesignerEducation(designerId),
-        getDesignerAwards(designerId)
-      ])
+      const response = await getDesignerComplete(designerId)
+      const data = response.data
 
-      designer.value = designerRes.data
-      portfolioWorks.value = worksRes.data || []
-      workExperience.value = (workExpRes.data || []).sort((a: WorkExperience, b: WorkExperience) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      educationBackground.value = (educationRes.data || []).sort((a: Education, b: Education) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      awardsAndCertifications.value = (awardsRes.data || []).sort((a: Award, b: Award) =>
-        (b.sort || 0) - (a.sort || 0)
-      )
+      if (data && data.designer) {
+        designer.value = data.designer
+        portfolioWorks.value = data.works || []
+        workExperience.value = data.workExperience || []
+        educationBackground.value = data.education || []
+        awardsAndCertifications.value = data.awards || []
+      } else {
+        designer.value = null
+        portfolioWorks.value = []
+        workExperience.value = []
+        educationBackground.value = []
+        awardsAndCertifications.value = []
+      }
     }
   } catch (error) {
     console.error('加载设计师数据失败:', error)

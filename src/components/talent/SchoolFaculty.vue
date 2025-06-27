@@ -38,13 +38,13 @@
       <div>
         <h4 class="text-lg font-bold mb-4">代表性教师</h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          <div v-for="teacher in facultyMembers" :key="teacher.id" class="glass-card rounded-lg p-3 sm:p-4">
+          <div v-for="teacher in styledFacultyMembers" :key="teacher.id" class="glass-card rounded-lg p-3 sm:p-4">
             <div class="flex flex-col items-center">
               <div
                 class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold mb-3"
                 :class="teacher.avatarClass"
               >
-                {{ teacher.initial }}
+                {{ getNameInitial(teacher.name) }}
               </div>
               <h5 class="text-base font-bold mb-1">{{ teacher.name }}</h5>
               <p class="text-xs text-gray-400 mb-2">{{ teacher.title }}</p>
@@ -70,8 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { schoolApi } from '@/api/talent/school'
+import { generateTeacherStyles, getNameInitial } from '@/utils/styleGenerator'
 
 interface Props {
   schoolId: number
@@ -91,6 +92,11 @@ console.log('🔍 师资模块环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
 console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
+// 为教师数据添加样式属性
+const styledFacultyMembers = computed(() => {
+  return facultyMembers.value.map(teacher => generateTeacherStyles(teacher))
+})
 
 // 获取师资信息
 const fetchFacultyData = async () => {

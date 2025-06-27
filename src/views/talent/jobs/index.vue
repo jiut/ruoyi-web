@@ -192,7 +192,7 @@
 											<img v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName"
 												class="w-full h-full object-cover rounded-lg">
 											<span v-else class="text-lg font-bold text-primary">
-												{{ getCompanyInitial(job.enterprise?.enterpriseName || '企') }}
+												{{ getNameInitial(job.enterprise?.enterpriseName || '企') }}
 											</span>
 										</div>
 
@@ -534,6 +534,7 @@ import { useJob } from '@/composables/talent/useJob'
 import { useSkillTags } from '@/composables/useSkillTags'
 import type { JobPosting } from '@/types/talent/job'
 import { ProfessionLabels } from '@/types/talent/designer'
+import { getNameInitial } from '@/utils/styleGenerator'
 
 const router = useRouter()
 const { jobs, loading, fetchJobs } = useJob()
@@ -833,10 +834,7 @@ const handleApplicationSubmit = (formData: any) => {
   // 这里可以添加提交申请的逻辑
 }
 
-// 工具方法
-const getCompanyInitial = (companyName: string) => {
-  return companyName.charAt(0).toUpperCase()
-}
+
 
 const formatSalary = (job: JobPosting) => {
   if (job.salaryMin && job.salaryMax) {

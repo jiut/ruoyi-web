@@ -34,7 +34,7 @@
                 <div class="w-16 h-16 company-logo rounded-lg flex items-center justify-center">
                   <img v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName" class="w-full h-full object-cover rounded-lg">
                   <span v-else class="text-2xl font-bold text-primary">
-                    {{ getCompanyInitial(job.enterprise?.enterpriseName || '企') }}
+                    {{ getNameInitial(job.enterprise?.enterpriseName || '企') }}
                   </span>
                 </div>
               </div>
@@ -99,7 +99,7 @@
               <div class="w-16 h-16 company-logo rounded-lg flex items-center justify-center mr-5 flex-shrink-0">
                 <img v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName" class="w-full h-full object-cover rounded-lg">
                 <span v-else class="text-2xl font-bold text-primary">
-                  {{ getCompanyInitial(job.enterprise?.enterpriseName || '企') }}
+                  {{ getNameInitial(job.enterprise?.enterpriseName || '企') }}
                 </span>
               </div>
               <div class="flex-1">
@@ -264,6 +264,7 @@ import SkillTagList from '@/components/common/SkillTagList/index.vue'
 import { getMockJobById } from '@/data/mockJobs'
 import type { JobPosting } from '@/types/talent/job'
 import { useSkillTags } from '@/composables/useSkillTags'
+import { getNameInitial } from '@/utils/styleGenerator'
 
 const route = useRoute()
 const job = ref<JobPosting | null>(null)
@@ -290,9 +291,7 @@ const fetchJobDetail = async () => {
 }
 
 // 方法
-const getCompanyInitial = (companyName: string) => {
-  return companyName.charAt(0).toUpperCase()
-}
+
 
 const formatDescription = (description: string) => {
   if (!description) return ''

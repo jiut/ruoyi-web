@@ -40,7 +40,7 @@
               <div class="w-20 h-20 rounded-full overflow-hidden avatar-glow">
                 <img v-if="designer.avatar" :src="designer.avatar" :alt="designer.designerName" class="w-full h-full object-cover">
                 <div v-else class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
-                  {{ getDesignerInitial(designer.designerName) }}
+                  {{ getNameInitial(designer.designerName) }}
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@
             <div class="w-24 h-24 rounded-full overflow-hidden mr-6 avatar-glow flex-shrink-0">
               <img v-if="designer.avatar" :src="designer.avatar" :alt="designer.designerName" class="w-full h-full object-cover">
               <div v-else class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-3xl font-bold">
-                {{ getDesignerInitial(designer.designerName) }}
+                {{ getNameInitial(designer.designerName) }}
               </div>
             </div>
             <div class="flex-1 min-w-0">
@@ -328,12 +328,10 @@ import { useSkillTags } from '@/composables/useSkillTags'
 import type { Designer, Work, WorkExperience, Education, Award, Profession, WorkStatus } from '@/types/talent/designer'
 import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
 import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
+import { getNameInitial } from '@/utils/styleGenerator'
 import {
-  getDesigner,
-  getDesignerWorks,
-  getDesignerWorkExperience,
-  getDesignerEducation,
-  getDesignerAwards
+  getDesignerComplete,
+  type DesignerCompleteDetail
 } from '@/api/talent/designer'
 
 const route = useRoute()
@@ -369,7 +367,7 @@ const getDesignerInfo = async () => {
     const id = designerId.value
 
     if (USE_MOCK_DATA) {
-      // 使用模拟数据
+      // 使用模拟数据（页面层面的直接处理，更快速的开发体验）
       console.log('🔧 使用模拟数据 - 设计师详情页面')
 
       const foundDesigner = mockDesigners.find(d => d.id === id)
@@ -384,37 +382,35 @@ const getDesignerInfo = async () => {
           .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
         awards.value = mockAwards.filter(award => award.designerId === id)
           .sort((a, b) => (b.sort || 0) - (a.sort || 0))
+      } else {
+        // Mock数据中未找到设计师
+        designer.value = null
+        designerWorks.value = []
+        workExperiences.value = []
+        educations.value = []
+        awards.value = []
       }
     } else {
-      // 使用后端API
-      console.log('🚀 使用后端API - 设计师详情页面')
+      // 使用聚合API调用后端接口
+      console.log('🚀 使用聚合API - 设计师详情页面')
 
-      // 并行请求所有数据
-      const [
-        designerRes,
-        worksRes,
-        workExpRes,
-        educationRes,
-        awardsRes
-      ] = await Promise.all([
-        getDesigner(id),
-        getDesignerWorks(id),
-        getDesignerWorkExperience(id),
-        getDesignerEducation(id),
-        getDesignerAwards(id)
-      ])
+      const response = await getDesignerComplete(id)
+      const data = response.data
 
-      designer.value = designerRes.data
-      designerWorks.value = worksRes.data || []
-      workExperiences.value = (workExpRes.data || []).sort((a: WorkExperience, b: WorkExperience) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      educations.value = (educationRes.data || []).sort((a: Education, b: Education) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-      )
-      awards.value = (awardsRes.data || []).sort((a: Award, b: Award) =>
-        (b.sort || 0) - (a.sort || 0)
-      )
+      if (data && data.designer) {
+        designer.value = data.designer
+        designerWorks.value = data.works || []
+        workExperiences.value = data.workExperience || []
+        educations.value = data.education || []
+        awards.value = data.awards || []
+      } else {
+        // 后端API返回空数据
+        designer.value = null
+        designerWorks.value = []
+        workExperiences.value = []
+        educations.value = []
+        awards.value = []
+      }
     }
   } catch (error) {
     console.error('获取设计师信息失败:', error)
@@ -442,9 +438,7 @@ const filteredWorks = computed(() => {
 })
 
 // 工具方法
-const getDesignerInitial = (name: string) => {
-  return name.charAt(0).toUpperCase()
-}
+
 
 const getProfessionLabel = (profession: Profession) => {
   return ProfessionLabels[profession] || profession

@@ -109,9 +109,9 @@
           >
             <div
               class="w-8 h-8 mx-auto flex items-center justify-center rounded-md text-white mb-1.5"
-              :class="employer.colorClass"
+              :class="generateEmployerColorClass(employer.id, employer.name)"
             >
-              <span class="text-sm font-bold">{{ employer.initial }}</span>
+              <span class="text-sm font-bold">{{ getNameInitial(employer.name) }}</span>
             </div>
             <h5 class="text-xs font-bold leading-tight mb-0.5 truncate">{{ employer.name }}</h5>
             <p class="text-xs text-gray-400 mb-0 leading-tight truncate">{{ employer.industry }}</p>
@@ -128,9 +128,9 @@
         >
           <div
             class="w-10 h-10 sm:w-12 sm:h-12 mx-auto flex items-center justify-center rounded-lg text-white mb-2"
-            :class="employer.colorClass"
+            :class="generateEmployerColorClass(employer.id, employer.name)"
           >
-            <span class="text-lg font-bold">{{ employer.initial }}</span>
+            <span class="text-lg font-bold">{{ getNameInitial(employer.name) }}</span>
           </div>
           <h5 class="text-sm font-bold leading-tight">{{ employer.name }}</h5>
           <p class="text-xs text-gray-400 mb-0 mt-1">{{ employer.industry }}</p>
@@ -144,6 +144,7 @@
 import { ref, onMounted, nextTick, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 import { schoolApi } from '@/api/talent/school'
+import { getNameInitial, generateEmployerColorClass } from '@/utils/styleGenerator'
 
 interface Props {
   schoolId: number

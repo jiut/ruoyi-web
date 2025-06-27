@@ -769,11 +769,8 @@ interface FacultyStatsData {
 interface TeacherData {
   id: number
   name: string
-  initial: string
   title: string
   expertise: string[]
-  avatarClass: string
-  tagClasses: string[]
   description: string
 }
 
@@ -843,31 +840,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '张松鹤',
-      initial: '张',
       title: '教授 / 博士生导师',
       expertise: ['信息设计', '交互设计'],
-      avatarClass: 'bg-gradient-to-br from-primary to-purple-500',
-      tagClasses: ['bg-primary/10 text-primary border-primary/20', 'bg-primary/10 text-primary border-primary/20'],
       description: '前苹果公司首席设计师，在人机交互和信息可视化领域具有重要贡献，主导多项国家重大科技项目。'
     },
     {
       id: 2,
       name: '李江华',
-      initial: '李',
       title: '教授 / 博士生导师',
       expertise: ['智能制造', '产品系统设计'],
-      avatarClass: 'bg-gradient-to-br from-blue-500 to-cyan-400',
-      tagClasses: ['bg-blue-500/10 text-blue-400 border-blue-500/20', 'bg-blue-500/10 text-blue-400 border-blue-500/20'],
       description: '国家杰出青年基金获得者，在智能制造和数字化设计领域贡献突出，拥有发明专利30余项。'
     },
     {
       id: 3,
       name: '王明非',
-      initial: '王',
       title: '副教授 / 硕士生导师',
       expertise: ['可持续设计', '设计研究'],
-      avatarClass: 'bg-gradient-to-br from-green-500 to-emerald-500',
-      tagClasses: ['bg-green-500/10 text-green-400 border-green-500/20', 'bg-green-500/10 text-green-400 border-green-500/20'],
       description: '联合国可持续发展目标设计顾问，在绿色设计和循环经济领域具有深入研究。'
     }
   ],
@@ -875,31 +863,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '陈雅玲',
-      initial: '陈',
       title: '教授 / 博士生导师',
       expertise: ['传统图形', '文化设计'],
-      avatarClass: 'bg-gradient-to-br from-red-500 to-pink-500',
-      tagClasses: ['bg-red-500/10 text-red-400 border-red-500/20', 'bg-red-500/10 text-red-400 border-red-500/20'],
       description: '中国美术家协会理事，在传统文化的当代表达方面造诣深厚，作品被多家国际博物馆收藏。'
     },
     {
       id: 2,
       name: '刘德华',
-      initial: '刘',
       title: '教授 / 博士生导师',
       expertise: ['新媒体艺术', '数字影像'],
-      avatarClass: 'bg-gradient-to-br from-purple-500 to-indigo-500',
-      tagClasses: ['bg-purple-500/10 text-purple-400 border-purple-500/20', 'bg-purple-500/10 text-purple-400 border-purple-500/20'],
       description: '威尼斯双年展参展艺术家，在新媒体艺术和当代艺术理论研究方面具有国际影响力。'
     },
     {
       id: 3,
       name: '张艺苑',
-      initial: '张',
       title: '副教授 / 硕士生导师',
       expertise: ['装置艺术', '策展实践'],
-      avatarClass: 'bg-gradient-to-br from-yellow-500 to-orange-500',
-      tagClasses: ['bg-yellow-500/10 text-yellow-400 border-yellow-500/20', 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'],
       description: '独立策展人，曾策划多个重要国际艺术展览，在当代艺术策展领域具有丰富经验。'
     }
   ],
@@ -907,31 +886,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '林建国',
-      initial: '林',
       title: '教授 / 博士生导师',
       expertise: ['交通工具设计', '可持续设计'],
-      avatarClass: 'bg-gradient-to-br from-blue-600 to-blue-400',
-      tagClasses: ['bg-blue-600/10 text-blue-400 border-blue-600/20', 'bg-blue-600/10 text-blue-400 border-blue-600/20'],
       description: '曾任奔驰设计中心高级设计师，在新能源汽车设计和智慧出行领域具有前瞻性研究。'
     },
     {
       id: 2,
       name: '周晓雯',
-      initial: '周',
       title: '教授 / 博士生导师',
       expertise: ['城市设计', '公共空间'],
-      avatarClass: 'bg-gradient-to-br from-green-600 to-teal-500',
-      tagClasses: ['bg-green-600/10 text-green-400 border-green-600/20', 'bg-green-600/10 text-green-400 border-green-600/20'],
       description: '联合国人居署顾问专家，在城市更新和公共空间设计方面具有重要贡献。'
     },
     {
       id: 3,
       name: '高志强',
-      initial: '高',
       title: '副教授 / 硕士生导师',
       expertise: ['服务设计', '社会创新'],
-      avatarClass: 'bg-gradient-to-br from-indigo-500 to-purple-400',
-      tagClasses: ['bg-indigo-500/10 text-indigo-400 border-indigo-500/20', 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'],
       description: 'IDEO设计顾问，在服务设计和社会创新方面具有丰富的国际项目经验。'
     }
   ],
@@ -939,31 +909,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '许江山',
-      initial: '许',
       title: '教授 / 博士生导师',
       expertise: ['陶瓷艺术', '传统工艺'],
-      avatarClass: 'bg-gradient-to-br from-amber-600 to-amber-400',
-      tagClasses: ['bg-amber-600/10 text-amber-400 border-amber-600/20', 'bg-amber-600/10 text-amber-400 border-amber-600/20'],
       description: '中国陶瓷艺术大师，在传统陶瓷工艺的当代转换方面具有突出贡献。'
     },
     {
       id: 2,
       name: '钱梦洁',
-      initial: '钱',
       title: '教授 / 博士生导师',
       expertise: ['纤维艺术', '材料研究'],
-      avatarClass: 'bg-gradient-to-br from-rose-500 to-pink-400',
-      tagClasses: ['bg-rose-500/10 text-rose-400 border-rose-500/20', 'bg-rose-500/10 text-rose-400 border-rose-500/20'],
       description: '国际纤维艺术三年展评委，在纤维材料创新和艺术表达方面具有独特建树。'
     },
     {
       id: 3,
       name: '孙文华',
-      initial: '孙',
       title: '副教授 / 硕士生导师',
       expertise: ['书法设计', '汉字文化'],
-      avatarClass: 'bg-gradient-to-br from-slate-600 to-slate-400',
-      tagClasses: ['bg-slate-600/10 text-slate-400 border-slate-600/20', 'bg-slate-600/10 text-slate-400 border-slate-600/20'],
       description: '中国书法家协会会员，在汉字文化的设计应用和理论研究方面成果丰硕。'
     }
   ],
@@ -971,31 +932,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '黄志明',
-      initial: '黄',
       title: '教授 / 博士生导师',
       expertise: ['岭南文化', '品牌设计'],
-      avatarClass: 'bg-gradient-to-br from-emerald-600 to-green-400',
-      tagClasses: ['bg-emerald-600/10 text-emerald-400 border-emerald-600/20', 'bg-emerald-600/10 text-emerald-400 border-emerald-600/20'],
       description: '岭南文化研究专家，为多个知名品牌提供文化设计咨询，在区域文化品牌化方面经验丰富。'
     },
     {
       id: 2,
       name: '吴彩霞',
-      initial: '吴',
       title: '教授 / 博士生导师',
       expertise: ['游戏美术', '数字娱乐'],
-      avatarClass: 'bg-gradient-to-br from-fuchsia-500 to-purple-400',
-      tagClasses: ['bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20', 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20'],
       description: '前腾讯游戏艺术总监，在游戏美术和数字娱乐产业方面具有深厚的行业背景。'
     },
     {
       id: 3,
       name: '梁启超',
-      initial: '梁',
       title: '副教授 / 硕士生导师',
       expertise: ['包装设计', '商业设计'],
-      avatarClass: 'bg-gradient-to-br from-cyan-500 to-blue-400',
-      tagClasses: ['bg-cyan-500/10 text-cyan-400 border-cyan-500/20', 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'],
       description: '曾任奥美广告创意总监，在包装设计和商业创意方面具有丰富的实战经验。'
     }
   ],
@@ -1003,31 +955,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '田飞龙',
-      initial: '田',
       title: '教授 / 博士生导师',
       expertise: ['用户体验', '设计研究'],
-      avatarClass: 'bg-gradient-to-br from-orange-500 to-red-400',
-      tagClasses: ['bg-orange-500/10 text-orange-400 border-orange-500/20', 'bg-orange-500/10 text-orange-400 border-orange-500/20'],
       description: '国际用户体验专家协会理事，在用户研究和体验设计方法论方面具有重要贡献。'
     },
     {
       id: 2,
       name: '苏雅丽',
-      initial: '苏',
       title: '教授 / 博士生导师',
       expertise: ['智能产品', '物联网设计'],
-      avatarClass: 'bg-gradient-to-br from-violet-500 to-purple-400',
-      tagClasses: ['bg-violet-500/10 text-violet-400 border-violet-500/20', 'bg-violet-500/10 text-violet-400 border-violet-500/20'],
       description: '智能制造领域专家，在IoT产品设计和智能家居系统方面具有丰富的项目经验。'
     },
     {
       id: 3,
       name: '马建华',
-      initial: '马',
       title: '副教授 / 硕士生导师',
       expertise: ['可持续设计', '绿色制造'],
-      avatarClass: 'bg-gradient-to-br from-lime-500 to-green-400',
-      tagClasses: ['bg-lime-500/10 text-lime-400 border-lime-500/20', 'bg-lime-500/10 text-lime-400 border-lime-500/20'],
       description: '绿色设计联盟专家委员，在可持续设计和循环经济模式创新方面具有深入研究。'
     }
   ],
@@ -1035,31 +978,22 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '张军辉',
-      initial: '张',
       title: '教授 / 博士生导师',
       expertise: ['军工设计', '精密仪器'],
-      avatarClass: 'bg-gradient-to-br from-gray-700 to-gray-500',
-      tagClasses: ['bg-gray-700/10 text-gray-400 border-gray-700/20', 'bg-gray-700/10 text-gray-400 border-gray-700/20'],
       description: '国防科技创新团队带头人，在军工产品设计和精密仪器开发方面具有重要贡献。'
     },
     {
       id: 2,
       name: '李雪梅',
-      initial: '李',
       title: '教授 / 博士生导师',
       expertise: ['人工智能', '智能制造'],
-      avatarClass: 'bg-gradient-to-br from-blue-700 to-indigo-500',
-      tagClasses: ['bg-blue-700/10 text-blue-400 border-blue-700/20', 'bg-blue-700/10 text-blue-400 border-blue-700/20'],
       description: 'AI设计实验室主任，在人工智能辅助设计和智能制造系统方面具有前沿研究。'
     },
     {
       id: 3,
       name: '王立新',
-      initial: '王',
       title: '副教授 / 硕士生导师',
       expertise: ['航空设计', '系统工程'],
-      avatarClass: 'bg-gradient-to-br from-teal-600 to-cyan-400',
-      tagClasses: ['bg-teal-600/10 text-teal-400 border-teal-600/20', 'bg-teal-600/10 text-teal-400 border-teal-600/20'],
       description: '航空工业集团设计顾问，在航空器设计和复杂系统工程方面经验丰富。'
     }
   ],
@@ -1067,32 +1001,23 @@ export const mockFacultyMembersBySchool: Record<number, TeacherData[]> = {
     {
       id: 1,
       name: '何志华',
-      initial: '何',
       title: '教授 / 博士生导师',
       expertise: ['汽车设计', '造型设计'],
-      avatarClass: 'bg-gradient-to-br from-red-600 to-orange-500',
-      tagClasses: ['bg-red-600/10 text-red-400 border-red-600/20', 'bg-red-600/10 text-red-400 border-red-600/20'],
       description: '曾任上汽集团首席设计师，在汽车造型设计和品牌塑造方面具有丰富的行业经验。'
     },
     {
       id: 2,
-      name: '刘湘怡',
-      initial: '刘',
+      name: '赵美玲',
       title: '教授 / 博士生导师',
-      expertise: ['湖湘文化', '文创设计'],
-      avatarClass: 'bg-gradient-to-br from-pink-600 to-rose-400',
-      tagClasses: ['bg-pink-600/10 text-pink-400 border-pink-600/20', 'bg-pink-600/10 text-pink-400 border-pink-600/20'],
-      description: '湖湘文化研究学者，在传统文化的现代设计应用和文创产品开发方面成果显著。'
+      expertise: ['工业设计', '创新方法'],
+      description: '工业设计方法论专家，在设计思维和创新流程优化方面具有深入研究。'
     },
     {
       id: 3,
-      name: '谭志勇',
-      initial: '谭',
+      name: '刘子明',
       title: '副教授 / 硕士生导师',
-      expertise: ['机械设计', '产品工程'],
-      avatarClass: 'bg-gradient-to-br from-amber-600 to-yellow-500',
-      tagClasses: ['bg-amber-600/10 text-amber-400 border-amber-600/20', 'bg-amber-600/10 text-amber-400 border-amber-600/20'],
-      description: '工程机械领域专家，在重型机械产品设计和制造工艺优化方面具有深入研究。'
+      expertise: ['交通设计', '未来出行'],
+      description: '智能交通系统设计专家，在未来出行方式和交通工具创新设计方面具有前瞻研究。'
     }
   ]
 }
@@ -1128,9 +1053,7 @@ interface EmploymentStatsData {
 interface EmployerData {
   id: number
   name: string
-  initial: string
   industry: string
-  colorClass: string
 }
 
 // 图表数据结构
@@ -1203,88 +1126,180 @@ export const mockEmploymentStatsBySchool: Record<number, EmploymentStatsData> = 
 // 模拟代表性雇主数据 - 按学校ID分类
 export const mockEmployersBySchool: Record<number, EmployerData[]> = {
   1: [ // 清华大学
-    { id: 1, name: '苹果', initial: '苹', industry: '国际科技', colorClass: 'bg-gray-500/20' },
-    { id: 2, name: '谷歌', initial: '谷', industry: '国际科技', colorClass: 'bg-blue-500/20' },
-    { id: 3, name: '微软', initial: '微', industry: '国际科技', colorClass: 'bg-green-500/20' },
-    { id: 4, name: '腾讯', initial: '腾', industry: '互联网科技', colorClass: 'bg-blue-600/20' },
-    { id: 5, name: '字节跳动', initial: '字', industry: '互联网科技', colorClass: 'bg-red-500/20' },
-    { id: 6, name: 'IDEO', initial: 'I', industry: '设计咨询', colorClass: 'bg-purple-500/20' },
-    { id: 7, name: '华为', initial: '华', industry: '通信科技', colorClass: 'bg-red-600/20' },
-    { id: 8, name: '中科院', initial: '中', industry: '科研院所', colorClass: 'bg-indigo-500/20' }
+    { id: 1, name: '苹果', industry: '国际科技' },
+    { id: 2, name: '谷歌', industry: '国际科技' },
+    { id: 3, name: '微软', industry: '国际科技' },
+    { id: 4, name: '腾讯', industry: '互联网科技' },
+    { id: 5, name: '字节跳动', industry: '互联网科技' },
+    { id: 6, name: 'IDEO', industry: '设计咨询' },
+    { id: 7, name: '华为', industry: '通信科技' },
+    { id: 8, name: '中科院', industry: '科研院所' }
   ],
   2: [ // 中央美术学院
-    { id: 1, name: '故宫博物院', initial: '故', industry: '文化机构', colorClass: 'bg-red-600/20' },
-    { id: 2, name: '中国美术馆', initial: '中', industry: '文化机构', colorClass: 'bg-amber-500/20' },
-    { id: 3, name: '央视', initial: '央', industry: '传媒机构', colorClass: 'bg-blue-600/20' },
-    { id: 4, name: '凤凰传媒', initial: '凤', industry: '传媒机构', colorClass: 'bg-orange-500/20' },
-    { id: 5, name: '奥美', initial: '奥', industry: '广告创意', colorClass: 'bg-purple-500/20' },
-    { id: 6, name: '正大制作', initial: '正', industry: '影视制作', colorClass: 'bg-green-500/20' },
-    { id: 7, name: '嘉德拍卖', initial: '嘉', industry: '艺术市场', colorClass: 'bg-yellow-600/20' },
-    { id: 8, name: '当代艺术馆', initial: '当', industry: '艺术机构', colorClass: 'bg-pink-500/20' }
+    { id: 1, name: '故宫博物院', industry: '文化机构' },
+    { id: 2, name: '中国美术馆', industry: '文化机构' },
+    { id: 3, name: '央视', industry: '传媒机构' },
+    { id: 4, name: '凤凰传媒', industry: '传媒机构' },
+    { id: 5, name: '奥美', industry: '广告创意' },
+    { id: 6, name: '正大制作', industry: '影视制作' },
+    { id: 7, name: '嘉德拍卖', industry: '艺术市场' },
+    { id: 8, name: '当代艺术馆', industry: '艺术机构' }
   ],
   3: [ // 同济大学
-    { id: 1, name: '奔驰设计', initial: '奔', industry: '汽车设计', colorClass: 'bg-gray-600/20' },
-    { id: 2, name: '宝马集团', initial: '宝', industry: '汽车设计', colorClass: 'bg-blue-600/20' },
-    { id: 3, name: 'IDEO', initial: 'I', industry: '设计咨询', colorClass: 'bg-purple-500/20' },
-    { id: 4, name: '腾讯', initial: '腾', industry: '互联网科技', colorClass: 'bg-blue-500/20' },
-    { id: 5, name: '上海建工', initial: '上', industry: '建筑设计', colorClass: 'bg-green-600/20' },
-    { id: 6, name: '华建集团', initial: '华', industry: '建筑设计', colorClass: 'bg-teal-500/20' },
-    { id: 7, name: '迪士尼', initial: '迪', industry: '娱乐设计', colorClass: 'bg-pink-500/20' },
-    { id: 8, name: '上汽集团', initial: '上', industry: '汽车制造', colorClass: 'bg-red-500/20' }
+    { id: 1, name: '奔驰设计', industry: '汽车设计' },
+    { id: 2, name: '宝马集团', industry: '汽车设计' },
+    { id: 3, name: 'IDEO', industry: '设计咨询' },
+    { id: 4, name: '腾讯', industry: '互联网科技' },
+    { id: 5, name: '上海建工', industry: '建筑设计' },
+    { id: 6, name: '华建集团', industry: '建筑设计' },
+    { id: 7, name: '迪士尼', industry: '娱乐设计' },
+    { id: 8, name: '上汽集团', industry: '汽车制造' }
   ],
   4: [ // 中国美术学院
-    { id: 1, name: '浙江博物馆', initial: '浙', industry: '文化机构', colorClass: 'bg-green-600/20' },
-    { id: 2, name: '西湖艺术馆', initial: '西', industry: '艺术机构', colorClass: 'bg-blue-500/20' },
-    { id: 3, name: '阿里巴巴', initial: '阿', industry: '互联网科技', colorClass: 'bg-orange-500/20' },
-    { id: 4, name: '网易', initial: '网', industry: '互联网科技', colorClass: 'bg-red-500/20' },
-    { id: 5, name: '朵云轩', initial: '朵', industry: '传统工艺', colorClass: 'bg-amber-600/20' },
-    { id: 6, name: '景德镇陶瓷', initial: '景', industry: '传统工艺', colorClass: 'bg-yellow-600/20' },
-    { id: 7, name: '天猫设计', initial: '天', industry: '电商设计', colorClass: 'bg-red-600/20' },
-    { id: 8, name: '今日头条', initial: '今', industry: '新媒体', colorClass: 'bg-gray-500/20' }
+    { id: 1, name: '浙江博物馆', industry: '文化机构' },
+    { id: 2, name: '西湖艺术馆', industry: '艺术机构' },
+    { id: 3, name: '阿里巴巴', industry: '互联网科技' },
+    { id: 4, name: '网易', industry: '互联网科技' },
+    { id: 5, name: '朵云轩', industry: '传统工艺' },
+    { id: 6, name: '景德镇陶瓷', industry: '传统工艺' },
+    { id: 7, name: '天猫设计', industry: '电商设计' },
+    { id: 8, name: '今日头条', industry: '新媒体' }
   ],
   5: [ // 广州美术学院
-    { id: 1, name: '腾讯游戏', initial: '腾', industry: '游戏设计', colorClass: 'bg-blue-600/20' },
-    { id: 2, name: '网易游戏', initial: '网', industry: '游戏设计', colorClass: 'bg-red-500/20' },
-    { id: 3, name: '奥飞娱乐', initial: '奥', industry: '动漫制作', colorClass: 'bg-purple-500/20' },
-    { id: 4, name: '美的集团', initial: '美', industry: '家电设计', colorClass: 'bg-blue-500/20' },
-    { id: 5, name: '比亚迪', initial: '比', industry: '汽车设计', colorClass: 'bg-green-500/20' },
-    { id: 6, name: '华为', initial: '华', industry: '通信科技', colorClass: 'bg-red-600/20' },
-    { id: 7, name: '字节跳动', initial: '字', industry: '互联网科技', colorClass: 'bg-gray-600/20' },
-    { id: 8, name: '正佳集团', initial: '正', industry: '商业设计', colorClass: 'bg-yellow-500/20' }
+    { id: 1, name: '腾讯游戏', industry: '游戏设计' },
+    { id: 2, name: '网易游戏', industry: '游戏设计' },
+    { id: 3, name: '奥飞娱乐', industry: '动漫制作' },
+    { id: 4, name: '美的集团', industry: '家电设计' },
+    { id: 5, name: '比亚迪', industry: '汽车设计' },
+    { id: 6, name: '华为', industry: '通信科技' },
+    { id: 7, name: '字节跳动', industry: '互联网科技' },
+    { id: 8, name: '正佳集团', industry: '商业设计' }
   ],
   6: [ // 江南大学
-    { id: 1, name: '海尔集团', initial: '海', industry: '家电制造', colorClass: 'bg-blue-600/20' },
-    { id: 2, name: '美的集团', initial: '美', industry: '家电制造', colorClass: 'bg-blue-500/20' },
-    { id: 3, name: '小米科技', initial: '小', industry: '消费电子', colorClass: 'bg-orange-500/20' },
-    { id: 4, name: '华为', initial: '华', industry: '通信科技', colorClass: 'bg-red-600/20' },
-    { id: 5, name: '腾讯', initial: '腾', industry: '互联网科技', colorClass: 'bg-blue-700/20' },
-    { id: 6, name: '阿里巴巴', initial: '阿', industry: '互联网科技', colorClass: 'bg-orange-600/20' },
-    { id: 7, name: 'OPPO', initial: 'O', industry: '消费电子', colorClass: 'bg-green-500/20' },
-    { id: 8, name: 'vivo', initial: 'v', industry: '消费电子', colorClass: 'bg-blue-500/20' }
+    { id: 1, name: '海尔集团', industry: '家电制造' },
+    { id: 2, name: '美的集团', industry: '家电制造' },
+    { id: 3, name: '小米科技', industry: '消费电子' },
+    { id: 4, name: '华为', industry: '通信科技' },
+    { id: 5, name: '腾讯', industry: '互联网科技' },
+    { id: 6, name: '阿里巴巴', industry: '互联网科技' },
+    { id: 7, name: 'OPPO', industry: '消费电子' },
+    { id: 8, name: 'vivo', industry: '消费电子' }
   ],
   7: [ // 北京理工大学
-    { id: 1, name: '中科院', initial: '中', industry: '科研院所', colorClass: 'bg-indigo-600/20' },
-    { id: 2, name: '航天科技', initial: '航', industry: '航空航天', colorClass: 'bg-blue-700/20' },
-    { id: 3, name: '兵器工业', initial: '兵', industry: '军工企业', colorClass: 'bg-gray-700/20' },
-    { id: 4, name: '华为', initial: '华', industry: '通信科技', colorClass: 'bg-red-600/20' },
-    { id: 5, name: '小米', initial: '小', industry: '消费电子', colorClass: 'bg-orange-500/20' },
-    { id: 6, name: '字节跳动', initial: '字', industry: '互联网科技', colorClass: 'bg-gray-600/20' },
-    { id: 7, name: '中船重工', initial: '中', industry: '重工制造', colorClass: 'bg-blue-800/20' },
-    { id: 8, name: '大疆创新', initial: '大', industry: '无人机', colorClass: 'bg-green-600/20' }
+    { id: 1, name: '中科院', industry: '科研院所' },
+    { id: 2, name: '航天科技', industry: '航空航天' },
+    { id: 3, name: '兵器工业', industry: '军工企业' },
+    { id: 4, name: '华为', industry: '通信科技' },
+    { id: 5, name: '小米', industry: '消费电子' },
+    { id: 6, name: '字节跳动', industry: '互联网科技' },
+    { id: 7, name: '中船重工', industry: '重工制造' },
+    { id: 8, name: '大疆创新', industry: '无人机' }
   ],
   8: [ // 湖南大学
-    { id: 1, name: '上汽集团', initial: '上', industry: '汽车制造', colorClass: 'bg-red-600/20' },
-    { id: 2, name: '一汽集团', initial: '一', industry: '汽车制造', colorClass: 'bg-red-500/20' },
-    { id: 3, name: '广汽集团', initial: '广', industry: '汽车制造', colorClass: 'bg-blue-600/20' },
-    { id: 4, name: '比亚迪', initial: '比', industry: '新能源汽车', colorClass: 'bg-green-500/20' },
-    { id: 5, name: '三一重工', initial: '三', industry: '工程机械', colorClass: 'bg-gray-600/20' },
-    { id: 6, name: '中联重科', initial: '中', industry: '工程机械', colorClass: 'bg-blue-700/20' },
-    { id: 7, name: '华为', initial: '华', industry: '通信科技', colorClass: 'bg-red-700/20' },
-    { id: 8, name: '腾讯', initial: '腾', industry: '互联网科技', colorClass: 'bg-blue-600/20' }
+    { id: 1, name: '上汽集团', industry: '汽车制造' },
+    { id: 2, name: '一汽集团', industry: '汽车制造' },
+    { id: 3, name: '广汽集团', industry: '汽车制造' },
+    { id: 4, name: '比亚迪', industry: '新能源汽车' },
+    { id: 5, name: '三一重工', industry: '工程机械' },
+    { id: 6, name: '中联重科', industry: '工程机械' },
+    { id: 7, name: '华为', industry: '通信科技' },
+    { id: 8, name: '腾讯', industry: '互联网科技' }
   ]
 }
 
-// 模拟图表数据
+// 模拟图表数据 - 按学校ID分类
+export const mockChartDataBySchool: Record<number, ChartData> = {
+  1: { // 清华大学 - 偏向科技互联网，高薪资
+    industryData: [
+      { value: 45, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 18, name: '设计咨询', itemStyle: { color: '#30d158' } },
+      { value: 15, name: '高校研究', itemStyle: { color: '#ff453a' } },
+      { value: 12, name: '国际企业', itemStyle: { color: '#ff9f0a' } },
+      { value: 10, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [2, 8, 15, 35, 25, 15],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  2: { // 中央美术学院 - 偏向文化艺术，薪资分布较为平均
+    industryData: [
+      { value: 35, name: '文化艺术', itemStyle: { color: '#ff453a' } },
+      { value: 25, name: '广告传媒', itemStyle: { color: '#ff9f0a' } },
+      { value: 20, name: '教育培训', itemStyle: { color: '#30d158' } },
+      { value: 12, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [8, 18, 30, 25, 15, 4],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  3: { // 同济大学 - 汽车设计和建筑设计强，中高薪资
+    industryData: [
+      { value: 30, name: '汽车设计', itemStyle: { color: '#30d158' } },
+      { value: 25, name: '建筑设计', itemStyle: { color: '#ff9f0a' } },
+      { value: 20, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 15, name: '设计咨询', itemStyle: { color: '#ff453a' } },
+      { value: 10, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [3, 10, 20, 35, 22, 10],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  4: { // 中国美术学院 - 传统工艺与当代艺术
+    industryData: [
+      { value: 40, name: '文化创意', itemStyle: { color: '#ff453a' } },
+      { value: 22, name: '传统工艺', itemStyle: { color: '#ff9f0a' } },
+      { value: 18, name: '教育培训', itemStyle: { color: '#30d158' } },
+      { value: 12, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [12, 22, 28, 22, 12, 4],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  5: { // 广州美术学院 - 游戏动漫和商业设计
+    industryData: [
+      { value: 32, name: '游戏动漫', itemStyle: { color: '#0a84ff' } },
+      { value: 28, name: '商业设计', itemStyle: { color: '#30d158' } },
+      { value: 20, name: '互联网科技', itemStyle: { color: '#ff9f0a' } },
+      { value: 12, name: '广告传媒', itemStyle: { color: '#ff453a' } },
+      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [6, 15, 28, 30, 18, 3],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  6: { // 江南大学 - 工业设计强校，就业率高
+    industryData: [
+      { value: 38, name: '制造业设计', itemStyle: { color: '#30d158' } },
+      { value: 25, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 18, name: '消费电子', itemStyle: { color: '#ff9f0a' } },
+      { value: 12, name: '设计咨询', itemStyle: { color: '#ff453a' } },
+      { value: 7, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [4, 12, 25, 32, 20, 7],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  7: { // 北京理工大学 - 高科技领域，高薪资
+    industryData: [
+      { value: 35, name: '科技制造', itemStyle: { color: '#0a84ff' } },
+      { value: 25, name: '国防科技', itemStyle: { color: '#ff453a' } },
+      { value: 20, name: '互联网科技', itemStyle: { color: '#30d158' } },
+      { value: 12, name: '精密仪器', itemStyle: { color: '#ff9f0a' } },
+      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [2, 6, 18, 30, 28, 16],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  },
+  8: { // 湖南大学 - 汽车设计见长
+    industryData: [
+      { value: 40, name: '汽车制造', itemStyle: { color: '#30d158' } },
+      { value: 22, name: '工程机械', itemStyle: { color: '#ff9f0a' } },
+      { value: 18, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+      { value: 12, name: '设计咨询', itemStyle: { color: '#ff453a' } },
+      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    ],
+    salaryData: [5, 14, 26, 30, 20, 5],
+    salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
+  }
+}
+
+// 模拟图表数据（默认数据，用于兼容）
 export const mockChartData: ChartData = {
   industryData: [
     { value: 42, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
@@ -1317,9 +1332,11 @@ export function getMockEmployers(schoolId?: number) {
 
 // 获取图表数据
 export function getMockChartData(schoolId?: number) {
-  // 这里可以根据schoolId返回不同的图表数据
-  // 目前返回通用的图表数据
-  return mockChartData
+  if (schoolId && mockChartDataBySchool[schoolId]) {
+    return mockChartDataBySchool[schoolId]
+  }
+  // 返回清华大学的数据作为默认值
+  return mockChartDataBySchool[1] || mockChartData
 }
 
 // 学生成果数据结构
@@ -1407,7 +1424,59 @@ export const mockAchievementStatsBySchool: Record<number, AchievementStatsData> 
   }
 }
 
-// 模拟获奖趋势数据 - 通用数据，可根据学校调整
+// 模拟获奖趋势数据 - 按学校ID分类
+export const mockTrendDataBySchool: Record<number, TrendData> = {
+  1: { // 清华大学 - 稳步增长，国际奖项优势明显
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [18, 22, 26, 28, 25, 27],
+    nationalData: [45, 48, 52, 56, 53, 57],
+    provincialData: [72, 78, 84, 82, 78, 85]
+  },
+  2: { // 中央美术学院 - 艺术类奖项稳定增长
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [12, 15, 18, 20, 17, 19],
+    nationalData: [28, 32, 36, 39, 35, 38],
+    provincialData: [48, 55, 62, 58, 52, 56]
+  },
+  3: { // 同济大学 - 设计类竞赛表现优异
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [14, 17, 21, 24, 22, 24],
+    nationalData: [35, 39, 43, 47, 44, 46],
+    provincialData: [58, 65, 72, 69, 65, 68]
+  },
+  4: { // 中国美术学院 - 传统文化类奖项突出
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [10, 13, 16, 18, 15, 17],
+    nationalData: [24, 28, 32, 35, 31, 34],
+    provincialData: [42, 48, 55, 52, 47, 51]
+  },
+  5: { // 广州美术学院 - 商业设计奖项增长
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [8, 11, 14, 16, 13, 15],
+    nationalData: [22, 26, 30, 33, 29, 32],
+    provincialData: [38, 44, 51, 48, 43, 47]
+  },
+  6: { // 江南大学 - 工业设计奖项领先
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [20, 24, 28, 31, 28, 30],
+    nationalData: [48, 52, 56, 62, 58, 61],
+    provincialData: [75, 82, 89, 86, 81, 86]
+  },
+  7: { // 北京理工大学 - 科技类奖项优势
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [11, 14, 17, 19, 16, 18],
+    nationalData: [26, 30, 34, 37, 33, 36],
+    provincialData: [38, 44, 48, 45, 41, 44]
+  },
+  8: { // 湖南大学 - 汽车设计奖项突出
+    years: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    internationalData: [13, 16, 19, 21, 18, 20],
+    nationalData: [28, 32, 36, 39, 35, 38],
+    provincialData: [45, 52, 58, 55, 50, 54]
+  }
+}
+
+// 模拟获奖趋势数据（默认数据，用于兼容）
 export const mockTrendData: TrendData = {
   years: ['2019', '2020', '2021', '2022', '2023', '2024'],
   internationalData: [15, 18, 22, 25, 23, 23],
@@ -1590,9 +1659,11 @@ export function getMockAchievementStats(schoolId?: number) {
 
 // 获取获奖趋势数据
 export function getMockTrendData(schoolId?: number) {
-  // 这里可以根据schoolId返回不同的趋势数据
-  // 目前返回通用的趋势数据
-  return mockTrendData
+  if (schoolId && mockTrendDataBySchool[schoolId]) {
+    return mockTrendDataBySchool[schoolId]
+  }
+  // 返回清华大学的数据作为默认值
+  return mockTrendDataBySchool[1] || mockTrendData
 }
 
 // 获取代表性获奖作品数据
@@ -1604,155 +1675,7 @@ export function getMockAwardWorks(schoolId?: number) {
   return mockAwardWorksBySchool[1]
 }
 
-// 模拟相关院校数据 - 按学校ID分类
-export const mockRelatedSchoolsBySchool: Record<number, School[]> = {
-  1: [ // 清华大学的相关院校
-    {
-      id: 2,
-      schoolName: '中央美术学院',
-      schoolType: 'ART' as SchoolType,
-      location: '北京市朝阳区',
-      province: '北京市',
-      city: '北京市',
-      level: 'UNDERGRADUATE' as SchoolLevel,
-      ranking: 1,
-      description: '中华人民共和国教育部直属的唯一一所高等美术学校',
-      logo: '',
-      website: 'https://www.cafa.edu.cn',
-      address: '北京市朝阳区花家地南街8号',
-      phone: '010-64771056',
-      email: 'info@cafa.edu.cn',
-      totalStudents: 4500,
-      totalTeachers: 572,
-      facultyCount: 8,
-      majorCount: 15,
-      status: 'ACTIVE',
-      isKey: true,
-      is985: false,
-      is211: false,
-      isDoubleFirst: true,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-27T00:00:00.000Z'
-    },
-    {
-      id: 3,
-      schoolName: '同济大学',
-      schoolType: 'COMPREHENSIVE' as SchoolType,
-      location: '上海市杨浦区',
-      province: '上海市',
-      city: '上海市',
-      level: 'UNDERGRADUATE' as SchoolLevel,
-      ranking: 20,
-      description: '同济大学设计创意学院是国内最具影响力的设计学院之一',
-      logo: '',
-      website: 'https://www.tongji.edu.cn',
-      address: '上海市杨浦区四平路1239号',
-      phone: '021-65982200',
-      email: 'info@tongji.edu.cn',
-      totalStudents: 35000,
-      totalTeachers: 2804,
-      facultyCount: 12,
-      majorCount: 96,
-      status: 'ACTIVE',
-      isKey: true,
-      is985: true,
-      is211: true,
-      isDoubleFirst: true,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-27T00:00:00.000Z'
-    },
-    {
-      id: 4,
-      schoolName: '中国美术学院',
-      schoolType: 'ART' as SchoolType,
-      location: '浙江省杭州市',
-      province: '浙江省',
-      city: '杭州市',
-      level: 'UNDERGRADUATE' as SchoolLevel,
-      ranking: 2,
-      description: '中国第一所综合性的国立高等艺术学府',
-      logo: '',
-      website: 'https://www.caa.edu.cn',
-      address: '浙江省杭州市上城区南山路218号',
-      phone: '0571-87164630',
-      email: 'info@caa.edu.cn',
-      totalStudents: 9000,
-      totalTeachers: 900,
-      facultyCount: 18,
-      majorCount: 26,
-      status: 'ACTIVE',
-      isKey: true,
-      is985: false,
-      is211: false,
-      isDoubleFirst: true,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-27T00:00:00.000Z'
-    },
-    {
-      id: 5,
-      schoolName: '广州美术学院',
-      schoolType: 'ART' as SchoolType,
-      location: '广东省广州市',
-      province: '广东省',
-      city: '广州市',
-      level: 'UNDERGRADUATE' as SchoolLevel,
-      ranking: 3,
-      description: '华南地区唯一一所高等美术学府',
-      logo: '',
-      website: 'https://www.gzarts.edu.cn',
-      address: '广东省广州市海珠区昌岗东路257号',
-      phone: '020-84017740',
-      email: 'info@gzarts.edu.cn',
-      totalStudents: 8000,
-      totalTeachers: 700,
-      facultyCount: 12,
-      majorCount: 31,
-      status: 'ACTIVE',
-      isKey: true,
-      is985: false,
-      is211: false,
-      isDoubleFirst: false,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-27T00:00:00.000Z'
-    },
-    {
-      id: 6,
-      schoolName: '江南大学',
-      schoolType: 'COMPREHENSIVE' as SchoolType,
-      location: '江苏省无锡市',
-      province: '江苏省',
-      city: '无锡市',
-      level: 'UNDERGRADUATE' as SchoolLevel,
-      ranking: 41,
-      description: '国内工业设计教育的重要基地',
-      logo: '',
-      website: 'https://www.jiangnan.edu.cn',
-      address: '江苏省无锡市蠡湖大道1800号',
-      phone: '0510-85913669',
-      email: 'info@jiangnan.edu.cn',
-      totalStudents: 20000,
-      totalTeachers: 1500,
-      facultyCount: 8,
-      majorCount: 55,
-      status: 'ACTIVE',
-      isKey: true,
-      is985: false,
-      is211: true,
-      isDoubleFirst: true,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-27T00:00:00.000Z'
-    }
-  ]
-}
 
-// 获取相关院校数据
-export function getMockRelatedSchools(schoolId?: number) {
-  if (schoolId && mockRelatedSchoolsBySchool[schoolId]) {
-    return mockRelatedSchoolsBySchool[schoolId]
-  }
-  // 返回清华大学的相关院校作为默认值
-  return mockRelatedSchoolsBySchool[1] || []
-}
 
 // SchoolCard组件所需的格式化数据
 interface SchoolCardStatsData {
@@ -1762,7 +1685,75 @@ interface SchoolCardStatsData {
   advantagePrograms: Record<string, string[]>
 }
 
-// 模拟SchoolCard卡片统计数据
+// 模拟SchoolCard卡片统计数据 - 按学校ID分类
+export const mockSchoolCardStatsBySchool: Record<number, SchoolCardStatsData> = {
+  1: { // 清华大学
+    employmentRates: ['96.8%'],
+    facultyStrengths: ['5.0'],
+    studentScores: ['4.9'],
+    advantagePrograms: {
+      'COMPREHENSIVE': ['信息艺术设计', '智能产品设计', '交互设计']
+    }
+  },
+  2: { // 中央美术学院
+    employmentRates: ['94.3%'],
+    facultyStrengths: ['4.9'],
+    studentScores: ['4.8'],
+    advantagePrograms: {
+      'ART': ['视觉传达设计', '数字媒体艺术', '传统文化设计']
+    }
+  },
+  3: { // 同济大学
+    employmentRates: ['95.7%'],
+    facultyStrengths: ['4.8'],
+    studentScores: ['4.7'],
+    advantagePrograms: {
+      'COMPREHENSIVE': ['汽车设计', '可持续设计', '城市设计']
+    }
+  },
+  4: { // 中国美术学院
+    employmentRates: ['92.1%'],
+    facultyStrengths: ['4.8'],
+    studentScores: ['4.7'],
+    advantagePrograms: {
+      'ART': ['陶瓷艺术', '纤维艺术', '文化创意设计']
+    }
+  },
+  5: { // 广州美术学院
+    employmentRates: ['93.8%'],
+    facultyStrengths: ['4.6'],
+    studentScores: ['4.5'],
+    advantagePrograms: {
+      'ART': ['游戏美术设计', '岭南文化设计', '商业设计']
+    }
+  },
+  6: { // 江南大学
+    employmentRates: ['97.2%'],
+    facultyStrengths: ['4.9'],
+    studentScores: ['4.8'],
+    advantagePrograms: {
+      'COMPREHENSIVE': ['工业设计', '用户体验设计', '智能产品设计']
+    }
+  },
+  7: { // 北京理工大学
+    employmentRates: ['96.5%'],
+    facultyStrengths: ['4.7'],
+    studentScores: ['4.6'],
+    advantagePrograms: {
+      'ENGINEERING': ['军工设计', '精密仪器设计', 'AI设计']
+    }
+  },
+  8: { // 湖南大学
+    employmentRates: ['95.1%'],
+    facultyStrengths: ['4.7'],
+    studentScores: ['4.6'],
+    advantagePrograms: {
+      'COMPREHENSIVE': ['汽车造型设计', '工程机械设计', '文化设计']
+    }
+  }
+}
+
+// 模拟SchoolCard卡片统计数据（默认数据，用于兼容）
 export const mockSchoolCardStats: SchoolCardStatsData = {
   employmentRates: ['96.8%', '95.2%', '92.8%', '91.5%', '89.3%', '87.6%'],
   facultyStrengths: ['5.0', '4.9', '4.8', '4.7', '4.6', '4.5'],
@@ -1778,6 +1769,10 @@ export const mockSchoolCardStats: SchoolCardStatsData = {
 
 // 格式化就业率
 export function getMockEmploymentRate(schoolId: number) {
+  if (mockSchoolCardStatsBySchool[schoolId]) {
+    return mockSchoolCardStatsBySchool[schoolId].employmentRates[0]
+  }
+  // 回退到原来的逻辑
   const rates = mockSchoolCardStats.employmentRates
   const hash = schoolId % rates.length
   return rates[hash]
@@ -1785,6 +1780,10 @@ export function getMockEmploymentRate(schoolId: number) {
 
 // 格式化师资力量评分
 export function getMockFacultyStrength(schoolId: number) {
+  if (mockSchoolCardStatsBySchool[schoolId]) {
+    return mockSchoolCardStatsBySchool[schoolId].facultyStrengths[0]
+  }
+  // 回退到原来的逻辑
   const scores = mockSchoolCardStats.facultyStrengths
   const hash = (schoolId + 1) % scores.length
   return scores[hash]
@@ -1792,6 +1791,10 @@ export function getMockFacultyStrength(schoolId: number) {
 
 // 格式化学生评分
 export function getMockStudentScore(schoolId: number) {
+  if (mockSchoolCardStatsBySchool[schoolId]) {
+    return mockSchoolCardStatsBySchool[schoolId].studentScores[0]
+  }
+  // 回退到原来的逻辑
   const scores = mockSchoolCardStats.studentScores
   const hash = (schoolId + 2) % scores.length
   return scores[hash]
@@ -1799,6 +1802,12 @@ export function getMockStudentScore(schoolId: number) {
 
 // 获取优势专业
 export function getMockAdvantagePrograms(school: School) {
+  if (mockSchoolCardStatsBySchool[school.id]) {
+    const programs = mockSchoolCardStatsBySchool[school.id].advantagePrograms[school.schoolType] || ['设计学', '艺术学']
+    return programs.join('、')
+  }
+  // 回退到原来的逻辑
   const programs = mockSchoolCardStats.advantagePrograms[school.schoolType] || ['设计学', '艺术学']
   return programs.join('、')
 }
+
