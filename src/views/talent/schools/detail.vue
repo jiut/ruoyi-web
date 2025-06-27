@@ -56,32 +56,58 @@
                   <i class="ri-map-pin-line mr-1 text-gray-400"></i>
                   <span>{{ school.location }}</span>
                 </div>
-                <div v-if="school.ranking" class="flex items-center justify-center">
+                <div v-if="school.ranking" class="flex items-center justify-center mt-0">
                   <i class="ri-trophy-line mr-1 text-gray-400"></i>
                   <span>全国排名 {{ school.ranking }}</span>
                 </div>
               </div>
 
-              <!-- 特殊标识 -->
-              <div class="flex gap-2 justify-center mb-4">
-                <span v-if="school.is985" class="skill-tag text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">985</span>
-                <span v-if="school.is211" class="skill-tag text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">211</span>
-                <span v-if="school.isDoubleFirst" class="skill-tag text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">双一流</span>
+              <!-- 院校类型标签 -->
+              <div class="flex flex-wrap gap-2 justify-center mb-4">
+                <!-- 院校类型标签 -->
+                <span
+                  :class="[
+                    'text-xs px-2 py-1 rounded-full',
+                    getSchoolTypeTagStyle(school.schoolType)
+                  ]"
+                >
+                  {{ formatSchoolType(school.schoolType) }}
+                </span>
+
+                <!-- 特殊标识标签 (优先级: 985>211>双一流，只显示最高等级) -->
+                <span
+                  v-if="school.is985"
+                  class="text-xs px-2 py-1 rounded-full school-tag school-tag-985 bg-yellow-500/10 text-yellow-400 border"
+                >
+                  985
+                </span>
+                <span
+                  v-else-if="school.is211"
+                  class="text-xs px-2 py-1 rounded-full school-tag school-tag-211 bg-purple-500/10 text-purple-400 border"
+                >
+                  211
+                </span>
+                <span
+                  v-else-if="school.isDoubleFirst"
+                  class="text-xs px-2 py-1 rounded-full school-tag school-tag-double-first bg-blue-500/10 text-blue-400 border"
+                >
+                  双一流
+                </span>
+
+                <!-- 地区标签 -->
+                <span class="text-xs px-2 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
+                  {{ formatLocation(school) }}
+                </span>
+
+                <!-- 就业率标签 -->
+                <span v-if="getEmploymentRate"
+                  class="text-xs px-2 py-1 rounded-full school-tag school-tag-employment bg-green-500/10 text-green-400 border">
+                  就业率 {{ getEmploymentRate }}
+                </span>
               </div>
             </div>
 
-            <!-- 按钮组 -->
-            <div class="flex justify-center space-x-2 mb-4">
-              <button class="neon-button px-6 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors flex-1 max-w-xs">
-                联系院校
-              </button>
-              <button @click="toggleFavorite" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                <i :class="isFavorited ? 'ri-heart-fill text-red-500' : 'ri-heart-line'"></i>
-              </button>
-              <button @click="shareSchool" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                <i class="ri-share-line"></i>
-              </button>
-            </div>
+
           </div>
 
           <!-- 桌面端水平布局 -->
@@ -107,138 +133,145 @@
                       <span>全国排名 {{ school.ranking }}</span>
                     </div>
                   </div>
-                  <!-- 特殊标识 -->
-                  <div class="flex gap-2 mb-4">
-                    <span v-if="school.is985" class="skill-tag text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">985</span>
-                    <span v-if="school.is211" class="skill-tag text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">211</span>
-                    <span v-if="school.isDoubleFirst" class="skill-tag text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">双一流</span>
+                  <!-- 院校类型标签 -->
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <!-- 院校类型标签 -->
+                    <span
+                      :class="[
+                        'text-xs px-2 py-1 rounded-full',
+                        getSchoolTypeTagStyle(school.schoolType)
+                      ]"
+                    >
+                      {{ formatSchoolType(school.schoolType) }}
+                    </span>
+
+                    <!-- 特殊标识标签 (优先级: 985>211>双一流，只显示最高等级) -->
+                    <span
+                      v-if="school.is985"
+                      class="text-xs px-2 py-1 rounded-full school-tag school-tag-985 bg-yellow-500/10 text-yellow-400 border"
+                    >
+                      985
+                    </span>
+                    <span
+                      v-else-if="school.is211"
+                      class="text-xs px-2 py-1 rounded-full school-tag school-tag-211 bg-purple-500/10 text-purple-400 border"
+                    >
+                      211
+                    </span>
+                    <span
+                      v-else-if="school.isDoubleFirst"
+                      class="text-xs px-2 py-1 rounded-full school-tag school-tag-double-first bg-blue-500/10 text-blue-400 border"
+                    >
+                      双一流
+                    </span>
+
+                    <!-- 地区标签 -->
+                    <span class="text-xs px-2 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
+                      {{ formatLocation(school) }}
+                    </span>
+
+                    <!-- 就业率标签 -->
+                    <span v-if="getEmploymentRate"
+                      class="text-xs px-2 py-1 rounded-full school-tag school-tag-employment bg-green-500/10 text-green-400 border">
+                      就业率 {{ getEmploymentRate }}
+                    </span>
                   </div>
                 </div>
-                <div class="flex space-x-2">
-                  <button class="neon-button px-6 py-3 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors whitespace-nowrap">
-                    联系院校
-                  </button>
-                  <button @click="toggleFavorite" class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                    <i :class="isFavorited ? 'ri-heart-fill text-red-500' : 'ri-heart-line'"></i>
-                  </button>
-                  <button @click="shareSchool" class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                    <i class="ri-share-line"></i>
-                  </button>
-                </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 详情内容标签页 -->
-        <div class="glass-card rounded-lg p-6 mb-8">
+                <!-- 详情内容标签页 -->
+        <div class="mb-8">
+                    <!-- 导航栏占位空间 -->
+          <div v-if="isSticky" class="nav-placeholder"></div>
+
+
+
           <!-- 标签页导航 -->
-          <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
-            <button
-              v-for="tab in tabs"
-              :key="tab.key"
-              @click="activeTab = tab.key"
-              :class="[
-                'px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap mr-6',
-                activeTab === tab.key
-                  ? 'text-primary border-primary'
-                  : 'text-gray-400 border-transparent hover:text-gray-300'
-              ]"
-            >
-              <i :class="tab.icon" class="mr-2"></i>
-              {{ tab.label }}
-            </button>
+          <div
+            ref="tabNavigationRef"
+            :class="[
+              'sticky-nav glass-card rounded-lg mb-6',
+              isSticky ? 'sticky-nav-fixed' : ''
+            ]"
+          >
+            <div class="flex overflow-x-auto scrollbar-hide tab-navigation w-full">
+              <button
+                v-for="(tab, index) in tabs"
+                :key="tab.key"
+                @click="handleTabClick(tab.key)"
+                :class="[
+                  'flex-1 px-2 sm:px-4 py-3 text-sm sm:text-base font-medium border-b-2 transition-colors whitespace-nowrap flex items-center justify-center',
+                  activeTab === tab.key
+                    ? 'text-primary border-primary'
+                    : 'text-gray-400 border-transparent hover:text-gray-300'
+                ]"
+              >
+                <i :class="tab.icon" class="mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                <span class="hidden sm:inline">{{ tab.label }}</span>
+                <span class="sm:hidden">{{ tab.label.slice(0, 2) }}</span>
+              </button>
+            </div>
           </div>
 
           <!-- 标签页内容 -->
-          <div class="tab-content">
-
-
-            <!-- 专业设置 -->
-            <div v-if="activeTab === 'majors'">
-              <SchoolMajors :school-id="school.id" />
-            </div>
-
-            <!-- 师资力量 -->
-            <div v-if="activeTab === 'faculty'">
-              <SchoolFaculty :school-id="school.id" />
-            </div>
-
-            <!-- 学生信息 -->
-            <div v-if="activeTab === 'students'">
-              <SchoolStudents :school-id="school.id" />
-            </div>
-
-            <!-- 学生作品 -->
-            <div v-if="activeTab === 'works'">
-              <SchoolStudentWorks :school-id="school.id" />
-            </div>
-
-            <!-- 就业数据 -->
-            <div v-if="activeTab === 'employment'">
-              <SchoolEmployment :school-id="school.id" />
-            </div>
-
-            <!-- 获奖成果 -->
-            <div v-if="activeTab === 'achievements'">
-              <SchoolAchievements :school-id="school.id" />
-            </div>
-          </div>
-        </div>
-
-        <!-- 相关推荐 -->
-        <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-6">相关院校推荐</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              v-for="relatedSchool in relatedSchools"
-              :key="relatedSchool.id"
-              class="related-school-card rounded-lg p-4 cursor-pointer hover:bg-gray-800/30 transition-colors"
-              @click="goToSchool(relatedSchool.id)"
-            >
-              <div class="flex items-center mb-2">
-                <div class="w-12 h-12 rounded-lg overflow-hidden mr-3 flex-shrink-0">
-                  <img v-if="relatedSchool.logo" :src="relatedSchool.logo" :alt="relatedSchool.schoolName" class="w-full h-full object-cover">
-                  <div v-else class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                    {{ getSchoolInitial(relatedSchool.schoolName) }}
-                  </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="text-sm font-medium truncate">{{ relatedSchool.schoolName }}</h3>
-                  <p class="text-xs text-gray-400">{{ relatedSchool.location }}</p>
-                </div>
+          <div ref="tabContentRef" class="glass-card rounded-lg p-6">
+            <div class="tab-content">
+              <!-- 专业设置 -->
+              <div v-if="activeTab === 'majors'">
+                <SchoolMajors :school-id="school.id" />
               </div>
-              <div class="flex gap-1">
-                <span v-if="relatedSchool.is985" class="text-xs px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400">985</span>
-                <span v-if="relatedSchool.is211" class="text-xs px-1 py-0.5 rounded bg-blue-500/20 text-blue-400">211</span>
-                <span v-if="relatedSchool.isDoubleFirst" class="text-xs px-1 py-0.5 rounded bg-purple-500/20 text-purple-400">双一流</span>
+
+              <!-- 师资力量 -->
+              <div v-if="activeTab === 'faculty'">
+                <SchoolFaculty :school-id="school.id" />
+              </div>
+
+              <!-- 学生作品 -->
+              <!-- <div v-if="activeTab === 'works'">
+                <SchoolStudentWorks :school-id="school.id" />
+              </div> -->
+
+              <!-- 就业数据 -->
+              <div v-if="activeTab === 'employment'">
+                <SchoolEmployment :school-id="school.id" />
+              </div>
+
+              <!-- 获奖成果 -->
+              <div v-if="activeTab === 'achievements'">
+                <SchoolAchievements :school-id="school.id" />
               </div>
             </div>
           </div>
         </div>
+
+
       </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
 
 import SchoolMajors from '@/components/talent/SchoolMajors.vue'
 import SchoolFaculty from '@/components/talent/SchoolFaculty.vue'
-import SchoolStudents from '@/components/talent/SchoolStudents.vue'
 import SchoolStudentWorks from '@/components/talent/SchoolStudentWorks.vue'
 import SchoolEmployment from '@/components/talent/SchoolEmployment.vue'
 import SchoolAchievements from '@/components/talent/SchoolAchievements.vue'
 import { useSchoolStore } from '@/stores/talent/school'
 import {
   getMockSchoolById,
-  getMockRelatedSchools
+  getMockEmploymentRate
 } from '@/data/mockSchools'
 import { SchoolTypeLabels } from '@/types/talent/school'
 import type { School, SchoolType } from '@/types/talent/school'
+import { useSchoolFormatter } from '@/composables/talent/useSchool'
 
 const route = useRoute()
 const router = useRouter()
@@ -251,15 +284,19 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
 const school = ref<School | null>(null)
 const activeTab = ref('majors')
 const loading = ref(false)
-const isFavorited = ref(false)
-const relatedSchools = ref<School[]>([])
+const tabNavigationRef = ref<HTMLElement | null>(null)
+const tabContentRef = ref<HTMLElement | null>(null)
+const isSticky = ref(false)
+const navOriginalTop = ref(0)
+const isCalculating = ref(false) // 防止重复计算的锁
+
+
 
 // 标签页配置
 const tabs = [
   { key: 'majors', label: '专业设置', icon: 'ri-book-line' },
   { key: 'faculty', label: '师资力量', icon: 'ri-user-star-line' },
-  { key: 'students', label: '学生信息', icon: 'ri-team-line' },
-  { key: 'works', label: '学生作品', icon: 'ri-gallery-line' },
+  // { key: 'works', label: '学生作品', icon: 'ri-gallery-line' },
   { key: 'employment', label: '就业数据', icon: 'ri-line-chart-line' },
   { key: 'achievements', label: '获奖成果', icon: 'ri-award-line' }
 ]
@@ -268,6 +305,20 @@ const tabs = [
 const schoolId = computed(() => {
   const id = route.params.id as string
   return parseInt(id)
+})
+
+// 监听路由参数变化
+watch(schoolId, async (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    console.log('🔄 路由参数变化，重新初始化')
+    await getSchoolInfo()
+
+    // 重新计算导航栏位置
+    await nextTick()
+    await new Promise(resolve => setTimeout(resolve, 200))
+    await initNavPosition()
+    handleScroll()
+  }
 })
 
 // 获取院校信息
@@ -282,24 +333,11 @@ const getSchoolInfo = async () => {
 
       // 从mockSchools获取院校数据
       school.value = getMockSchoolById(id) || null
-
-      // 从mockSchools获取相关院校
-      relatedSchools.value = getMockRelatedSchools(id)
-
-      // 初始化收藏状态
-      isFavorited.value = false
     } else {
       // 使用后端API
       console.log('🚀 使用后端API - 院校详情页面')
-      const result = await schoolStore.fetchSchoolDetail(id)
-      school.value = result
-      isFavorited.value = false
-
-      // 获取相关院校（同类型或同地区）
-      const allSchools = schoolStore.schools
-      relatedSchools.value = allSchools
-        .filter((s: School) => s.id !== id && (s.schoolType === school.value?.schoolType || s.location === school.value?.location))
-        .slice(0, 6)
+      await schoolStore.fetchSchoolDetail(id)
+      school.value = schoolStore.currentSchool
     }
   } catch (error) {
     console.error('获取院校信息失败:', error)
@@ -318,39 +356,308 @@ const getSchoolTypeLabel = (type: SchoolType) => {
   return SchoolTypeLabels[type] || type
 }
 
-const toggleFavorite = async () => {
-  if (!school.value) return
+// 格式化院校类型 - 使用统一的格式化函数
+const { formatSchoolType } = useSchoolFormatter()
+
+// 获取院校类型标签样式 - 完整的颜色主题配置
+const getSchoolTypeTagStyle = (schoolType: SchoolType) => {
+  const styleMap: Record<string, string> = {
+    // 综合类 - 蓝色主题（主色调）
+    'COMPREHENSIVE': 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
+
+    // 艺术类 - 紫色主题
+    'ART': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+    'ART_DESIGN': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+
+    // 理工类 - 深蓝色主题
+    'ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+    'SCIENCE': 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
+    'SCIENCE_ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+
+    // 师范类 - 绿色主题
+    'NORMAL': 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
+
+    // 财经类 - 橙色主题
+    'FINANCE': 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
+
+    // 医学类 - 红色主题
+    'MEDICAL': 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
+
+    // 文科类 - 粉色主题
+    'LIBERAL_ARTS': 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
+
+    // 农林类 - 绿色主题
+    'AGRICULTURE': 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
+
+    // 体育类 - 黄绿色主题
+    'SPORTS': 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
+
+    // 政法类 - 深灰色主题
+    'POLITICS_LAW': 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
+
+    // 民族类 - 琥珀色主题
+    'ETHNIC': 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
+
+    // 军事类 - 深绿色主题
+    'MILITARY': 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
+
+    // 职业院校 - 橙色主题
+    'VOCATIONAL': 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
+
+    // 独立学院 - 灰蓝色主题
+    'INDEPENDENT': 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border'
+  }
+  return styleMap[schoolType] || 'school-tag school-tag-default bg-gray-700/50 text-gray-300 border'
+}
+
+// 格式化地区信息
+const formatLocation = (school: School) => {
+  if (school.city && school.province) {
+    return school.city === school.province ? school.city : school.city
+  }
+  return school.location || school.province || school.city || '未知'
+}
+
+// 获取就业率数据
+const getEmploymentRate = computed(() => {
+  if (!school.value) return null
+
+  if (USE_MOCK_DATA) {
+    return getMockEmploymentRate(school.value.id)
+  } else {
+    // TODO: 调用后端API获取真实数据
+    return school.value.employmentData?.employmentRate || null
+  }
+})
+
+// 自动滚动到激活的标签
+const scrollToActiveTab = async () => {
+  await nextTick()
+  if (tabNavigationRef.value) {
+    const activeButton = tabNavigationRef.value.querySelector('.text-primary')
+    if (activeButton) {
+      activeButton.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      })
+    }
+  }
+}
+
+// 滚动到内容区域顶部
+const scrollToContent = async () => {
+  // 等待DOM渲染完成
+  await nextTick()
+
+  if (tabContentRef.value) {
+    const headerHeight = window.innerWidth <= 768 ? 64 : 80
+    const navHeight = 78 // 导航栏高度
+    const rect = tabContentRef.value.getBoundingClientRect()
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+
+    // 检查页面滚动能力
+    const pageHeight = document.documentElement.scrollHeight
+    const viewportHeight = window.innerHeight
+    const maxScrollTop = pageHeight - viewportHeight
+
+    let targetScrollTop
+    if (isSticky.value) {
+      // 如果导航栏已经固定，滚动到内容顶部刚好在固定导航栏下方
+      targetScrollTop = rect.top + scrollTop - headerHeight - navHeight - 10
+    } else {
+      // 如果导航栏未固定，滚动到导航栏位置
+      targetScrollTop = navOriginalTop.value - headerHeight - 10
+    }
+
+    // 确保目标位置在可滚动范围内
+    const finalTarget = Math.min(Math.max(0, targetScrollTop), maxScrollTop)
+    const currentPos = window.pageYOffset
+
+    if (maxScrollTop <= 0) {
+      return
+    }
+
+    if (Math.abs(finalTarget - currentPos) < 10) {
+      return
+    }
+
+    window.scrollTo({
+      top: finalTarget,
+      behavior: 'smooth'
+    })
+  }
+}
+
+// 滚动监听
+const handleScroll = () => {
+  if (tabNavigationRef.value && navOriginalTop.value > 0 && !isCalculating.value) {
+    // 根据屏幕宽度动态设置header高度
+    const headerHeight = window.innerWidth <= 768 ? 64 : 80
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+
+    // 检查是否应该固定导航栏
+    // 当页面滚动超过导航栏原始位置减去header高度时，固定导航栏
+    const shouldStick = scrollTop >= navOriginalTop.value - headerHeight
+
+    isSticky.value = shouldStick
+  }
+}
+
+// 初始化导航栏原始位置
+const initNavPosition = async () => {
+  // 防止重复计算
+  if (isCalculating.value) return
+
+  // 如果已经是粘性状态，不重新计算原始位置
+  if (isSticky.value && navOriginalTop.value > 0) return
+
+  isCalculating.value = true
 
   try {
-    // 简单的本地切换，实际项目中应该调用后端API
-    isFavorited.value = !isFavorited.value
-  } catch (error) {
-    console.error('收藏操作失败:', error)
+    if (tabNavigationRef.value) {
+      // 先等待一下，确保页面布局稳定
+      await nextTick()
+
+      // 确保元素可见且有高度
+      const rect = tabNavigationRef.value.getBoundingClientRect()
+
+      if (rect.height > 0) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        const newPosition = rect.top + scrollTop
+
+        // 只有当位置发生显著变化时才更新，并且不是在粘性状态下
+        if ((Math.abs(newPosition - navOriginalTop.value) > 10 || navOriginalTop.value === 0) && !isSticky.value) {
+          navOriginalTop.value = newPosition
+        }
+      }
+    }
+  } finally {
+    isCalculating.value = false
   }
 }
 
-const shareSchool = () => {
-  if (!school.value) return
+// 处理标签点击
+const handleTabClick = async (tabKey: string) => {
+  const isTabChanged = tabKey !== activeTab.value
 
-  const url = `${window.location.origin}/talent/schools/${school.value.id}`
-  if (navigator.share) {
-    navigator.share({
-      title: `${school.value.schoolName} - 院校详情`,
-      text: school.value.description,
-      url
-    })
-  } else {
-    navigator.clipboard.writeText(url)
-    // 这里可以添加提示信息
+  // 更新当前标签
+  activeTab.value = tabKey
+
+  // 如果是切换标签，需要等待内容渲染完成
+  if (isTabChanged) {
+    // 等待Vue的响应式更新完成
+    await nextTick()
+    // 额外等待DOM完全更新
+    await new Promise(resolve => setTimeout(resolve, 150))
   }
+
+  // 如果导航栏位置还未初始化，先尝试初始化
+  if (navOriginalTop.value <= 0) {
+    await initNavPosition()
+    handleScroll()
+  }
+
+  await scrollToContent()
 }
 
-const goToSchool = (schoolId: number) => {
-  router.push(`/talent/schools/${schoolId}`)
+// 监听标签切换
+watch(activeTab, async (newTab, oldTab) => {
+  // 如果是初始化时，只滚动导航栏标签
+  if (!oldTab) {
+    await scrollToActiveTab()
+  }
+})
+
+// 监听学校数据变化，重新计算导航栏位置
+watch(school, async (newSchool) => {
+  if (newSchool) {
+    // 等待DOM更新
+    await nextTick()
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    await initNavPosition()
+    handleScroll()
+  }
+})
+
+// 窗口大小变化监听
+const handleResize = () => {
+  // 重新计算导航栏位置
+  setTimeout(async () => {
+    await initNavPosition()
+    handleScroll()
+  }, 100)
 }
+
+// 使用 MutationObserver 监听DOM变化，带防抖处理
+const setupNavPositionObserver = () => {
+  if (!tabNavigationRef.value) return
+
+  let debounceTimer: NodeJS.Timeout | null = null
+
+  const observer = new MutationObserver(() => {
+    // 防抖处理，避免频繁触发
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+
+    debounceTimer = setTimeout(async () => {
+      // 只在非粘性状态下重新计算
+      if (!isSticky.value) {
+        await initNavPosition()
+      }
+    }, 200)
+  })
+
+  // 只监听导航栏容器的变化，而不是整个页面
+  observer.observe(tabNavigationRef.value.parentElement || tabNavigationRef.value, {
+    childList: true,
+    attributes: true,
+    attributeFilter: ['class', 'style']
+  })
+
+  // 2秒后停止监听，避免性能问题
+  setTimeout(() => {
+    observer.disconnect()
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+  }, 2000)
+}
+
+
 
 onMounted(async () => {
+  // 先添加滚动监听和resize监听
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('resize', handleResize, { passive: true })
+
   await getSchoolInfo()
+  await scrollToActiveTab()
+
+  // 等待DOM渲染完成后初始化导航栏位置
+  await nextTick()
+
+  // 多次尝试初始化
+  for (let i = 0; i < 5; i++) {
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await initNavPosition()
+    if (navOriginalTop.value > 0) {
+      break
+    }
+  }
+
+  handleScroll() // 初始检查
+
+  // 设置DOM变化监听
+  setupNavPositionObserver()
+})
+
+onUnmounted(() => {
+  // 清理事件监听
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
@@ -408,14 +715,7 @@ onMounted(async () => {
   color: #60a5fa;
 }
 
-.related-school-card {
-  border: 1px solid rgba(99, 99, 102, 0.2);
-  background: rgba(28, 28, 30, 0.3);
-}
 
-.related-school-card:hover {
-  border-color: rgba(10, 132, 255, 0.3);
-}
 
 /* 标签页切换动画 */
 .tab-content {
@@ -433,24 +733,179 @@ onMounted(async () => {
   }
 }
 
+/* 修复院校类型标签边框颜色被全局样式覆盖的问题 */
+.school-tag {
+  position: relative;
+}
+
+/* 院校类型标签边框颜色 */
+.school-tag-comprehensive {
+  border-color: rgba(10, 132, 255, 0.2) !important;
+}
+
+.school-tag-art {
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.school-tag-engineering {
+  border-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+.school-tag-science {
+  border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+.school-tag-normal {
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.school-tag-finance {
+  border-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+.school-tag-medical {
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.school-tag-liberal {
+  border-color: rgba(236, 72, 153, 0.2) !important;
+}
+
+.school-tag-agriculture {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.school-tag-sports {
+  border-color: rgba(132, 204, 22, 0.2) !important;
+}
+
+.school-tag-law {
+  border-color: rgba(100, 116, 139, 0.2) !important;
+}
+
+.school-tag-ethnic {
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.school-tag-military {
+  border-color: rgba(22, 101, 52, 0.2) !important;
+}
+
+.school-tag-vocational {
+  border-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+.school-tag-independent {
+  border-color: rgba(107, 114, 128, 0.2) !important;
+}
+
+.school-tag-default {
+  border-color: rgba(107, 114, 128, 0.6) !important;
+}
+
+/* 特殊标识标签边框颜色 */
+.school-tag-985 {
+  border-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+.school-tag-211 {
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.school-tag-double-first {
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.school-tag-employment {
+  border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+/* 粘性导航栏 */
+.sticky-nav {
+  transition: all 0.3s ease;
+  z-index: 100;
+  padding-bottom: 0 !important;
+}
+
+.sticky-nav-fixed {
+  position: fixed;
+  top: 80px; /* TalentHeader 的高度 */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: 1200px; /* 与容器宽度保持一致 */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 导航栏占位空间 */
+.nav-placeholder {
+  height: 78px; /* 与导航栏高度保持一致 */
+  margin-bottom: 1.5rem;
+}
+
+/* 标签页导航优化 */
+.tab-navigation {
+  padding-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  min-width: 100%;
+}
+
+.tab-navigation button {
+  min-width: 0;
+  text-align: center;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* 移动端优化 */
 @media (max-width: 768px) {
   .glass-card.mb-8 {
     margin-bottom: 2rem !important;
   }
 
-  .flex.border-b.border-gray-700.mb-6.overflow-x-auto {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  .sticky-nav-fixed {
+    top: 64px; /* 移动端 TalentHeader 高度较小 */
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 
-  .flex.border-b.border-gray-700.mb-6.overflow-x-auto::-webkit-scrollbar {
-    height: 4px;
+  .tab-navigation {
+    width: 100%;
   }
 
-  .flex.border-b.border-gray-700.mb-6.overflow-x-auto::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 2px;
+  .tab-navigation button {
+    flex: 1;
+    min-width: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+  .tab-navigation button {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    padding-top: 0;
+    padding-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .tab-navigation button i {
+    margin-right: 0.25rem;
+    font-size: 0.875rem;
+      }
+  }
 </style>

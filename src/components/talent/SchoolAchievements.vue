@@ -4,7 +4,7 @@
     <div class="mb-6">
       <h4 class="text-lg font-bold mb-4">学生获奖情况</h4>
       <div class="glass-card rounded-lg p-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div class="text-center p-3 bg-gray-800/30 rounded-lg">
             <p class="text-xs text-gray-400 mb-1">国际奖项</p>
             <p class="text-2xl font-bold mb-0 gradient-text">{{ achievementStats.internationalAwards || 0 }}</p>

@@ -126,7 +126,8 @@ PUT    /designer/job                     # 修改岗位
 DELETE /designer/job/{ids}               # 删除岗位
 GET    /designer/job/enterprise/{id}     # 企业岗位查询
 GET    /designer/job/profession/{profession}  # 按职业查询岗位
-GET    /designer/job/skills              # 按技能查询岗位
+GET    /designer/job/skills              # 按技能查询岗位（交集查询）
+GET    /designer/job/skills-any          # 按技能查询岗位（任意匹配）
 ```
 
 ### 岗位申请接口
@@ -200,6 +201,12 @@ GET    /designer/user/enterprise/profile # 获取企业档案
 GET    /designer/user/school/profile     # 获取院校档案
 PUT    /designer/user/unbind/{entityType} # 解绑身份
 POST   /designer/user/bind               # 管理员绑定用户实体
+
+# 绑定已有实体接口
+GET    /designer/user/available/enterprises # 查看可绑定的企业列表
+POST   /designer/user/bind/enterprise    # 绑定到指定企业
+GET    /designer/user/available/schools  # 查看可绑定的院校列表
+POST   /designer/user/bind/school        # 绑定到指定院校
 ```
 
 ## 使用方法
@@ -528,6 +535,112 @@ DELETE /designer/school/1/favorite
 GET /designer/school/favorites
 ```
 
+### 5. 技能查询接口使用方法
+
+#### 技能查询对比
+
+| 接口 | 查询逻辑 | 示例 | 应用场景 |
+|------|----------|------|----------|
+| `/designer/job/skills` | 交集查询（AND） | 搜索 A,B 时，岗位必须同时包含 A 和 B | 精确匹配，要求岗位具备所有技能 |
+| `/designer/job/skills-any` | 并集查询（OR） | 搜索 A,B 时，岗位包含 A 或 B 即可 | 宽松匹配，扩大搜索范围 |
+
+#### 使用示例
+```bash
+# 精确匹配：查找同时需要原型设计和视觉设计技能的岗位
+GET /designer/job/skills?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+
+# 任意匹配：查找需要原型设计或视觉设计技能之一的岗位
+GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+```
+
+**支持的技能标签:**
+- ANIMATION_DESIGN (动效设计)
+- PROTOTYPE_DESIGN (原型设计)
+- CHARACTER_DESIGN (角色设计)
+- VISUAL_DESIGN (视觉设计)
+- USER_INTERFACE_DESIGN (用户界面设计)
+- USER_EXPERIENCE_DESIGN (用户体验设计)
+- GRAPHIC_DESIGN (平面设计)
+- BRANDING_DESIGN (品牌设计)
+- ILLUSTRATION (插画)
+- WEB_DESIGN (网页设计)
+- MOBILE_DESIGN (移动设计)
+- PRINT_DESIGN (印刷设计)
+
+### 6. 绑定已有实体使用方法
+
+#### 绑定企业流程
+```bash
+# 1. 查询可绑定的企业列表
+GET /designer/user/available/enterprises?pageNum=1&pageSize=10&enterpriseName=科技
+
+# 2. 绑定到指定企业
+POST /designer/user/bind/enterprise?enterpriseId=1&inviteCode=INVITE123
+```
+
+**企业列表响应示例:**
+```json
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": {
+        "records": [
+            {
+                "enterpriseId": 1,
+                "enterpriseName": "字节跳动科技有限公司",
+                "description": "全球领先的移动互联网公司",
+                "industry": "互联网",
+                "scale": "5000+",
+                "address": "北京市海淀区"
+            }
+        ],
+        "total": 1,
+        "size": 10,
+        "current": 1,
+        "pages": 1
+    }
+}
+```
+
+#### 绑定院校流程
+```bash
+# 1. 查询可绑定的院校列表
+GET /designer/user/available/schools?pageNum=1&pageSize=10&schoolName=设计
+
+# 2. 绑定到指定院校
+POST /designer/user/bind/school?schoolId=1&studentId=2020001234
+```
+
+**院校列表响应示例:**
+```json
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": {
+        "records": [
+            {
+                "schoolId": 1,
+                "schoolName": "清华大学美术学院",
+                "description": "中国著名的艺术设计院校",
+                "schoolType": "公立",
+                "level": "985",
+                "address": "北京市海淀区清华园1号"
+            }
+        ],
+        "total": 1,
+        "size": 10,
+        "current": 1,
+        "pages": 1
+    }
+}
+```
+
+#### 绑定注意事项
+- 每个用户在同一实体类型下只能绑定一个实体
+- 如需切换绑定，必须先解绑当前实体
+- 企业邀请码和学号验证功能后续版本完善
+- 管理员可为任意用户绑定身份
+
 
 
 ## 权限设计
@@ -722,4 +835,4 @@ graph TB
 
 ## 开发团队
 
-本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。 
+本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。

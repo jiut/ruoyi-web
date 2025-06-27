@@ -7,62 +7,133 @@
     </div>
 
     <!-- 就业概况 -->
-    <div v-else class="mb-6">
-      <h4 class="text-lg font-bold mb-4">就业概况</h4>
-      <div class="glass-card rounded-lg p-4 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+    <div v-else class="mb-4 sm:mb-6">
+      <h4 class="text-lg font-bold mb-3 sm:mb-4">就业概况</h4>
+      <div class="glass-card rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-3 sm:mb-4">
+          <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
             <p class="text-xs text-gray-400 mb-1">就业率</p>
             <p class="text-2xl font-bold text-green-400 mb-0">{{ employmentStats?.employmentRate || '--' }}</p>
           </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+          <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
             <p class="text-xs text-gray-400 mb-1">平均起薪</p>
             <p class="text-2xl font-bold text-yellow-400 mb-0">{{ employmentStats?.averageSalary || '--' }}</p>
           </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+          <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
             <p class="text-xs text-gray-400 mb-1">深造率</p>
             <p class="text-2xl font-bold text-blue-400 mb-0">{{ employmentStats?.furtherStudyRate || '--' }}</p>
           </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+          <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
             <p class="text-xs text-gray-400 mb-1">海外就业率</p>
             <p class="text-2xl font-bold text-purple-400 mb-0">{{ employmentStats?.overseasEmploymentRate || '--' }}</p>
           </div>
         </div>
-        <p class="text-sm text-gray-300 mb-0">
+        <p class="text-sm text-gray-300 mb-0 leading-relaxed">
           {{ employmentStats?.description || '暂无就业描述' }}
         </p>
       </div>
 
       <!-- 数据可视化 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <!-- 就业行业分布 -->
         <div class="w-full">
-          <h5 class="text-base font-bold mb-3">就业行业分布</h5>
-          <div ref="industryChartRef" class="w-full h-60" style="width: 100%; height: 240px;"></div>
+          <h5 class="text-base font-bold mb-2 sm:mb-3">就业行业分布</h5>
+
+          <!-- 手机端列表显示 -->
+          <div class="lg:hidden">
+            <div class="space-y-2">
+              <div
+                v-for="item in industryListData"
+                :key="item.name"
+                class="glass-card rounded-lg p-3 flex items-center justify-between"
+              >
+                <div class="flex items-center">
+                  <div
+                    class="w-4 h-4 rounded-full mr-3 flex-shrink-0"
+                    :style="{ backgroundColor: item.color }"
+                  ></div>
+                  <span class="text-sm text-gray-300">{{ item.name }}</span>
+                </div>
+                <span class="text-sm font-bold text-white">{{ item.value }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 桌面端图表显示 -->
+          <div ref="industryChartRef" class="hidden lg:block w-full h-60" style="width: 100%;"></div>
         </div>
+
+        <!-- 薪资水平分布 -->
         <div class="w-full">
-          <h5 class="text-base font-bold mb-3">薪资水平分布</h5>
-          <div ref="salaryChartRef" class="w-full h-60" style="width: 100%; height: 240px;"></div>
+          <h5 class="text-base font-bold mb-2 sm:mb-3">薪资水平分布</h5>
+
+          <!-- 手机端列表显示 -->
+          <div class="lg:hidden">
+            <div class="space-y-2">
+              <div
+                v-for="(item, index) in salaryListData"
+                :key="index"
+                class="glass-card rounded-lg p-3"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm text-gray-300">{{ item.label }}</span>
+                  <span class="text-sm font-bold text-white">{{ item.value }}%</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                  <div
+                    class="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-300"
+                    :style="{ width: `${(item.value / Math.max(...salaryListData.map(d => d.value))) * 100}%` }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 桌面端图表显示 -->
+          <div ref="salaryChartRef" class="hidden lg:block w-full h-60" style="width: 100%;"></div>
         </div>
       </div>
     </div>
 
     <!-- 代表性雇主 -->
     <div>
-      <h4 class="text-lg font-bold mb-4">代表性雇主</h4>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <h4 class="text-lg font-bold mb-3 sm:mb-4">代表性雇主</h4>
+
+      <!-- 手机端紧凑布局 -->
+      <div class="sm:hidden">
+        <div class="grid grid-cols-2 gap-2">
+          <div
+            v-for="employer in employers"
+            :key="employer.id"
+            class="glass-card rounded-lg p-2 text-center"
+          >
+            <div
+              class="w-8 h-8 mx-auto flex items-center justify-center rounded-md text-white mb-1.5"
+              :class="employer.colorClass"
+            >
+              <span class="text-sm font-bold">{{ employer.initial }}</span>
+            </div>
+            <h5 class="text-xs font-bold leading-tight mb-0.5 truncate">{{ employer.name }}</h5>
+            <p class="text-xs text-gray-400 mb-0 leading-tight truncate">{{ employer.industry }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 平板和桌面端布局 -->
+      <div class="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div
           v-for="employer in employers"
           :key="employer.id"
-          class="glass-card rounded-lg p-4 text-center"
+          class="glass-card rounded-lg p-3 sm:p-4 text-center"
         >
           <div
-            class="w-12 h-12 mx-auto flex items-center justify-center rounded-lg text-white mb-2"
+            class="w-10 h-10 sm:w-12 sm:h-12 mx-auto flex items-center justify-center rounded-lg text-white mb-2"
             :class="employer.colorClass"
           >
             <span class="text-lg font-bold">{{ employer.initial }}</span>
           </div>
-          <h5 class="text-sm font-bold">{{ employer.name }}</h5>
-          <p class="text-xs text-gray-400 mb-0">{{ employer.industry }}</p>
+          <h5 class="text-sm font-bold leading-tight">{{ employer.name }}</h5>
+          <p class="text-xs text-gray-400 mb-0 mt-1">{{ employer.industry }}</p>
         </div>
       </div>
     </div>
@@ -91,6 +162,10 @@ let industryChart: echarts.ECharts | null = null
 let salaryChart: echarts.ECharts | null = null
 let resizeObserver: ResizeObserver | null = null
 
+// 手机端列表数据
+const industryListData = ref<{ name: string; value: number; color: string }[]>([])
+const salaryListData = ref<{ label: string; value: number }[]>([])
+
 // 环境配置：根据VITE_USE_MOCK_DATA切换数据源
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
   (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
@@ -99,6 +174,33 @@ console.log('🔍 就业模块环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
 console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+
+// 设置手机端列表数据
+const setupMobileListData = () => {
+  // 设置行业分布列表数据
+  const industryData = chartData.value?.industryData || [
+    { value: 42, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
+    { value: 23, name: '设计咨询', itemStyle: { color: '#30d158' } },
+    { value: 15, name: '广告传媒', itemStyle: { color: '#ff9f0a' } },
+    { value: 12, name: '高校研究', itemStyle: { color: '#ff453a' } },
+    { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+  ]
+
+  industryListData.value = industryData.map((item: any) => ({
+    name: item.name,
+    value: item.value,
+    color: item.itemStyle?.color || '#666'
+  }))
+
+  // 设置薪资分布列表数据
+  const salaryLabels = chartData.value?.salaryLabels || ['8K以下', '8-12K', '12-15K', '15-20K', '20-25K', '25K以上']
+  const salaryData = chartData.value?.salaryData || [5, 12, 25, 30, 18, 10]
+
+  salaryListData.value = salaryLabels.map((label: string, index: number) => ({
+    label,
+    value: salaryData[index] || 0
+  }))
+}
 
 // 获取就业数据
 const fetchEmploymentData = async () => {
@@ -119,6 +221,9 @@ const fetchEmploymentData = async () => {
       employers.value = apiResponse.data?.employers || []
       chartData.value = apiResponse.data?.chartData || null
     }
+
+    // 设置手机端列表数据
+    setupMobileListData()
   } catch (error) {
     console.error('获取就业数据失败:', error)
     // 发生错误时使用默认数据
@@ -136,16 +241,20 @@ const initCharts = async () => {
   // 等待DOM完全渲染
   await new Promise(resolve => setTimeout(resolve, 50))
 
+  // 只在桌面端初始化图表
+  if (window.innerWidth < 1024) return
+
   if (industryChartRef.value) {
     // 强制设置容器尺寸
     const container = industryChartRef.value
     const parentWidth = container.parentElement?.clientWidth || 400
+    const chartHeight = 240  // 桌面端固定240px
     container.style.width = `${parentWidth}px`
-    container.style.height = '240px'
+    container.style.height = `${chartHeight}px`
 
     industryChart = echarts.init(container, 'dark', {
       width: parentWidth,
-      height: 240
+      height: chartHeight
     })
     const industryOption = {
       backgroundColor: 'transparent',
@@ -201,12 +310,13 @@ const initCharts = async () => {
     // 强制设置容器尺寸
     const container = salaryChartRef.value
     const parentWidth = container.parentElement?.clientWidth || 400
+    const chartHeight = 240  // 桌面端固定240px
     container.style.width = `${parentWidth}px`
-    container.style.height = '240px'
+    container.style.height = `${chartHeight}px`
 
     salaryChart = echarts.init(container, 'dark', {
       width: parentWidth,
-      height: 240
+      height: chartHeight
     })
     const salaryOption = {
       backgroundColor: 'transparent',
@@ -255,23 +365,30 @@ const initCharts = async () => {
 
 // 处理窗口大小变化
 const handleResize = () => {
+  // 只在桌面端处理图表缩放
+  if (window.innerWidth < 1024) return
+
   if (industryChart && industryChartRef.value) {
     const container = industryChartRef.value
     const parentWidth = container.parentElement?.clientWidth || 400
+    const chartHeight = 240  // 桌面端固定240px
     container.style.width = `${parentWidth}px`
+    container.style.height = `${chartHeight}px`
     industryChart.resize({
       width: parentWidth,
-      height: 240
+      height: chartHeight
     })
   }
 
   if (salaryChart && salaryChartRef.value) {
     const container = salaryChartRef.value
     const parentWidth = container.parentElement?.clientWidth || 400
+    const chartHeight = 240  // 桌面端固定240px
     container.style.width = `${parentWidth}px`
+    container.style.height = `${chartHeight}px`
     salaryChart.resize({
       width: parentWidth,
-      height: 240
+      height: chartHeight
     })
   }
 }

@@ -9,23 +9,23 @@
       <!-- 师资概况 -->
       <div class="mb-6">
         <h4 class="text-lg font-bold mb-4">师资概况</h4>
-        <div class="glass-card rounded-lg p-4">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+        <div class="glass-card rounded-lg p-3 sm:p-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4">
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
               <p class="text-xs text-gray-400 mb-1">专任教师</p>
-              <p class="text-2xl font-bold gradient-text mb-0">{{ facultyStats?.totalFaculty || 0 }}</p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.totalFaculty || 0 }}</p>
             </div>
-            <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
               <p class="text-xs text-gray-400 mb-1">教授/副教授</p>
-              <p class="text-2xl font-bold gradient-text mb-0">{{ facultyStats?.professors || 0 }}</p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.professors || 0 }}</p>
             </div>
-            <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
               <p class="text-xs text-gray-400 mb-1">博士学位教师</p>
-              <p class="text-2xl font-bold gradient-text mb-0">{{ facultyStats?.doctorDegree || 0 }}</p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.doctorDegree || 0 }}</p>
             </div>
-            <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
               <p class="text-xs text-gray-400 mb-1">海外背景教师</p>
-              <p class="text-2xl font-bold gradient-text mb-0">{{ facultyStats?.overseasBackground || 0 }}</p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.overseasBackground || 0 }}</p>
             </div>
           </div>
           <p class="text-sm text-gray-300 mb-0">
@@ -37,8 +37,8 @@
       <!-- 代表性教师 -->
       <div>
         <h4 class="text-lg font-bold mb-4">代表性教师</h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div v-for="teacher in facultyMembers" :key="teacher.id" class="glass-card rounded-lg p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <div v-for="teacher in facultyMembers" :key="teacher.id" class="glass-card rounded-lg p-3 sm:p-4">
             <div class="flex flex-col items-center">
               <div
                 class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold mb-3"
