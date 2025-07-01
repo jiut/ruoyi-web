@@ -22,7 +22,7 @@ const themeVars = useThemeVars();
 
 // 表单状态管理
 const registerForm = reactive({
-  username: '',
+  email: '',
   code: '',
   password: '',
   confirmPassword: ''
@@ -45,22 +45,11 @@ const formErrors = reactive({
 function validateForm() {
   let isValid = true;
 
-  // 用户名验证
-  if (!registerForm.username) {
-    formErrors.username = t('register.invalid_account');
-    isValid = false;
-  } else if (registerForm.username.length < 3) {
-    formErrors.username = t('register.usernameTooShort');
-    isValid = false;
-  } else {
-    formErrors.username = '';
-  }
-
   // 邮箱验证
-  if (!registerForm.username) {
+  if (!registerForm.email) {
     formErrors.email = t('register.enter_email');
     isValid = false;
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.username)) {
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
     formErrors.email = t('register.invalidEmail');
     isValid = false;
   } else {
@@ -130,10 +119,10 @@ const codeButtonText = computed(() => {
 
 async function sendVerificationCode() {
   // 验证邮箱
-  if (!registerForm.username) {
-    message.error("用户名不能为空!");
+  if (!registerForm.email) {
+    message.error("邮箱不能为空!");
     return;
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.username)) {
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
      message.error("请输入正确的邮箱!");
     return;
   }
@@ -142,9 +131,9 @@ async function sendVerificationCode() {
 
   try {
     isSending.value = true;
-    await getVerificationCode(registerForm.username);
+    await getVerificationCode(registerForm.email);
     message.success(t('register.send_success'));
-    
+
     // 开始倒计时
     countdown.value = 60;
     const timer = setInterval(() => {
@@ -295,7 +284,7 @@ const brandSectionStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--n-body-color);
+	background-color: var(--n-body-color);
   padding: 20px;
 }
 
