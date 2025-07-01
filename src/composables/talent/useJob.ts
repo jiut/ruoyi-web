@@ -6,17 +6,14 @@ import { useMessage } from 'naive-ui'
 // 保持模拟数据导入以支持开发模式
 import { getMockJobs } from '@/data/mockJobs'
 import { ProfessionLabels } from '@/types/talent/designer'
-
-// 环境配置：可以通过环境变量控制是否使用模拟数据
-// 只有明确设置为 'true' 才使用模拟数据，否则使用后端API
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
+import { shouldUseMockData } from '@/utils/authUtils'
 
 // 调试信息
-console.log('🔍 环境变量调试信息:')
+console.log('🔍 岗位Composable调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
 console.log('  PROD:', import.meta.env.PROD)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  是否使用Mock数据:', shouldUseMockData())
 console.log('  VITE_GLOB_API_URL:', import.meta.env.VITE_GLOB_API_URL)
 
 export function useJob() {
@@ -32,15 +29,15 @@ export function useJob() {
     try {
       loading.value = true
 
-      if (USE_MOCK_DATA) {
-        // 开发模式：使用模拟数据
-        console.log('🔧 开发模式：使用模拟数据')
+      if (shouldUseMockData()) {
+        // 未登录模式：使用模拟数据
+        console.log('🔧 未登录模式：使用模拟数据')
         const result = getMockJobs(params)
         mockJobs.value = result.rows
         mockTotal.value = result.total
       } else {
-        // 生产模式：使用真实的后端API
-        console.log('🚀 生产模式：使用后端API')
+        // 已登录模式：使用真实的后端API
+        console.log('🚀 已登录模式：使用后端API')
         await store.fetchJobs(params)
       }
     } catch (error) {
@@ -52,12 +49,12 @@ export function useJob() {
   }
 
   return {
-    // 状态 - 根据模式返回不同的数据源
-    jobs: computed(() => USE_MOCK_DATA ? mockJobs.value : store.jobs),
+    // 状态 - 根据登录状态返回不同的数据源
+    jobs: computed(() => shouldUseMockData() ? mockJobs.value : store.jobs),
     currentJob: computed(() => store.currentJob),
     loading: computed(() => loading.value || store.loading),
-    total: computed(() => USE_MOCK_DATA ? mockTotal.value : store.total),
-    jobCount: computed(() => USE_MOCK_DATA ? mockTotal.value : store.jobCount),
+    total: computed(() => shouldUseMockData() ? mockTotal.value : store.total),
+    jobCount: computed(() => shouldUseMockData() ? mockTotal.value : store.jobCount),
     filters: computed(() => store.filters),
     sortBy: computed(() => store.sortBy),
 

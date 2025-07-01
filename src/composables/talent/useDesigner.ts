@@ -5,16 +5,14 @@ import type { DesignerQueryParams, Profession, SkillTag, WorkStatus } from '@/ty
 import { mockDesigners, mockWorks } from '@/data/mockDesigners'
 import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
 import SkillTagUtils from '@/utils/skillTagUtils'
+import { shouldUseMockData } from '@/utils/authUtils'
+import { useUserStore } from '@/store/modules/user'
 
-// 环境配置：可以通过环境变量控制是否使用模拟数据
-// 默认在开发环境使用mock数据，生产环境使用API
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
-
-console.log('🔍 设计师Composable环境变量调试信息:')
+console.log('🔍 设计师Composable调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  是否使用Mock数据:', shouldUseMockData())
+console.log('  用户信息:', useUserStore().userInfo)
 
 export function useDesigner() {
   const store = useDesignerStore()
@@ -35,7 +33,7 @@ export function useDesigner() {
 
   // 获取设计师列表
   const fetchDesigners = async (reset = false) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       mockLoading.value = true
       try {
         console.log('🔧 使用模拟数据 - 设计师列表')
@@ -88,7 +86,7 @@ export function useDesigner() {
 
   // 搜索设计师
   const searchDesigners = async () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       if (searchKeyword.value.trim()) {
         queryParams.designerName = searchKeyword.value.trim()
       } else {
@@ -119,7 +117,7 @@ export function useDesigner() {
     })
     searchKeyword.value = ''
 
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       mockDesignerList.value = [...mockDesigners]
     } else {
       store.resetDesigners()
@@ -129,7 +127,7 @@ export function useDesigner() {
 
   // 应用筛选
   const applyFilters = async () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       await fetchDesigners(true)
     } else {
       store.resetDesigners()
@@ -139,7 +137,7 @@ export function useDesigner() {
 
   // 加载更多
   const loadMoreDesigners = async () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       // Mock数据一次性加载完毕，无需分页
       return
     } else {
@@ -225,16 +223,16 @@ export function useDesigner() {
   }
 
   return {
-    // 状态 - 根据环境变量返回不同数据源
-    designers: computed(() => USE_MOCK_DATA ? mockDesignerList.value : store.designers),
-    loading: computed(() => USE_MOCK_DATA ? mockLoading.value : store.loading),
-    total: computed(() => USE_MOCK_DATA ? mockTotal.value : store.total),
-    hasMore: computed(() => USE_MOCK_DATA ? false : store.hasMore),
+    // 状态 - 根据登录状态返回不同数据源
+    designers: computed(() => shouldUseMockData() ? mockDesignerList.value : store.designers),
+    loading: computed(() => shouldUseMockData() ? mockLoading.value : store.loading),
+    total: computed(() => shouldUseMockData() ? mockTotal.value : store.total),
+    hasMore: computed(() => shouldUseMockData() ? false : store.hasMore),
 
-    // 筛选选项 - 根据环境变量和数据源动态生成
-    professions: computed(() => USE_MOCK_DATA ? getProfessions() : getApiProfessions()),
-    skillTags: computed(() => USE_MOCK_DATA ? getSkillTags() : getApiSkillTags()),
-    regions: computed(() => USE_MOCK_DATA ? getRegions() : getApiRegions()),
+    // 筛选选项 - 根据登录状态和数据源动态生成
+    professions: computed(() => shouldUseMockData() ? getProfessions() : getApiProfessions()),
+    skillTags: computed(() => shouldUseMockData() ? getSkillTags() : getApiSkillTags()),
+    regions: computed(() => shouldUseMockData() ? getRegions() : getApiRegions()),
     workStatuses: computed(() => getWorkStatuses()),
 
     // 参数
@@ -248,7 +246,7 @@ export function useDesigner() {
     applyFilters,
     loadMoreDesigners,
     getDesignerWorksCount,
-    fetchFilterOptions: USE_MOCK_DATA ? () => Promise.resolve() : store.fetchFilterOptions
+    fetchFilterOptions: shouldUseMockData() ? () => Promise.resolve() : store.fetchFilterOptions
   }
 }
 
@@ -257,7 +255,7 @@ export function useDesignerDetail() {
 
   // 获取设计师详情
   const fetchDesignerDetail = async (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 设计师详情')
       // Mock模式下不需要获取详情，因为列表中已包含所有信息
       return
@@ -269,7 +267,7 @@ export function useDesignerDetail() {
 
   // 重置设计师详情
   const resetDesignerDetail = () => {
-    if (!USE_MOCK_DATA) {
+    if (!shouldUseMockData()) {
       store.resetCurrentDesigner()
     }
   }
@@ -281,7 +279,7 @@ export function useDesignerDetail() {
     currentDesignerWorkExperience: computed(() => store.currentDesignerWorkExperience),
     currentDesignerEducation: computed(() => store.currentDesignerEducation),
     currentDesignerAwards: computed(() => store.currentDesignerAwards),
-    loading: computed(() => USE_MOCK_DATA ? false : store.loading),
+    loading: computed(() => shouldUseMockData() ? false : store.loading),
 
     // 方法
     fetchDesignerDetail,

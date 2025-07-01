@@ -42,21 +42,18 @@ import {
   getMockStudentScore,
   getMockAdvantagePrograms
 } from '@/data/mockSchools'
+import { shouldUseMockData } from '@/utils/authUtils'
 
-// 环境配置：可以通过环境变量控制是否使用模拟数据
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
-
-console.log('🔍 院校API环境变量调试信息:')
+console.log('🔍 院校API调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  是否使用Mock数据:', shouldUseMockData())
 
 // 院校基础管理 - 复用现有若依API
 export const schoolApi = {
   // 查询院校列表 - 使用若依现有API
   list: (query: SchoolListParams) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校列表')
       const mockResponse = getMockSchools({
         pageNum: query.pageNum,
@@ -77,7 +74,7 @@ export const schoolApi = {
 
   // 获取院校详情 - 使用若依现有API
   get: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校详情', id)
       const mockSchool = getMockSchoolById(id)
       return Promise.resolve({
@@ -94,7 +91,7 @@ export const schoolApi = {
 
   // 就业统计数据 - 使用若依现有API
   getEmploymentStats: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 就业统计')
       return Promise.resolve({
         data: getMockEmploymentStats(id)
@@ -110,7 +107,7 @@ export const schoolApi = {
 
   // 就业分布数据 - 使用若依现有API
   getEmploymentDistribution: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 就业分布')
       return Promise.resolve({
         data: {
@@ -155,7 +152,7 @@ export const schoolApi = {
 
   // 按类型查询院校 - 通过list接口实现
   getByType: (schoolType: string) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按类型查询院校')
       return Promise.resolve({
         data: []
@@ -171,7 +168,7 @@ export const schoolApi = {
 
   // 按地区查询院校 - 通过list接口实现
   getByLocation: (province: string, city?: string) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按地区查询院校')
       return Promise.resolve({
         data: []
@@ -187,7 +184,7 @@ export const schoolApi = {
 
   // 搜索院校 - 通过list接口实现
   search: (keyword: string) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 搜索院校', keyword)
       const mockResponse = getMockSchools({ schoolName: keyword })
       return Promise.resolve({
@@ -205,7 +202,7 @@ export const schoolApi = {
 
   // 扩展API（需要后端新增）
   getSchoolStudents: (id: number, params: SchoolStudentsParams) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校学生列表')
       return Promise.resolve({
         total: 0,
@@ -221,7 +218,7 @@ export const schoolApi = {
   },
 
   getSchoolMajors: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校专业列表')
       return Promise.resolve({
         majorCategories: getMockMajorCategories(id),
@@ -236,7 +233,7 @@ export const schoolApi = {
   },
 
   getSchoolAchievements: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校成果列表')
       return Promise.resolve({
         achievements: []
@@ -250,7 +247,7 @@ export const schoolApi = {
   },
 
   getSchoolFaculty: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校师资信息')
       return Promise.resolve({
         facultyStats: getMockFacultyStats(id),
@@ -265,7 +262,7 @@ export const schoolApi = {
   },
 
   getSchoolEmployment: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校就业信息')
       return Promise.resolve({
         employmentStats: getMockEmploymentStats(id),
@@ -282,7 +279,7 @@ export const schoolApi = {
 
   // SchoolCard 所需的格式化数据API
   getCardStats: (schoolId: number, school: School) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校卡片统计数据')
       return Promise.resolve({
         employmentRate: getMockEmploymentRate(schoolId),
@@ -300,7 +297,7 @@ export const schoolApi = {
 
   // 获取院校完整信息 - 一次性加载所有数据
   getFullInfo: (id: number): Promise<{ data: SchoolFullInfo }> => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校完整信息', id)
       const basicInfo = getMockSchoolById(id)
 
@@ -343,7 +340,7 @@ export const schoolApi = {
 export const majorApi = {
   // 查询专业列表
   list: (schoolId?: number, category?: string) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业列表')
       return Promise.resolve({
         data: []
@@ -359,7 +356,7 @@ export const majorApi = {
 
   // 获取专业详情
   get: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业详情')
       return Promise.resolve({
         data: null
@@ -374,7 +371,7 @@ export const majorApi = {
 
   // 按院校查询专业
   getBySchool: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按院校查询专业')
       return Promise.resolve({
         data: []
@@ -389,7 +386,7 @@ export const majorApi = {
 
   // 按分类查询专业
   getByCategory: (category: string) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按分类查询专业')
       return Promise.resolve({
         data: []
@@ -407,7 +404,7 @@ export const majorApi = {
 export const facultyApi = {
   // 查询学院列表
   list: (schoolId?: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 学院列表')
       return Promise.resolve({
         data: []
@@ -423,7 +420,7 @@ export const facultyApi = {
 
   // 获取学院详情
   get: (id: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 学院详情')
       return Promise.resolve({
         data: null
@@ -438,7 +435,7 @@ export const facultyApi = {
 
   // 按院校查询学院
   getBySchool: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按院校查询学院')
       return Promise.resolve({
         data: []
@@ -453,7 +450,7 @@ export const facultyApi = {
 
   // 查询教师列表
   getTeachers: (facultyId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 教师列表')
       return Promise.resolve({
         data: []
@@ -471,7 +468,7 @@ export const facultyApi = {
 export const employmentApi = {
   // 获取院校就业数据
   getBySchool: (schoolId: number, year?: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校就业数据')
       return Promise.resolve({
         data: null
@@ -487,7 +484,7 @@ export const employmentApi = {
 
   // 获取专业就业数据
   getByMajor: (majorId: number, year?: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业就业数据')
       return Promise.resolve({
         data: null
@@ -503,7 +500,7 @@ export const employmentApi = {
 
   // 获取就业趋势数据
   getTrend: (schoolId: number, years: number[]) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 就业趋势数据')
       return Promise.resolve({
         data: []
@@ -522,7 +519,7 @@ export const employmentApi = {
 export const achievementApi = {
   // 获取院校获奖列表
   getAwards: (schoolId: number, level?: string, year?: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校获奖列表')
       return Promise.resolve({
         data: []
@@ -538,7 +535,7 @@ export const achievementApi = {
 
   // 获取院校成果列表
   getAchievements: (schoolId: number, type?: string, year?: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校成果列表')
       return Promise.resolve({
         data: []
@@ -554,7 +551,7 @@ export const achievementApi = {
 
   // 获取获奖统计数据
   getAwardStats: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 获奖统计数据')
       return Promise.resolve({
         data: getMockAchievementStats(schoolId)
@@ -569,7 +566,7 @@ export const achievementApi = {
 
   // 获取获奖趋势数据
   getTrendData: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 获奖趋势数据')
       return Promise.resolve({
         data: getMockTrendData(schoolId)
@@ -584,7 +581,7 @@ export const achievementApi = {
 
   // 获取代表性获奖作品
   getAwardWorks: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 代表性获奖作品')
       return Promise.resolve({
         data: getMockAwardWorks(schoolId)
@@ -602,7 +599,7 @@ export const achievementApi = {
 export const schoolInteractionApi = {
   // 收藏院校 - 扩展功能
   favorite: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 收藏院校')
       return Promise.resolve({
         success: true,
@@ -618,7 +615,7 @@ export const schoolInteractionApi = {
 
   // 取消收藏院校 - 扩展功能
   unfavorite: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 取消收藏院校')
       return Promise.resolve({
         success: true,
@@ -634,7 +631,7 @@ export const schoolInteractionApi = {
 
   // 获取我的收藏院校列表 - 扩展功能
   getFavoriteSchools: () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 收藏院校列表')
       return Promise.resolve({
         total: 0,
@@ -650,7 +647,7 @@ export const schoolInteractionApi = {
 
   // 分享院校 - 扩展功能
   share: (schoolId: number) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 分享院校')
       return Promise.resolve({
         shareUrl: `http://example.com/school/${schoolId}`,
@@ -666,7 +663,7 @@ export const schoolInteractionApi = {
 
   // 院校对比 - 扩展功能
   compareSchools: (schoolIds: number[], compareFields: string[]) => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校对比')
       return Promise.resolve({
         schools: []
@@ -685,7 +682,7 @@ export const schoolInteractionApi = {
 export const statisticsApi = {
   // 获取院校概览统计
   getOverview: () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校概览统计')
       return Promise.resolve({
         data: {
@@ -705,7 +702,7 @@ export const statisticsApi = {
 
   // 获取地区分布统计
   getRegionDistribution: () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 地区分布统计')
       return Promise.resolve({
         data: []
@@ -720,7 +717,7 @@ export const statisticsApi = {
 
   // 获取类型分布统计
   getTypeDistribution: () => {
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 类型分布统计')
       return Promise.resolve({
         data: []

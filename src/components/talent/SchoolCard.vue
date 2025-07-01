@@ -114,6 +114,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { School, SchoolType } from '@/types/talent/school'
 import { useSchoolFormatter, useSchoolInteraction } from '@/composables/talent/useSchool'
 import {
@@ -138,13 +139,13 @@ const emit = defineEmits<{
 const { formatSchoolType } = useSchoolFormatter()
 const { isFavorited, toggleFavorite: toggleFav } = useSchoolInteraction()
 
-// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 console.log('🔍 SchoolCard 环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
 
 // 处理卡片点击
 const handleCardClick = () => {
@@ -267,7 +268,7 @@ const formatEmploymentRate = (school: School) => {
   }
 
   // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockEmploymentRate(school.id)
   } else {
     // 后端暂未提供数据，显示默认值
@@ -283,7 +284,7 @@ const formatFacultyStrength = (school: School) => {
   }
 
   // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockFacultyStrength(school.id)
   } else {
     // 后端暂未提供数据，显示默认值
@@ -299,7 +300,7 @@ const formatStudentScore = (school: School) => {
   }
 
   // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockStudentScore(school.id)
   } else {
     // 后端暂未提供数据，显示默认值
@@ -315,7 +316,7 @@ const getAdvantagePrograms = (school: School) => {
   }
 
   // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockAdvantagePrograms(school)
   } else {
     // 后端暂未提供数据，显示默认值

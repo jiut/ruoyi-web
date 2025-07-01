@@ -313,9 +313,9 @@ const router = useRouter()
 const schoolStore = useSchoolStore()
 const message = useMessage()
 
-// 环境配置
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 const school = ref<School | null>(null)
 const schoolFullInfo = ref<SchoolFullInfo | null>(null)
@@ -394,7 +394,7 @@ const getSchoolInfo = async () => {
     loading.value = true
     const id = schoolId.value
 
-    if (USE_MOCK_DATA) {
+    if (USE_MOCK_DATA.value) {
       // 使用模拟数据
       console.log('🔧 使用模拟数据 - 院校详情页面')
       school.value = getMockSchoolById(id) || null
@@ -496,7 +496,7 @@ const getEmploymentRate = computed(() => {
   }
 
   // 兜底逻辑：如果完整信息还未加载，使用原有逻辑
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockEmploymentRate(school.value.id)
   } else {
     return school.value.employmentData?.employmentRate || null

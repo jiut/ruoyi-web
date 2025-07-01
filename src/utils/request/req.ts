@@ -14,6 +14,9 @@ const {message} = createDiscreteApi(["message"])
 // 是否显示重新登录
 export const isRelogin = { show: false };
 
+// 是否正在处理401错误
+let isHandling401 = false;
+
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
 // 创建 axios 实例
 const service = axios.create({
@@ -87,11 +90,27 @@ service.interceptors.response.use(
       return res.data;
     }
     if (code === 401) {
-      // 退出登录
-      message.error('无效的会话，或者会话已过期，请重新登录。')
-      useUserStore().logout().then(() => {
-          location.href = '#/login';
-      });
+      // 防止重复处理401错误
+      if (!isHandling401) {
+        isHandling401 = true;
+        // 退出登录
+        message.error('无效的会话，或者会话已过期，请重新登录。')
+        useUserStore().logout().then(() => {
+          // 重置标志位
+          setTimeout(() => {
+            isHandling401 = false;
+          }, 1000);
+          // 如果当前不在登录页面，才进行跳转
+          // if (!location.hash.includes('/login')) {
+          //   location.href = '#/login';
+          // }
+        }).catch(() => {
+          // 如果logout失败，也要重置标志位
+          setTimeout(() => {
+            isHandling401 = false;
+          }, 1000);
+        });
+      }
     } else if (code === HttpStatus.SERVER_ERROR) {
       // console.log(msg);
        return Promise.reject(new Error(msg));

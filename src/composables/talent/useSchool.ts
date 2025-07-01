@@ -27,6 +27,12 @@ import {
 } from '@/types/talent/school'
 import { achievementApi } from '@/api/talent/school'
 import { getStatusText, getStatusClass, getStatusTagType, getStatusIcon, isStatusActive, toggleStatus } from '@/utils/statusUtils'
+import { shouldUseMockData } from '@/utils/authUtils'
+import { getMockSchools, getMockSchoolById, getMockMajorCategories, getMockCourseSystem, getMockFacultyStats, getMockFacultyMembers, getMockEmploymentStats, getMockEmployers, getMockChartData, getMockAchievementStats, getMockTrendData, getMockAwardWorks } from '@/data/mockSchools'
+
+console.log('🔍 院校Composable调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  是否使用Mock数据:', shouldUseMockData())
 
 // 院校列表管理
 export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
@@ -34,36 +40,67 @@ export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
   const message = useMessage()
 
   const isInitialized = ref(false)
+  const mockSchools = ref<School[]>([])
+  const mockLoading = ref(false)
+  const mockTotal = ref(0)
 
   // 初始化
   const initialize = async () => {
     if (!isInitialized.value) {
-      await schoolStore.fetchSchools(initialParams)
+      if (shouldUseMockData()) {
+        console.log('🔧 使用模拟数据 - 院校列表')
+        mockLoading.value = true
+        try {
+          const result = getMockSchools(initialParams)
+          mockSchools.value = result.rows
+          mockTotal.value = result.total
+        } catch (error) {
+          console.error('获取院校列表失败:', error)
+        } finally {
+          mockLoading.value = false
+        }
+      } else {
+        console.log('🚀 使用后端API - 院校列表')
+        await schoolStore.fetchSchools(initialParams)
+      }
       isInitialized.value = true
+    } else {
+      console.log('🔄 院校列表已初始化，跳过重复加载')
     }
   }
 
   // 刷新列表
   const refresh = () => {
-    return schoolStore.fetchSchools({ pageNum: 1 })
+    if (shouldUseMockData()) {
+      const result = getMockSchools({ pageNum: 1 })
+      mockSchools.value = result.rows
+      mockTotal.value = result.total
+      return Promise.resolve()
+    } else {
+      return schoolStore.fetchSchools({ pageNum: 1 })
+    }
   }
 
   // 加载更多
   const loadMore = () => {
-    schoolStore.loadMore()
+    if (!shouldUseMockData()) {
+      schoolStore.loadMore()
+    }
   }
 
   // 重置筛选
   const resetFilters = () => {
-    schoolStore.resetFilters()
+    if (!shouldUseMockData()) {
+      schoolStore.resetFilters()
+    }
   }
 
   return {
-    // 状态
-    schools: computed(() => schoolStore.schools),
-    totalSchools: computed(() => schoolStore.totalSchools),
-    loading: computed(() => schoolStore.loading),
-    hasNextPage: computed(() => schoolStore.hasNextPage),
+    // 状态 - 根据登录状态返回不同的数据源
+    schools: computed(() => shouldUseMockData() ? mockSchools.value : schoolStore.schools),
+    totalSchools: computed(() => shouldUseMockData() ? mockTotal.value : schoolStore.totalSchools),
+    loading: computed(() => shouldUseMockData() ? mockLoading.value : schoolStore.loading),
+    hasNextPage: computed(() => shouldUseMockData() ? false : schoolStore.hasNextPage),
     filters: computed(() => schoolStore.filters),
 
     // 方法
@@ -71,7 +108,7 @@ export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
     refresh,
     loadMore,
     resetFilters,
-    updateFilters: schoolStore.updateFilters
+    updateFilters: shouldUseMockData() ? () => Promise.resolve() : schoolStore.updateFilters
   }
 }
 
@@ -320,19 +357,35 @@ export function useSchoolDetail(schoolId?: number) {
   const schoolStore = useSchoolStore()
   const message = useMessage()
   const currentTab = ref('overview') // overview, majors, faculty, employment, awards
+  const mockSchool = ref<School | null>(null)
+  const mockLoading = ref(false)
 
   // 加载院校详情
   const loadDetail = async (id: number) => {
-    await schoolStore.fetchSchoolDetail(id)
+    if (shouldUseMockData()) {
+      console.log('🔧 使用模拟数据 - 院校详情')
+      mockLoading.value = true
+      try {
+        const result = getMockSchoolById(id)
+        mockSchool.value = result
+      } catch (error) {
+        console.error('获取院校详情失败:', error)
+      } finally {
+        mockLoading.value = false
+      }
+    } else {
+      console.log('🚀 使用后端API - 院校详情')
+      await schoolStore.fetchSchoolDetail(id)
 
-    // 并行加载相关数据
-    await Promise.all([
-      schoolStore.fetchMajorsBySchool(id),
-      schoolStore.fetchFacultiesBySchool(id),
-      schoolStore.fetchEmploymentData(id),
-      schoolStore.fetchAwards(id),
-      schoolStore.fetchAwardStats(id)
-    ])
+      // 并行加载相关数据
+      await Promise.all([
+        schoolStore.fetchMajorsBySchool(id),
+        schoolStore.fetchFacultiesBySchool(id),
+        schoolStore.fetchEmploymentData(id),
+        schoolStore.fetchAwards(id),
+        schoolStore.fetchAwardStats(id)
+      ])
+    }
   }
 
   // 切换标签
@@ -346,20 +399,20 @@ export function useSchoolDetail(schoolId?: number) {
   }
 
   return {
-    // 状态
-    currentSchool: computed(() => schoolStore.currentSchool),
+    // 状态 - 根据登录状态返回不同的数据源
+    currentSchool: computed(() => shouldUseMockData() ? mockSchool.value : schoolStore.currentSchool),
     majors: computed(() => schoolStore.majors),
     faculties: computed(() => schoolStore.faculties),
     employmentData: computed(() => schoolStore.employmentData),
     awards: computed(() => schoolStore.awards),
     awardStats: computed(() => schoolStore.awardStats),
-    loading: computed(() => schoolStore.detailLoading),
+    loading: computed(() => shouldUseMockData() ? mockLoading.value : schoolStore.detailLoading),
     currentTab,
 
     // 方法
     loadDetail,
     switchTab,
-    clearDetail: schoolStore.clearCurrentSchool
+    clearDetail: shouldUseMockData() ? () => {} : schoolStore.clearCurrentSchool
   }
 }
 

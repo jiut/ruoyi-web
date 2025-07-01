@@ -127,7 +127,7 @@ async function sendVerificationCode() {
     isSending.value = true;
     await getVerificationCode(resetForm.email);
     message.success(t("reset.codeSent"));
-    
+
     // 开始倒计时
     countdown.value = 60;
     const timer = setInterval(() => {
@@ -278,7 +278,7 @@ const brandSectionStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--n-body-color);
+  background-color: #ffffff;
   padding: 20px;
 }
 
@@ -436,12 +436,12 @@ html.dark .login-content {
   .brand-title {
     font-size: 2rem;
   }
-  
+
   .verification-code-row {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .send-code-button {
     width: 100%;
   }

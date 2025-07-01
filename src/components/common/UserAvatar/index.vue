@@ -48,18 +48,25 @@ watch(
  */
 
 async function getLoginUserInfo() {
-  if(!getToken()){
-      return
+  const token = getToken();
+  if (!token) {
+    return;
   }
 
-  const [err, newUserInfo] = await to(getUserInfo());
-      if (err) {
-        message.error(err.toString())
-      }
-  if(newUserInfo){
-    userInfo.value.avatar = newUserInfo.data.user.avatar;
-    userInfo.value.name = newUserInfo.data.user.nickName;
-    userInfo.value.userBalance = newUserInfo.data.user.userBalance;
+  try {
+    const [err, newUserInfo] = await to(getUserInfo());
+    if (err) {
+      console.warn('获取用户信息失败:', err);
+      // 不显示错误消息，避免干扰用户体验
+      return;
+    }
+    if (newUserInfo?.data?.user) {
+      userInfo.value.avatar = newUserInfo.data.user.avatar;
+      userInfo.value.name = newUserInfo.data.user.nickName;
+      userInfo.value.userBalance = newUserInfo.data.user.userBalance;
+    }
+  } catch (error) {
+    console.warn('获取用户信息异常:', error);
   }
 }
 

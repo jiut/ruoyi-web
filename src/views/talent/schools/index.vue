@@ -449,19 +449,22 @@ import SchoolCard from '@/components/talent/SchoolCard.vue'
 import { useSchool } from '@/composables/talent/useSchool'
 import type { School } from '@/types/talent/school'
 import { mockSchools } from '@/data/mockSchools'
+import { shouldUseMockData } from '@/utils/authUtils'
 
 const router = useRouter()
 
-// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+// 根据登录状态和环境变量切换数据源
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 console.log('🔍 院校页面环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
 
-const { schools, loading, fetchSchools } = useSchool({ autoLoad: false })
+const { schools, loading, fetchSchools } = useSchool({
+  autoLoad: false, // 禁用自动加载，手动控制数据加载
+  initialParams: undefined
+})
 
 // 设备检测和导航状态
 const isMobile = ref(false)
@@ -532,16 +535,23 @@ const schoolNatures = ['公办', '民办', '中外合作']
 
 // 计算属性
 const schoolCount = computed(() => {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return mockSchools.length || 1256
   }
   return schools.value.length || 1256
 })
 
 const filteredSchools = computed(() => {
-  // 根据环境变量选择数据源
-  const sourceData = USE_MOCK_DATA ? mockSchools : schools.value
+  // 根据登录状态和环境变量选择数据源
+  // 在Mock模式下，直接使用全局mockSchools数据，避免重复
+  const sourceData = USE_MOCK_DATA.value ? mockSchools : schools.value
   let filtered = [...sourceData]
+
+  // 调试信息
+  console.log('🔍 filteredSchools 计算属性执行:')
+  console.log('  数据源类型:', USE_MOCK_DATA.value ? 'Mock数据' : '后端API')
+  console.log('  原始数据长度:', sourceData.length)
+  console.log('  原始数据ID列表:', sourceData.map(s => s.id))
 
   // 院校类型筛选
   if (selectedSchoolTypes.value.length > 0) {
@@ -555,6 +565,20 @@ const filteredSchools = computed(() => {
     )
   }
 
+  // 院校层次筛选
+  if (selectedLevel.value) {
+    filtered = filtered.filter(school => school.level === selectedLevel.value)
+  }
+
+  // 办学性质筛选
+  if (selectedNatures.value.length > 0) {
+    filtered = filtered.filter(school => {
+      // 这里需要根据实际的办学性质字段进行筛选
+      // 暂时跳过这个筛选，因为mock数据中没有这个字段
+      return true
+    })
+  }
+
   // 特殊标识筛选
   if (is985.value) {
     filtered = filtered.filter(school => school.is985)
@@ -565,6 +589,9 @@ const filteredSchools = computed(() => {
   if (isDoubleFirst.value) {
     filtered = filtered.filter(school => school.isDoubleFirst)
   }
+
+  console.log('  筛选后数据长度:', filtered.length)
+  console.log('  筛选后数据ID列表:', filtered.map(s => s.id))
 
   return filtered
 })
@@ -598,7 +625,18 @@ const totalPages = computed(() => Math.ceil(sortedSchools.value.length / itemsPe
 const paginatedSchools = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
   const end = start + itemsPerPage.value
-  return sortedSchools.value.slice(start, end)
+  const result = sortedSchools.value.slice(start, end)
+
+  // 调试信息
+  console.log('🔍 paginatedSchools 计算属性执行:')
+  console.log('  当前页:', currentPage.value)
+  console.log('  每页数量:', itemsPerPage.value)
+  console.log('  开始索引:', start)
+  console.log('  结束索引:', end)
+  console.log('  分页后数据长度:', result.length)
+  console.log('  分页后数据ID列表:', result.map(s => s.id))
+
+  return result
 })
 
 const filteredSchoolCount = computed(() => filteredSchools.value.length)
@@ -750,11 +788,14 @@ const applyFiltersAndClose = () => {
 
 onMounted(() => {
   console.log('🎯 院校页面挂载完成，开始获取院校数据')
-  console.log('📊 数据源:', USE_MOCK_DATA ? 'Mock数据' : '后端API')
+  console.log('📊 数据源:', USE_MOCK_DATA.value ? 'Mock数据' : '后端API')
 
-  if (!USE_MOCK_DATA) {
-    // 只有在非Mock模式下才调用API
+  // 只有在非Mock模式下才调用API
+  if (!USE_MOCK_DATA.value) {
+    console.log('🚀 非Mock模式，调用API获取数据')
     fetchSchools()
+  } else {
+    console.log('🔧 使用Mock数据，跳过API调用，直接使用全局mockSchools数据')
   }
 
   checkDevice()

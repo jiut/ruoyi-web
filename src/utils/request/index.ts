@@ -29,16 +29,19 @@ function http<T = any>(
     if (res.data.code === 200) {
       return res.data
     } else if (res.data.code === 401) {
-      // 只有认证失败时才清除token和刷新页面
+      // 只有认证失败时才清除token和重定向
       authStore.removeToken()
-      window.location.reload()
+      // 如果当前不在登录页面，才进行跳转
+      // if (!window.location.hash.includes('/login')) {
+      //   window.location.href = '#/login'
+      // }
     } else {
       // 其他错误直接抛出，不刷新页面
       return Promise.reject(res.data)
           }
   }
 
-  const failHandler = (error: Response<Error>) => {
+  const failHandler = (error: any) => {
     console.error('请求失败:', error)
     afterRequest?.()
 
@@ -49,7 +52,10 @@ function http<T = any>(
       if (status === 401) {
         const authStore = useAuthStore()
         authStore.removeToken()
-        window.location.reload()
+        // 如果当前不在登录页面，才进行跳转
+        // if (!window.location.hash.includes('/login')) {
+        //   window.location.href = '#/login'
+        // }
       }
       return Promise.reject(data || error)
     } else if (error.request) {
@@ -83,7 +89,7 @@ function http<T = any>(
 
 export function get<T = any>(
   { url, data, method = 'GET', onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T>> {
+): Promise<Response<T> | undefined> {
   return http<T>({
     url,
     method,
@@ -97,7 +103,7 @@ export function get<T = any>(
 
 export function post<T = any>(
   { url, data, method = 'POST', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T>> {
+): Promise<Response<T> | undefined> {
   return http<T>({
     url,
     method,

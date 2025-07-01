@@ -230,9 +230,9 @@ const reloadSchoolData = async () => {
   await loadSchoolData(props.school.id)
 }
 
-// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 // 获取就业率数据
 const getEmploymentRate = computed(() => {
@@ -241,7 +241,7 @@ const getEmploymentRate = computed(() => {
   }
 
   // 兜底逻辑：如果完整信息还未加载，使用原有逻辑
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_DATA.value) {
     return getMockEmploymentRate(props.school.id)
   } else {
     return props.school.employmentData?.employmentRate || null

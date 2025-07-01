@@ -380,14 +380,14 @@ import {
 } from '@/api/talent/designer'
 import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
 
-// 环境配置：可以通过环境变量控制是否使用模拟数据
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 console.log('🔍 设计师详情弹窗环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
 console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
 
 
 interface Props {
@@ -437,7 +437,7 @@ watch([() => props.designerId, () => props.visible], async ([newDesignerId, newV
 const loadDesignerData = async (designerId: number) => {
   loading.value = true
   try {
-    if (USE_MOCK_DATA) {
+    if (USE_MOCK_DATA.value) {
       // 使用模拟数据（组件层面的直接处理，更快速的开发体验）
       console.log('🔧 使用模拟数据 - 设计师详情弹窗')
 

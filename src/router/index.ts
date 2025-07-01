@@ -179,7 +179,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/talent',
     name: 'TalentRoot',
-    component: () => import('@/views/talent/layout.vue'),
+    component: talentlayout,
     redirect: '/talent/jobs',
     children: [
       {
@@ -229,6 +229,12 @@ const routes: RouteRecordRaw[] = [
         name: 'SchoolDetail',
         component: () => import('@/views/talent/schools/detail.vue'),
         meta: { title: '院校详情' }
+      },
+      {
+        path: 'debug',
+        name: 'TalentDebug',
+        component: () => import('@/views/talent/debug.vue'),
+        meta: { title: '调试页面' }
       },
       // {
       //   path: 'profile',

@@ -144,58 +144,7 @@
           </div>
 
           <!-- 用户菜单 -->
-          <div class="relative" ref="userMenuRef">
-            <button
-              @click="toggleUserMenu"
-              class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors"
-            >
-              <div class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                {{ userName.charAt(0) }}
-              </div>
-              <span class="hidden xl:inline text-white text-sm">{{ userName }}</span>
-              <i class="ri-arrow-down-s-line text-gray-400 hidden xl:block"></i>
-            </button>
-
-            <!-- 用户下拉菜单 -->
-            <div
-              v-show="showUserMenu"
-              class="dropdown-menu rounded-lg mt-2 right-0 w-48"
-            >
-              <div class="p-3 border-b border-gray-700">
-                <div class="flex items-center">
-                  <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white font-bold mr-3">
-                    {{ userName.charAt(0) }}
-                  </div>
-                  <div>
-                    <p class="text-sm font-medium">{{ userName }}</p>
-                    <p class="text-xs text-gray-400">{{ userRole }}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="py-2">
-                <router-link to="/profile" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                  <i class="ri-user-line mr-3"></i>
-                  个人资料
-                </router-link>
-                <router-link to="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                  <i class="ri-settings-3-line mr-3"></i>
-                  账户设置
-                </router-link>
-                <router-link to="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-                  <i class="ri-bookmark-line mr-3"></i>
-                  我的收藏
-                </router-link>
-                <div class="border-t border-gray-700 mt-2"></div>
-                <button
-                  @click="handleLogout"
-                  class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400 w-full text-left"
-                >
-                  <i class="ri-logout-box-line mr-3"></i>
-                  退出登录
-                </button>
-              </div>
-            </div>
-          </div>
+          <TalentUserMenu />
 
           <!-- 移动端菜单按钮 -->
           <button
@@ -272,6 +221,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import TalentUserMenu from './TalentUserMenu.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -280,18 +230,14 @@ const route = useRoute()
 const searchQuery = ref('')
 const mobileSearchQuery = ref('')
 const showNotifications = ref(false)
-const showUserMenu = ref(false)
 const showMobileSearch = ref(false)
 const showMobileMenu = ref(false)
 
 // 用户信息
-const userName = ref('张小明')
-const userRole = ref('求职者')
 const unreadCount = ref(3)
 
 // 引用
 const notificationRef = ref<HTMLElement | null>(null)
-const userMenuRef = ref<HTMLElement | null>(null)
 
 // 通知数据
 const notifications = ref([
@@ -347,12 +293,6 @@ const handleMobileSearch = () => {
 
 const toggleNotifications = () => {
   showNotifications.value = !showNotifications.value
-  showUserMenu.value = false
-}
-
-const toggleUserMenu = () => {
-  showUserMenu.value = !showUserMenu.value
-  showNotifications.value = false
 }
 
 const toggleMobileSearch = () => {
@@ -365,20 +305,11 @@ const toggleMobileMenu = () => {
   showMobileSearch.value = false
 }
 
-const handleLogout = () => {
-  // 这里添加退出登录逻辑
-  console.log('退出登录')
-  router.push('/login')
-}
-
 // 点击外部关闭下拉菜单
 const handleClickOutside = (event: Event) => {
   const target = event.target as HTMLElement
   if (notificationRef.value && !(notificationRef.value as HTMLElement).contains(target)) {
     showNotifications.value = false
-  }
-  if (userMenuRef.value && !(userMenuRef.value as HTMLElement).contains(target)) {
-    showUserMenu.value = false
   }
 }
 

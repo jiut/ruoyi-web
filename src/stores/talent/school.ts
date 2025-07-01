@@ -31,6 +31,7 @@ import {
   statisticsApi
 } from '@/api/talent/school'
 import { mockSchools, getMockSchools } from '@/data/mockSchools'
+import { shouldUseMockData } from '@/utils/authUtils'
 
 // API响应类型定义
 interface ApiResponse<T> {
@@ -42,14 +43,11 @@ interface ApiResponse<T> {
 }
 
 export const useSchoolStore = defineStore('school', () => {
-  // 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-  const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-    (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
-  console.log('🔍 院校Store环境变量调试信息:')
+  console.log('🔍 院校Store调试信息:')
   console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
   console.log('  DEV:', import.meta.env.DEV)
-  console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
+  console.log('  是否使用Mock数据:', shouldUseMockData())
 
   // 状态
   const loading = ref(false)
@@ -244,7 +242,7 @@ export const useSchoolStore = defineStore('school', () => {
       loading.value = true
       const queryParams = { ...filters.value, ...params }
 
-      if (USE_MOCK_DATA) {
+      if (shouldUseMockData()) {
         console.log('🔧 使用Mock数据 - fetchSchools')
         // 使用模拟数据
         const mockResponse = getMockSchools({
@@ -261,24 +259,16 @@ export const useSchoolStore = defineStore('school', () => {
           isDoubleFirst: queryParams.isDoubleFirst
         })
 
-        if (params?.pageNum === 1) {
-          schools.value = mockResponse.rows
-        } else {
-          schools.value.push(...mockResponse.rows)
-        }
-
+        // 始终替换数据，避免重复
+        schools.value = mockResponse.rows
         totalSchools.value = mockResponse.total
         schoolCount.value = mockResponse.total
       } else {
         console.log('🚀 使用后端API - fetchSchools')
         const response = await schoolApi.list(queryParams) as ApiResponse<School>
 
-        if (params?.pageNum === 1) {
-          schools.value = response.rows || []
-        } else {
-          schools.value.push(...(response.rows || []))
-        }
-
+        // 始终替换数据，避免重复
+        schools.value = response.rows || []
         totalSchools.value = response.total || 0
         schoolCount.value = response.total || 0
       }
@@ -301,7 +291,7 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       detailLoading.value = true
 
-      if (USE_MOCK_DATA) {
+      if (shouldUseMockData()) {
         console.log('🔧 使用Mock数据 - fetchSchoolDetail', id)
         // 使用模拟数据
         const mockSchool = mockSchools.find(school => school.id === id)
@@ -334,7 +324,7 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       loading.value = true
 
-      if (USE_MOCK_DATA) {
+      if (shouldUseMockData()) {
         console.log('🔧 使用Mock数据 - searchSchools', keyword)
         // 模拟搜索逻辑
         const filteredMockSchools = mockSchools.filter(school =>

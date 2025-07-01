@@ -1,12 +1,12 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 import { NLayout, NLayoutContent } from 'naive-ui'
-import { useRouter } from 'vue-router' 
+import { useRouter } from 'vue-router'
 import Permission from '../chat/layout/Permission.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { homeStore, useAppStore, useAuthStore, useChatStore } from '@/store'
 import { aiSider ,aiFooter} from '@/views/mj'
-import aiMobileMenu from '@/views/mj/aiMobileMenu.vue'; 
+import aiMobileMenu from '@/views/mj/aiMobileMenu.vue';
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -32,7 +32,7 @@ const getContainerClass = computed(() => {
     'h-full',
     { 'abc': !isMobile.value && !collapsed.value },
   ]
-}) 
+})
 </script>
 
 <template>
@@ -40,7 +40,7 @@ const getContainerClass = computed(() => {
     <div class="h-full overflow-hidden" :class="getMobileClass">
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider  :sider-placement="isMobile?'left': 'right'">
         <aiSider v-if="!isMobile"/>
-       
+
         <NLayoutContent class="h-full">
           <RouterView v-slot="{ Component, route }">
             <component :is="Component" :key="route.fullPath" />
@@ -51,8 +51,8 @@ const getContainerClass = computed(() => {
     </div>
     <Permission :visible="needPermission" />
   </div>
-   <aiMobileMenu v-if="isMobile"   /> 
-  <aiFooter/> 
+   <aiMobileMenu v-if="isMobile"   />
+  <aiFooter/>
 </template>
 <style  >
 .h55{

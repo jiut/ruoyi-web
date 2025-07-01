@@ -114,7 +114,7 @@ const brandSectionStyle = computed(() => {
 
         <!-- 右侧登录表单 -->
         <div class="form-wrapper">
-  
+
           <div class="login-methods">
             <div class="active-method">账号密码登录</div>
           </div>
@@ -168,7 +168,7 @@ const brandSectionStyle = computed(() => {
                 {{ $t("login.login") }}
               </NButton>
             </div>
-            
+
             <!-- 注册提示 -->
             <div class="register-prompt">
               还没有账号？
@@ -192,7 +192,7 @@ const brandSectionStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--n-body-color);
+  background-color: #ffffff;
   padding: 20px;
 }
 

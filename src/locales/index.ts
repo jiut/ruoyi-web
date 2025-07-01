@@ -11,14 +11,20 @@ import trTr from './tr-TR'
 import { useAppStoreWithOut } from '@/store/modules/app'
 import type { Language } from '@/store/modules/app/helper'
 
-const appStore = useAppStoreWithOut()
+let defaultLocale = 'zh-CN'
 
-const defaultLocale = appStore.language || 'zh-CN'
+try {
+  const appStore = useAppStoreWithOut()
+  defaultLocale = appStore.language || 'zh-CN'
+} catch (error) {
+  console.warn('Unable to access app store during i18n initialization, using default locale')
+}
 
 const i18n = createI18n({
+  legacy: false,
   locale: defaultLocale,
   fallbackLocale: 'en-US',
-  allowComposition: true,
+  globalInjection: true,
   messages: {
     'en-US': enUS,
     'ko-KR': koKR,
@@ -34,7 +40,7 @@ const i18n = createI18n({
 export const t = i18n.global.t
 
 export function setLocale(locale: Language) {
-  i18n.global.locale = locale
+  i18n.global.locale.value = locale
 }
 
 export function setupI18n(app: App) {
