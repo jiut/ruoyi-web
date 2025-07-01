@@ -58,38 +58,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import * as echarts from 'echarts'
-import { useSchoolAchievements } from '@/composables/talent/useSchool'
+import type { AchievementStatsData, TrendData, AwardWorkData } from '@/types/talent/school'
 
 interface Props {
   schoolId: number
+  achievementStats?: AchievementStatsData
+  trendData?: TrendData
+  awardWorks?: AwardWorkData[]
 }
 
 const props = defineProps<Props>()
-
-// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
-
-console.log('🎯 学生成果组件环境变量调试信息:')
-console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
 
 const trendChartRef = ref<HTMLElement>()
 let trendChart: echarts.ECharts | null = null
 let resizeObserver: ResizeObserver | null = null
 
-// 使用成果数据composable
-const {
-  loading,
-  error,
-  achievementStats,
-  trendData,
-  awardWorks,
-  initAchievements
-} = useSchoolAchievements(props.schoolId)
+// 直接使用从父组件传递的数据
+const achievementStats = computed(() => props.achievementStats || {
+  internationalAwards: 0,
+  nationalAwards: 0,
+  provincialAwards: 0,
+  patents: 0,
+  description: '暂无成果描述'
+})
+const trendData = computed(() => props.trendData || {
+  years: [],
+  internationalData: [],
+  nationalData: [],
+  provincialData: []
+})
+const awardWorks = computed(() => props.awardWorks || [])
 
 // 初始化趋势图表
 const initTrendChart = async () => {
@@ -236,25 +236,22 @@ const initResizeObserver = () => {
   }
 }
 
-// 初始化数据和图表
-const initComponent = async () => {
-  // 并行加载所有数据
-  await initAchievements()
+// 当数据加载完成后初始化图表
+watch(() => [props.achievementStats, props.trendData, props.awardWorks], async () => {
+  if (props.trendData && props.trendData.years.length > 0) {
+    // 数据加载完成后初始化图表
+    await initTrendChart()
+    if (!resizeObserver) {
+      initResizeObserver()
+      window.addEventListener('resize', handleResize)
+    }
 
-  // 数据加载完成后初始化图表
-  await initTrendChart()
-  initResizeObserver()
-  window.addEventListener('resize', handleResize)
-
-  // 额外的检查，确保图表正确初始化
-  setTimeout(() => {
-    handleResize()
-  }, 500)
-}
-
-onMounted(async () => {
-  await initComponent()
-})
+    // 额外的检查，确保图表正确初始化
+    setTimeout(() => {
+      handleResize()
+    }, 500)
+  }
+}, { immediate: true })
 
 onUnmounted(() => {
   trendChart?.dispose()

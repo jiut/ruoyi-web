@@ -7,6 +7,7 @@ export interface HttpOption {
   data?: any
   method?: string
   headers?: any
+  params?: any
   onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
   signal?: GenericAbortSignal
   beforeRequest?: () => void

@@ -70,16 +70,260 @@ ALTER TABLE `des_designer` ADD COLUMN `user_id` BIGINT COMMENT '关联用户ID';
 - 设计师可以申请多个岗位
 - 用户可以绑定多种身份（通过绑定关系表管理）
 
+## 数据结构定义
+
+### 院校相关数据结构
+
+#### 基础院校信息
+```typescript
+interface School {
+  id: number
+  schoolName: string
+  schoolType: 'COMPREHENSIVE' | 'ART' | 'ENGINEERING' | 'NORMAL' | 'FINANCE'
+  location: string
+  province: string
+  city: string
+  level: 'UNDERGRADUATE' | 'GRADUATE' | 'VOCATIONAL'
+  ranking: number
+  description: string
+  logo: string
+  website: string
+  address: string
+  phone: string
+  email: string
+  totalStudents: number
+  totalTeachers: number
+  facultyCount: number
+  majorCount: number
+  status: 'ACTIVE' | 'INACTIVE'
+  isKey: boolean
+  is985: boolean
+  is211: boolean
+  isDoubleFirst: boolean
+  createdAt: string
+  updatedAt: string
+}
+```
+
+#### 专业分类数据
+```typescript
+interface MajorCategoryData {
+  name: string        // 专业名称，如"信息艺术设计"
+  icon: string        // 图标，如"ri-computer-line"
+  description: string // 专业描述
+  skills: string[]    // 技能列表
+}
+```
+
+#### 课程体系数据
+```typescript
+interface CourseGroup {
+  name: string      // 课程组名称，如"通识基础课程"
+  courses: string[] // 课程列表
+}
+```
+
+#### 师资统计数据
+```typescript
+interface FacultyStatsData {
+  totalFaculty: number      // 师资总数
+  professors: number        // 教授人数
+  doctorDegree: number      // 博士学位人数
+  overseasBackground: number // 海外背景人数
+  description: string       // 师资描述
+}
+
+interface TeacherData {
+  id: number          // 教师ID
+  name: string        // 教师姓名
+  title: string       // 职称
+  expertise: string[] // 专业领域
+  description: string // 教师描述
+}
+```
+
+#### 就业统计数据
+```typescript
+interface EmploymentStatsData {
+  employmentRate: string       // 就业率，如"96.8%"
+  averageSalary: string        // 平均薪资，如"18.5K"
+  furtherStudyRate: string     // 深造率，如"38.2%"
+  overseasEmploymentRate: string // 海外就业率，如"22.1%"
+  description: string          // 就业描述
+}
+
+interface EmployerData {
+  id: number      // 雇主ID
+  name: string    // 雇主名称
+  industry: string // 行业类型
+}
+
+interface ChartData {
+  industryData: Array<{
+    value: number                    // 数值
+    name: string                     // 行业名称
+  }>
+  salaryData: number[]               // 薪资分布数据
+  salaryLabels: string[]             // 薪资区间标签
+}
+```
+
+#### 学生成果数据
+```typescript
+interface AchievementStatsData {
+  internationalAwards: number // 国际奖项数量
+  nationalAwards: number      // 国家级奖项数量
+  provincialAwards: number    // 省级奖项数量
+  patents: number             // 专利数量
+  description: string         // 成果描述
+}
+
+interface TrendData {
+  years: string[]            // 年份数组
+  internationalData: number[] // 国际奖项数据
+  nationalData: number[]      // 国家级奖项数据
+  provincialData: number[]    // 省级奖项数据
+}
+
+interface AwardWorkData {
+  id: number          // 作品ID
+  title: string       // 作品标题
+  award: string       // 奖项名称
+  description: string // 作品描述
+}
+```
+
+#### 卡片统计数据
+```typescript
+interface SchoolCardStatsData {
+  employmentRates: string[]                           // 就业率数组
+  facultyStrengths: string[]                          // 师资力量评分数组
+  studentScores: string[]                             // 学生评分数组
+  advantagePrograms: Record<string, string[]>         // 优势专业按院校类型分类
+}
+```
+
+#### 综合数据结构
+```typescript
+interface SchoolFullInfo {
+  basicInfo: School                      // 基础院校信息
+  majorCategories: MajorCategoryData[]   // 专业分类数据
+  courseSystem: CourseGroup[]            // 课程体系数据
+  facultyStats: FacultyStatsData         // 师资统计数据
+  facultyMembers: TeacherData[]          // 代表性教师数据
+  employmentStats: EmploymentStatsData   // 就业统计数据
+  employers: EmployerData[]              // 代表性雇主数据
+  chartData: ChartData                   // 图表数据
+  achievementStats: AchievementStatsData // 学生成果统计
+  trendData: TrendData                   // 获奖趋势数据
+  awardWorks: AwardWorkData[]            // 获奖作品数据
+  cardStats: SchoolCardStatsData         // 卡片统计数据
+}
+```
+
+#### 设计师完整详情数据结构
+```typescript
+interface DesignerCompleteInfo {
+  designer: Designer                    // 设计师基本信息
+  works: Work[]                        // 设计师作品集
+  workExperience: WorkExperience[]     // 工作经历列表
+  education: Education[]               // 教育背景列表
+  awards: Award[]                      // 获奖记录列表
+}
+
+interface Designer {
+  id: number
+  designerName: string
+  profession: string
+  email: string
+  phone: string
+  skillTags: string
+  description: string
+  avatar: string
+  location: string
+  experience: number
+  workStatus: string
+  company: string
+  // ... 其他设计师字段
+}
+
+interface Work {
+  id: number
+  title: string
+  description: string
+  imageUrl: string
+  category: string
+  designerId: number
+  // ... 其他作品字段
+}
+
+interface WorkExperience {
+  id: number
+  company: string
+  position: string
+  startDate: string
+  endDate: string | null
+  description: string
+  isCurrent: boolean
+  designerId: number
+  // ... 其他工作经历字段
+}
+
+interface Education {
+  id: number
+  school: string
+  degree: string
+  major: string
+  startDate: string
+  endDate: string
+  description: string
+  designerId: number
+  // ... 其他教育背景字段
+}
+
+interface Award {
+  id: number
+  title: string
+  organization: string
+  year: string
+  description: string
+  designerId: number
+  level: string
+  category: string
+  // ... 其他获奖字段
+}
+```
+
+#### 标准响应格式
+```typescript
+interface ApiResponse<T> {
+  code: number    // 状态码，200表示成功
+  msg: string     // 响应消息
+  data: T         // 响应数据
+}
+
+interface SchoolListResponse {
+  total: number
+  rows: School[]
+}
+```
+
 ## API接口
 
 ### 设计师管理接口
 
+#### 基础设计师管理接口
 ```
 GET    /designer/designer/list           # 查询设计师列表
 GET    /designer/designer/{id}           # 获取设计师详情
+GET    /designer/designer/{id}/complete  # 获取设计师完整详情（聚合API）
 POST   /designer/designer                # 新增设计师
 PUT    /designer/designer                # 修改设计师
 DELETE /designer/designer/{ids}          # 删除设计师
+```
+
+#### 设计师查询接口
+```
 GET    /designer/designer/profession/{profession}  # 按职业查询
 GET    /designer/designer/skills         # 按技能查询
 GET    /designer/designer/professions    # 获取职业选项
@@ -88,6 +332,7 @@ GET    /designer/designer/skillTags      # 获取技能标签选项
 
 ### 院校管理接口
 
+#### 基础院校管理接口
 ```
 GET    /designer/school/list             # 查询院校列表
 GET    /designer/school/{id}             # 获取院校详情
@@ -95,11 +340,59 @@ POST   /designer/school                  # 新增院校
 PUT    /designer/school                  # 修改院校
 DELETE /designer/school/{ids}            # 删除院校
 GET    /designer/school/user/{userId}    # 根据用户ID查询院校
-GET    /designer/school/{id}/employment/statistics    # 就业统计
-GET    /designer/school/{id}/employment/distribution  # 就业分布
-GET    /designer/school/{id}/students    # 查询院校学生列表
-GET    /designer/school/{id}/majors      # 查询院校专业列表
-GET    /designer/school/{id}/achievements # 查询院校获奖成果
+GET    /designer/school/{id}/full-info   # 获取院校完整信息
+```
+
+#### 院校专业与课程接口
+```
+GET    /designer/school/{id}/major-categories  # 获取院校专业分类
+GET    /designer/school/{id}/course-system     # 获取院校课程体系
+GET    /designer/school/{id}/majors            # 查询院校专业列表
+```
+
+#### 师资管理接口
+```
+GET    /designer/school/{id}/faculty-stats     # 获取院校师资统计
+GET    /designer/school/{id}/faculty-members   # 获取院校代表性教师
+```
+
+#### 就业统计接口
+```
+GET    /designer/school/{id}/employment-stats      # 获取院校就业统计
+GET    /designer/school/{id}/employment/statistics # 就业统计（原有接口）
+GET    /designer/school/{id}/employment/distribution # 就业分布（原有接口）
+GET    /designer/school/{id}/employment-charts     # 获取院校就业图表数据
+GET    /designer/school/{id}/employers             # 获取院校代表性雇主
+```
+
+#### 学生管理接口
+```
+GET    /designer/school/{id}/students          # 查询院校学生列表
+```
+
+#### 学生成果接口
+```
+GET    /designer/school/{id}/achievement-stats # 获取院校学生成果统计
+GET    /designer/school/{id}/award-trends      # 获取院校获奖趋势数据
+GET    /designer/school/{id}/award-works       # 获取院校获奖作品
+GET    /designer/school/{id}/achievements      # 查询院校获奖成果（原有接口）
+```
+
+#### 院校展示数据接口
+```
+GET    /designer/school/{id}/card-stats        # 获取院校卡片统计数据
+```
+
+#### 格式化数据接口
+```
+GET    /designer/school/{id}/formatted/employment-rate     # 获取格式化就业率
+GET    /designer/school/{id}/formatted/faculty-strength    # 获取格式化师资力量评分
+GET    /designer/school/{id}/formatted/student-score       # 获取格式化学生评分
+GET    /designer/school/{id}/formatted/advantage-programs  # 获取格式化优势专业
+```
+
+#### 院校收藏接口
+```
 POST   /designer/school/{id}/favorite    # 收藏院校
 DELETE /designer/school/{id}/favorite    # 取消收藏院校
 GET    /designer/school/favorites        # 获取我的收藏院校
@@ -118,15 +411,20 @@ GET    /designer/enterprise/user/{userId} # 根据用户ID查询企业
 
 ### 岗位招聘接口
 
+#### 基础岗位管理接口
 ```
 GET    /designer/job/list                # 查询岗位列表
 GET    /designer/job/{id}                # 获取岗位详情
 POST   /designer/job                     # 发布岗位
 PUT    /designer/job                     # 修改岗位
 DELETE /designer/job/{ids}               # 删除岗位
+```
+
+#### 岗位查询接口
+```
 GET    /designer/job/enterprise/{id}     # 企业岗位查询
 GET    /designer/job/profession/{profession}  # 按职业查询岗位
-GET    /designer/job/skills              # 按技能查询岗位（交集查询）
+GET    /designer/job/skills              # 按技能查询岗位（精确匹配）
 GET    /designer/job/skills-any          # 按技能查询岗位（任意匹配）
 ```
 
@@ -191,22 +489,29 @@ PUT    /designer/award/{id}/sort         # 调整获奖记录排序
 
 ### 用户注册绑定接口
 
+#### 用户注册接口
 ```
 POST   /designer/user/register/designer  # 注册设计师身份
 POST   /designer/user/register/enterprise # 注册企业身份
 POST   /designer/user/register/school    # 注册院校身份
+```
+
+#### 用户绑定管理接口
+```
 GET    /designer/user/bindings           # 获取用户绑定信息
 GET    /designer/user/designer/profile   # 获取设计师档案
 GET    /designer/user/enterprise/profile # 获取企业档案
 GET    /designer/user/school/profile     # 获取院校档案
 PUT    /designer/user/unbind/{entityType} # 解绑身份
 POST   /designer/user/bind               # 管理员绑定用户实体
+```
 
-# 绑定已有实体接口
-GET    /designer/user/available/enterprises # 查看可绑定的企业列表
-POST   /designer/user/bind/enterprise    # 绑定到指定企业
-GET    /designer/user/available/schools  # 查看可绑定的院校列表
-POST   /designer/user/bind/school        # 绑定到指定院校
+#### 绑定已有实体接口
+```
+GET    /designer/user/available/enterprises  # 查看可绑定的企业列表
+POST   /designer/user/bind/enterprise        # 绑定到指定企业
+GET    /designer/user/available/schools      # 查看可绑定的院校列表
+POST   /designer/user/bind/school            # 绑定到指定院校
 ```
 
 ## 使用方法
@@ -284,7 +589,139 @@ GET /designer/user/enterprise/profile
 GET /designer/user/school/profile
 ```
 
-### 3. 设计师档案管理
+### 3. 绑定已有实体
+
+#### 绑定已有企业
+```bash
+# 1. 查看可绑定的企业列表
+GET /designer/user/available/enterprises?pageNum=1&pageSize=10&enterpriseName=科技
+
+# 2. 绑定到指定企业
+POST /designer/user/bind/enterprise?enterpriseId=1&inviteCode=INVITE123
+```
+
+**企业绑定参数**:
+- `enterpriseId` (必须): 企业ID
+- `inviteCode` (可选): 企业邀请码
+
+#### 绑定已有院校
+```bash
+# 1. 查看可绑定的院校列表
+GET /designer/user/available/schools?pageNum=1&pageSize=10&schoolName=设计
+
+# 2. 绑定到指定院校
+POST /designer/user/bind/school?schoolId=1&studentId=2020001234
+```
+
+**院校绑定参数**:
+- `schoolId` (必须): 院校ID
+- `studentId` (可选): 学号
+
+#### 绑定限制说明
+- 每个用户在同一实体类型下只能绑定一个实体
+- 如需切换绑定，必须先解绑当前实体
+- 解绑操作：
+  ```bash
+  # 解绑企业身份
+  PUT /designer/user/unbind/enterprise
+
+  # 解绑院校身份
+  PUT /designer/user/unbind/school
+  ```
+
+#### 管理员绑定接口
+```bash
+# 管理员为任意用户绑定实体
+POST /designer/user/bind?userId=123&entityType=enterprise&entityId=1
+```
+
+**管理员绑定参数**:
+- `userId` (必须): 用户ID
+- `entityType` (必须): 实体类型 (`designer`/`enterprise`/`school`)
+- `entityId` (必须): 实体ID
+
+### 4. 设计师档案管理
+
+#### 获取设计师完整详情（聚合API）
+```bash
+# 获取设计师完整信息（包含基本信息、作品、工作经历、教育背景、获奖记录）
+GET /designer/designer/1/complete
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": {
+    "designer": {
+      "id": 1,
+      "designerName": "张雨",
+      "profession": "UI_UX_DESIGNER",
+      "email": "zhangyu@example.com",
+      "phone": "13888888888",
+      "skillTags": "[\"figma\",\"sketch\",\"ui_design\"]",
+      "description": "...",
+      "avatar": "...",
+      "location": "北京市",
+      "experience": 5,
+      "workStatus": "EMPLOYED",
+      "company": "腾讯"
+    },
+    "works": [
+      {
+        "id": 1,
+        "title": "移动支付APP界面设计",
+        "description": "...",
+        "imageUrl": "...",
+        "category": "移动应用",
+        "designerId": 1
+      }
+    ],
+    "workExperience": [
+      {
+        "id": 1,
+        "company": "腾讯",
+        "position": "高级UI设计师",
+        "startDate": "2022-01-01",
+        "endDate": null,
+        "description": "...",
+        "isCurrent": true,
+        "designerId": 1
+      }
+    ],
+    "education": [
+      {
+        "id": 1,
+        "school": "清华大学",
+        "degree": "学士",
+        "major": "视觉传达设计",
+        "startDate": "2018-09-01",
+        "endDate": "2022-06-30",
+        "description": "...",
+        "designerId": 1
+      }
+    ],
+    "awards": [
+      {
+        "id": 1,
+        "title": "Red Dot Design Award",
+        "organization": "Red Dot",
+        "year": "2023",
+        "description": "...",
+        "designerId": 1,
+        "level": "GOLD",
+        "category": "DESIGN_AWARD"
+      }
+    ]
+  }
+}
+```
+
+**性能优势**:
+- 🚀 减少网络请求次数：5个请求 → 1个请求
+- ⚡ 并行数据查询：4个数据源并行获取，响应时间更短
+- 📦 数据一致性：一次性获取完整数据，避免数据不一致
 
 #### 管理工作经历
 ```bash
@@ -489,7 +926,72 @@ public List<Designer> getMyDesigners() {
 7. 查看院校专业设置和就业率
 8. 管理院校获奖成果展示
 
-### 4. 院校数据查询使用方法
+### 5. 岗位技能查询使用方法
+
+#### 技能查询接口对比
+```bash
+# 精确匹配查询（要求岗位包含所有搜索技能）
+GET /designer/job/skills?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+
+# 任意匹配查询（要求岗位包含任意一个搜索技能）
+GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
+```
+
+**查询逻辑对比**:
+| 接口 | 查询逻辑 | 示例 | 应用场景 |
+|------|----------|------|----------|
+| `/skills` | 交集查询（AND） | 搜索 A,B 时，岗位必须同时包含 A 和 B | 精确匹配，要求岗位具备所有技能 |
+| `/skills-any` | 并集查询（OR） | 搜索 A,B 时，岗位包含 A 或 B 即可 | 宽松匹配，扩大搜索范围 |
+
+**支持的技能标签**:
+- **动效设计**: ANIMATION_DESIGN
+- **原型设计**: PROTOTYPE_DESIGN
+- **角色设计**: CHARACTER_DESIGN
+- **视觉设计**: VISUAL_DESIGN
+- **用户界面设计**: USER_INTERFACE_DESIGN
+- **用户体验设计**: USER_EXPERIENCE_DESIGN
+- **平面设计**: GRAPHIC_DESIGN
+- **品牌设计**: BRANDING_DESIGN
+- **插画**: ILLUSTRATION
+- **网页设计**: WEB_DESIGN
+- **移动设计**: MOBILE_DESIGN
+- **印刷设计**: PRINT_DESIGN
+
+**使用场景示例**:
+```bash
+# 1. 宽松技能匹配 - 找到具备某些技能中任意一种的设计师
+GET /designer/job/skills-any?skillTags=UI_DESIGN,UX_DESIGN,VISUAL_DESIGN
+
+# 2. 扩大搜索范围 - 当精确匹配结果太少时
+GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,ANIMATION_DESIGN
+
+# 3. 相关技能探索 - 查找相关技能的岗位
+GET /designer/job/skills-any?skillTags=WEB_DESIGN,MOBILE_DESIGN,USER_INTERFACE_DESIGN
+```
+
+### 6. 院校数据查询使用方法
+
+#### 查询院校列表（扩展）
+```bash
+GET /designer/school/list?pageNum=1&pageSize=20&schoolName=设计学院&schoolType=ART&province=北京&city=北京&level=UNDERGRADUATE&isKey=true&is985=false&is211=true&isDoubleFirst=true
+```
+
+**请求参数：**
+```typescript
+interface SchoolListParams {
+  pageNum?: number      // 页码，默认1
+  pageSize?: number     // 每页大小，默认20
+  schoolName?: string   // 院校名称模糊查询
+  schoolType?: string   // 院校类型: COMPREHENSIVE/ART/ENGINEERING/NORMAL/FINANCE
+  province?: string     // 省份
+  city?: string         // 城市
+  level?: string        // 办学层次: UNDERGRADUATE/GRADUATE/VOCATIONAL
+  isKey?: boolean       // 是否重点院校
+  is985?: boolean       // 是否985院校
+  is211?: boolean       // 是否211院校
+  isDoubleFirst?: boolean // 是否双一流院校
+}
+```
 
 #### 查询院校学生列表
 ```bash
@@ -503,7 +1005,106 @@ GET /designer/school/1/students?status=current&profession=UI设计&pageNum=1&pag
 - `pageNum`: 页码（默认1）
 - `pageSize`: 每页大小（默认20）
 
-#### 查询院校专业列表
+#### 查询院校专业分类
+```bash
+GET /designer/school/1/major-categories
+```
+
+**返回数据包含：**
+- 专业名称、图标、描述
+- 相关技能列表
+
+#### 查询院校课程体系
+```bash
+GET /designer/school/1/course-system
+```
+
+**返回数据包含：**
+- 课程组名称
+- 每个课程组的课程列表
+
+#### 查询院校师资统计
+```bash
+GET /designer/school/1/faculty-stats
+```
+
+**返回数据包含：**
+- 师资总数、教授人数
+- 博士学位人数、海外背景人数
+- 师资描述信息
+
+#### 查询院校就业统计
+```bash
+GET /designer/school/1/employment-stats
+```
+
+**返回数据包含：**
+- 就业率、平均薪资
+- 深造率、海外就业率
+- 就业描述信息
+
+#### 查询院校就业图表数据
+```bash
+GET /designer/school/1/employment-charts
+```
+
+**返回数据包含：**
+- 行业分布数据（饼图）
+- 薪资分布数据（柱状图）
+
+#### 查询院校获奖成果统计
+```bash
+GET /designer/school/1/achievement-stats
+```
+
+**返回数据包含：**
+- 国际、国家级、省级奖项数量
+- 专利数量和成果描述
+
+#### 查询院校获奖趋势
+```bash
+GET /designer/school/1/award-trends
+```
+
+**返回数据包含：**
+- 年份数组
+- 各级别奖项的趋势数据
+
+#### 查询院校卡片统计
+```bash
+GET /designer/school/1/card-stats
+```
+
+**返回数据包含：**
+- 就业率、师资力量、学生评分数组
+- 按院校类型分类的优势专业
+
+#### 格式化数据查询
+```bash
+# 获取格式化就业率
+GET /designer/school/1/formatted/employment-rate
+
+# 获取格式化师资力量评分
+GET /designer/school/1/formatted/faculty-strength
+
+# 获取格式化学生评分
+GET /designer/school/1/formatted/student-score
+
+# 获取格式化优势专业
+GET /designer/school/1/formatted/advantage-programs
+```
+
+#### 查询院校完整信息
+```bash
+GET /designer/school/1/full-info
+```
+
+**返回数据包含：**
+- 基础信息、专业分类、课程体系
+- 师资统计、就业统计、成果统计
+- 图表数据、趋势数据、卡片统计
+
+#### 查询院校专业列表（原有）
 ```bash
 GET /designer/school/1/majors
 ```
@@ -513,7 +1114,7 @@ GET /designer/school/1/majors
 - 就业人数和就业率
 - 按学生数量排序
 
-#### 查询院校获奖成果
+#### 查询院校获奖成果（原有）
 ```bash
 GET /designer/school/1/achievements
 ```
@@ -534,112 +1135,6 @@ DELETE /designer/school/1/favorite
 # 获取我的收藏
 GET /designer/school/favorites
 ```
-
-### 5. 技能查询接口使用方法
-
-#### 技能查询对比
-
-| 接口 | 查询逻辑 | 示例 | 应用场景 |
-|------|----------|------|----------|
-| `/designer/job/skills` | 交集查询（AND） | 搜索 A,B 时，岗位必须同时包含 A 和 B | 精确匹配，要求岗位具备所有技能 |
-| `/designer/job/skills-any` | 并集查询（OR） | 搜索 A,B 时，岗位包含 A 或 B 即可 | 宽松匹配，扩大搜索范围 |
-
-#### 使用示例
-```bash
-# 精确匹配：查找同时需要原型设计和视觉设计技能的岗位
-GET /designer/job/skills?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
-
-# 任意匹配：查找需要原型设计或视觉设计技能之一的岗位
-GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
-```
-
-**支持的技能标签:**
-- ANIMATION_DESIGN (动效设计)
-- PROTOTYPE_DESIGN (原型设计)
-- CHARACTER_DESIGN (角色设计)
-- VISUAL_DESIGN (视觉设计)
-- USER_INTERFACE_DESIGN (用户界面设计)
-- USER_EXPERIENCE_DESIGN (用户体验设计)
-- GRAPHIC_DESIGN (平面设计)
-- BRANDING_DESIGN (品牌设计)
-- ILLUSTRATION (插画)
-- WEB_DESIGN (网页设计)
-- MOBILE_DESIGN (移动设计)
-- PRINT_DESIGN (印刷设计)
-
-### 6. 绑定已有实体使用方法
-
-#### 绑定企业流程
-```bash
-# 1. 查询可绑定的企业列表
-GET /designer/user/available/enterprises?pageNum=1&pageSize=10&enterpriseName=科技
-
-# 2. 绑定到指定企业
-POST /designer/user/bind/enterprise?enterpriseId=1&inviteCode=INVITE123
-```
-
-**企业列表响应示例:**
-```json
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": {
-        "records": [
-            {
-                "enterpriseId": 1,
-                "enterpriseName": "字节跳动科技有限公司",
-                "description": "全球领先的移动互联网公司",
-                "industry": "互联网",
-                "scale": "5000+",
-                "address": "北京市海淀区"
-            }
-        ],
-        "total": 1,
-        "size": 10,
-        "current": 1,
-        "pages": 1
-    }
-}
-```
-
-#### 绑定院校流程
-```bash
-# 1. 查询可绑定的院校列表
-GET /designer/user/available/schools?pageNum=1&pageSize=10&schoolName=设计
-
-# 2. 绑定到指定院校
-POST /designer/user/bind/school?schoolId=1&studentId=2020001234
-```
-
-**院校列表响应示例:**
-```json
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": {
-        "records": [
-            {
-                "schoolId": 1,
-                "schoolName": "清华大学美术学院",
-                "description": "中国著名的艺术设计院校",
-                "schoolType": "公立",
-                "level": "985",
-                "address": "北京市海淀区清华园1号"
-            }
-        ],
-        "total": 1,
-        "size": 10,
-        "current": 1,
-        "pages": 1
-    }
-}
-```
-
-#### 绑定注意事项
-- 每个用户在同一实体类型下只能绑定一个实体
-- 如需切换绑定，必须先解绑当前实体
-- 企业邀请码和学号验证功能后续版本完善
-- 管理员可为任意用户绑定身份
 
 
 
@@ -833,6 +1328,156 @@ graph TB
 - `TROUBLESHOOTING.md` - 详细的故障排除指南
 - 常见问题包括：重复索引错误、角色创建失败、权限检查失败等
 
+## API集成说明
+
+### 本次更新内容
+
+本版本已完整集成了多个重要功能模块的API接口，包括院校Mock数据API、设计师完整详情聚合API、技能查询优化API和绑定已有实体API：
+
+#### ✅ 新增接口统计
+- **设计师聚合API**: 1个 (设计师完整详情查询)
+- **技能查询优化**: 1个 (任意匹配技能查询)
+- **绑定已有实体**: 4个 (企业/院校绑定相关接口)
+- **院校展示接口**: 16个 (专业分类、师资统计、就业统计等)
+
+#### ✅ 功能特性
+- **性能优化**: 设计师聚合API减少5个网络请求到1个
+- **查询灵活性**: 技能查询支持精确匹配和任意匹配两种模式
+- **绑定灵活性**: 支持绑定已有实体，无需重复注册
+- **数据完整性**: 院校接口覆盖所有Mock数据源和函数
+
+#### ✅ 架构兼容性
+- **URL规范统一**: 所有接口采用 `/designer/*` 路径结构
+- **权限体系集成**: 继承现有权限码体系
+- **原有接口保留**: 完全兼容已有的管理接口
+- **前端无缝切换**: Mock数据与API响应结构完全一致
+
+### 院校API集成详情
+
+#### ✅ 新增接口统计
+- **基础管理接口**: 1个 (院校完整信息查询)
+- **专业课程接口**: 2个 (专业分类、课程体系)
+- **师资管理接口**: 2个 (师资统计、代表性教师)
+- **就业统计接口**: 3个 (就业统计、图表数据、代表性雇主)
+- **学生成果接口**: 3个 (成果统计、获奖趋势、获奖作品)
+- **展示数据接口**: 1个 (卡片统计)
+- **格式化接口**: 4个 (各类格式化数据)
+
+#### ✅ 数据结构覆盖
+- **12个核心数据结构**全部定义
+- **支持所有筛选参数**（pageNum, pageSize, schoolType等）
+- **统一响应格式**（ApiResponse<T>）
+- **完整数据关系**（SchoolFullInfo综合结构）
+
+#### ✅ 架构兼容性
+- **URL规范统一**：所有接口采用 `/designer/school/*` 路径结构
+- **权限体系集成**：继承 `designer:school:*` 权限码体系
+- **原有接口保留**：完全兼容已有的院校管理接口
+- **前端无缝切换**：Mock数据与API响应结构完全一致
+
+### Mock数据覆盖验证
+
+#### 📊 数据源覆盖率 100%
+1. ✅ mockSchools → `/designer/school/list` & `/designer/school/{id}`
+2. ✅ mockMajorCategoriesBySchool → `/designer/school/{id}/major-categories`
+3. ✅ mockCourseSystemBySchool → `/designer/school/{id}/course-system`
+4. ✅ mockFacultyStatsBySchool → `/designer/school/{id}/faculty-stats`
+5. ✅ mockFacultyMembersBySchool → `/designer/school/{id}/faculty-members`
+6. ✅ mockEmploymentStatsBySchool → `/designer/school/{id}/employment-stats`
+7. ✅ mockEmployersBySchool → `/designer/school/{id}/employers`
+8. ✅ mockChartDataBySchool → `/designer/school/{id}/employment-charts`
+9. ✅ mockAchievementStatsBySchool → `/designer/school/{id}/achievement-stats`
+10. ✅ mockTrendDataBySchool → `/designer/school/{id}/award-trends`
+11. ✅ mockAwardWorksBySchool → `/designer/school/{id}/award-works`
+12. ✅ mockSchoolCardStatsBySchool → `/designer/school/{id}/card-stats`
+
+#### 🔧 函数映射覆盖率 100%
+- **基础查询函数**: getMockSchools, getMockSchoolById
+- **专业课程函数**: getMockMajorCategories, getMockCourseSystem
+- **师资相关函数**: getMockFacultyStats, getMockFacultyMembers
+- **就业统计函数**: getMockEmploymentStats, getMockEmployers, getMockChartData
+- **成果统计函数**: getMockAchievementStats, getMockTrendData, getMockAwardWorks
+- **格式化函数**: getMockEmploymentRate, getMockFacultyStrength, getMockStudentScore, getMockAdvantagePrograms
+
+### 实施建议
+
+#### 开发优先级
+1. **P1 (立即实施)**: 基础院校数据接口、院校完整信息接口
+2. **P2 (核心功能)**: 专业分类、课程体系、师资统计、就业统计接口
+3. **P3 (增强展示)**: 代表性教师、雇主、图表数据、学生成果接口
+4. **P4 (完善功能)**: 获奖趋势、获奖作品、卡片统计、格式化接口
+
+#### 缓存策略建议
+- **基础数据**: 1小时缓存 (院校信息、专业分类、课程体系)
+- **统计数据**: 30分钟缓存 (师资统计、就业统计、成果统计)
+- **图表数据**: 15分钟缓存 (就业图表、获奖趋势)
+- **格式化数据**: 1小时缓存 (各类格式化展示数据)
+
+通过本次集成，院校数据展示功能已与整个设计师生态管理系统完全融合，为用户提供了完整的院校信息查询和展示能力。
+
+### 设计师聚合API集成详情
+
+#### ✅ 实现状态
+- **后端实现**: ✅ 完成 (`DesignerController.getDesignerComplete()`)
+- **API路径**: `GET /designer/designer/{designerId}/complete`
+- **性能优化**: 并行查询4个数据源，响应时间显著提升
+- **权限控制**: 支持不同角色的访问控制
+
+#### ✅ 数据结构覆盖
+- **设计师基本信息**: Designer
+- **作品集**: Work[]
+- **工作经历**: WorkExperience[]
+- **教育背景**: Education[]
+- **获奖记录**: Award[]
+
+#### ✅ 性能优势
+- 🚀 减少网络请求次数：5个请求 → 1个请求
+- ⚡ 并行数据查询：4个数据源并行获取，响应时间更短
+- 📦 数据一致性：一次性获取完整数据，避免数据不一致
+
+### 技能查询优化API集成详情
+
+#### ✅ 新增接口
+- **精确匹配**: `GET /designer/job/skills` (原有)
+- **任意匹配**: `GET /designer/job/skills-any` (新增)
+
+#### ✅ 查询逻辑对比
+| 接口 | 查询逻辑 | 应用场景 |
+|------|----------|----------|
+| `/skills` | 交集查询（AND） | 精确匹配，要求岗位具备所有技能 |
+| `/skills-any` | 并集查询（OR） | 宽松匹配，扩大搜索范围 |
+
+#### ✅ 支持的技能标签
+12种设计技能标签，包括动效设计、原型设计、视觉设计、UI/UX设计等
+
+### 绑定已有实体API集成详情
+
+#### ✅ 新增接口
+- **企业绑定**: `GET /designer/user/available/enterprises`, `POST /designer/user/bind/enterprise`
+- **院校绑定**: `GET /designer/user/available/schools`, `POST /designer/user/bind/school`
+
+#### ✅ 功能特性
+- **灵活绑定**: 支持绑定已有实体，无需重复注册
+- **身份验证**: 支持邀请码和学号验证（待完善）
+- **权限控制**: 管理员可为任意用户绑定实体
+- **绑定限制**: 每个用户在同一实体类型下只能绑定一个实体
+
+#### ✅ 使用场景
+- **员工加入已有企业**: 通过邀请码绑定企业身份
+- **学生绑定院校**: 通过学号绑定院校身份
+- **管理员管理**: 为任意用户绑定或解绑身份
+
+### 总体集成效果
+
+通过本次全面的API集成，设计师生态管理系统现在具备了：
+
+1. **完整的院校数据展示能力** - 16个专业接口覆盖所有展示需求
+2. **高性能的设计师详情查询** - 聚合API大幅提升前端性能
+3. **灵活的岗位技能匹配** - 支持精确和宽松两种查询模式
+4. **便捷的实体绑定机制** - 支持绑定已有实体，提升用户体验
+
+所有新增接口都严格遵循现有的架构规范和权限体系，确保系统的整体一致性和安全性。
+
 ## 开发团队
 
-本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。
+本模块基于若依框架开发，整合了用户绑定系统，提供了完整的设计师生态管理解决方案。 

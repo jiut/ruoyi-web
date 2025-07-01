@@ -23,12 +23,17 @@ export interface School {
   totalTeachers: number
   facultyCount: number
   majorCount: number
-  // 状态
-  status: string
+  // 状态 ('0' = 启用, '1' = 停用)
+  status: '0' | '1'
   isKey: boolean // 是否重点院校
   is985: boolean
   is211: boolean
   isDoubleFirst: boolean // 是否双一流
+  // 卡片展示统计数据
+  employmentRate?: string     // 就业率，如 "96.8%"
+  facultyStrength?: string    // 师资力量评分，如 "5.0"
+  studentScore?: string       // 学生评分，如 "4.9"
+  advantagePrograms?: string  // 优势专业，如 "信息艺术设计、智能产品设计"
   // 时间戳
   createdAt: string
   updatedAt: string
@@ -391,8 +396,7 @@ export const SchoolSortLabels: Record<SchoolSortBy, string> = {
   [SchoolSortBy.COMPREHENSIVE]: '综合排序',
   [SchoolSortBy.EMPLOYMENT_RATE]: '就业率优先',
   [SchoolSortBy.FACULTY_STRENGTH]: '师资力量优先',
-  [SchoolSortBy.STUDENT_SCORE]: '学生评分优先',
-  [SchoolSortBy.ESTABLISHED_YEAR]: '建校时间'
+  [SchoolSortBy.STUDENT_SCORE]: '学生评分优先'
 }
 
 // API响应接口
@@ -477,4 +481,105 @@ export interface Achievement {
   // 时间戳
   createdAt: string
   updatedAt: string
+}
+
+// Mock 数据相关接口定义（与 mockSchools.ts 保持一致）
+export interface MajorCategoryData {
+  name: string        // 专业名称，如"信息艺术设计"
+  icon: string        // 图标，如"ri-computer-line"
+  description: string // 专业描述
+  skills: string[]    // 技能列表
+}
+
+export interface CourseGroup {
+  name: string      // 课程组名称，如"通识基础课程"
+  courses: string[] // 课程列表
+}
+
+export interface FacultyStatsData {
+  totalFaculty: number      // 师资总数
+  professors: number        // 教授人数
+  doctorDegree: number      // 博士学位人数
+  overseasBackground: number // 海外背景人数
+  description: string       // 师资描述
+}
+
+export interface TeacherData {
+  id: number          // 教师ID
+  name: string        // 教师姓名
+  title: string       // 职称
+  expertise: string[] // 专业领域
+  description: string // 教师描述
+}
+
+export interface EmploymentStatsData {
+  employmentRate: string       // 就业率，如"96.8%"
+  averageSalary: string        // 平均薪资，如"18.5K"
+  furtherStudyRate: string     // 深造率，如"38.2%"
+  overseasEmploymentRate: string // 海外就业率，如"22.1%"
+  description: string          // 就业描述
+}
+
+export interface EmployerData {
+  id: number      // 雇主ID
+  name: string    // 雇主名称
+  industry: string // 行业类型
+}
+
+export interface ChartData {
+  industryData: Array<{
+    value: number                    // 数值
+    name: string                     // 行业名称
+  }>
+  salaryData: number[]               // 薪资分布数据
+  salaryLabels: string[]             // 薪资区间标签
+}
+
+export interface AchievementStatsData {
+  internationalAwards: number // 国际奖项数量
+  nationalAwards: number      // 国家级奖项数量
+  provincialAwards: number    // 省级奖项数量
+  patents: number             // 专利数量
+  description: string         // 成果描述
+}
+
+export interface TrendData {
+  years: string[]            // 年份数组
+  internationalData: number[] // 国际奖项数据
+  nationalData: number[]      // 国家级奖项数据
+  provincialData: number[]    // 省级奖项数据
+}
+
+export interface AwardWorkData {
+  id: number          // 作品ID
+  title: string       // 作品标题
+  award: string       // 奖项名称
+  description: string // 作品描述
+}
+
+export interface SchoolCardStatsData {
+  employmentRates: string[]                           // 就业率数组
+  facultyStrengths: string[]                          // 师资力量评分数组
+  studentScores: string[]                             // 学生评分数组
+  advantagePrograms: Record<string, string[]>         // 优势专业按院校类型分类
+}
+
+// 院校完整信息接口（用于 full-info API）
+export interface SchoolFullInfo {
+  basicInfo: School                      // 基础院校信息
+  majorCategories: MajorCategoryData[]   // 专业分类数据
+  courseSystem: CourseGroup[]            // 课程体系数据
+  facultyStats: FacultyStatsData         // 师资统计数据
+  facultyMembers: TeacherData[]          // 代表性教师数据
+  employmentStats: EmploymentStatsData   // 就业统计数据
+  employers: EmployerData[]              // 代表性雇主数据
+  chartData: ChartData                   // 图表数据
+  achievementStats: AchievementStatsData // 学生成果统计
+  trendData: TrendData                   // 获奖趋势数据
+  awardWorks: AwardWorkData[]            // 获奖作品数据
+  cardStats: SchoolCardStatsData         // 卡片统计数据
+
+  // 后端实际返回的字段名（兼容性字段）
+  employmentCharts?: ChartData           // 就业图表数据（后端字段名）
+  awardTrends?: TrendData                // 获奖趋势数据（后端字段名）
 }

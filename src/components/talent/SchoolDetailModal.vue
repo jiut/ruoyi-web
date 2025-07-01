@@ -102,17 +102,58 @@
 
 					<!-- 标签内容 -->
 					<div class="tab-content">
-						<div v-show="currentTab === 'majors'" class="tab-pane" id="majorsContent">
-							<SchoolMajors :school-id="school.id" />
+						<!-- 加载状态 -->
+						<div v-if="loading" class="flex items-center justify-center h-64">
+							<div class="flex flex-col items-center">
+								<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+								<p class="text-gray-400">正在加载院校详细信息...</p>
+							</div>
 						</div>
-						<div v-show="currentTab === 'faculty'" class="tab-pane" id="facultyContent">
-							<SchoolFaculty :school-id="school.id" />
-						</div>
-						<div v-show="currentTab === 'employment'" class="tab-pane" id="employmentContent">
-							<SchoolEmployment :school-id="school.id" />
-						</div>
-						<div v-show="currentTab === 'achievements'" class="tab-pane" id="achievementsContent">
-							<SchoolAchievements :school-id="school.id" />
+						<!-- 内容区域 -->
+						<template v-else-if="schoolFullInfo">
+							<div v-show="currentTab === 'majors'" class="tab-pane" id="majorsContent">
+								<SchoolMajors
+									:school-id="school.id"
+									:major-categories="schoolFullInfo.majorCategories"
+									:course-system="schoolFullInfo.courseSystem"
+								/>
+							</div>
+							<div v-show="currentTab === 'faculty'" class="tab-pane" id="facultyContent">
+								<SchoolFaculty
+									:school-id="school.id"
+									:faculty-stats="schoolFullInfo.facultyStats"
+									:faculty-members="schoolFullInfo.facultyMembers"
+								/>
+							</div>
+							<div v-show="currentTab === 'employment'" class="tab-pane" id="employmentContent">
+								<SchoolEmployment
+									:school-id="school.id"
+									:employment-stats="schoolFullInfo.employmentStats"
+									:employers="schoolFullInfo.employers"
+									:chart-data="schoolFullInfo.chartData"
+								/>
+							</div>
+							<div v-show="currentTab === 'achievements'" class="tab-pane" id="achievementsContent">
+								<SchoolAchievements
+									:school-id="school.id"
+									:achievement-stats="schoolFullInfo.achievementStats"
+									:trend-data="schoolFullInfo.trendData"
+									:award-works="schoolFullInfo.awardWorks"
+								/>
+							</div>
+						</template>
+						<!-- 错误状态 -->
+						<div v-else-if="!loading" class="flex items-center justify-center h-64">
+							<div class="flex flex-col items-center">
+								<i class="ri-error-warning-line text-4xl text-red-400 mb-4"></i>
+								<p class="text-gray-400">加载院校信息失败</p>
+																<button
+									@click="reloadSchoolData"
+									class="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+								>
+									重新加载
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -128,12 +169,13 @@
 import { ref, computed, watch, Teleport } from 'vue'
 import { useMessage } from 'naive-ui'
 import { useSchool, useSchoolFormatter } from '@/composables/talent/useSchool'
+import { schoolApi } from '@/api/talent/school'
 import SchoolMajors from './SchoolMajors.vue'
 import SchoolFaculty from './SchoolFaculty.vue'
 import SchoolEmployment from './SchoolEmployment.vue'
 import SchoolAchievements from './SchoolAchievements.vue'
 import { getMockEmploymentRate } from '@/data/mockSchools'
-import type { School, SchoolType } from '@/types/talent/school'
+import type { School, SchoolType, SchoolFullInfo } from '@/types/talent/school'
 
 interface Props {
   school: School
@@ -146,13 +188,47 @@ const emit = defineEmits<{
 }>()
 
 const message = useMessage()
-const { toggleFavorite: toggleFav } = useSchool()
+const { toggleFavorite: toggleFav } = useSchool({ autoLoad: false })
 const { formatSchoolType } = useSchoolFormatter()
 
 const currentTab = ref('majors')
 const favoriteLoading = ref(false)
-const majors = ref([])
-const employmentData = ref(null)
+const loading = ref(false)
+const schoolFullInfo = ref<SchoolFullInfo | null>(null)
+
+// 加载院校数据的函数
+const loadSchoolData = async (schoolId: number) => {
+  if (!schoolId) return
+
+  loading.value = true
+  try {
+    const response = await schoolApi.getFullInfo(schoolId)
+
+    // 修复字段名不匹配问题：employmentCharts -> chartData
+    const rawData = response.data as any // 使用any类型断言来访问后端实际字段
+    if (rawData.employmentCharts && !rawData.chartData) {
+      rawData.chartData = rawData.employmentCharts
+    }
+
+    // 同样处理 awardTrends -> trendData 的映射
+    if (rawData.awardTrends && !rawData.trendData) {
+      rawData.trendData = rawData.awardTrends
+    }
+
+    schoolFullInfo.value = rawData
+  } catch (error) {
+    console.error('❌ 加载院校完整信息失败:', error)
+    message.error('加载院校详细信息失败，请稍后重试')
+    schoolFullInfo.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+// 重新加载院校数据的函数
+const reloadSchoolData = async () => {
+  await loadSchoolData(props.school.id)
+}
 
 // 环境配置：根据VITE_USE_MOCK_DATA切换数据源
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
@@ -160,10 +236,14 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
 
 // 获取就业率数据
 const getEmploymentRate = computed(() => {
+  if (schoolFullInfo.value?.employmentStats?.employmentRate) {
+    return schoolFullInfo.value.employmentStats.employmentRate
+  }
+
+  // 兜底逻辑：如果完整信息还未加载，使用原有逻辑
   if (USE_MOCK_DATA) {
     return getMockEmploymentRate(props.school.id)
   } else {
-    // TODO: 调用后端API获取真实数据
     return props.school.employmentData?.employmentRate || null
   }
 })
@@ -280,21 +360,10 @@ const toggleFavorite = async () => {
   }
 }
 
-// 监听学校变化，加载相关数据
-watch(() => props.school.id, async (schoolId) => {
+// 监听学校变化，加载完整院校数据
+watch(() => props.school.id, (schoolId) => {
   if (schoolId) {
-    try {
-      // TODO: 加载专业数据
-      // majors.value = await loadSchoolMajors(schoolId)
-      // TODO: 加载就业数据
-      // employmentData.value = await loadEmploymentData(schoolId)
-
-      // 暂时使用模拟数据
-      majors.value = []
-      employmentData.value = null
-    } catch (error) {
-      console.error('加载院校数据失败:', error)
-    }
+    loadSchoolData(schoolId)
   }
 }, { immediate: true })
 </script>
@@ -512,6 +581,16 @@ input[type="number"]::-webkit-outer-spin-button {
 /* 修复院校类型标签边框颜色被全局样式覆盖的问题 */
 .school-tag {
   position: relative;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 /* 院校类型标签边框颜色 */

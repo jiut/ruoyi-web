@@ -21,7 +21,8 @@ import type {
   SchoolStudentsParams,
   SchoolStudentsResponse,
   SchoolMajorsResponse,
-  SchoolAchievementsResponse
+  SchoolAchievementsResponse,
+  SchoolFullInfo
 } from '@/types/talent/school'
 import {
   getMockSchools,
@@ -69,7 +70,7 @@ export const schoolApi = {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        params: query
+        data: query
       })
     }
   },
@@ -96,14 +97,7 @@ export const schoolApi = {
     if (USE_MOCK_DATA) {
       console.log('🔧 使用模拟数据 - 就业统计')
       return Promise.resolve({
-        data: {
-          year: 2023,
-          totalGraduates: 0,
-          employedCount: 0,
-          employmentRate: 0,
-          averageSalary: 0,
-          salaryRanges: []
-        }
+        data: getMockEmploymentStats(id)
       })
     } else {
       console.log('🚀 使用若依后端API - 就业统计')
@@ -120,9 +114,8 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 就业分布')
       return Promise.resolve({
         data: {
-          industryDistribution: [],
-          regionDistribution: [],
-          companySizeDistribution: []
+          employers: getMockEmployers(id),
+          chartData: getMockChartData(id)
         }
       })
     } else {
@@ -171,7 +164,7 @@ export const schoolApi = {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        params: { schoolType }
+        data: { schoolType }
       })
     }
   },
@@ -187,7 +180,7 @@ export const schoolApi = {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        params: { location: city ? `${province}-${city}` : province }
+        data: { location: city ? `${province}-${city}` : province }
       })
     }
   },
@@ -205,7 +198,7 @@ export const schoolApi = {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        params: { schoolName: keyword }
+        data: { schoolName: keyword }
       })
     }
   },
@@ -222,7 +215,7 @@ export const schoolApi = {
       return request({
         url: `/designer/school/${id}/students`,
         method: 'get',
-        params
+        data: params
       })
     }
   },
@@ -303,6 +296,46 @@ export const schoolApi = {
         method: 'get'
       })
     }
+  },
+
+  // 获取院校完整信息 - 一次性加载所有数据
+  getFullInfo: (id: number): Promise<{ data: SchoolFullInfo }> => {
+    if (USE_MOCK_DATA) {
+      console.log('🔧 使用模拟数据 - 院校完整信息', id)
+      const basicInfo = getMockSchoolById(id)
+
+      if (!basicInfo) {
+        return Promise.reject(new Error('院校不存在'))
+      }
+
+      const fullInfo: SchoolFullInfo = {
+        basicInfo,
+        majorCategories: getMockMajorCategories(id),
+        courseSystem: getMockCourseSystem(id),
+        facultyStats: getMockFacultyStats(id),
+        facultyMembers: getMockFacultyMembers(id),
+        employmentStats: getMockEmploymentStats(id),
+        employers: getMockEmployers(id),
+        chartData: getMockChartData(id),
+        achievementStats: getMockAchievementStats(id),
+        trendData: getMockTrendData(id),
+        awardWorks: getMockAwardWorks(id),
+        cardStats: {
+          employmentRates: [getMockEmploymentRate(id)].filter(Boolean),
+          facultyStrengths: [getMockFacultyStrength(id)].filter(Boolean),
+          studentScores: [getMockStudentScore(id)].filter(Boolean),
+          advantagePrograms: {}
+        }
+      }
+
+      return Promise.resolve({ data: fullInfo })
+    } else {
+      console.log('🚀 使用若依后端API - 院校完整信息')
+      return request({
+        url: `/designer/school/${id}/full-info`,
+        method: 'get'
+      })
+    }
   }
 }
 
@@ -319,7 +352,7 @@ export const majorApi = {
       return request({
         url: '/school/major/list',
         method: 'get',
-        params: { schoolId, category }
+        data: { schoolId, category }
       })
     }
   },
@@ -383,7 +416,7 @@ export const facultyApi = {
       return request({
         url: '/school/faculty/list',
         method: 'get',
-        params: { schoolId }
+        data: { schoolId }
       })
     }
   },
@@ -447,7 +480,7 @@ export const employmentApi = {
       return request({
         url: `/school/employment/school/${schoolId}`,
         method: 'get',
-        params: { year }
+        data: { year }
       })
     }
   },
@@ -463,7 +496,7 @@ export const employmentApi = {
       return request({
         url: `/school/employment/major/${majorId}`,
         method: 'get',
-        params: { year }
+        data: { year }
       })
     }
   },
@@ -479,7 +512,7 @@ export const employmentApi = {
       return request({
         url: `/school/employment/trend/${schoolId}`,
         method: 'get',
-        params: { years: years.join(',') }
+        data: { years: years.join(',') }
       })
     }
   }
@@ -498,7 +531,7 @@ export const achievementApi = {
       return request({
         url: `/school/award/school/${schoolId}`,
         method: 'get',
-        params: { level, year }
+        data: { level, year }
       })
     }
   },
@@ -514,7 +547,7 @@ export const achievementApi = {
       return request({
         url: `/school/achievement/school/${schoolId}`,
         method: 'get',
-        params: { type, year }
+        data: { type, year }
       })
     }
   },

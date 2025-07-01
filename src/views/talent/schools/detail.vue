@@ -183,12 +183,10 @@
           </div>
         </div>
 
-                <!-- 详情内容标签页 -->
+        <!-- 详情内容标签页 -->
         <div class="mb-8">
-                    <!-- 导航栏占位空间 -->
+          <!-- 导航栏占位空间 -->
           <div v-if="isSticky" class="nav-placeholder"></div>
-
-
 
           <!-- 标签页导航 -->
           <div
@@ -219,35 +217,70 @@
 
           <!-- 标签页内容 -->
           <div ref="tabContentRef" class="glass-card rounded-lg p-6">
-            <div class="tab-content">
+            <!-- 内容加载状态 -->
+            <div v-if="dataLoading" class="flex items-center justify-center h-64">
+              <div class="flex flex-col items-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                <p class="text-gray-400">正在加载院校详细信息...</p>
+              </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div v-else-if="schoolFullInfo" class="tab-content">
               <!-- 专业设置 -->
               <div v-if="activeTab === 'majors'">
-                <SchoolMajors :school-id="school.id" />
+                <SchoolMajors
+                  :school-id="school.id"
+                  :major-categories="schoolFullInfo.majorCategories"
+                  :course-system="schoolFullInfo.courseSystem"
+                />
               </div>
 
               <!-- 师资力量 -->
               <div v-if="activeTab === 'faculty'">
-                <SchoolFaculty :school-id="school.id" />
+                <SchoolFaculty
+                  :school-id="school.id"
+                  :faculty-stats="schoolFullInfo.facultyStats"
+                  :faculty-members="schoolFullInfo.facultyMembers"
+                />
               </div>
-
-              <!-- 学生作品 -->
-              <!-- <div v-if="activeTab === 'works'">
-                <SchoolStudentWorks :school-id="school.id" />
-              </div> -->
 
               <!-- 就业数据 -->
               <div v-if="activeTab === 'employment'">
-                <SchoolEmployment :school-id="school.id" />
+                <SchoolEmployment
+                  :school-id="school.id"
+                  :employment-stats="schoolFullInfo.employmentStats"
+                  :employers="schoolFullInfo.employers"
+                  :chart-data="schoolFullInfo.chartData"
+                />
               </div>
 
               <!-- 获奖成果 -->
               <div v-if="activeTab === 'achievements'">
-                <SchoolAchievements :school-id="school.id" />
+                <SchoolAchievements
+                  :school-id="school.id"
+                  :achievement-stats="schoolFullInfo.achievementStats"
+                  :trend-data="schoolFullInfo.trendData"
+                  :award-works="schoolFullInfo.awardWorks"
+                />
+              </div>
+            </div>
+
+            <!-- 错误状态 -->
+            <div v-else-if="!dataLoading" class="flex items-center justify-center h-64">
+              <div class="flex flex-col items-center">
+                <i class="ri-error-warning-line text-4xl text-red-400 mb-4"></i>
+                <p class="text-gray-400">加载院校详细信息失败</p>
+                <button
+                  @click="loadSchoolData"
+                  class="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+                >
+                  重新加载
+                </button>
               </div>
             </div>
           </div>
         </div>
-
 
       </div>
     </main>
@@ -257,6 +290,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useMessage } from 'naive-ui'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
 
 import SchoolMajors from '@/components/talent/SchoolMajors.vue'
@@ -265,32 +299,34 @@ import SchoolStudentWorks from '@/components/talent/SchoolStudentWorks.vue'
 import SchoolEmployment from '@/components/talent/SchoolEmployment.vue'
 import SchoolAchievements from '@/components/talent/SchoolAchievements.vue'
 import { useSchoolStore } from '@/stores/talent/school'
+import { schoolApi } from '@/api/talent/school'
 import {
   getMockSchoolById,
   getMockEmploymentRate
 } from '@/data/mockSchools'
 import { SchoolTypeLabels } from '@/types/talent/school'
-import type { School, SchoolType } from '@/types/talent/school'
+import type { School, SchoolType, SchoolFullInfo } from '@/types/talent/school'
 import { useSchoolFormatter } from '@/composables/talent/useSchool'
 
 const route = useRoute()
 const router = useRouter()
 const schoolStore = useSchoolStore()
+const message = useMessage()
 
 // 环境配置
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
   (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
 const school = ref<School | null>(null)
+const schoolFullInfo = ref<SchoolFullInfo | null>(null)
 const activeTab = ref('majors')
 const loading = ref(false)
+const dataLoading = ref(false)
 const tabNavigationRef = ref<HTMLElement | null>(null)
 const tabContentRef = ref<HTMLElement | null>(null)
 const isSticky = ref(false)
 const navOriginalTop = ref(0)
 const isCalculating = ref(false) // 防止重复计算的锁
-
-
 
 // 标签页配置
 const tabs = [
@@ -321,7 +357,38 @@ watch(schoolId, async (newId, oldId) => {
   }
 })
 
-// 获取院校信息
+// 加载院校完整数据的函数
+const loadSchoolData = async () => {
+  if (!schoolId.value) return
+
+  dataLoading.value = true
+  try {
+    console.log('🔧 开始加载院校完整信息:', schoolId.value)
+    const response = await schoolApi.getFullInfo(schoolId.value)
+
+    // 修复字段名不匹配问题：employmentCharts -> chartData
+    const rawData = response.data as any
+    if (rawData.employmentCharts && !rawData.chartData) {
+      rawData.chartData = rawData.employmentCharts
+    }
+
+    // 同样处理 awardTrends -> trendData 的映射
+    if (rawData.awardTrends && !rawData.trendData) {
+      rawData.trendData = rawData.awardTrends
+    }
+
+    schoolFullInfo.value = rawData
+    console.log('✅ 院校完整信息加载成功:', rawData)
+  } catch (error) {
+    console.error('❌ 加载院校完整信息失败:', error)
+    message.error('加载院校详细信息失败，请稍后重试')
+    schoolFullInfo.value = null
+  } finally {
+    dataLoading.value = false
+  }
+}
+
+// 获取院校基本信息
 const getSchoolInfo = async () => {
   try {
     loading.value = true
@@ -330,8 +397,6 @@ const getSchoolInfo = async () => {
     if (USE_MOCK_DATA) {
       // 使用模拟数据
       console.log('🔧 使用模拟数据 - 院校详情页面')
-
-      // 从mockSchools获取院校数据
       school.value = getMockSchoolById(id) || null
     } else {
       // 使用后端API
@@ -339,8 +404,13 @@ const getSchoolInfo = async () => {
       await schoolStore.fetchSchoolDetail(id)
       school.value = schoolStore.currentSchool
     }
+
+    // 如果基本信息加载成功，则开始加载完整信息
+    if (school.value) {
+      await loadSchoolData()
+    }
   } catch (error) {
-    console.error('获取院校信息失败:', error)
+    console.error('获取院校基本信息失败:', error)
     school.value = null
   } finally {
     loading.value = false
@@ -420,10 +490,15 @@ const formatLocation = (school: School) => {
 const getEmploymentRate = computed(() => {
   if (!school.value) return null
 
+  // 优先使用完整信息中的就业率数据
+  if (schoolFullInfo.value?.employmentStats?.employmentRate) {
+    return schoolFullInfo.value.employmentStats.employmentRate
+  }
+
+  // 兜底逻辑：如果完整信息还未加载，使用原有逻辑
   if (USE_MOCK_DATA) {
     return getMockEmploymentRate(school.value.id)
   } else {
-    // TODO: 调用后端API获取真实数据
     return school.value.employmentData?.employmentRate || null
   }
 })
@@ -624,8 +699,6 @@ const setupNavPositionObserver = () => {
   }, 2000)
 }
 
-
-
 onMounted(async () => {
   // 先添加滚动监听和resize监听
   window.addEventListener('scroll', handleScroll, { passive: true })
@@ -712,8 +785,6 @@ onUnmounted(() => {
   border: 1px solid rgba(10, 132, 255, 0.3);
   color: #60a5fa;
 }
-
-
 
 /* 标签页切换动画 */
 .tab-content {
@@ -821,7 +892,7 @@ onUnmounted(() => {
 /* 粘性导航栏 */
 .sticky-nav {
   transition: all 0.3s ease;
-  z-index: 100;
+  z-index: 40;
   padding-bottom: 0 !important;
 }
 
@@ -874,7 +945,7 @@ onUnmounted(() => {
   }
 
   .sticky-nav-fixed {
-    top: 64px; /* 移动端 TalentHeader 高度较小 */
+    top: 72px; /* 移动端 TalentHeader 基础高度64px + 预留移动端菜单空间 */
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }

@@ -66,6 +66,69 @@ const EMPLOYER_COLOR_SCHEMES = [
   'bg-blue-800/20'
 ]
 
+// 扩展的图表颜色方案（hex格式，用于ECharts）- 确保有足够的不同颜色
+const CHART_COLORS = [
+  // 主要颜色系列
+  '#0a84ff', // 蓝色
+  '#30d158', // 绿色
+  '#ff453a', // 红色
+  '#ff9f0a', // 橙色
+  '#bf5af2', // 紫色
+  '#ffcc02', // 黄色
+  '#5ac8fa', // 浅蓝色
+  '#ff375f', // 粉红色
+
+  // 深色系列
+  // '#007aff', // 深蓝色
+  // '#32d74b', // 深绿色
+  // '#ff3b30', // 深红色
+  // '#ff9500', // 深橙色
+  // '#af52de', // 深紫色
+  // '#f9ca24', // 深黄色
+  // '#64d2ff', // 深青色
+  // '#e84393', // 深粉色
+
+  // // 中性色系列
+  // '#5856d6', // 靛蓝色
+  // '#34c759', // 苹果绿
+  // '#fd79a8', // 玫瑰金
+  // '#00cec9', // 青绿色
+  // '#6c5ce7', // 淡紫色
+  // '#fdcb6e', // 桃色
+  // '#e17055', // 珊瑚色
+  // '#74b9ff', // 天蓝色
+
+  // // 扩展色系列
+  // '#a29bfe', // 薰衣草色
+  // '#fd79a8', // 樱花粉
+  // '#55a3ff', // 湖蓝色
+  // '#26de81', // 薄荷绿
+  // '#fc7c7c', // 西瓜红
+  // '#f8c291', // 蜜桃色
+  // '#c44569', // 酒红色
+  // '#3742fa', // 宝蓝色
+
+  // // 自然色系列
+  // '#2ed573', // 森林绿
+  // '#ff6b6b', // 番茄红
+  // '#4834d4', // 深紫蓝
+  // '#dda0dd', // 梅花色
+  // '#ff9ff3', // 兰花色
+  // '#54a0ff', // 冰蓝色
+  // '#5f27cd', // 皇家紫
+  // '#00d2d3', // 碧绿色
+
+  // // 渐变过渡色
+  // '#ff6348', // 橘红色
+  // '#2f3542', // 炭灰色
+  // '#ff4757', // 胭脂红
+  // '#3c6382', // 海军蓝
+  // '#40407a', // 深蓝紫
+  // '#706fd3', // 紫罗兰
+  // '#f1c40f', // 向日葵黄
+  // '#e55039', // 辣椒红
+]
+
 /**
  * 根据字符串生成稳定的随机数
  * 确保相同的输入总是得到相同的输出
@@ -157,3 +220,94 @@ export function generateEmployerStyles<T extends { id: number; name: string }>(
     colorClass: generateEmployerColorClass(employer.id, employer.name)
   }
 }
+
+/**
+ * 为图表数据项生成颜色（基础版本）
+ * @param itemName 数据项名称
+ * @param index 数据项索引（用于备用随机性）
+ * @returns hex颜色值
+ */
+export function generateChartColor(itemName: string, index: number = 0): string {
+  const seed = hashString(itemName)
+  const colorIndex = (seed + index) % CHART_COLORS.length
+  return CHART_COLORS[colorIndex]
+}
+
+/**
+ * 为图表数据项生成唯一颜色（确保每一项颜色不同）
+ * @param itemName 数据项名称
+ * @param index 数据项索引
+ * @param totalItems 数据项总数
+ * @param dataSetId 数据集标识符（可选，用于区分不同的数据集）
+ * @returns hex颜色值
+ */
+export function generateUniqueChartColor(
+  itemName: string,
+  index: number,
+  totalItems: number,
+  dataSetId: string = 'default'
+): string {
+  // 使用数据集ID、项目名称和索引组合来确保唯一性
+  const combinedSeed = hashString(`${dataSetId}_${itemName}_${index}`)
+
+  // 如果数据项较少，使用均匀分布策略
+  if (totalItems <= CHART_COLORS.length) {
+    // 确保颜色尽可能分散
+    const step = Math.floor(CHART_COLORS.length / totalItems)
+    const baseIndex = (index * step) % CHART_COLORS.length
+    const offset = combinedSeed % step
+    const colorIndex = (baseIndex + offset) % CHART_COLORS.length
+    return CHART_COLORS[colorIndex]
+  } else {
+    // 数据项较多时，使用hash分布
+    const colorIndex = combinedSeed % CHART_COLORS.length
+    return CHART_COLORS[colorIndex]
+  }
+}
+
+/**
+ * 为图表数据数组生成itemStyle（基础版本）
+ * @param data 原始图表数据（不包含itemStyle）
+ * @returns 包含itemStyle的图表数据
+ */
+export function generateChartItemStyles<T extends { name: string; value: number }>(
+  data: T[]
+): (T & { itemStyle: { color: string } })[] {
+  return data.map((item, index) => ({
+    ...item,
+    itemStyle: {
+      color: generateChartColor(item.name, index)
+    }
+  }))
+}
+
+/**
+ * 为图表数据数组生成唯一itemStyle（确保每一项颜色不同）
+ * @param data 原始图表数据（不包含itemStyle）
+ * @param dataSetId 数据集标识符（可选，用于区分不同的数据集）
+ * @returns 包含itemStyle的图表数据
+ */
+export function generateUniqueChartItemStyles<T extends { name: string; value: number }>(
+  data: T[],
+  dataSetId: string = 'default'
+): (T & { itemStyle: { color: string } })[] {
+  return data.map((item, index) => ({
+    ...item,
+    itemStyle: {
+      color: generateUniqueChartColor(item.name, index, data.length, dataSetId)
+    }
+  }))
+}
+
+/**
+ * 为行业分布数据生成itemStyle（专用函数）
+ * @param industryData 行业分布原始数据
+ * @returns 包含itemStyle的行业分布数据
+ */
+export function generateIndustryChartData<T extends { name: string; value: number }>(
+  industryData: T[]
+): (T & { itemStyle: { color: string } })[] {
+  return generateUniqueChartItemStyles(industryData, 'industry')
+}
+
+

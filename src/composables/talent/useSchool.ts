@@ -26,6 +26,7 @@ import {
   AwardLevelLabels
 } from '@/types/talent/school'
 import { achievementApi } from '@/api/talent/school'
+import { getStatusText, getStatusClass, getStatusTagType, getStatusIcon, isStatusActive, toggleStatus } from '@/utils/statusUtils'
 
 // 院校列表管理
 export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
@@ -456,6 +457,23 @@ export function useSchoolFormatter() {
     return tags
   }
 
+  // 状态相关格式化函数
+  const formatSchoolStatus = (status: '0' | '1') => {
+    return getStatusText(status)
+  }
+
+  const getSchoolStatusClass = (status: '0' | '1') => {
+    return getStatusClass(status)
+  }
+
+  const getSchoolStatusTagType = (status: '0' | '1') => {
+    return getStatusTagType(status)
+  }
+
+  const getSchoolStatusIcon = (status: '0' | '1') => {
+    return getStatusIcon(status)
+  }
+
   return {
     formatSchoolType,
     formatSchoolLevel,
@@ -464,7 +482,11 @@ export function useSchoolFormatter() {
     formatEmploymentRate,
     formatSalary,
     formatRanking,
-    formatSchoolTags
+    formatSchoolTags,
+    formatSchoolStatus,
+    getSchoolStatusClass,
+    getSchoolStatusTagType,
+    getSchoolStatusIcon
   }
 }
 

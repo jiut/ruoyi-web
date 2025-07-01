@@ -40,13 +40,13 @@
           >
             院校数据库
           </router-link>
-          <router-link
+          <!-- <router-link
             to="/talent/works"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
             active-class="active"
           >
             学生作品库
-          </router-link>
+          </router-link> -->
           <router-link
             to="/talent/jobs"
             class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
@@ -445,7 +445,7 @@ onUnmounted(() => {
   backdrop-filter: blur(12px);
   border: 1px solid rgba(99, 99, 102, 0.2);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  z-index: 50;
+  z-index: 60;
 }
 
 .breadcrumb-separator {

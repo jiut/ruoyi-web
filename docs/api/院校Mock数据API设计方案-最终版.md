@@ -217,7 +217,6 @@ interface ChartData {
   industryData: Array<{
     value: number                    // 数值
     name: string                     // 行业名称
-    itemStyle: { color: string }     // 颜色样式
   }>
   salaryData: number[]               // 薪资分布数据
   salaryLabels: string[]             // 薪资区间标签

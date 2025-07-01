@@ -259,43 +259,67 @@ const formatLocation = (school: School) => {
   return school.location || school.province || school.city || '未知'
 }
 
-// 格式化就业率 - 根据环境变量切换数据源
+// 格式化就业率 - 优先使用后端数据，其次使用Mock数据
 const formatEmploymentRate = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.employmentRate) {
+    return school.employmentRate
+  }
+
+  // 如果没有后端数据，根据环境变量决定
   if (USE_MOCK_DATA) {
     return getMockEmploymentRate(school.id)
   } else {
-    // TODO: 调用后端API获取真实数据
-    return '请配置后端API'
+    // 后端暂未提供数据，显示默认值
+    return '--'
   }
 }
 
-// 格式化师资力量评分 - 根据环境变量切换数据源
+// 格式化师资力量评分 - 优先使用后端数据，其次使用Mock数据
 const formatFacultyStrength = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.facultyStrength) {
+    return school.facultyStrength
+  }
+
+  // 如果没有后端数据，根据环境变量决定
   if (USE_MOCK_DATA) {
     return getMockFacultyStrength(school.id)
   } else {
-    // TODO: 调用后端API获取真实数据
-    return '请配置后端API'
+    // 后端暂未提供数据，显示默认值
+    return '--'
   }
 }
 
-// 格式化学生评分 - 根据环境变量切换数据源
+// 格式化学生评分 - 优先使用后端数据，其次使用Mock数据
 const formatStudentScore = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.studentScore) {
+    return school.studentScore
+  }
+
+  // 如果没有后端数据，根据环境变量决定
   if (USE_MOCK_DATA) {
     return getMockStudentScore(school.id)
   } else {
-    // TODO: 调用后端API获取真实数据
-    return '请配置后端API'
+    // 后端暂未提供数据，显示默认值
+    return '--'
   }
 }
 
-// 获取优势专业 - 根据环境变量切换数据源
+// 获取优势专业 - 优先使用后端数据，其次使用Mock数据
 const getAdvantagePrograms = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.advantagePrograms) {
+    return school.advantagePrograms
+  }
+
+  // 如果没有后端数据，根据环境变量决定
   if (USE_MOCK_DATA) {
     return getMockAdvantagePrograms(school)
   } else {
-    // TODO: 调用后端API获取真实数据
-    return '请配置后端API'
+    // 后端暂未提供数据，显示默认值
+    return '待完善'
   }
 }
 </script>

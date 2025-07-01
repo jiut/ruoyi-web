@@ -173,29 +173,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/exception/500/index.vue'),
   },
 
-  // 技能标签演示页面
-  {
-    path: '/test/skill-tags',
-    name: 'SkillTagDemo',
-    component: () => import('@/views/test/skill-tag-demo.vue'),
-    meta: { title: '技能标签演示' }
-  },
 
-  // Mock数据测试页面
-  {
-    path: '/test/mock-data',
-    name: 'MockDataTest',
-    component: () => import('@/views/test/mock-data-test.vue'),
-    meta: { title: 'Mock数据测试' }
-  },
-
-  // 设计师数据调试页面
-  {
-    path: '/debug/designers',
-    name: 'DesignersDebug',
-    component: () => import('@/views/talent/designers/debug.vue'),
-    meta: { title: '设计师数据调试' }
-  },
 
   // 人才模块
   {

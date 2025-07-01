@@ -44,59 +44,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { schoolApi } from '@/api/talent/school'
+import { computed } from 'vue'
+import type { MajorCategoryData, CourseGroup } from '@/types/talent/school'
 
 interface Props {
   schoolId: number
-  majors?: any[]
+  majorCategories?: MajorCategoryData[]
+  courseSystem?: CourseGroup[]
 }
 
 const props = defineProps<Props>()
 
-const loading = ref(false)
-const majorCategories = ref<any[]>([])
-const courseSystem = ref<any[]>([])
-
-// 环境配置：根据VITE_USE_MOCK_DATA切换数据源
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
-
-console.log('🔍 专业模块环境变量调试信息:')
-console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA)
-
-// 加载专业数据
-const loadMajorData = async () => {
-  try {
-    loading.value = true
-    const response = await schoolApi.getSchoolMajors(props.schoolId)
-
-    if (USE_MOCK_DATA) {
-      // 使用模拟数据时的数据结构
-      const mockResponse = response as { majorCategories: any[]; courseSystem: any[] }
-      majorCategories.value = mockResponse.majorCategories || []
-      courseSystem.value = mockResponse.courseSystem || []
-    } else {
-      // 使用后端API时的数据结构
-      const apiResponse = response as { data?: { majorCategories?: any[]; courseSystem?: any[] } }
-      majorCategories.value = apiResponse.data?.majorCategories || []
-      courseSystem.value = apiResponse.data?.courseSystem || []
-    }
-  } catch (error) {
-    console.error('加载专业数据失败:', error)
-    // 发生错误时使用默认数据
-    majorCategories.value = []
-    courseSystem.value = []
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  loadMajorData()
-})
+// 直接使用从父组件传递的数据，无需额外请求API
+const majorCategories = computed(() => props.majorCategories || [])
+const courseSystem = computed(() => props.courseSystem || [])
+const loading = computed(() => !props.majorCategories && !props.courseSystem)
 </script>
 
 <style scoped>

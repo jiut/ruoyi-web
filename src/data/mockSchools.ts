@@ -30,7 +30,7 @@ export const mockSchools: School[] = [
     totalTeachers: 3485,
     facultyCount: 15,
     majorCount: 82,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: true,
     is211: true,
@@ -57,7 +57,7 @@ export const mockSchools: School[] = [
     totalTeachers: 572,
     facultyCount: 8,
     majorCount: 15,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: false,
     is211: false,
@@ -84,7 +84,7 @@ export const mockSchools: School[] = [
     totalTeachers: 2804,
     facultyCount: 12,
     majorCount: 96,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: true,
     is211: true,
@@ -111,7 +111,7 @@ export const mockSchools: School[] = [
     totalTeachers: 900,
     facultyCount: 18,
     majorCount: 26,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: false,
     is211: false,
@@ -138,7 +138,7 @@ export const mockSchools: School[] = [
     totalTeachers: 700,
     facultyCount: 12,
     majorCount: 31,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: false,
     is211: false,
@@ -165,7 +165,7 @@ export const mockSchools: School[] = [
     totalTeachers: 1500,
     facultyCount: 8,
     majorCount: 55,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: false,
     is211: true,
@@ -192,7 +192,7 @@ export const mockSchools: School[] = [
     totalTeachers: 2200,
     facultyCount: 10,
     majorCount: 70,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: true,
     is211: true,
@@ -219,7 +219,7 @@ export const mockSchools: School[] = [
     totalTeachers: 2500,
     facultyCount: 11,
     majorCount: 75,
-    status: 'ACTIVE',
+    status: '0',
     isKey: true,
     is985: true,
     is211: true,
@@ -1058,7 +1058,7 @@ interface EmployerData {
 
 // 图表数据结构
 interface ChartData {
-  industryData: Array<{ value: number; name: string; itemStyle: { color: string } }>
+      industryData: Array<{ value: number; name: string }>
   salaryData: number[]
   salaryLabels: string[]
 }
@@ -1211,88 +1211,88 @@ export const mockEmployersBySchool: Record<number, EmployerData[]> = {
 export const mockChartDataBySchool: Record<number, ChartData> = {
   1: { // 清华大学 - 偏向科技互联网，高薪资
     industryData: [
-      { value: 45, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 18, name: '设计咨询', itemStyle: { color: '#30d158' } },
-      { value: 15, name: '高校研究', itemStyle: { color: '#ff453a' } },
-      { value: 12, name: '国际企业', itemStyle: { color: '#ff9f0a' } },
-      { value: 10, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+              { value: 45, name: '互联网科技' },
+        { value: 18, name: '设计咨询' },
+        { value: 15, name: '高校研究' },
+        { value: 12, name: '国际企业' },
+        { value: 10, name: '其他行业' }
     ],
     salaryData: [2, 8, 15, 35, 25, 15],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   2: { // 中央美术学院 - 偏向文化艺术，薪资分布较为平均
     industryData: [
-      { value: 35, name: '文化艺术', itemStyle: { color: '#ff453a' } },
-      { value: 25, name: '广告传媒', itemStyle: { color: '#ff9f0a' } },
-      { value: 20, name: '教育培训', itemStyle: { color: '#30d158' } },
-      { value: 12, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+              { value: 35, name: '文化艺术' },
+        { value: 25, name: '广告传媒' },
+        { value: 20, name: '教育培训' },
+        { value: 12, name: '互联网科技' },
+        { value: 8, name: '其他行业' }
     ],
     salaryData: [8, 18, 30, 25, 15, 4],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   3: { // 同济大学 - 汽车设计和建筑设计强，中高薪资
     industryData: [
-      { value: 30, name: '汽车设计', itemStyle: { color: '#30d158' } },
-      { value: 25, name: '建筑设计', itemStyle: { color: '#ff9f0a' } },
-      { value: 20, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 15, name: '设计咨询', itemStyle: { color: '#ff453a' } },
-      { value: 10, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+              { value: 30, name: '汽车设计' },
+        { value: 25, name: '建筑设计' },
+        { value: 20, name: '互联网科技' },
+        { value: 15, name: '设计咨询' },
+        { value: 10, name: '其他行业' }
     ],
     salaryData: [3, 10, 20, 35, 22, 10],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   4: { // 中国美术学院 - 传统工艺与当代艺术
     industryData: [
-      { value: 40, name: '文化创意', itemStyle: { color: '#ff453a' } },
-      { value: 22, name: '传统工艺', itemStyle: { color: '#ff9f0a' } },
-      { value: 18, name: '教育培训', itemStyle: { color: '#30d158' } },
-      { value: 12, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+      { value: 40, name: '文化创意' },
+      { value: 22, name: '传统工艺' },
+      { value: 18, name: '教育培训' },
+      { value: 12, name: '互联网科技' },
+      { value: 8, name: '其他行业' }
     ],
     salaryData: [12, 22, 28, 22, 12, 4],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   5: { // 广州美术学院 - 游戏动漫和商业设计
     industryData: [
-      { value: 32, name: '游戏动漫', itemStyle: { color: '#0a84ff' } },
-      { value: 28, name: '商业设计', itemStyle: { color: '#30d158' } },
-      { value: 20, name: '互联网科技', itemStyle: { color: '#ff9f0a' } },
-      { value: 12, name: '广告传媒', itemStyle: { color: '#ff453a' } },
-      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+      { value: 32, name: '游戏动漫' },
+      { value: 28, name: '商业设计' },
+      { value: 20, name: '互联网科技' },
+      { value: 12, name: '广告传媒' },
+      { value: 8, name: '其他行业' }
     ],
     salaryData: [6, 15, 28, 30, 18, 3],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   6: { // 江南大学 - 工业设计强校，就业率高
     industryData: [
-      { value: 38, name: '制造业设计', itemStyle: { color: '#30d158' } },
-      { value: 25, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 18, name: '消费电子', itemStyle: { color: '#ff9f0a' } },
-      { value: 12, name: '设计咨询', itemStyle: { color: '#ff453a' } },
-      { value: 7, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+      { value: 38, name: '制造业设计' },
+      { value: 25, name: '互联网科技' },
+      { value: 18, name: '消费电子' },
+      { value: 12, name: '设计咨询' },
+      { value: 7, name: '其他行业' }
     ],
     salaryData: [4, 12, 25, 32, 20, 7],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   7: { // 北京理工大学 - 高科技领域，高薪资
     industryData: [
-      { value: 35, name: '科技制造', itemStyle: { color: '#0a84ff' } },
-      { value: 25, name: '国防科技', itemStyle: { color: '#ff453a' } },
-      { value: 20, name: '互联网科技', itemStyle: { color: '#30d158' } },
-      { value: 12, name: '精密仪器', itemStyle: { color: '#ff9f0a' } },
-      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+      { value: 35, name: '科技制造' },
+      { value: 25, name: '国防科技' },
+      { value: 20, name: '互联网科技' },
+      { value: 12, name: '精密仪器' },
+      { value: 8, name: '其他行业' }
     ],
     salaryData: [2, 6, 18, 30, 28, 16],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
   },
   8: { // 湖南大学 - 汽车设计见长
     industryData: [
-      { value: 40, name: '汽车制造', itemStyle: { color: '#30d158' } },
-      { value: 22, name: '工程机械', itemStyle: { color: '#ff9f0a' } },
-      { value: 18, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-      { value: 12, name: '设计咨询', itemStyle: { color: '#ff453a' } },
-      { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+      { value: 40, name: '汽车制造' },
+      { value: 22, name: '工程机械' },
+      { value: 18, name: '互联网科技' },
+      { value: 12, name: '设计咨询' },
+      { value: 8, name: '其他行业' }
     ],
     salaryData: [5, 14, 26, 30, 20, 5],
     salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
@@ -1302,11 +1302,11 @@ export const mockChartDataBySchool: Record<number, ChartData> = {
 // 模拟图表数据（默认数据，用于兼容）
 export const mockChartData: ChartData = {
   industryData: [
-    { value: 42, name: '互联网科技', itemStyle: { color: '#0a84ff' } },
-    { value: 23, name: '设计咨询', itemStyle: { color: '#30d158' } },
-    { value: 15, name: '广告传媒', itemStyle: { color: '#ff9f0a' } },
-    { value: 12, name: '高校研究', itemStyle: { color: '#ff453a' } },
-    { value: 8, name: '其他行业', itemStyle: { color: '#bf5af2' } }
+    { value: 42, name: '互联网科技' },
+    { value: 23, name: '设计咨询' },
+    { value: 15, name: '广告传媒' },
+    { value: 12, name: '高校研究' },
+    { value: 8, name: '其他行业' }
   ],
   salaryData: [5, 12, 25, 30, 18, 10],
   salaryLabels: ['8K-', '8-12K', '12-15K', '15-20K', '20-25K', '25K+']
@@ -1682,7 +1682,7 @@ interface SchoolCardStatsData {
   employmentRates: string[]
   facultyStrengths: string[]
   studentScores: string[]
-  advantagePrograms: Record<string, string[]>
+  advantagePrograms: string[]
 }
 
 // 模拟SchoolCard卡片统计数据 - 按学校ID分类
@@ -1691,65 +1691,49 @@ export const mockSchoolCardStatsBySchool: Record<number, SchoolCardStatsData> = 
     employmentRates: ['96.8%'],
     facultyStrengths: ['5.0'],
     studentScores: ['4.9'],
-    advantagePrograms: {
-      'COMPREHENSIVE': ['信息艺术设计', '智能产品设计', '交互设计']
-    }
+    advantagePrograms: ['信息艺术设计', '智能产品设计', '交互设计']
   },
   2: { // 中央美术学院
     employmentRates: ['94.3%'],
     facultyStrengths: ['4.9'],
     studentScores: ['4.8'],
-    advantagePrograms: {
-      'ART': ['视觉传达设计', '数字媒体艺术', '传统文化设计']
-    }
+    advantagePrograms: ['视觉传达设计', '数字媒体艺术', '传统文化设计']
   },
   3: { // 同济大学
     employmentRates: ['95.7%'],
     facultyStrengths: ['4.8'],
     studentScores: ['4.7'],
-    advantagePrograms: {
-      'COMPREHENSIVE': ['汽车设计', '可持续设计', '城市设计']
-    }
+    advantagePrograms: ['汽车设计', '可持续设计', '城市设计']
   },
   4: { // 中国美术学院
     employmentRates: ['92.1%'],
     facultyStrengths: ['4.8'],
     studentScores: ['4.7'],
-    advantagePrograms: {
-      'ART': ['陶瓷艺术', '纤维艺术', '文化创意设计']
-    }
+    advantagePrograms: ['陶瓷艺术', '纤维艺术', '文化创意设计']
   },
   5: { // 广州美术学院
     employmentRates: ['93.8%'],
     facultyStrengths: ['4.6'],
     studentScores: ['4.5'],
-    advantagePrograms: {
-      'ART': ['游戏美术设计', '岭南文化设计', '商业设计']
-    }
+    advantagePrograms: ['游戏美术设计', '岭南文化设计', '商业设计']
   },
   6: { // 江南大学
     employmentRates: ['97.2%'],
     facultyStrengths: ['4.9'],
     studentScores: ['4.8'],
-    advantagePrograms: {
-      'COMPREHENSIVE': ['工业设计', '用户体验设计', '智能产品设计']
-    }
+    advantagePrograms: ['工业设计', '用户体验设计', '智能产品设计']
   },
   7: { // 北京理工大学
     employmentRates: ['96.5%'],
     facultyStrengths: ['4.7'],
     studentScores: ['4.6'],
-    advantagePrograms: {
-      'ENGINEERING': ['军工设计', '精密仪器设计', 'AI设计']
-    }
+    advantagePrograms: ['军工设计', '精密仪器设计', 'AI设计']
   },
   8: { // 湖南大学
     employmentRates: ['95.1%'],
     facultyStrengths: ['4.7'],
     studentScores: ['4.6'],
-    advantagePrograms: {
-      'COMPREHENSIVE': ['汽车造型设计', '工程机械设计', '文化设计']
-    }
+    advantagePrograms: ['汽车造型设计', '工程机械设计', '文化设计']
   }
 }
 
@@ -1758,13 +1742,7 @@ export const mockSchoolCardStats: SchoolCardStatsData = {
   employmentRates: ['96.8%', '95.2%', '92.8%', '91.5%', '89.3%', '87.6%'],
   facultyStrengths: ['5.0', '4.9', '4.8', '4.7', '4.6', '4.5'],
   studentScores: ['4.9', '4.8', '4.7', '4.6', '4.5', '4.4'],
-  advantagePrograms: {
-    'COMPREHENSIVE': ['UI/UX设计', '视觉传达'],
-    'ART': ['视觉传达', '产品设计'],
-    'ENGINEERING': ['工业设计', '数字媒体'],
-    'NORMAL': ['艺术教育', '美术学'],
-    'FINANCE': ['品牌设计', '广告设计']
-  }
+  advantagePrograms: ['UI/UX设计', '视觉传达', '产品设计', '工业设计', '数字媒体']
 }
 
 // 格式化就业率
@@ -1803,11 +1781,11 @@ export function getMockStudentScore(schoolId: number) {
 // 获取优势专业
 export function getMockAdvantagePrograms(school: School) {
   if (mockSchoolCardStatsBySchool[school.id]) {
-    const programs = mockSchoolCardStatsBySchool[school.id].advantagePrograms[school.schoolType] || ['设计学', '艺术学']
+    const programs = mockSchoolCardStatsBySchool[school.id].advantagePrograms
     return programs.join('、')
   }
   // 回退到原来的逻辑
-  const programs = mockSchoolCardStats.advantagePrograms[school.schoolType] || ['设计学', '艺术学']
+  const programs = mockSchoolCardStats.advantagePrograms
   return programs.join('、')
 }
 

@@ -77,7 +77,7 @@
 
 /* 职位卡片 */
 .job-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   background: rgba(28, 28, 30, 0.7);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -86,8 +86,8 @@
 }
 
 .job-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* 搜索输入框 */
@@ -459,8 +459,135 @@ input[type="number"]::-webkit-outer-spin-button {
   border-color: #0a84ff;
 }
 
+.border-primary\/20 {
+  border-color: rgba(10, 132, 255, 0.2) !important;
+}
+
 .border-primary\/30 {
   border-color: rgba(10, 132, 255, 0.3);
 }
 
 /* 技能标签颜色变体已移至 skill-tags.css，使用分类系统 */
+
+/* 院校卡片基础样式 */
+.school-card {
+  transition: all 0.3s ease;
+}
+
+.school-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 设计师卡片基础样式 */
+.designer-card {
+  transition: all 0.3s ease;
+}
+
+.designer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 状态相关样式 */
+.status-active {
+  @apply text-green-500;
+}
+
+.status-inactive {
+  @apply text-red-500;
+}
+
+/* 状态标签样式 */
+.status-tag {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-tag.status-active {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-tag.status-inactive {
+  @apply bg-red-100 text-red-800;
+}
+
+/* 暗色主题下的状态标签 */
+.dark .status-tag.status-active {
+  @apply bg-green-900/30 text-green-400 border border-green-500/30;
+}
+
+.dark .status-tag.status-inactive {
+  @apply bg-red-900/30 text-red-400 border border-red-500/30;
+}
+
+/* 状态图标样式 */
+.status-icon {
+  @apply w-4 h-4 mr-1;
+}
+
+.status-icon.status-active {
+  @apply text-green-500;
+}
+
+.status-icon.status-inactive {
+  @apply text-red-500;
+}
+
+/* 状态开关样式 */
+.status-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors;
+}
+
+.status-switch.status-active {
+  @apply bg-green-600;
+}
+
+.status-switch.status-inactive {
+  @apply bg-gray-600;
+}
+
+.status-switch-handle {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform;
+}
+
+.status-switch.status-active .status-switch-handle {
+  @apply translate-x-6;
+}
+
+.status-switch.status-inactive .status-switch-handle {
+  @apply translate-x-1;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .school-card,
+  .designer-card,
+  .job-card {
+    margin-bottom: 1rem;
+  }
+
+  .filter-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .status-tag {
+    @apply text-xs px-2 py-1;
+  }
+}
+
+/* 动画效果 */
+@keyframes statusChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.status-changing {
+  animation: statusChange 0.3s ease-in-out;
+}
