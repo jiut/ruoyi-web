@@ -192,7 +192,7 @@ const brandSectionStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
+  background-color: #FFF;
   padding: 20px;
 }
 

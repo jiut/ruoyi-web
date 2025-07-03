@@ -5,6 +5,17 @@
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-white mb-2">用户菜单调试页面</h1>
         <p class="text-gray-400">用于调试加载框和用户信息框的对齐问题</p>
+
+        <!-- 快速导航 -->
+        <div class="mt-4 flex justify-center space-x-4">
+          <router-link
+            to="/registration/test"
+            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 text-sm font-medium"
+          >
+            <i class="ri-test-tube-line mr-2"></i>
+            注册功能测试页面
+          </router-link>
+        </div>
       </div>
 
       <!-- 控制面板 -->

@@ -192,13 +192,13 @@
         >
           院校数据库
         </router-link>
-        <router-link
+        <!-- <router-link
           to="/talent/works"
           class="nav-button px-3 py-2 rounded-lg text-sm font-medium"
           active-class="active"
         >
           学生作品库
-        </router-link>
+        </router-link> -->
         <router-link
           to="/talent/jobs"
           class="nav-button px-3 py-2 rounded-lg text-sm font-medium"

@@ -8,6 +8,12 @@ export interface UserInfo {
   userBalance: number
   userGrade: string,
   userName: string
+  userId?: string | number // 添加userId字段
+  roles?: Array<{
+    roleId: string
+    roleName: string
+    roleKey: string
+  }>
 }
 
 export interface UserState {
@@ -20,7 +26,10 @@ export function defaultSetting(): UserState {
       avatar: 'https://avatars.githubusercontent.com/u/32251822?v=4',
       name: '熊猫助手',
       userBalance: 0,
-      userGrade: '0'
+      userGrade: '0',
+      userName: '',
+      userId: undefined, // 添加userId字段
+      roles: []
     },
   }
 }

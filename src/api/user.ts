@@ -70,6 +70,19 @@ export function editUserNmae(nickName:string) {
 }
 
 /**
+ * 专用角色选择接口（绕过权限和数据限制）
+ */
+export function selectUserRole(roleId: string) {
+    return request({
+        url: '/system/user/selectRole',
+        method: 'post',
+        data: {
+            roleId: roleId  // 保持字符串格式
+        }
+    })
+}
+
+/**
  * 退出登录
  */
 export function loginOut() {

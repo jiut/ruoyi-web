@@ -248,7 +248,7 @@ const getUserInitial = () => {
       <!-- 用户下拉菜单 -->
       <div
         v-show="showUserMenu"
-        class="talent-user-dropdown rounded-lg mt-2 right-0 w-48"
+        class="talent-user-dropdown absolute top-full right-0 mt-2 w-48 rounded-lg"
         @click.stop
       >
         <div class="p-3 border-b border-gray-700">
@@ -354,17 +354,17 @@ const getUserInitial = () => {
 
 <style scoped>
 .talent-user-dropdown {
-  position: absolute !important;
-  background: rgba(28, 28, 30, 0.95) !important;
+  background: rgba(28, 28, 30, 0.95);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(99, 99, 102, 0.2);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  z-index: 9999 !important;
+  z-index: 9999;
   /* 不要设置 display，让 v-show 控制 */
 }
 
 /* 防止过渡期间的布局跳动 */
 .user-menu-container {
+  position: relative; /* 确保下拉菜单相对于此容器定位 */
   min-height: 44px; /* 确保容器有最小高度 */
   display: flex;
   align-items: center;

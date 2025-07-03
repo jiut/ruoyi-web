@@ -18,6 +18,7 @@ import {
   LogOut as out
 } from '@vicons/ionicons5'
 import { defineAsyncComponent } from 'vue'
+import { getCurrentRole } from '@/utils/authUtils'
 
 const router = useRouter()
 const userInfo = ref<UserInfo>(defaultSetting().userInfo)
@@ -64,6 +65,7 @@ async function getLoginUserInfo() {
       userInfo.value.avatar = newUserInfo.data.user.avatar;
       userInfo.value.name = newUserInfo.data.user.nickName;
       userInfo.value.userBalance = newUserInfo.data.user.userBalance;
+      userInfo.value.roles = newUserInfo.data.user.roles || [];
     }
   } catch (error) {
     console.warn('获取用户信息异常:', error);
@@ -79,6 +81,23 @@ async function getLoginUserInfo() {
     removeToken();
     // 跳转到登录页面
     router.push('/login')
+}
+
+/**
+ * 获取角色显示名称
+ */
+function getRoleDisplayName() {
+  const currentRole = getCurrentRole()
+  if (!currentRole) return ''
+
+  const roleMap: Record<string, string> = {
+    '1932319128081666050': '设计师',
+    '1932319128081666051': '企业管理员',
+    '1932319128081666052': '院校管理员',
+    '2': '普通用户'
+  }
+
+  return roleMap[currentRole.roleId] || currentRole.roleName || ''
 }
 
 function renderIcon(icon: any) {
@@ -128,9 +147,14 @@ function handleMenuSelect(key: string) {
     </n-dropdown>
     <div class="flex-1 min-w-0 ml-2">
       <n-ellipsis style="max-width: 80px">{{ userInfo.name ?? '熊猫助手' }}</n-ellipsis>
-      <p class="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">
-        <span style="font-size: 10rpx;">{{$t('mjset.balance')}}:{{ userInfo.userBalance }}</span>
-      </p>
+      <div class="flex items-center space-x-2">
+        <p class="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">
+          <span style="font-size: 10rpx;">{{$t('mjset.balance')}}:{{ userInfo.userBalance }}</span>
+        </p>
+        <span v-if="getRoleDisplayName()" class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+          {{ getRoleDisplayName() }}
+        </span>
+      </div>
     </div>
     <Setting v-if="settingVisible" v-model:visible="settingVisible" />
     <PromptStore v-if="promptStoreVisible" v-model:visible="promptStoreVisible" title="购买套餐" />

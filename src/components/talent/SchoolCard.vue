@@ -1,6 +1,10 @@
 <template>
   <div
-    class="glass-card rounded-lg glow-border card-hover cursor-pointer"
+    :class="[
+      'glass-card rounded-lg glow-border card-hover cursor-pointer',
+      isMobile ? 'mobile-card' : 'desktop-card',
+      navigating && selectedSchool?.id === school.id ? 'navigating' : ''
+    ]"
     @click="handleCardClick"
   >
     <div class="p-2 md:p-6">
@@ -114,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import type { School, SchoolType } from '@/types/talent/school'
 import { useSchoolFormatter, useSchoolInteraction } from '@/composables/talent/useSchool'
 import {
@@ -135,6 +139,25 @@ const emit = defineEmits<{
   detail: [school: School]
 }>()
 
+// 设备检测和导航状态
+const isMobile = ref(false)
+const navigating = ref(false)
+const selectedSchool = ref<School | null>(null)
+
+const checkDevice = () => {
+  const screenWidth = window.innerWidth
+  const userAgent = navigator.userAgent
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
+  isMobile.value = screenWidth < 1024 ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) ||
+    (isTouchDevice && screenWidth < 1200)
+}
+
+const handleResize = () => {
+  checkDevice()
+}
+
 // 使用组合式函数
 const { formatSchoolType } = useSchoolFormatter()
 const { isFavorited, toggleFavorite: toggleFav } = useSchoolInteraction()
@@ -150,6 +173,7 @@ console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
 // 处理卡片点击
 const handleCardClick = () => {
   console.log('🔍 SchoolCard 点击事件:', props.school.schoolName, props.school.id)
+  selectedSchool.value = props.school
   emit('click', props.school)
   emit('detail', props.school)
   console.log('📤 已发送 click 和 detail 事件')
@@ -163,6 +187,16 @@ const toggleFavorite = async () => {
     console.error('Toggle favorite error:', error)
   }
 }
+
+// 生命周期
+onMounted(() => {
+  checkDevice()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
 // 获取院校Logo首字母
 const getSchoolInitial = (schoolName: string) => {

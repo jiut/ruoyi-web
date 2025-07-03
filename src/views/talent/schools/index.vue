@@ -1135,7 +1135,7 @@ input:checked + .switch-slider:before {
 .mobile-card:hover::after {
   border-color: rgba(10, 132, 255, 0.6);
   transform: translateY(-50%) rotate(45deg) scale(1.1);
-}
+}src\views\talent\schools\index.vue
 
 .desktop-card {
   position: relative;

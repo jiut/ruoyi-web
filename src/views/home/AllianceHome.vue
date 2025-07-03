@@ -10,15 +10,15 @@
 					</div>
 				</div>
 				<nav class="hidden md:flex space-x-8">
-					<a @click="scrollToSection('talent-pool')"
+					<router-link to="/talent/schools"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="探索全球设计人才资源，寻找合适的设计师或工作机会">星海人才</a>
+						title="探索全球设计人才资源，寻找合适的设计师或工作机会">星海人才</router-link>
 					<a @click="scrollToSection('ai-resources')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
 						title="体验前沿AI设计工具，提升创作效率">AI资讯</a>
 					<a @click="scrollToSection('task-system')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
-						title="发布或接取设计任务，智能匹配需求">创意速配</a>
+						title="发布或接取设计任务，智能匹配需求">智图工厂</a>
 					<!-- <a @click="scrollToSection('data-dashboard')"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer whitespace-nowrap"
 						title="实时监控行业数据，把握市场动向">AIGC驾驶舱</a> -->
@@ -51,12 +51,14 @@
 			<!-- 移动端菜单 -->
 			<div v-if="mobileMenuOpen" class="md:hidden bg-gray-900 py-4 px-6 shadow-lg">
 				<div class="flex flex-col space-y-4">
-					<a @click="scrollToSection('talent-pool'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">星海人才</a>
+					<!-- <a @click="scrollToSection('talent-pool'); mobileMenuOpen = false"
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">星海人才</a> -->
+					<router-link to="/talent/schools" @click="mobileMenuOpen = false"
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">星海人才</router-link>
 					<a @click="scrollToSection('ai-resources'); mobileMenuOpen = false"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">AI资讯</a>
 					<a @click="scrollToSection('task-system'); mobileMenuOpen = false"
-						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">创意速配</a>
+						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">智图工厂</a>
 					<a @click="scrollToSection('data-dashboard'); mobileMenuOpen = false"
 						class="hover:text-purple-400 transition-colors duration-300 cursor-pointer">数据驾驶舱</a>
 				</div>
@@ -122,11 +124,11 @@
 						<p class="text-gray-400 mb-4">
 							汇聚全球设计师资源，连接院校、学生、企业，打造人才生态闭环
 						</p>
-						<a @click="scrollToSection('talent-pool')"
+						<router-link to="/talent/schools"
 							class="text-blue-400 hover:text-blue-300 flex items-center cursor-pointer">
 							<span>了解更多</span>
 							<i class="fas fa-arrow-right ml-2"></i>
-						</a>
+						</router-link>
 					</div>
 					<!-- AI资讯 -->
 					<div
@@ -144,13 +146,13 @@
 							<i class="fas fa-arrow-right ml-2"></i>
 						</a>
 					</div>
-					<!-- 创意速配 -->
+					<!-- 智图工厂 -->
 					<div
 						class="bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
 						<div class="h-12 w-12 rounded-full bg-cyan-600 flex items-center justify-center mb-6">
 							<i class="fas fa-exchange-alt text-xl"></i>
 						</div>
-						<h3 class="text-xl font-bold mb-3">创意速配</h3>
+						<h3 class="text-xl font-bold mb-3">智图工厂</h3>
 						<p class="text-gray-400 mb-4">
 							智能匹配设计需求与人才，提供全流程任务管理与支付保障
 						</p>
@@ -222,10 +224,9 @@
 							展示新锐设计师作品，为企业提供新鲜创意与人才发掘渠道
 						</p>
 						<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-							<div v-for="(image, index) in studentWorks" :key="`work-${index}`" class="aspect-square rounded-lg overflow-hidden cursor-pointer">
-								<img
-									:src="image.src"
-									:alt="image.alt"
+							<div v-for="(image, index) in studentWorks" :key="`work-${index}`"
+								class="aspect-square rounded-lg overflow-hidden cursor-pointer">
+								<img :src="image.src" :alt="image.alt"
 									class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
 							</div>
 						</div>
@@ -434,11 +435,11 @@
 				</div>
 			</div>
 		</section>
-		<!-- 创意速配入口 -->
+		<!-- 智图工厂入口 -->
 		<section id="task-system" class="py-20 bg-gradient-to-b from-gray-900 to-indigo-950">
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
-					<h2 class="text-3xl md:text-4xl font-bold mb-4">创意速配</h2>
+					<h2 class="text-3xl md:text-4xl font-bold mb-4">智图工厂</h2>
 					<p class="text-gray-400 max-w-2xl mx-auto">
 						智能匹配设计需求与人才，提供全流程任务管理与支付保障
 					</p>
@@ -451,7 +452,7 @@
 								设计任务交易平台
 							</h3>
 							<p class="text-gray-300 mb-8">
-								亿思AI设计联盟平台提供业内领先的创意速配，连接企业需求与设计人才，实现高效精准匹配。
+								亿思AI设计联盟平台提供业内领先的智图工厂，连接企业需求与设计人才，实现高效精准匹配。
 								通过AI智能推荐、标准化流程与安全支付，为双方创造无忧的合作体验。
 							</p>
 							<div class="grid grid-cols-2 gap-6 mb-8">
@@ -488,7 +489,7 @@
 					<div class="order-1 lg:order-2 flex justify-center">
 						<img
 							src="https://readdy.ai/api/search-image?query=Modern%20digital%20workspace%20showing%20professional%20design%20collaboration%20between%20AI%20and%20human%20designers%2C%20with%20flowing%20data%20visualization%2C%20project%20management%20interface%2C%20and%20payment%20system%20on%20dark%20themed%20UI%20with%20blue%20and%20purple%20accents%2C%20clean%20minimalist%20style&width=600&height=500&seq=task-system-img&orientation=landscape"
-							alt="创意速配" class="w-full max-w-lg rounded-xl shadow-2xl" />
+							alt="智图工厂" class="w-full max-w-lg rounded-xl shadow-2xl" />
 					</div>
 				</div>
 			</div>
@@ -547,28 +548,32 @@
 							</div>
 							<h4 class="font-medium mb-4 text-white">设计师等级</h4>
 							<div class="flex items-center justify-between space-x-4">
-								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mx-auto mb-2">
 										<i class="fas fa-seedling text-gray-400"></i>
 									</div>
 									<h5 class="font-medium mb-1 text-white">新秀设计师</h5>
 									<p class="text-xs text-gray-500">初级认证</p>
 								</div>
-								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-10 h-10 flex items-center justify-center bg-blue-700 rounded-full mx-auto mb-2">
 										<i class="fas fa-award text-blue-400"></i>
 									</div>
 									<h5 class="font-medium mb-1 text-white">专业设计师</h5>
 									<p class="text-xs text-gray-500">中级认证</p>
 								</div>
-								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-10 h-10 flex items-center justify-center bg-purple-700 rounded-full mx-auto mb-2">
 										<i class="fas fa-crown text-purple-400"></i>
 									</div>
 									<h5 class="font-medium mb-1 text-white">资深设计师</h5>
 									<p class="text-xs text-gray-500">高级认证</p>
 								</div>
-								<div class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex-1 p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg text-center hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-10 h-10 flex items-center justify-center bg-yellow-700 rounded-full mx-auto mb-2">
 										<i class="fas fa-gem text-yellow-400"></i>
 									</div>
@@ -640,25 +645,29 @@
 						<div>
 							<h4 class="font-medium mb-4 text-white">支付方式</h4>
 							<div class="flex flex-wrap gap-4">
-								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-8 h-8 flex items-center justify-center mr-3">
 										<i class="ri-alipay-fill text-blue-500 ri-lg"></i>
 									</div>
 									<span class="font-medium text-white">支付宝</span>
 								</div>
-								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-8 h-8 flex items-center justify-center mr-3">
 										<i class="ri-wechat-pay-fill text-green-500 ri-lg"></i>
 									</div>
 									<span class="font-medium text-white">微信支付</span>
 								</div>
-								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-8 h-8 flex items-center justify-center mr-3">
 										<i class="ri-bank-card-fill text-gray-700 ri-lg"></i>
 									</div>
 									<span class="font-medium text-white">银行转账</span>
 								</div>
-								<div class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+								<div
+									class="flex items-center p-3 border border-gray-700 bg-gray-900 bg-opacity-50 rounded-lg hover:bg-gray-800 transition-colors duration-300">
 									<div class="w-8 h-8 flex items-center justify-center mr-3">
 										<i class="ri-paypal-fill text-blue-700 ri-lg"></i>
 									</div>
@@ -838,12 +847,12 @@
 					<div>
 						<h4 class="font-bold mb-4">快速链接</h4>
 						<ul class="space-y-2">
-							<li><a @click="scrollToSection('talent-pool')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">星海人才</a></li>
+							<li><router-link to="/talent/schools"
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">星海人才</router-link></li>
 							<li><a @click="scrollToSection('ai-resources')"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AI资讯</a></li>
 							<li><a @click="scrollToSection('task-system')"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">创意速配</a></li>
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">智图工厂</a></li>
 							<li><a @click="scrollToSection('data-dashboard')"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AIGC驾驶舱</a></li>
 						</ul>
@@ -894,7 +903,7 @@
 				</div>
 			</div>
 		</footer>
-		<!-- 创意速配弹窗 -->
+		<!-- 智图工厂弹窗 -->
 		<a-modal v-model:visible="taskSystemVisible" :footer="null" width="90%" :bodyStyle="{ padding: '0' }"
 			:maskClosable="false">
 			<div class="bg-gray-900 text-white rounded-lg overflow-hidden">
@@ -912,7 +921,7 @@
 					<div class="flex items-center relative z-10">
 						<i class="fas fa-exchange-alt text-2xl mr-4 text-blue-400"></i>
 						<div>
-							<div class="text-2xl font-bold">创意速配</div>
+							<div class="text-2xl font-bold">智图工厂</div>
 							<div class="text-sm text-gray-300 mt-1">智能匹配设计需求与人才</div>
 						</div>
 					</div>
@@ -1386,6 +1395,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store';
 import { UserAvatar } from '@/components/common';
 import { ProfessionLabels } from '@/types/talent/designer'
+import { needsRoleSelection } from '@/utils/authUtils'
 
 const router = useRouter();
 const swiperModules = [Pagination, Autoplay];
@@ -1421,7 +1431,7 @@ const studentWorks = ref([
 ]);
 const toolsRankingChart = ref<HTMLElement | null>(null);
 const responseEfficiencyChart = ref<HTMLElement | null>(null);
-// 创意速配
+// 智图工厂
 const taskSystemVisible = ref(false);
 const activeTaskTab = ref('marketplace');
 const myTasksFilter = ref('all');
@@ -1487,6 +1497,12 @@ const scrollToSection = (id: string) => {
 	}
 };
 onMounted(() => {
+	// 检查是否需要角色选择
+	if (needsRoleSelection()) {
+		router.push('/role-selection')
+		return
+	}
+
 	// AI工具使用分布图
 	if (talentMapChart.value) {
 		const chart = echarts.init(talentMapChart.value);

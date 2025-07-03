@@ -168,6 +168,84 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/role-selection',
+    name: 'RoleSelection',
+    component: () => import('@/views/role-selection/index.vue'),
+    meta: { title: '选择角色' }
+  },
+
+  {
+    path: '/role-test',
+    name: 'RoleTest',
+    component: () => import('@/views/role-test/index.vue'),
+    meta: { title: '角色测试' }
+  },
+
+  // 角色注册页面
+  {
+    path: '/registration/designer',
+    name: 'DesignerRegistration',
+    component: () => import('@/views/registration/designer.vue'),
+    meta: { title: '设计师注册' }
+  },
+  {
+    path: '/registration/enterprise',
+    name: 'EnterpriseRegistration',
+    component: () => import('@/views/registration/enterprise.vue'),
+    meta: { title: '企业注册' }
+  },
+  {
+    path: '/registration/school',
+    name: 'SchoolRegistration',
+    component: () => import('@/views/registration/school.vue'),
+    meta: { title: '院校注册' }
+  },
+  {
+    path: '/registration/test',
+    name: 'RegistrationTest',
+    component: () => import('@/views/registration/test.vue'),
+    meta: { title: '注册功能测试' }
+  },
+
+  // 信息补充页面
+  {
+    path: '/profile',
+    name: 'ProfileRoot',
+    children: [
+      {
+        path: 'welcome',
+        name: 'ProfileWelcome',
+        component: () => import('@/views/profile/welcome.vue'),
+        meta: { title: '完善资料' }
+      },
+      {
+        path: 'designer/basic',
+        name: 'DesignerBasicProfile',
+        component: () => import('@/views/profile/designer/basic.vue'),
+        meta: { title: '基础信息' }
+      },
+      {
+        path: 'designer/portfolio',
+        name: 'DesignerPortfolio',
+        component: () => import('@/views/profile/designer/portfolio.vue'),
+        meta: { title: '作品集' }
+      },
+      {
+        path: 'designer/experience',
+        name: 'DesignerExperience',
+        component: () => import('@/views/profile/designer/experience.vue'),
+        meta: { title: '工作经历' }
+      },
+      {
+        path: 'designer/education',
+        name: 'DesignerEducation',
+        component: () => import('@/views/profile/designer/education.vue'),
+        meta: { title: '教育背景' }
+      }
+    ]
+  },
+
+  {
     path: '/500',
     name: '500',
     component: () => import('@/views/exception/500/index.vue'),

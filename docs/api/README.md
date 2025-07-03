@@ -38,7 +38,7 @@
 ### 核心表结构
 
 1. **des_enterprise** - 企业信息表
-2. **des_school** - 院校信息表
+2. **des_school** - 院校信息表  
 3. **des_designer** - 设计师信息表
 4. **des_work** - 设计师作品表
 5. **des_job_posting** - 岗位招聘表
@@ -514,6 +514,42 @@ GET    /designer/user/available/schools      # 查看可绑定的院校列表
 POST   /designer/user/bind/school            # 绑定到指定院校
 ```
 
+### 角色选择接口
+
+#### 专用角色选择接口
+```
+POST   /system/user/selectRole           # 用户角色选择（专用接口）
+```
+
+**接口说明**：
+- 专为普通用户转换为专业角色设计的专用接口
+- 完全绕过权限检查和数据权限限制
+- 只允许普通角色（role_key="common"）用户调用
+- 只能选择预定义的三个专业角色
+- 直接操作 `sys_user_role` 表，确保权限转换成功
+
+**支持的角色**：
+- 设计师：`1932319128081666050`
+- 企业管理员：`1932319128081666051`
+- 院校管理员：`1932319128081666052`
+
+**请求示例**：
+```bash
+POST /system/user/selectRole
+Content-Type: application/json
+
+{
+    "roleId": "1932319128081666050"
+}
+```
+
+**使用说明**：
+1. 该接口专门解决普通用户权限不足的问题
+2. 接口会自动删除用户的旧角色关联，添加新的角色关联
+3. 调用成功后，用户需要重新获取用户信息以刷新权限缓存
+4. 前端调用后需执行 `userStore.getInfo()` 更新用户状态
+5. 需要重启后端应用使修改生效
+
 ## 使用方法
 
 ### 1. 用户注册流程
@@ -558,7 +594,7 @@ Content-Type: application/json
 
 {
     "schoolName": "设计学院",
-    "schoolType": "UNIVERSITY",
+    "schoolType": "COMPREHENSIVE",
     "level": "本科",
     "address": "上海市浦东新区",
     "description": "知名设计院校"
@@ -624,8 +660,8 @@ POST /designer/user/bind/school?schoolId=1&studentId=2020001234
   ```bash
   # 解绑企业身份
   PUT /designer/user/unbind/enterprise
-
-  # 解绑院校身份
+  
+  # 解绑院校身份  
   PUT /designer/user/unbind/school
   ```
 
@@ -836,20 +872,20 @@ public void someMethod() {
     if (permissionUtils.isDesigner()) {
         // 设计师相关操作
     }
-
+    
     // 检查是否为企业用户
     if (permissionUtils.isEnterprise()) {
         // 企业相关操作
     }
-
+    
     // 检查是否为院校用户
     if (permissionUtils.isSchool()) {
         // 院校相关操作
     }
-
+    
     // 获取当前用户的设计师ID
     Long designerId = permissionUtils.getCurrentDesignerId();
-
+    
     // 检查用户权限
     if (permissionUtils.hasDesignerPermission(designerId)) {
         // 有权限操作该设计师信息
@@ -861,13 +897,13 @@ public void someMethod() {
 ```java
 @SaCheckPermission("designer:designer:edit")
 @PutMapping("/{designerId}")
-public R<Void> updateDesigner(@PathVariable Long designerId,
+public R<Void> updateDesigner(@PathVariable Long designerId, 
                               @RequestBody Designer designer) {
     // 检查用户是否有权限编辑该设计师
     if (!permissionUtils.hasDesignerPermission(designerId)) {
         return R.fail("无权限操作");
     }
-
+    
     return toAjax(designerService.updateDesigner(designer));
 }
 ```
@@ -878,7 +914,7 @@ public R<Void> updateDesigner(@PathVariable Long designerId,
 ```java
 public List<Designer> getMyDesigners() {
     Long userId = LoginHelper.getUserId();
-
+    
     if (permissionUtils.isSchool()) {
         // 院校用户查看本校设计师
         Long schoolId = permissionUtils.getCurrentSchoolId();
@@ -892,7 +928,7 @@ public List<Designer> getMyDesigners() {
         Long designerId = permissionUtils.getCurrentDesignerId();
         return Arrays.asList(designerService.selectDesignerById(designerId));
     }
-
+    
     return Collections.emptyList();
 }
 ```
@@ -945,7 +981,7 @@ GET /designer/job/skills-any?skillTags=PROTOTYPE_DESIGN,VISUAL_DESIGN
 
 **支持的技能标签**:
 - **动效设计**: ANIMATION_DESIGN
-- **原型设计**: PROTOTYPE_DESIGN
+- **原型设计**: PROTOTYPE_DESIGN  
 - **角色设计**: CHARACTER_DESIGN
 - **视觉设计**: VISUAL_DESIGN
 - **用户界面设计**: USER_INTERFACE_DESIGN
@@ -1205,7 +1241,7 @@ GET /designer/school/favorites
 执行安全脚本后，检查以下内容：
 ```sql
 -- 检查必需的角色
-SELECT role_id, role_name, role_key FROM sys_role
+SELECT role_id, role_name, role_key FROM sys_role 
 WHERE role_key IN ('designer', 'enterprise', 'school');
 
 -- 检查用户绑定表
@@ -1255,11 +1291,11 @@ graph TB
     B --> C[业务服务层]
     C --> D[数据访问层]
     D --> E[数据库层]
-
+    
     B --> F[权限控制]
     C --> G[业务逻辑]
     D --> H[数据操作]
-
+    
     F --> I[用户角色绑定]
     I --> J[设计师角色]
     I --> K[企业角色]
@@ -1356,7 +1392,7 @@ graph TB
 
 #### ✅ 新增接口统计
 - **基础管理接口**: 1个 (院校完整信息查询)
-- **专业课程接口**: 2个 (专业分类、课程体系)
+- **专业课程接口**: 2个 (专业分类、课程体系)  
 - **师资管理接口**: 2个 (师资统计、代表性教师)
 - **就业统计接口**: 3个 (就业统计、图表数据、代表性雇主)
 - **学生成果接口**: 3个 (成果统计、获奖趋势、获奖作品)
@@ -1371,7 +1407,7 @@ graph TB
 
 #### ✅ 架构兼容性
 - **URL规范统一**：所有接口采用 `/designer/school/*` 路径结构
-- **权限体系集成**：继承 `designer:school:*` 权限码体系
+- **权限体系集成**：继承 `designer:school:*` 权限码体系  
 - **原有接口保留**：完全兼容已有的院校管理接口
 - **前端无缝切换**：Mock数据与API响应结构完全一致
 
@@ -1394,7 +1430,7 @@ graph TB
 #### 🔧 函数映射覆盖率 100%
 - **基础查询函数**: getMockSchools, getMockSchoolById
 - **专业课程函数**: getMockMajorCategories, getMockCourseSystem
-- **师资相关函数**: getMockFacultyStats, getMockFacultyMembers
+- **师资相关函数**: getMockFacultyStats, getMockFacultyMembers  
 - **就业统计函数**: getMockEmploymentStats, getMockEmployers, getMockChartData
 - **成果统计函数**: getMockAchievementStats, getMockTrendData, getMockAwardWorks
 - **格式化函数**: getMockEmploymentRate, getMockFacultyStrength, getMockStudentScore, getMockAdvantagePrograms
@@ -1403,13 +1439,13 @@ graph TB
 
 #### 开发优先级
 1. **P1 (立即实施)**: 基础院校数据接口、院校完整信息接口
-2. **P2 (核心功能)**: 专业分类、课程体系、师资统计、就业统计接口
+2. **P2 (核心功能)**: 专业分类、课程体系、师资统计、就业统计接口  
 3. **P3 (增强展示)**: 代表性教师、雇主、图表数据、学生成果接口
 4. **P4 (完善功能)**: 获奖趋势、获奖作品、卡片统计、格式化接口
 
 #### 缓存策略建议
 - **基础数据**: 1小时缓存 (院校信息、专业分类、课程体系)
-- **统计数据**: 30分钟缓存 (师资统计、就业统计、成果统计)
+- **统计数据**: 30分钟缓存 (师资统计、就业统计、成果统计)  
 - **图表数据**: 15分钟缓存 (就业图表、获奖趋势)
 - **格式化数据**: 1小时缓存 (各类格式化展示数据)
 

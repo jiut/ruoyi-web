@@ -84,7 +84,9 @@ export const useUserStore = defineStore('user-store', {
             name: res.data.user.nickName || res.data.user.userName || '',
             userBalance: res.data.user.userBalance || 0,
             userGrade: res.data.user.userGrade || '0',
-            userName: res.data.user.userName || ''
+            userName: res.data.user.userName || '',
+            userId: res.data.user.userId, // 保存userId
+            roles: res.data.user.roles || []
           });
         }
       } catch (error) {
