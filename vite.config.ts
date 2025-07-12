@@ -24,7 +24,7 @@ function setupPlugins(env) {
       // 指定 symbolId 格式
       symbolId: 'icon-[name]',
     }),
-  ].filter(Boolean); // 过滤掉 falsy 值
+  ].filter(Boolean) // 过滤掉 falsy 值
 }
 
 export default defineConfig(({ mode }) => {
@@ -51,12 +51,12 @@ export default defineConfig(({ mode }) => {
         '/uploads': {
           target: viteEnv.VITE_APP_API_BASE_URL,
           changeOrigin: true, // 允许跨域
-          //rewrite: path => path.replace('/api/', '/'),
+          // rewrite: path => path.replace('/api/', '/'),
         },
         '/openapi': {
           target: viteEnv.VITE_APP_API_BASE_URL,
           changeOrigin: true, // 允许跨域
-          //rewrite: path => path.replace('/api/', '/'),
+          // rewrite: path => path.replace('/api/', '/'),
         },
       },
     },

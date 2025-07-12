@@ -1,11 +1,11 @@
-import { ref, computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { useMessage } from 'naive-ui'
 import { useJobStore } from '@/stores/talent/job'
 import { applyJob } from '@/api/talent/job'
-import type { JobApplicationData, SalaryRange, JobPosting } from '@/types/talent/job'
-import { useMessage } from 'naive-ui'
+import type { JobApplicationData, JobPosting, SalaryRange } from '@/types/talent/job'
 // 保持模拟数据导入以支持开发模式
 import { getMockJobs } from '@/data/mockJobs'
-import { ProfessionLabels } from '@/types/talent/designer'
+import ProfessionUtils from '@/utils/professionUtils'
 import { shouldUseMockData } from '@/utils/authUtils'
 
 // 调试信息
@@ -35,15 +35,18 @@ export function useJob() {
         const result = getMockJobs(params)
         mockJobs.value = result.rows
         mockTotal.value = result.total
-      } else {
+      }
+      else {
         // 已登录模式：使用真实的后端API
         console.log('🚀 已登录模式：使用后端API')
         await store.fetchJobs(params)
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取岗位列表失败:', error)
       message.error('获取岗位列表失败，请稍后重试')
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -67,7 +70,7 @@ export function useJob() {
     resetSearch: store.resetSearch,
     changePage: store.changePage,
     changePageSize: store.changePageSize,
-    search: store.search
+    search: store.search,
   }
 }
 
@@ -84,10 +87,7 @@ export function useJobFilter() {
   const supportFreshGraduate = ref(false)
   const weekendOff = ref(false)
 
-  const professionOptions = Object.entries(ProfessionLabels).map(([value, label]) => ({
-    value,
-    label
-  }))
+  const professionOptions = ProfessionUtils.getSelectOptions()
 
   const locationOptions = [
     { value: '北京', label: '北京' },
@@ -95,7 +95,7 @@ export function useJobFilter() {
     { value: '广州', label: '广州' },
     { value: '深圳', label: '深圳' },
     { value: '杭州', label: '杭州' },
-    { value: '成都', label: '成都' }
+    { value: '成都', label: '成都' },
   ]
 
   const experienceOptions = [
@@ -103,7 +103,7 @@ export function useJobFilter() {
     { value: '1-3年', label: '1-3 年' },
     { value: '3-5年', label: '3-5 年' },
     { value: '5-10年', label: '5-10 年' },
-    { value: '10年以上', label: '10 年以上' }
+    { value: '10年以上', label: '10 年以上' },
   ]
 
   const workTypeOptions = [
@@ -111,14 +111,14 @@ export function useJobFilter() {
     { value: '兼职', label: '兼职' },
     { value: '实习', label: '实习' },
     { value: '远程', label: '远程' },
-    { value: '项目制', label: '项目制' }
+    { value: '项目制', label: '项目制' },
   ]
 
   const companyScaleOptions = [
     { value: '初创企业', label: '初创企业 (≤50人)' },
     { value: '中小企业', label: '中小企业 (50-500人)' },
     { value: '大型企业', label: '大型企业 (500-2000人)' },
-    { value: '超大型企业', label: '超大型企业 (>2000人)' }
+    { value: '超大型企业', label: '超大型企业 (>2000人)' },
   ]
 
   const applyFilters = () => {
@@ -131,7 +131,7 @@ export function useJobFilter() {
       salaryRange: salaryRange.value,
       isUrgent: isUrgent.value,
       supportFreshGraduate: supportFreshGraduate.value,
-      weekendOff: weekendOff.value
+      weekendOff: weekendOff.value,
     })
   }
 
@@ -169,7 +169,7 @@ export function useJobFilter() {
 
     // 方法
     applyFilters,
-    resetFilters
+    resetFilters,
   }
 }
 
@@ -189,7 +189,7 @@ export function useJobApplication() {
     expectedSalary: '',
     coverLetter: '',
     resumeUrl: '',
-    portfolioUrl: ''
+    portfolioUrl: '',
   })
 
   const openApplicationModal = (jobId: number) => {
@@ -215,7 +215,7 @@ export function useJobApplication() {
       expectedSalary: '',
       coverLetter: '',
       resumeUrl: '',
-      portfolioUrl: ''
+      portfolioUrl: '',
     })
   }
 
@@ -225,10 +225,12 @@ export function useJobApplication() {
       await applyJob(applicationForm)
       message.success('申请已提交，我们会尽快联系您！')
       closeApplicationModal()
-    } catch (error) {
+    }
+    catch (error) {
       console.error('提交申请失败:', error)
       message.error('提交申请失败，请稍后重试')
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -241,7 +243,7 @@ export function useJobApplication() {
     openApplicationModal,
     closeApplicationModal,
     submitApplication,
-    resetForm
+    resetForm,
   }
 }
 
@@ -267,6 +269,6 @@ export function useJobDetail() {
     currentJob: computed(() => store.currentJob),
     loading: computed(() => store.loading),
     openDetailModal,
-    closeDetailModal
+    closeDetailModal,
   }
 }

@@ -1,9 +1,3 @@
-<template>
-  <div class="talent-page">
-    <RouterView />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 
@@ -19,6 +13,12 @@ onUnmounted(() => {
   document.documentElement.classList.remove('talent-mode')
 })
 </script>
+
+<template>
+  <div class="talent-page">
+    <RouterView />
+  </div>
+</template>
 
 <style scoped>
 @import '@/styles/talent.css';

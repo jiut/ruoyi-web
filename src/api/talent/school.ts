@@ -6,41 +6,27 @@
 import request from '@/utils/request'
 import type {
   School,
-  SchoolQueryParams,
-  Major,
-  Faculty,
-  Employment,
-  Award,
-  Achievement,
-  Teacher,
+  SchoolFullInfo,
   SchoolListParams,
-  SchoolListResponse,
-  SchoolDetailResponse,
-  EmploymentStatistics,
-  EmploymentDistribution,
   SchoolStudentsParams,
-  SchoolStudentsResponse,
-  SchoolMajorsResponse,
-  SchoolAchievementsResponse,
-  SchoolFullInfo
 } from '@/types/talent/school'
 import {
-  getMockSchools,
-  getMockSchoolById,
-  getMockMajorCategories,
-  getMockCourseSystem,
-  getMockFacultyStats,
-  getMockFacultyMembers,
-  getMockEmploymentStats,
-  getMockEmployers,
-  getMockChartData,
   getMockAchievementStats,
-  getMockTrendData,
+  getMockAdvantagePrograms,
   getMockAwardWorks,
+  getMockChartData,
+  getMockCourseSystem,
+  getMockEmployers,
   getMockEmploymentRate,
+  getMockEmploymentStats,
+  getMockFacultyMembers,
+  getMockFacultyStats,
   getMockFacultyStrength,
+  getMockMajorCategories,
+  getMockSchoolById,
+  getMockSchools,
   getMockStudentScore,
-  getMockAdvantagePrograms
+  getMockTrendData,
 } from '@/data/mockSchools'
 import { shouldUseMockData } from '@/utils/authUtils'
 
@@ -59,15 +45,16 @@ export const schoolApi = {
         pageNum: query.pageNum,
         pageSize: query.pageSize,
         schoolName: query.schoolName,
-        schoolType: query.schoolType
+        schoolType: query.schoolType,
       })
       return Promise.resolve(mockResponse)
-    } else {
+    }
+    else {
       console.log('🚀 使用若依后端API - 院校列表')
       return request({
         url: '/designer/school/list',
         method: 'get',
-        data: query
+        data: query,
       })
     }
   },
@@ -78,13 +65,14 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 院校详情', id)
       const mockSchool = getMockSchoolById(id)
       return Promise.resolve({
-        data: mockSchool
+        data: mockSchool,
       })
-    } else {
+    }
+    else {
       console.log('🚀 使用若依后端API - 院校详情')
       return request({
         url: `/designer/school/${id}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -94,13 +82,14 @@ export const schoolApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 就业统计')
       return Promise.resolve({
-        data: getMockEmploymentStats(id)
+        data: getMockEmploymentStats(id),
       })
-    } else {
+    }
+    else {
       console.log('🚀 使用若依后端API - 就业统计')
       return request({
         url: `/designer/school/${id}/employment/statistics`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -112,14 +101,15 @@ export const schoolApi = {
       return Promise.resolve({
         data: {
           employers: getMockEmployers(id),
-          chartData: getMockChartData(id)
-        }
+          chartData: getMockChartData(id),
+        },
       })
-    } else {
+    }
+    else {
       console.log('🚀 使用若依后端API - 就业分布')
       return request({
         url: `/designer/school/${id}/employment/distribution`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -129,7 +119,7 @@ export const schoolApi = {
     return request({
       url: '/designer/school',
       method: 'post',
-      data: data
+      data,
     })
   },
 
@@ -138,7 +128,7 @@ export const schoolApi = {
     return request({
       url: '/designer/school',
       method: 'put',
-      data: data
+      data,
     })
   },
 
@@ -146,7 +136,7 @@ export const schoolApi = {
   delete: (ids: number[]) => {
     return request({
       url: `/designer/school/${ids.join(',')}`,
-      method: 'delete'
+      method: 'delete',
     })
   },
 
@@ -155,13 +145,14 @@ export const schoolApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按类型查询院校')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        data: { schoolType }
+        data: { schoolType },
       })
     }
   },
@@ -171,13 +162,14 @@ export const schoolApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按地区查询院校')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        data: { location: city ? `${province}-${city}` : province }
+        data: { location: city ? `${province}-${city}` : province },
       })
     }
   },
@@ -189,13 +181,14 @@ export const schoolApi = {
       const mockResponse = getMockSchools({ schoolName: keyword })
       return Promise.resolve({
         rows: mockResponse.rows,
-        total: mockResponse.total
+        total: mockResponse.total,
       })
-    } else {
+    }
+    else {
       return request({
         url: '/designer/school/list',
         method: 'get',
-        data: { schoolName: keyword }
+        data: { schoolName: keyword },
       })
     }
   },
@@ -206,13 +199,14 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 院校学生列表')
       return Promise.resolve({
         total: 0,
-        rows: []
+        rows: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${id}/students`,
         method: 'get',
-        data: params
+        data: params,
       })
     }
   },
@@ -222,12 +216,13 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 院校专业列表')
       return Promise.resolve({
         majorCategories: getMockMajorCategories(id),
-        courseSystem: getMockCourseSystem(id)
+        courseSystem: getMockCourseSystem(id),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${id}/majors`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -236,12 +231,13 @@ export const schoolApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校成果列表')
       return Promise.resolve({
-        achievements: []
+        achievements: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${id}/achievements`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -251,12 +247,13 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 院校师资信息')
       return Promise.resolve({
         facultyStats: getMockFacultyStats(id),
-        facultyMembers: getMockFacultyMembers(id)
+        facultyMembers: getMockFacultyMembers(id),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${id}/faculty`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -267,12 +264,13 @@ export const schoolApi = {
       return Promise.resolve({
         employmentStats: getMockEmploymentStats(id),
         employers: getMockEmployers(id),
-        chartData: getMockChartData(id)
+        chartData: getMockChartData(id),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${id}/employment`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -285,12 +283,13 @@ export const schoolApi = {
         employmentRate: getMockEmploymentRate(schoolId),
         facultyStrength: getMockFacultyStrength(schoolId),
         studentScore: getMockStudentScore(schoolId),
-        advantagePrograms: getMockAdvantagePrograms(school)
+        advantagePrograms: getMockAdvantagePrograms(school),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${schoolId}/card-stats`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -301,9 +300,8 @@ export const schoolApi = {
       console.log('🔧 使用模拟数据 - 院校完整信息', id)
       const basicInfo = getMockSchoolById(id)
 
-      if (!basicInfo) {
+      if (!basicInfo)
         return Promise.reject(new Error('院校不存在'))
-      }
 
       const fullInfo: SchoolFullInfo = {
         basicInfo,
@@ -321,19 +319,20 @@ export const schoolApi = {
           employmentRates: [getMockEmploymentRate(id)].filter(Boolean),
           facultyStrengths: [getMockFacultyStrength(id)].filter(Boolean),
           studentScores: [getMockStudentScore(id)].filter(Boolean),
-          advantagePrograms: {}
-        }
+          advantagePrograms: {},
+        },
       }
 
       return Promise.resolve({ data: fullInfo })
-    } else {
+    }
+    else {
       console.log('🚀 使用若依后端API - 院校完整信息')
       return request({
         url: `/designer/school/${id}/full-info`,
-        method: 'get'
+        method: 'get',
       })
     }
-  }
+  },
 }
 
 // 专业相关API
@@ -343,13 +342,14 @@ export const majorApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业列表')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/school/major/list',
         method: 'get',
-        data: { schoolId, category }
+        data: { schoolId, category },
       })
     }
   },
@@ -359,12 +359,13 @@ export const majorApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业详情')
       return Promise.resolve({
-        data: null
+        data: null,
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/major/${id}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -374,12 +375,13 @@ export const majorApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按院校查询专业')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/major/school/${schoolId}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -389,15 +391,16 @@ export const majorApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按分类查询专业')
       return Promise.resolve({
-        data: []
-      })
-    } else {
-      return request({
-        url: `/school/major/category/${category}`,
-        method: 'get'
+        data: [],
       })
     }
-  }
+    else {
+      return request({
+        url: `/school/major/category/${category}`,
+        method: 'get',
+      })
+    }
+  },
 }
 
 // 师资相关API
@@ -407,13 +410,14 @@ export const facultyApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 学院列表')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/school/faculty/list',
         method: 'get',
-        data: { schoolId }
+        data: { schoolId },
       })
     }
   },
@@ -423,12 +427,13 @@ export const facultyApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 学院详情')
       return Promise.resolve({
-        data: null
+        data: null,
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/faculty/${id}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -438,12 +443,13 @@ export const facultyApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 按院校查询学院')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/faculty/school/${schoolId}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -453,15 +459,16 @@ export const facultyApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 教师列表')
       return Promise.resolve({
-        data: []
-      })
-    } else {
-      return request({
-        url: `/school/teacher/faculty/${facultyId}`,
-        method: 'get'
+        data: [],
       })
     }
-  }
+    else {
+      return request({
+        url: `/school/teacher/faculty/${facultyId}`,
+        method: 'get',
+      })
+    }
+  },
 }
 
 // 就业数据API
@@ -471,13 +478,14 @@ export const employmentApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校就业数据')
       return Promise.resolve({
-        data: null
+        data: null,
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/employment/school/${schoolId}`,
         method: 'get',
-        data: { year }
+        data: { year },
       })
     }
   },
@@ -487,13 +495,14 @@ export const employmentApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 专业就业数据')
       return Promise.resolve({
-        data: null
+        data: null,
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/employment/major/${majorId}`,
         method: 'get',
-        data: { year }
+        data: { year },
       })
     }
   },
@@ -503,16 +512,17 @@ export const employmentApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 就业趋势数据')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/employment/trend/${schoolId}`,
         method: 'get',
-        data: { years: years.join(',') }
+        data: { years: years.join(',') },
       })
     }
-  }
+  },
 }
 
 // 获奖成果API
@@ -522,13 +532,14 @@ export const achievementApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校获奖列表')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/award/school/${schoolId}`,
         method: 'get',
-        data: { level, year }
+        data: { level, year },
       })
     }
   },
@@ -538,13 +549,14 @@ export const achievementApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校成果列表')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/achievement/school/${schoolId}`,
         method: 'get',
-        data: { type, year }
+        data: { type, year },
       })
     }
   },
@@ -554,12 +566,13 @@ export const achievementApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 获奖统计数据')
       return Promise.resolve({
-        data: getMockAchievementStats(schoolId)
+        data: getMockAchievementStats(schoolId),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/award/stats/${schoolId}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -569,12 +582,13 @@ export const achievementApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 获奖趋势数据')
       return Promise.resolve({
-        data: getMockTrendData(schoolId)
+        data: getMockTrendData(schoolId),
       })
-    } else {
+    }
+    else {
       return request({
         url: `/school/achievement/trend/${schoolId}`,
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -584,15 +598,16 @@ export const achievementApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 代表性获奖作品')
       return Promise.resolve({
-        data: getMockAwardWorks(schoolId)
-      })
-    } else {
-      return request({
-        url: `/school/achievement/works/${schoolId}`,
-        method: 'get'
+        data: getMockAwardWorks(schoolId),
       })
     }
-  }
+    else {
+      return request({
+        url: `/school/achievement/works/${schoolId}`,
+        method: 'get',
+      })
+    }
+  },
 }
 
 // 用户交互API - 扩展接口（需要后端新增）
@@ -603,12 +618,13 @@ export const schoolInteractionApi = {
       console.log('🔧 使用模拟数据 - 收藏院校')
       return Promise.resolve({
         success: true,
-        message: '收藏成功'
+        message: '收藏成功',
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${schoolId}/favorite`,
-        method: 'post'
+        method: 'post',
       })
     }
   },
@@ -619,12 +635,13 @@ export const schoolInteractionApi = {
       console.log('🔧 使用模拟数据 - 取消收藏院校')
       return Promise.resolve({
         success: true,
-        message: '取消收藏成功'
+        message: '取消收藏成功',
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${schoolId}/favorite`,
-        method: 'delete'
+        method: 'delete',
       })
     }
   },
@@ -635,12 +652,13 @@ export const schoolInteractionApi = {
       console.log('🔧 使用模拟数据 - 收藏院校列表')
       return Promise.resolve({
         total: 0,
-        rows: []
+        rows: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/designer/school/favorites',
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -651,12 +669,13 @@ export const schoolInteractionApi = {
       console.log('🔧 使用模拟数据 - 分享院校')
       return Promise.resolve({
         shareUrl: `http://example.com/school/${schoolId}`,
-        qrCode: 'data:image/png;base64,xxx'
+        qrCode: 'data:image/png;base64,xxx',
       })
-    } else {
+    }
+    else {
       return request({
         url: `/designer/school/${schoolId}/share`,
-        method: 'post'
+        method: 'post',
       })
     }
   },
@@ -666,16 +685,17 @@ export const schoolInteractionApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 院校对比')
       return Promise.resolve({
-        schools: []
+        schools: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/designer/school/compare',
         method: 'post',
-        data: { schoolIds, compareFields }
+        data: { schoolIds, compareFields },
       })
     }
-  }
+  },
 }
 
 // 统计信息API
@@ -689,13 +709,14 @@ export const statisticsApi = {
           totalSchools: 156,
           totalMajors: 1250,
           totalStudents: 3450000,
-          averageEmploymentRate: 95.2
-        }
+          averageEmploymentRate: 95.2,
+        },
       })
-    } else {
+    }
+    else {
       return request({
         url: '/school/statistics/overview',
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -705,12 +726,13 @@ export const statisticsApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 地区分布统计')
       return Promise.resolve({
-        data: []
+        data: [],
       })
-    } else {
+    }
+    else {
       return request({
         url: '/school/statistics/region',
-        method: 'get'
+        method: 'get',
       })
     }
   },
@@ -720,13 +742,14 @@ export const statisticsApi = {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 类型分布统计')
       return Promise.resolve({
-        data: []
-      })
-    } else {
-      return request({
-        url: '/school/statistics/type',
-        method: 'get'
+        data: [],
       })
     }
-  }
+    else {
+      return request({
+        url: '/school/statistics/type',
+        method: 'get',
+      })
+    }
+  },
 }

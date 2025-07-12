@@ -98,6 +98,14 @@ const {
 ### 1. 单个标签组件
 
 ```vue
+<script setup>
+import { SkillTag } from '@/components/common'
+
+const handleTagClick = (tag, category) => {
+  console.log(`点击了${tag}，属于${category}分类`)
+}
+</script>
+
 <template>
   <!-- 基础使用 -->
   <SkillTag tag="Figma" />
@@ -111,19 +119,20 @@ const {
     @click="handleTagClick"
   />
 </template>
-
-<script setup>
-import { SkillTag } from '@/components/common'
-
-const handleTagClick = (tag, category) => {
-  console.log(`点击了${tag}，属于${category}分类`)
-}
-</script>
 ```
 
 ### 2. 标签列表组件
 
 ```vue
+<script setup>
+import { SkillTagList } from '@/components/common'
+
+const skills = [
+  'Figma', 'Sketch', '交互设计', 'UI设计',
+  '用户体验', '用户研究', '原型设计'
+]
+</script>
+
 <template>
   <!-- 普通列表 -->
   <SkillTagList
@@ -140,15 +149,6 @@ const handleTagClick = (tag, category) => {
     :show-stats="true"
   />
 </template>
-
-<script setup>
-import { SkillTagList } from '@/components/common'
-
-const skills = [
-  'Figma', 'Sketch', '交互设计', 'UI设计',
-  '用户体验', '用户研究', '原型设计'
-]
-</script>
 ```
 
 ## 📊 标签分类详细列表
@@ -200,31 +200,6 @@ import { SkillTag, SkillTagList } from '@/components/common'
 ### 3. 使用示例
 
 ```vue
-<template>
-  <div class="skill-showcase">
-    <!-- 单个标签示例 -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3">设计工具</h3>
-      <div class="flex flex-wrap gap-2">
-        <SkillTag tag="Figma" />
-        <SkillTag tag="Sketch" />
-        <SkillTag tag="Photoshop" />
-      </div>
-    </div>
-
-    <!-- 分组标签示例 -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold mb-3">技能概览</h3>
-      <SkillTagList
-        :tags="allSkills"
-        :grouped="true"
-        :show-stats="true"
-        :animation-enabled="true"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { SkillTag, SkillTagList } from '@/components/common'
 
@@ -237,6 +212,35 @@ const allSkills = [
   '用户体验', '用户研究', '原型设计', '设计系统'
 ]
 </script>
+
+<template>
+  <div class="skill-showcase">
+    <!-- 单个标签示例 -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold mb-3">
+        设计工具
+      </h3>
+      <div class="flex flex-wrap gap-2">
+        <SkillTag tag="Figma" />
+        <SkillTag tag="Sketch" />
+        <SkillTag tag="Photoshop" />
+      </div>
+    </div>
+
+    <!-- 分组标签示例 -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold mb-3">
+        技能概览
+      </h3>
+      <SkillTagList
+        :tags="allSkills"
+        :grouped="true"
+        :show-stats="true"
+        :animation-enabled="true"
+      />
+    </div>
+  </div>
+</template>
 ```
 
 ## 🎯 最佳实践

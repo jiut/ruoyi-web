@@ -1,11 +1,11 @@
-import { useStorage } from "@vueuse/core";
+import { useStorage } from '@vueuse/core'
 
-const TokenKey = 'RuoYi-Token';
+const TokenKey = 'RuoYi-Token'
 
-const tokenStorage = useStorage<null | string>(TokenKey, null);
+const tokenStorage = useStorage<null | string>(TokenKey, null)
 
-export const getToken = () => tokenStorage.value;
+export const getToken = () => tokenStorage.value
 
-export const setToken = (token: string) => (tokenStorage.value = token);
+export const setToken = (token: string) => (tokenStorage.value = token)
 
-export const removeToken = () => (tokenStorage.value = null);
+export const removeToken = () => (tokenStorage.value = null)

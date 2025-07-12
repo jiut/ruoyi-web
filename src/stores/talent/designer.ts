@@ -1,26 +1,26 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import {
-  listDesigner,
   getDesigner,
-  getDesignerWorks,
-  getDesignerWorkExperience,
-  getDesignerEducation,
   getDesignerAwards,
+  getDesignerEducation,
+  getDesignerWorkExperience,
+  getDesignerWorks,
   getProfessions,
-  getSkillTags,
   getRegions,
-  searchDesigners
+  getSkillTags,
+  listDesigner,
+  searchDesigners,
 } from '@/api/talent/designer'
 import type {
+  Award,
   Designer,
   DesignerQueryParams,
+  Education,
+  Profession,
+  SkillTag,
   Work,
   WorkExperience,
-  Education,
-  Award,
-  Profession,
-  SkillTag
 } from '@/types/talent/designer'
 
 export const useDesignerStore = defineStore('talent-designer', () => {
@@ -48,14 +48,15 @@ export const useDesignerStore = defineStore('talent-designer', () => {
 
   // 获取设计师列表
   const fetchDesigners = async (params?: DesignerQueryParams, reset = false) => {
-    if (loading.value && !reset) return
+    if (loading.value && !reset)
+      return
 
     loading.value = true
     try {
       const queryParams = {
         pageNum: reset ? 1 : pageNum.value,
         pageSize: pageSize.value,
-        ...params
+        ...params,
       }
 
       const response = await listDesigner(queryParams)
@@ -63,16 +64,19 @@ export const useDesignerStore = defineStore('talent-designer', () => {
       if (reset) {
         designers.value = response.rows
         pageNum.value = 1
-      } else {
+      }
+      else {
         designers.value.push(...response.rows)
       }
 
       total.value = response.total
       pageNum.value++
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取设计师列表失败:', error)
       window.$message?.error('获取设计师列表失败')
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -87,13 +91,13 @@ export const useDesignerStore = defineStore('talent-designer', () => {
         worksResponse,
         workExperienceResponse,
         educationResponse,
-        awardsResponse
+        awardsResponse,
       ] = await Promise.all([
         getDesigner(id),
         getDesignerWorks(id),
         getDesignerWorkExperience(id),
         getDesignerEducation(id),
-        getDesignerAwards(id)
+        getDesignerAwards(id),
       ])
 
       currentDesigner.value = designerResponse.data
@@ -101,10 +105,12 @@ export const useDesignerStore = defineStore('talent-designer', () => {
       currentDesignerWorkExperience.value = workExperienceResponse.data || []
       currentDesignerEducation.value = educationResponse.data || []
       currentDesignerAwards.value = awardsResponse.data || []
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取设计师详情失败:', error)
       window.$message?.error('获取设计师详情失败')
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -122,10 +128,12 @@ export const useDesignerStore = defineStore('talent-designer', () => {
       designers.value = response.data || []
       total.value = response.data?.length || 0
       pageNum.value = 1
-    } catch (error) {
+    }
+    catch (error) {
       console.error('搜索设计师失败:', error)
       window.$message?.error('搜索设计师失败')
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -136,13 +144,14 @@ export const useDesignerStore = defineStore('talent-designer', () => {
       const [professionsResponse, skillTagsResponse, regionsResponse] = await Promise.all([
         getProfessions(),
         getSkillTags(),
-        getRegions()
+        getRegions(),
       ])
 
       professions.value = professionsResponse.data || []
       skillTags.value = skillTagsResponse.data || []
       regions.value = regionsResponse.data || []
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取筛选选项失败:', error)
     }
   }
@@ -165,7 +174,8 @@ export const useDesignerStore = defineStore('talent-designer', () => {
 
   // 加载更多
   const loadMore = async (params?: DesignerQueryParams) => {
-    if (!hasMore.value || loading.value) return
+    if (!hasMore.value || loading.value)
+      return
     await fetchDesigners(params, false)
   }
 
@@ -196,6 +206,6 @@ export const useDesignerStore = defineStore('talent-designer', () => {
     fetchFilterOptions,
     resetDesigners,
     resetCurrentDesigner,
-    loadMore
+    loadMore,
   }
 })

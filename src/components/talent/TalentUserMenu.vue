@@ -1,24 +1,20 @@
 <script setup lang='ts'>
-import { onMounted, onUnmounted, ref, watch, computed } from 'vue'
-import { NAvatar, NButton, useMessage, NEllipsis, NDropdown, NIcon } from 'naive-ui'
-import defaultAvatar from '@/assets/avatar.jpg'
-import { isString } from '@/utils/is'
-import { removeToken, getToken } from '@/store/modules/auth/helper'
+import { computed, defineAsyncComponent, h, onMounted, onUnmounted, ref, watch } from 'vue'
+import { NAvatar, NIcon, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
-import { loginOut, getUserInfo } from '@/api/user'
-import { UserData } from "@/typings/user"
-import { defaultSetting, UserInfo } from '@/store/modules/user/helper'
-import to from "await-to-js"
-import { useAuthStore } from '@/store'
-import { h } from 'vue'
+import to from 'await-to-js'
 import {
+  LogOut as out,
   Settings as settings,
   Storefront as storefront,
-  LogOut as out,
-  Person as person,
-  PersonAdd as personAdd
 } from '@vicons/ionicons5'
-import { defineAsyncComponent } from 'vue'
+import defaultAvatar from '@/assets/avatar.jpg'
+import { isString } from '@/utils/is'
+import { getToken, removeToken } from '@/store/modules/auth/helper'
+import { getUserInfo, loginOut } from '@/api/user'
+import type { UserInfo } from '@/store/modules/user/helper'
+import { defaultSetting } from '@/store/modules/user/helper'
+import { useAuthStore } from '@/store'
 
 const router = useRouter()
 const userInfo = ref<UserInfo>(defaultSetting().userInfo)
@@ -43,9 +39,9 @@ const isLoggedIn = computed(() => {
 
 onMounted(async () => {
   // 如果有token，尝试获取用户信息
-  if (getToken()) {
+  if (getToken())
     await getLoginUserInfo()
-  }
+
   // 无论是否有token或加载是否成功，都要完成初始化
   isInitializing.value = false
   document.addEventListener('click', handleClickOutside)
@@ -59,12 +55,11 @@ onUnmounted(() => {
 watch(
   () => authStore.token,
   async (newToken, oldToken) => {
-    if (newToken) {
+    if (newToken)
       await getLoginUserInfo()
-    } else {
+    else
       userInfo.value = defaultSetting().userInfo
-    }
-  }
+  },
 )
 
 /**
@@ -72,9 +67,8 @@ watch(
  */
 async function getLoginUserInfo() {
   const token = getToken()
-  if (!token) {
+  if (!token)
     return
-  }
 
   try {
     const [err, newUserInfo] = await to(getUserInfo())
@@ -89,7 +83,8 @@ async function getLoginUserInfo() {
       userInfo.value.name = newUserInfo.data.user.nickName
       userInfo.value.userBalance = newUserInfo.data.user.userBalance
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.warn('获取用户信息异常:', error)
     // 如果发生异常，也清除token
     removeToken()
@@ -129,28 +124,27 @@ const menuOptions = [
   {
     label: '账户设置',
     key: 'accountSettings',
-    icon: renderIcon(settings)
+    icon: renderIcon(settings),
   },
   {
     label: '购买套餐',
     key: 'buy',
-    icon: renderIcon(storefront)
+    icon: renderIcon(storefront),
   },
   {
     label: '退出登录',
     key: 'logout',
-    icon: renderIcon(out)
-  }
+    icon: renderIcon(out),
+  },
 ]
 
 function handleMenuSelect(key: string) {
-  if (key === 'logout') {
+  if (key === 'logout')
     handleReset()
-  } else if (key === 'accountSettings') {
+  else if (key === 'accountSettings')
     settingVisible.value = true
-  } else if (key === 'buy') {
+  else if (key === 'buy')
     promptStoreVisible.value = true
-  }
 }
 
 const toggleUserMenu = () => {
@@ -161,9 +155,8 @@ const toggleUserMenu = () => {
 // 点击外部关闭下拉菜单
 const handleClickOutside = (event: Event) => {
   const target = event.target as HTMLElement
-  if (!target.closest('.user-menu-container')) {
+  if (!target.closest('.user-menu-container'))
     showUserMenu.value = false
-  }
 }
 
 // 获取用户名的第一个字符
@@ -180,10 +173,10 @@ const getUserInitial = () => {
       <template v-if="getToken()">
         <button class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors cursor-default">
           <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-full overflow-hidden bg-gray-500 flex items-center justify-center">
-            <div class="w-6 h-6 bg-gray-400 rounded-full"></div>
+            <div class="w-6 h-6 bg-gray-400 rounded-full" />
           </div>
-          <div class="hidden lg:inline h-5 w-16 bg-gray-500 rounded"></div>
-          <div class="hidden lg:block w-4 h-4 bg-gray-500 rounded opacity-60"></div>
+          <div class="hidden lg:inline h-5 w-16 bg-gray-500 rounded" />
+          <div class="hidden lg:block w-4 h-4 bg-gray-500 rounded opacity-60" />
         </button>
       </template>
 
@@ -193,34 +186,34 @@ const getUserInitial = () => {
           <!-- 移动端占位符 -->
           <div class="flex lg:hidden space-x-1">
             <div class="w-9 h-9 rounded-full bg-gray-500 flex items-center justify-center">
-              <div class="w-4 h-4 bg-gray-400 rounded"></div>
+              <div class="w-4 h-4 bg-gray-400 rounded" />
             </div>
             <div class="w-9 h-9 rounded-full bg-gray-500 flex items-center justify-center">
-              <div class="w-4 h-4 bg-gray-400 rounded"></div>
+              <div class="w-4 h-4 bg-gray-400 rounded" />
             </div>
           </div>
 
           <!-- 平板端占位符 -->
           <div class="hidden lg:flex xl:hidden space-x-1">
             <div class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-gray-500">
-              <div class="w-3 h-3 bg-gray-400 rounded"></div>
-              <div class="w-8 h-3 bg-gray-400 rounded"></div>
+              <div class="w-3 h-3 bg-gray-400 rounded" />
+              <div class="w-8 h-3 bg-gray-400 rounded" />
             </div>
             <div class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-gray-500">
-              <div class="w-3 h-3 bg-gray-400 rounded"></div>
-              <div class="w-8 h-3 bg-gray-400 rounded"></div>
+              <div class="w-3 h-3 bg-gray-400 rounded" />
+              <div class="w-8 h-3 bg-gray-400 rounded" />
             </div>
           </div>
 
           <!-- 桌面端占位符 -->
           <div class="hidden xl:flex space-x-2">
             <div class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gray-500">
-              <div class="w-4 h-4 bg-gray-400 rounded"></div>
-              <div class="w-12 h-4 bg-gray-400 rounded"></div>
+              <div class="w-4 h-4 bg-gray-400 rounded" />
+              <div class="w-12 h-4 bg-gray-400 rounded" />
             </div>
             <div class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gray-500">
-              <div class="w-4 h-4 bg-gray-400 rounded"></div>
-              <div class="w-12 h-4 bg-gray-400 rounded"></div>
+              <div class="w-4 h-4 bg-gray-400 rounded" />
+              <div class="w-12 h-4 bg-gray-400 rounded" />
             </div>
           </div>
         </div>
@@ -230,8 +223,8 @@ const getUserInitial = () => {
     <!-- 已登录状态 -->
     <template v-else-if="isLoggedIn">
       <button
-        @click.stop="toggleUserMenu"
         class="flex items-center space-x-2 hover:bg-gray-800/50 rounded-lg p-1 transition-colors"
+        @click.stop="toggleUserMenu"
       >
         <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
           <template v-if="isString(userInfo.avatar) && userInfo.avatar.length > 0">
@@ -242,7 +235,7 @@ const getUserInitial = () => {
           </template>
         </div>
         <span class="hidden lg:inline text-white text-sm">{{ userInfo.name ?? '用户' }}</span>
-        <i class="ri-arrow-down-s-line text-gray-400 hidden lg:block"></i>
+        <i class="ri-arrow-down-s-line text-gray-400 hidden lg:block" />
       </button>
 
       <!-- 用户下拉菜单 -->
@@ -262,67 +255,71 @@ const getUserInitial = () => {
               </template>
             </div>
             <div>
-              <p class="text-sm font-medium">{{ userInfo.name ?? '用户' }}</p>
-              <p class="text-xs text-gray-400">余额: {{ userInfo.userBalance }}</p>
+              <p class="text-sm font-medium">
+                {{ userInfo.name ?? '用户' }}
+              </p>
+              <p class="text-xs text-gray-400">
+                余额: {{ userInfo.userBalance }}
+              </p>
             </div>
           </div>
         </div>
         <div class="py-2">
           <router-link to="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-            <i class="ri-settings-3-line mr-3"></i>
+            <i class="ri-settings-3-line mr-3" />
             账户设置
           </router-link>
           <router-link to="/favorites" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
-            <i class="ri-bookmark-line mr-3"></i>
+            <i class="ri-bookmark-line mr-3" />
             我的收藏
           </router-link>
-          <div class="border-t border-gray-700 mt-2"></div>
+          <div class="border-t border-gray-700 mt-2" />
           <button
-            @click="handleReset"
             class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50 text-red-400 w-full text-left"
+            @click="handleReset"
           >
-            <i class="ri-logout-box-line mr-3"></i>
+            <i class="ri-logout-box-line mr-3" />
             退出登录
           </button>
         </div>
       </div>
     </template>
 
-        <!-- 未登录状态 -->
+    <!-- 未登录状态 -->
     <template v-else>
       <div class="flex items-center space-x-2">
         <!-- 移动端：只显示图标按钮 -->
         <div class="flex lg:hidden space-x-1">
           <button
-            @click="handleLogin"
             class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center text-white hover:bg-gradient-to-br hover:from-blue-700 hover:to-purple-600 transition-colors"
             title="登录"
+            @click="handleLogin"
           >
-            <i class="ri-user-line text-base"></i>
+            <i class="ri-user-line text-base" />
           </button>
           <button
-            @click="handleRegister"
             class="w-9 h-9 rounded-full bg-gradient-to-br from-green-600 to-teal-500 flex items-center justify-center text-white hover:bg-gradient-to-br hover:from-green-700 hover:to-teal-600 transition-colors"
             title="注册"
+            @click="handleRegister"
           >
-            <i class="ri-user-add-line text-base"></i>
+            <i class="ri-user-add-line text-base" />
           </button>
         </div>
 
         <!-- 平板端：显示紧凑按钮 -->
         <div class="hidden lg:flex xl:hidden space-x-1">
           <button
-            @click="handleLogin"
             class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-purple-500 text-white hover:from-blue-700 hover:to-purple-600 transition-all duration-200 text-xs font-medium"
+            @click="handleLogin"
           >
-            <i class="ri-user-line text-sm"></i>
+            <i class="ri-user-line text-sm" />
             <span>登录</span>
           </button>
           <button
-            @click="handleRegister"
             class="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-green-600 to-teal-500 text-white hover:from-green-700 hover:to-teal-600 transition-all duration-200 text-xs font-medium"
+            @click="handleRegister"
           >
-            <i class="ri-user-add-line text-sm"></i>
+            <i class="ri-user-add-line text-sm" />
             <span>注册</span>
           </button>
         </div>
@@ -330,17 +327,17 @@ const getUserInitial = () => {
         <!-- 桌面端：显示完整按钮 -->
         <div class="hidden xl:flex space-x-2">
           <button
-            @click="handleLogin"
             class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-500 text-white hover:from-blue-700 hover:to-purple-600 transition-all duration-200 text-sm font-medium"
+            @click="handleLogin"
           >
-            <i class="ri-user-line"></i>
+            <i class="ri-user-line" />
             <span>登录</span>
           </button>
           <button
-            @click="handleRegister"
             class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-green-600 to-teal-500 text-white hover:from-green-700 hover:to-teal-600 transition-all duration-200 text-sm font-medium"
+            @click="handleRegister"
           >
-            <i class="ri-user-add-line"></i>
+            <i class="ri-user-add-line" />
             <span>注册</span>
           </button>
         </div>
@@ -423,4 +420,3 @@ const getUserInitial = () => {
   user-select: none;
 }
 </style>
-

@@ -563,12 +563,23 @@ export const schoolApi = {
 
 ```vue
 <!-- src/components/talent/SchoolDetailModal.vue -->
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useSchoolStore } from '@/stores/talent/school'
+
+const schoolStore = useSchoolStore()
+
+// 计算属性
+const majorCategories = computed(() => schoolStore.majorCategories)
+const facultyStats = computed(() => schoolStore.facultyStatistics)
+</script>
+
 <template>
   <div class="school-detail">
     <!-- 专业分类展示 -->
     <div v-if="majorCategories.length" class="major-categories">
       <div v-for="category in majorCategories" :key="category.name" class="category-card">
-        <i :class="category.icon"></i>
+        <i :class="category.icon" />
         <h3>{{ category.name }}</h3>
         <p>{{ category.description }}</p>
         <div class="skills">
@@ -589,17 +600,6 @@ export const schoolApi = {
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useSchoolStore } from '@/stores/talent/school'
-
-const schoolStore = useSchoolStore()
-
-// 计算属性
-const majorCategories = computed(() => schoolStore.majorCategories)
-const facultyStats = computed(() => schoolStore.facultyStatistics)
-</script>
 ```
 
 ## 环境配置

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { JobPosting, JobQueryParams, JobCardData, FilterOptions, SalaryRange } from '@/types/talent/job'
-import { listJob, getJob } from '@/api/talent/job'
+import { computed, ref } from 'vue'
+import type { JobPosting, JobQueryParams, SalaryRange } from '@/types/talent/job'
+import { getJob, listJob } from '@/api/talent/job'
 
 export const useJobStore = defineStore('talent-job', () => {
   // 状态
@@ -11,7 +11,7 @@ export const useJobStore = defineStore('talent-job', () => {
   const total = ref(0)
   const queryParams = ref<JobQueryParams>({
     pageNum: 1,
-    pageSize: 20
+    pageSize: 20,
   })
 
   // 筛选状态
@@ -25,7 +25,7 @@ export const useJobStore = defineStore('talent-job', () => {
     salaryRange: { min: 10, max: 50 } as SalaryRange,
     isUrgent: false,
     supportFreshGraduate: false,
-    weekendOff: false
+    weekendOff: false,
   })
 
   // 排序选项
@@ -38,33 +38,33 @@ export const useJobStore = defineStore('talent-job', () => {
     // 应用筛选逻辑
     if (filters.value.professions.length > 0) {
       result = result.filter(job =>
-        filters.value.professions.includes(job.profession)
+        filters.value.professions.includes(job.profession),
       )
     }
 
     if (filters.value.locations.length > 0) {
       result = result.filter(job =>
         filters.value.locations.some(location =>
-          job.workLocation.includes(location)
-        )
+          job.workLocation.includes(location),
+        ),
       )
     }
 
     if (filters.value.experiences.length > 0) {
       result = result.filter(job =>
-        filters.value.experiences.includes(job.experienceRequired)
+        filters.value.experiences.includes(job.experienceRequired),
       )
     }
 
     if (filters.value.workTypes.length > 0) {
       result = result.filter(job =>
-        filters.value.workTypes.includes(job.workType)
+        filters.value.workTypes.includes(job.workType),
       )
     }
 
-        // 薪资范围筛选
+    // 薪资范围筛选
     const { min, max } = filters.value.salaryRange
-    result = result.filter(job => {
+    result = result.filter((job) => {
       if (job.salaryMin && job.salaryMax) {
         const jobMinK = job.salaryMin / 1000
         const jobMaxK = job.salaryMax / 1000
@@ -78,9 +78,9 @@ export const useJobStore = defineStore('talent-job', () => {
       case 'salary-high':
         result.sort((a, b) => {
           const getSalaryMax = (job: JobPosting) => {
-            if (job.salaryMax) {
+            if (job.salaryMax)
               return job.salaryMax / 1000
-            }
+
             return 0
           }
           return getSalaryMax(b) - getSalaryMax(a)
@@ -89,9 +89,9 @@ export const useJobStore = defineStore('talent-job', () => {
       case 'salary-low':
         result.sort((a, b) => {
           const getSalaryMin = (job: JobPosting) => {
-            if (job.salaryMin) {
+            if (job.salaryMin)
               return job.salaryMin / 1000
-            }
+
             return 0
           }
           return getSalaryMin(a) - getSalaryMin(b)
@@ -100,7 +100,7 @@ export const useJobStore = defineStore('talent-job', () => {
       case 'latest':
       default:
         result.sort((a, b) =>
-          new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+          new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime(),
         )
         break
     }
@@ -111,7 +111,7 @@ export const useJobStore = defineStore('talent-job', () => {
   const jobCount = computed(() => filteredJobs.value.length)
 
   // 方法
-    // 数据映射函数：将后端数据格式转换为前端期望的格式
+  // 数据映射函数：将后端数据格式转换为前端期望的格式
   const mapJobData = (backendJob: any, index: number): JobPosting => {
     // 处理薪资信息
     let salaryMin: number | undefined
@@ -141,7 +141,7 @@ export const useJobStore = defineStore('talent-job', () => {
       deadline: backendJob.deadline || '',
       createdAt: backendJob.createdAt || new Date().toISOString(),
       updatedAt: backendJob.updatedAt || new Date().toISOString(),
-      enterprise: backendJob.enterprise || null
+      enterprise: backendJob.enterprise || null,
     } as JobPosting
   }
 
@@ -162,11 +162,13 @@ export const useJobStore = defineStore('talent-job', () => {
 
       console.log('  映射后的岗位数据:', jobs.value)
       console.log('  获取到的岗位数量:', jobs.value.length)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('❌ 获取岗位列表失败:', error)
       jobs.value = []
       total.value = 0
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -176,10 +178,12 @@ export const useJobStore = defineStore('talent-job', () => {
     try {
       const response = await getJob(id)
       currentJob.value = response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取岗位详情失败:', error)
       currentJob.value = null
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -203,7 +207,7 @@ export const useJobStore = defineStore('talent-job', () => {
       salaryRange: { min: 10, max: 50 },
       isUrgent: false,
       supportFreshGraduate: false,
-      weekendOff: false
+      weekendOff: false,
     }
   }
 
@@ -212,16 +216,16 @@ export const useJobStore = defineStore('talent-job', () => {
   }
 
   const search = async (searchQuery?: string) => {
-    if (searchQuery) {
+    if (searchQuery)
       updateQueryParams({ title: searchQuery })
-    }
+
     await fetchJobs()
   }
 
   const resetSearch = () => {
     queryParams.value = {
       pageNum: 1,
-      pageSize: 20
+      pageSize: 20,
     }
     resetFilters()
     fetchJobs()
@@ -259,6 +263,6 @@ export const useJobStore = defineStore('talent-job', () => {
     search,
     resetSearch,
     changePage,
-    changePageSize
+    changePageSize,
   }
 })

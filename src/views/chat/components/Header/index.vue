@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-import { computed, nextTick,ref,watch  } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { NModal } from 'naive-ui'
 import { HoverButton, SvgIcon } from '@/components/common'
-import {  gptConfigStore, homeStore, useAppStore, useChatStore } from '@/store'
+import { gptConfigStore, homeStore, useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import {NModal} from "naive-ui"
-import aiModel from "@/views/mj/aiModel.vue"
+import aiModel from '@/views/mj/aiModel.vue'
 import { chatSetting } from '@/api'
 
+defineProps<Props>()
+const emit = defineEmits<Emit>()
 const { isMobile } = useBasicLayout()
 interface Props {
-  usingContext: boolean,
+  usingContext: boolean
   haveData: boolean
 }
 
@@ -17,9 +19,6 @@ interface Emit {
   (ev: 'export'): void
   (ev: 'handleClear'): void
 }
-
-defineProps<Props>()
-const emit = defineEmits<Emit>()
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -44,13 +43,12 @@ function handleExport() {
 function handleClear() {
   emit('handleClear')
 }
-const uuid = chatStore.active;
-const chatSet = new chatSetting( uuid==null?1002:uuid);
-const nGptStore = ref( chatSet.getGptConfig())  ;
-const st = ref({isShow:false});
-watch(()=>gptConfigStore.myData,()=>nGptStore.value=  chatSet.getGptConfig() , {deep:true})
-watch(()=>homeStore.myData.act,(n)=> n=='saveChat' && (nGptStore.value=  chatSet.getGptConfig() ), {deep:true})
-
+const uuid = chatStore.active
+const chatSet = new chatSetting(uuid == null ? 1002 : uuid)
+const nGptStore = ref(chatSet.getGptConfig())
+const st = ref({ isShow: false })
+watch(() => gptConfigStore.myData, () => nGptStore.value = chatSet.getGptConfig(), { deep: true })
+watch(() => homeStore.myData.act, n => n == 'saveChat' && (nGptStore.value = chatSet.getGptConfig()), { deep: true })
 </script>
 
 <template>
@@ -60,8 +58,8 @@ watch(()=>homeStore.myData.act,(n)=> n=='saveChat' && (nGptStore.value=  chatSet
     <div class="relative flex items-center justify-between min-w-0 overflow-hidden h-14" style="height: 116px; line-height: 116px;">
       <div class="flex items-center">
         <button
-          class="flex items-center justify-center w-11 h-11"
-          @click="handleUpdateCollapsed" v-if="isMobile"
+          v-if="isMobile"
+          class="flex items-center justify-center w-11 h-11" @click="handleUpdateCollapsed"
         >
           <SvgIcon v-if="collapsed" class="text-2xl" icon="ri:align-justify" />
           <SvgIcon v-else class="text-2xl" icon="ri:align-right" />
@@ -79,19 +77,17 @@ watch(()=>homeStore.myData.act,(n)=> n=='saveChat' && (nGptStore.value=  chatSet
             <SvgIcon icon="ri:download-2-line" />
           </span>
         </HoverButton> -->
-        <HoverButton @click="handleClear" class="clear-chat">
-          <span class="text-xl text-[#4f555e] dark:text-white" >
-            <IconSvg icon="clear" width="28px" height="22px"></IconSvg>
+        <HoverButton class="clear-chat" @click="handleClear">
+          <span class="text-xl text-[#4f555e] dark:text-white">
+            <IconSvg icon="clear" width="28px" height="22px" />
             <!-- <SvgIcon icon="ri:delete-bin-line" /> -->
           </span>
         </HoverButton>
       </div>
     </div>
-
-
   </header>
 
-  <NModal v-model:show="st.isShow"   preset="card"  :title="$t('mjchat.modelChange')" class="!max-w-[540px] change-dialog" @close="st.isShow=false" >
-        <aiModel @close="st.isShow=false"/>
+  <NModal v-model:show="st.isShow" preset="card" :title="$t('mjchat.modelChange')" class="!max-w-[540px] change-dialog" @close="st.isShow = false">
+    <aiModel @close="st.isShow = false" />
   </NModal>
 </template>

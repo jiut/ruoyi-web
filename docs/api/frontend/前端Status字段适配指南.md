@@ -150,6 +150,28 @@ export async function updateSchoolStatus(id: number, status: 'ACTIVE' | 'INACTIV
 
 ```vue
 <!-- SchoolList.vue -->
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { getStatusText } from '@/utils/statusConverter'
+
+const schoolList = ref([])
+
+function getStatusTagType(status: string) {
+  return status === '0' ? 'success' : 'danger'
+}
+
+function handleStatusChange(school: any) {
+  // 处理状态变更
+  updateSchoolStatus(school.id, school.status)
+}
+
+// 组件挂载时获取数据
+onMounted(async () => {
+  const response = await getSchoolList()
+  schoolList.value = response.data.rows
+})
+</script>
+
 <template>
   <div>
     <el-table :data="schoolList">
@@ -165,8 +187,8 @@ export async function updateSchoolStatus(id: number, status: 'ACTIVE' | 'INACTIV
         <template #default="{ row }">
           <el-switch
             v-model="row.status"
-            :active-value="'0'"
-            :inactive-value="'1'"
+            active-value="0"
+            inactive-value="1"
             @change="handleStatusChange(row)"
           />
         </template>
@@ -174,28 +196,6 @@ export async function updateSchoolStatus(id: number, status: 'ACTIVE' | 'INACTIV
     </el-table>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { getStatusText } from '@/utils/statusConverter';
-
-const schoolList = ref([]);
-
-function getStatusTagType(status: string) {
-  return status === '0' ? 'success' : 'danger';
-}
-
-function handleStatusChange(school: any) {
-  // 处理状态变更
-  updateSchoolStatus(school.id, school.status);
-}
-
-// 组件挂载时获取数据
-onMounted(async () => {
-  const response = await getSchoolList();
-  schoolList.value = response.data.rows;
-});
-</script>
 ```
 
 ## 📋 实施检查清单

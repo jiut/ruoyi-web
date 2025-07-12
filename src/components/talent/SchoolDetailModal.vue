@@ -1,181 +1,17 @@
-<template>
-	<!-- 院校详情弹窗 - 添加动画效果 -->
-	<Teleport to="body">
-		<!-- 模态框覆盖层 -->
-		<Transition name="modal-overlay" appear>
-			<div v-if="visible" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4" @click="handleModalClick">
-				<!-- 模态框主体 -->
-				<Transition name="modal" appear>
-					<div
-						v-if="visible"
-						class="modal glass-card w-full max-w-5xl max-h-[90vh] overflow-y-auto custom-scrollbar rounded-lg"
-						@click.stop
-					>
-						<div class="p-6">
-					<div class="flex justify-between items-center mb-6">
-						<div class="flex items-center">
-							<div
-								class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center text-white text-2xl font-bold mr-4 border border-purple-400/30">
-								{{ getSchoolInitial(school.schoolName) }}
-							</div>
-							<div>
-								<h2 class="text-2xl font-bold text-white mb-0" id="schoolName">{{ school.schoolName }}</h2>
-								<p class="text-gray-400 mb-0" id="schoolDepartment">{{ getSchoolTypeLabel(school.schoolType) }}</p>
-							</div>
-						</div>
-						<div class="flex items-center space-x-3">
-							<button @click="toggleFavorite" :disabled="favoriteLoading"
-								class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
-								:title="isFavorited ? '已收藏' : '收藏院校'">
-								<i :class="isFavorited ? 'ri-bookmark-fill' : 'ri-bookmark-line'"></i>
-							</button>
-							<button
-								class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
-								@click="visible = false">
-								<i class="ri-close-line"></i>
-							</button>
-						</div>
-					</div>
-
-					<!-- 基本信息 -->
-					<div class="mb-8">
-						<div class="flex flex-wrap gap-3 mb-4">
-							<!-- 院校类型标签 -->
-							<span
-								:class="[
-									'text-sm px-3 py-1 rounded-full',
-									getSchoolTypeTagStyle(school.schoolType)
-								]"
-							>
-								{{ formatSchoolType(school.schoolType) }}
-							</span>
-
-							<!-- 特殊标识标签 (优先级: 985>211>双一流，只显示最高等级) -->
-							<span
-								v-if="school.is985"
-								class="text-sm px-3 py-1 rounded-full school-tag school-tag-985 bg-yellow-500/10 text-yellow-400 border"
-							>
-								985
-							</span>
-							<span
-								v-else-if="school.is211"
-								class="text-sm px-3 py-1 rounded-full school-tag school-tag-211 bg-purple-500/10 text-purple-400 border"
-							>
-								211
-							</span>
-							<span
-								v-else-if="school.isDoubleFirst"
-								class="text-sm px-3 py-1 rounded-full school-tag school-tag-double-first bg-blue-500/10 text-blue-400 border"
-							>
-								双一流
-							</span>
-
-							<!-- 地区标签 -->
-							<span class="text-sm px-3 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
-								{{ formatLocation(school) }}
-							</span>
-
-							<!-- 就业率标签 -->
-							<span v-if="getEmploymentRate"
-								class="text-sm px-3 py-1 rounded-full school-tag school-tag-employment bg-green-500/10 text-green-400 border">
-								就业率 {{ getEmploymentRate }}
-							</span>
-						</div>
-						<p class="text-gray-300 text-sm leading-relaxed">
-							{{ school.description || '这是一所优秀的院校，致力于培养高质量的设计人才，具有深厚的教学底蕴和先进的教学理念。' }}
-						</p>
-					</div>
-
-					<!-- 标签切换 -->
-					<div class="border-b border-gray-700 mb-6">
-						<div class="flex space-x-2">
-							<button v-for="tab in tabs" :key="tab.key" @click="currentTab = tab.key" :class="[
-                  'px-4 py-2 text-sm font-medium border-b-2 transition-colors',
-                  currentTab === tab.key
-                    ? 'border-primary text-primary tab-active'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                ]" :data-tab="tab.key">
-								{{ tab.label }}
-							</button>
-						</div>
-					</div>
-
-					<!-- 标签内容 -->
-					<div class="tab-content">
-						<!-- 加载状态 -->
-						<div v-if="loading" class="flex items-center justify-center h-64">
-							<div class="flex flex-col items-center">
-								<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-								<p class="text-gray-400">正在加载院校详细信息...</p>
-							</div>
-						</div>
-						<!-- 内容区域 -->
-						<template v-else-if="schoolFullInfo">
-							<div v-show="currentTab === 'majors'" class="tab-pane" id="majorsContent">
-								<SchoolMajors
-									:school-id="school.id"
-									:major-categories="schoolFullInfo.majorCategories"
-									:course-system="schoolFullInfo.courseSystem"
-								/>
-							</div>
-							<div v-show="currentTab === 'faculty'" class="tab-pane" id="facultyContent">
-								<SchoolFaculty
-									:school-id="school.id"
-									:faculty-stats="schoolFullInfo.facultyStats"
-									:faculty-members="schoolFullInfo.facultyMembers"
-								/>
-							</div>
-							<div v-show="currentTab === 'employment'" class="tab-pane" id="employmentContent">
-								<SchoolEmployment
-									:school-id="school.id"
-									:employment-stats="schoolFullInfo.employmentStats"
-									:employers="schoolFullInfo.employers"
-									:chart-data="schoolFullInfo.chartData"
-								/>
-							</div>
-							<div v-show="currentTab === 'achievements'" class="tab-pane" id="achievementsContent">
-								<SchoolAchievements
-									:school-id="school.id"
-									:achievement-stats="schoolFullInfo.achievementStats"
-									:trend-data="schoolFullInfo.trendData"
-									:award-works="schoolFullInfo.awardWorks"
-								/>
-							</div>
-						</template>
-						<!-- 错误状态 -->
-						<div v-else-if="!loading" class="flex items-center justify-center h-64">
-							<div class="flex flex-col items-center">
-								<i class="ri-error-warning-line text-4xl text-red-400 mb-4"></i>
-								<p class="text-gray-400">加载院校信息失败</p>
-																<button
-									@click="reloadSchoolData"
-									class="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-								>
-									重新加载
-								</button>
-							</div>
-						</div>
-					</div>
-
-						</div>
-					</div>
-				</Transition>
-			</div>
-		</Transition>
-	</Teleport>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, watch, Teleport } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useMessage } from 'naive-ui'
-import { useSchool, useSchoolFormatter } from '@/composables/talent/useSchool'
-import { schoolApi } from '@/api/talent/school'
 import SchoolMajors from './SchoolMajors.vue'
 import SchoolFaculty from './SchoolFaculty.vue'
 import SchoolEmployment from './SchoolEmployment.vue'
 import SchoolAchievements from './SchoolAchievements.vue'
+import { schoolApi } from '@/api/talent/school'
+import { useSchool, useSchoolFormatter } from '@/composables/talent/useSchool'
 import { getMockEmploymentRate } from '@/data/mockSchools'
-import type { School, SchoolType, SchoolFullInfo } from '@/types/talent/school'
+import type { School, SchoolFullInfo, SchoolType } from '@/types/talent/school'
+
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
 
 interface Props {
   school: School
@@ -198,7 +34,8 @@ const schoolFullInfo = ref<SchoolFullInfo | null>(null)
 
 // 加载院校数据的函数
 const loadSchoolData = async (schoolId: number) => {
-  if (!schoolId) return
+  if (!schoolId)
+    return
 
   loading.value = true
   try {
@@ -206,21 +43,21 @@ const loadSchoolData = async (schoolId: number) => {
 
     // 修复字段名不匹配问题：employmentCharts -> chartData
     const rawData = response.data as any // 使用any类型断言来访问后端实际字段
-    if (rawData.employmentCharts && !rawData.chartData) {
+    if (rawData.employmentCharts && !rawData.chartData)
       rawData.chartData = rawData.employmentCharts
-    }
 
     // 同样处理 awardTrends -> trendData 的映射
-    if (rawData.awardTrends && !rawData.trendData) {
+    if (rawData.awardTrends && !rawData.trendData)
       rawData.trendData = rawData.awardTrends
-    }
 
     schoolFullInfo.value = rawData
-  } catch (error) {
+  }
+  catch (error) {
     console.error('❌ 加载院校完整信息失败:', error)
     message.error('加载院校详细信息失败，请稍后重试')
     schoolFullInfo.value = null
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -229,36 +66,31 @@ const loadSchoolData = async (schoolId: number) => {
 const reloadSchoolData = async () => {
   await loadSchoolData(props.school.id)
 }
-
-// 根据登录状态和环境变量切换数据源
-import { shouldUseMockData } from '@/utils/authUtils'
 const USE_MOCK_DATA = computed(() => shouldUseMockData())
 
 // 获取就业率数据
 const getEmploymentRate = computed(() => {
-  if (schoolFullInfo.value?.employmentStats?.employmentRate) {
+  if (schoolFullInfo.value?.employmentStats?.employmentRate)
     return schoolFullInfo.value.employmentStats.employmentRate
-  }
 
   // 兜底逻辑：如果完整信息还未加载，使用原有逻辑
-  if (USE_MOCK_DATA.value) {
+  if (USE_MOCK_DATA.value)
     return getMockEmploymentRate(props.school.id)
-  } else {
+  else
     return props.school.employmentData?.employmentRate || null
-  }
 })
 
 // 标签页配置
 const tabs = [
-	{ key: 'majors', label: '专业设置' },
+  { key: 'majors', label: '专业设置' },
   { key: 'faculty', label: '师资力量' },
   { key: 'employment', label: '就业情况' },
-  { key: 'achievements', label: '获奖成果' }
+  { key: 'achievements', label: '获奖成果' },
 ]
 
 const visible = computed({
   get: () => props.visible,
-  set: (value) => emit('update:visible', value)
+  set: value => emit('update:visible', value),
 })
 
 // 收藏状态
@@ -277,12 +109,12 @@ const getSchoolInitial = (name: string) => {
 // 获取院校类型标签
 const getSchoolTypeLabel = (type: string) => {
   const labels = {
-    'COMPREHENSIVE': '综合大学',
-    'SCIENCE_ENGINEERING': '理工类',
-    'ART_DESIGN': '艺术设计类',
-    'NORMAL': '师范类',
-    'VOCATIONAL': '职业院校',
-    'INDEPENDENT': '独立学院'
+    COMPREHENSIVE: '综合大学',
+    SCIENCE_ENGINEERING: '理工类',
+    ART_DESIGN: '艺术设计类',
+    NORMAL: '师范类',
+    VOCATIONAL: '职业院校',
+    INDEPENDENT: '独立学院',
   }
   return labels[type as keyof typeof labels] || type
 }
@@ -291,58 +123,58 @@ const getSchoolTypeLabel = (type: string) => {
 const getSchoolTypeTagStyle = (schoolType: SchoolType) => {
   const styleMap: Record<string, string> = {
     // 综合类 - 蓝色主题（主色调）
-    'COMPREHENSIVE': 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
+    COMPREHENSIVE: 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
 
     // 艺术类 - 紫色主题
-    'ART': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
-    'ART_DESIGN': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+    ART: 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+    ART_DESIGN: 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
 
     // 理工类 - 深蓝色主题
-    'ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
-    'SCIENCE': 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
-    'SCIENCE_ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+    ENGINEERING: 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+    SCIENCE: 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
+    SCIENCE_ENGINEERING: 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
 
     // 师范类 - 绿色主题
-    'NORMAL': 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
+    NORMAL: 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
 
     // 财经类 - 橙色主题
-    'FINANCE': 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
+    FINANCE: 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
 
     // 医学类 - 红色主题
-    'MEDICAL': 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
+    MEDICAL: 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
 
     // 文科类 - 粉色主题
-    'LIBERAL_ARTS': 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
+    LIBERAL_ARTS: 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
 
     // 农林类 - 绿色主题
-    'AGRICULTURE': 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
+    AGRICULTURE: 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
 
     // 体育类 - 黄绿色主题
-    'SPORTS': 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
+    SPORTS: 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
 
     // 政法类 - 深灰色主题
-    'POLITICS_LAW': 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
+    POLITICS_LAW: 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
 
     // 民族类 - 琥珀色主题
-    'ETHNIC': 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
+    ETHNIC: 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
 
     // 军事类 - 深绿色主题
-    'MILITARY': 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
+    MILITARY: 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
 
     // 职业院校 - 橙色主题
-    'VOCATIONAL': 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
+    VOCATIONAL: 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
 
     // 独立学院 - 灰蓝色主题
-    'INDEPENDENT': 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border'
+    INDEPENDENT: 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border',
   }
   return styleMap[schoolType] || 'school-tag school-tag-default bg-gray-700/50 text-gray-300 border'
 }
 
 // 格式化地区信息
 const formatLocation = (school: School) => {
-  if (school.city && school.province) {
+  if (school.city && school.province)
     return school.city === school.province ? school.city : school.city
-  }
+
   return school.location || school.province || school.city || '未知'
 }
 
@@ -353,20 +185,201 @@ const toggleFavorite = async () => {
     await toggleFav(props.school.id)
     isFavorited.value = !isFavorited.value
     message.success(isFavorited.value ? '已收藏院校' : '已取消收藏')
-  } catch (error) {
+  }
+  catch (error) {
     message.error('操作失败，请稍后重试')
-  } finally {
+  }
+  finally {
     favoriteLoading.value = false
   }
 }
 
 // 监听学校变化，加载完整院校数据
 watch(() => props.school.id, (schoolId) => {
-  if (schoolId) {
+  if (schoolId)
     loadSchoolData(schoolId)
-  }
 }, { immediate: true })
 </script>
+
+<template>
+  <!-- 院校详情弹窗 - 添加动画效果 -->
+  <Teleport to="body">
+    <!-- 模态框覆盖层 -->
+    <Transition name="modal-overlay" appear>
+      <div v-if="visible" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4" @click="handleModalClick">
+        <!-- 模态框主体 -->
+        <Transition name="modal" appear>
+          <div
+            v-if="visible"
+            class="modal glass-card w-full max-w-5xl max-h-[90vh] overflow-y-auto custom-scrollbar rounded-lg"
+            @click.stop
+          >
+            <div class="p-6">
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center">
+                  <div
+                    class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center text-white text-2xl font-bold mr-4 border border-purple-400/30"
+                  >
+                    {{ getSchoolInitial(school.schoolName) }}
+                  </div>
+                  <div>
+                    <h2 id="schoolName" class="text-2xl font-bold text-white mb-0">
+                      {{ school.schoolName }}
+                    </h2>
+                    <p id="schoolDepartment" class="text-gray-400 mb-0">
+                      {{ getSchoolTypeLabel(school.schoolType) }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <button
+                    :disabled="favoriteLoading" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
+                    :title="isFavorited ? '已收藏' : '收藏院校'"
+                    @click="toggleFavorite"
+                  >
+                    <i :class="isFavorited ? 'ri-bookmark-fill' : 'ri-bookmark-line'" />
+                  </button>
+                  <button
+                    class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
+                    @click="visible = false"
+                  >
+                    <i class="ri-close-line" />
+                  </button>
+                </div>
+              </div>
+
+              <!-- 基本信息 -->
+              <div class="mb-8">
+                <div class="flex flex-wrap gap-3 mb-4">
+                  <!-- 院校类型标签 -->
+                  <span
+                    class="text-sm px-3 py-1 rounded-full" :class="[
+                      getSchoolTypeTagStyle(school.schoolType),
+                    ]"
+                  >
+                    {{ formatSchoolType(school.schoolType) }}
+                  </span>
+
+                  <!-- 特殊标识标签 (优先级: 985>211>双一流，只显示最高等级) -->
+                  <span
+                    v-if="school.is985"
+                    class="text-sm px-3 py-1 rounded-full school-tag school-tag-985 bg-yellow-500/10 text-yellow-400 border"
+                  >
+                    985
+                  </span>
+                  <span
+                    v-else-if="school.is211"
+                    class="text-sm px-3 py-1 rounded-full school-tag school-tag-211 bg-purple-500/10 text-purple-400 border"
+                  >
+                    211
+                  </span>
+                  <span
+                    v-else-if="school.isDoubleFirst"
+                    class="text-sm px-3 py-1 rounded-full school-tag school-tag-double-first bg-blue-500/10 text-blue-400 border"
+                  >
+                    双一流
+                  </span>
+
+                  <!-- 地区标签 -->
+                  <span class="text-sm px-3 py-1 rounded-full bg-gray-700/50 text-gray-300 border border-gray-600">
+                    {{ formatLocation(school) }}
+                  </span>
+
+                  <!-- 就业率标签 -->
+                  <span
+                    v-if="getEmploymentRate"
+                    class="text-sm px-3 py-1 rounded-full school-tag school-tag-employment bg-green-500/10 text-green-400 border"
+                  >
+                    就业率 {{ getEmploymentRate }}
+                  </span>
+                </div>
+                <p class="text-gray-300 text-sm leading-relaxed">
+                  {{ school.description || '这是一所优秀的院校，致力于培养高质量的设计人才，具有深厚的教学底蕴和先进的教学理念。' }}
+                </p>
+              </div>
+
+              <!-- 标签切换 -->
+              <div class="border-b border-gray-700 mb-6">
+                <div class="flex space-x-2">
+                  <button
+                    v-for="tab in tabs" :key="tab.key" class="px-4 py-2 text-sm font-medium border-b-2 transition-colors" :class="[
+                      currentTab === tab.key
+                        ? 'border-primary text-primary tab-active'
+                        : 'border-transparent text-gray-400 hover:text-gray-300',
+                    ]" :data-tab="tab.key" @click="currentTab = tab.key"
+                  >
+                    {{ tab.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 标签内容 -->
+              <div class="tab-content">
+                <!-- 加载状态 -->
+                <div v-if="loading" class="flex items-center justify-center h-64">
+                  <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
+                    <p class="text-gray-400">
+                      正在加载院校详细信息...
+                    </p>
+                  </div>
+                </div>
+                <!-- 内容区域 -->
+                <template v-else-if="schoolFullInfo">
+                  <div v-show="currentTab === 'majors'" id="majorsContent" class="tab-pane">
+                    <SchoolMajors
+                      :school-id="school.id"
+                      :major-categories="schoolFullInfo.majorCategories"
+                      :course-system="schoolFullInfo.courseSystem"
+                    />
+                  </div>
+                  <div v-show="currentTab === 'faculty'" id="facultyContent" class="tab-pane">
+                    <SchoolFaculty
+                      :school-id="school.id"
+                      :faculty-stats="schoolFullInfo.facultyStats"
+                      :faculty-members="schoolFullInfo.facultyMembers"
+                    />
+                  </div>
+                  <div v-show="currentTab === 'employment'" id="employmentContent" class="tab-pane">
+                    <SchoolEmployment
+                      :school-id="school.id"
+                      :employment-stats="schoolFullInfo.employmentStats"
+                      :employers="schoolFullInfo.employers"
+                      :chart-data="schoolFullInfo.chartData"
+                    />
+                  </div>
+                  <div v-show="currentTab === 'achievements'" id="achievementsContent" class="tab-pane">
+                    <SchoolAchievements
+                      :school-id="school.id"
+                      :achievement-stats="schoolFullInfo.achievementStats"
+                      :trend-data="schoolFullInfo.trendData"
+                      :award-works="schoolFullInfo.awardWorks"
+                    />
+                  </div>
+                </template>
+                <!-- 错误状态 -->
+                <div v-else-if="!loading" class="flex items-center justify-center h-64">
+                  <div class="flex flex-col items-center">
+                    <i class="ri-error-warning-line text-4xl text-red-400 mb-4" />
+                    <p class="text-gray-400">
+                      加载院校信息失败
+                    </p>
+                    <button
+                      class="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+                      @click="reloadSchoolData"
+                    >
+                      重新加载
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
+</template>
 
 <style scoped>
 /* 全局基础样式 - 从HTML移植 */

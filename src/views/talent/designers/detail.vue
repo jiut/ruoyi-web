@@ -1,3 +1,200 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import TalentHeader from '@/components/talent/TalentHeader.vue'
+import { SkillTagList } from '@/components/common'
+import { useSkillTags } from '@/composables/useSkillTags'
+import type { Award, Designer, Education, Profession, Work, WorkExperience, WorkStatus } from '@/types/talent/designer'
+import ProfessionUtils from '@/utils/professionUtils'
+import { mockAwards, mockDesigners, mockEducation, mockWorkExperience, mockWorks } from '@/data/mockDesigners'
+import { getNameInitial } from '@/utils/styleGenerator'
+import {
+  getDesignerComplete,
+} from '@/api/talent/designer'
+
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+
+const route = useRoute()
+const { debugSkillTags } = useSkillTags()
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
+
+console.log('🔍 设计师详情页面环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  DEV:', import.meta.env.DEV)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
+
+const loading = ref(true)
+const designer = ref<Designer | null>(null)
+const designerWorks = ref<Work[]>([])
+const workExperiences = ref<WorkExperience[]>([])
+const educations = ref<Education[]>([])
+const awards = ref<Award[]>([])
+const selectedWorkCategory = ref('全部')
+
+// 获取设计师ID - 处理长整数精度问题
+const designerId = computed(() => {
+  const id = route.params.id as string
+  const numId = Number(id)
+
+  // 检查是否发生精度丢失
+  if (numId.toString() !== id) {
+    console.error('设计师ID精度丢失:', {
+      原始ID: id,
+      转换后ID: numId,
+      转换后字符串: numId.toString(),
+    })
+    // 对于超长ID，我们仍然返回数字，但会在API调用时使用原始字符串
+    return numId
+  }
+
+  return numId
+})
+
+// 获取设计师信息
+const getDesignerInfo = async () => {
+  try {
+    loading.value = true
+    // 使用原始字符串ID来避免精度丢失
+    const originalId = route.params.id as string
+    const id = designerId.value
+
+    if (USE_MOCK_DATA.value) {
+      // 使用模拟数据（页面层面的直接处理，更快速的开发体验）
+      console.log('🔧 使用模拟数据 - 设计师详情页面')
+
+      const foundDesigner = mockDesigners.find(d => d.id === id)
+      if (foundDesigner) {
+        designer.value = foundDesigner
+
+        // 获取相关数据
+        designerWorks.value = mockWorks.filter(work => work.designerId === id)
+        workExperiences.value = mockWorkExperience.filter(exp => exp.designerId === id)
+          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        educations.value = mockEducation.filter(edu => edu.designerId === id)
+          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        awards.value = mockAwards.filter(award => award.designerId === id)
+          .sort((a, b) => (b.year || 0) - (a.year || 0))
+      }
+      else {
+        // Mock数据中未找到设计师
+        designer.value = null
+        designerWorks.value = []
+        workExperiences.value = []
+        educations.value = []
+        awards.value = []
+      }
+    }
+    else {
+      // 使用聚合API调用后端接口
+      console.log('🚀 使用聚合API - 设计师详情页面', { originalId, convertedId: id })
+
+      // 检查ID是否发生精度丢失，如果是则使用原始字符串ID
+      const apiId = (id.toString() !== originalId) ? originalId : id
+      console.log('🔍 设计师详情页面 API调用调试:', {
+        原始路由ID: originalId,
+        转换后ID: id,
+        最终使用ID: apiId,
+        是否发生精度丢失: id.toString() !== originalId,
+      })
+
+      const response = await getDesignerComplete(apiId)
+      const data = response.data
+
+      if (data && data.designer) {
+        designer.value = data.designer
+        designerWorks.value = data.works || []
+        workExperiences.value = data.workExperiences || []
+        educations.value = data.educations || []
+        awards.value = data.awards || []
+      }
+      else {
+        // 后端API返回空数据
+        designer.value = null
+        designerWorks.value = []
+        workExperiences.value = []
+        educations.value = []
+        awards.value = []
+      }
+    }
+  }
+  catch (error) {
+    console.error('获取设计师信息失败:', error)
+    designer.value = null
+    designerWorks.value = []
+    workExperiences.value = []
+    educations.value = []
+    awards.value = []
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+// 作品分类
+const workCategories = ['全部', 'UI设计', 'Web设计', '产品设计', '交互设计']
+
+// 筛选后的作品
+const filteredWorks = computed(() => {
+  if (selectedWorkCategory.value === '全部')
+    return designerWorks.value
+
+  return designerWorks.value.filter(work => work.category === selectedWorkCategory.value)
+})
+
+// 工具方法
+
+const getProfessionLabel = (profession: Profession) => {
+  return ProfessionUtils.getDisplayName(profession)
+}
+
+const getWorkStatusLabel = (status: WorkStatus) => {
+  const statuses = {
+    EMPLOYED: '在职',
+    FREELANCER: '自由职业',
+    SEEKING: '求职中',
+    STUDENT: '学生',
+  }
+  return statuses[status] || status
+}
+
+const getDesignerSkills = (designer: Designer) => {
+  try {
+    const skills = JSON.parse(designer.skillTags || '[]')
+    return Array.isArray(skills) ? skills : []
+  }
+  catch {
+    return []
+  }
+}
+
+const getSocialLink = (platform: string) => {
+  if (!designer.value)
+    return ''
+  try {
+    const links = JSON.parse(designer.value.socialLinks || '{}')
+    return links[platform] || ''
+  }
+  catch {
+    return ''
+  }
+}
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return `${date.getFullYear()}年${date.getMonth() + 1}月`
+}
+
+const viewWork = (work: Work) => {
+  console.log('查看作品:', work)
+  // 这里可以打开作品详情模态框或跳转到作品详情页
+}
+
+onMounted(async () => {
+  await getDesignerInfo()
+})
+</script>
+
 <template>
   <div class="talent-page">
     <!-- 统一顶栏 -->
@@ -5,26 +202,34 @@
 
     <!-- 主内容区 -->
     <main class="container mx-auto px-4 py-4 pb-8 mt-20 md:mt-16">
-			<!-- 面包屑导航 -->
-			<section class="py-2 mb-4">
-				<div class="container mx-auto px-4">
-					<nav class="flex items-center space-x-2 text-sm">
-						<router-link to="/" class="text-gray-400 hover:text-primary transition-colors">首页</router-link>
-						<span class="text-gray-500">/</span>
-						<router-link to="/talent/designers" class="text-gray-400 hover:text-primary transition-colors">设计师档案</router-link>
-						<span class="text-gray-500">/</span>
-						<span class="text-white">{{ designer?.designerName || '设计师详情' }}</span>
-					</nav>
-				</div>
-			</section>
+      <!-- 面包屑导航 -->
+      <section class="py-2 mb-4">
+        <div class="container mx-auto px-4">
+          <nav class="flex items-center space-x-2 text-sm">
+            <router-link to="/" class="text-gray-400 hover:text-primary transition-colors">
+              首页
+            </router-link>
+            <span class="text-gray-500">/</span>
+            <router-link to="/talent/designers" class="text-gray-400 hover:text-primary transition-colors">
+              设计师档案
+            </router-link>
+            <span class="text-gray-500">/</span>
+            <span class="text-white">{{ designer?.designerName || '设计师详情' }}</span>
+          </nav>
+        </div>
+      </section>
 
       <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <p class="mt-4 text-gray-400">加载中...</p>
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        <p class="mt-4 text-gray-400">
+          加载中...
+        </p>
       </div>
 
       <div v-else-if="!designer" class="text-center py-12">
-        <p class="text-gray-400">设计师信息不存在</p>
+        <p class="text-gray-400">
+          设计师信息不存在
+        </p>
         <router-link to="/talent/designers" class="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
           返回设计师列表
         </router-link>
@@ -47,21 +252,25 @@
 
             <!-- 设计师信息居中 -->
             <div class="text-center mb-4">
-              <h1 class="text-xl font-bold mb-1">{{ designer.designerName }}</h1>
-              <p class="text-gray-400 mb-3 text-sm">{{ getProfessionLabel(designer.profession) }}</p>
+              <h1 class="text-xl font-bold mb-1">
+                {{ designer.designerName }}
+              </h1>
+              <p class="text-gray-400 mb-3 text-sm">
+                {{ getProfessionLabel(designer.profession) }}
+              </p>
 
               <!-- 信息标签垂直排列 -->
               <div class="space-y-2 text-sm mb-4">
                 <div class="flex items-center justify-center">
-                  <i class="ri-map-pin-line mr-1 text-gray-400"></i>
+                  <i class="ri-map-pin-line mr-1 text-gray-400" />
                   <span>{{ designer.location }}</span>
                 </div>
                 <div class="flex items-center justify-center">
-                  <i class="ri-time-line mr-1 text-gray-400"></i>
+                  <i class="ri-time-line mr-1 text-gray-400" />
                   <span>{{ designer.workYears || designer.experience }} 年经验</span>
                 </div>
                 <div class="flex items-center justify-center">
-                  <i class="ri-user-line mr-1 text-gray-400"></i>
+                  <i class="ri-user-line mr-1 text-gray-400" />
                   <span>{{ designer.workStatus ? getWorkStatusLabel(designer.workStatus) : '未设置' }}</span>
                 </div>
               </div>
@@ -73,10 +282,10 @@
                 联系我
               </button>
               <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                <i class="ri-heart-line"></i>
+                <i class="ri-heart-line" />
               </button>
               <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                <i class="ri-share-line"></i>
+                <i class="ri-share-line" />
               </button>
             </div>
 
@@ -85,7 +294,7 @@
               <SkillTagList
                 :tags="getDesignerSkills(designer)"
                 :group-by-category="false"
-                :sort-order="'asc'"
+                sort-order="asc"
                 size="sm"
                 :show-category="true"
                 container-class="flex flex-wrap gap-2 justify-center"
@@ -104,19 +313,23 @@
             <div class="flex-1 min-w-0">
               <div class="flex justify-between items-start">
                 <div>
-                  <h1 class="text-3xl font-bold mb-2">{{ designer.designerName }}</h1>
-                  <p class="text-gray-400 mb-3">{{ getProfessionLabel(designer.profession) }}</p>
+                  <h1 class="text-3xl font-bold mb-2">
+                    {{ designer.designerName }}
+                  </h1>
+                  <p class="text-gray-400 mb-3">
+                    {{ getProfessionLabel(designer.profession) }}
+                  </p>
                   <div class="flex items-center text-sm mb-4 space-x-6">
                     <div class="flex items-center">
-                      <i class="ri-map-pin-line mr-1 text-gray-400"></i>
+                      <i class="ri-map-pin-line mr-1 text-gray-400" />
                       <span>{{ designer.location }}</span>
                     </div>
                     <div class="flex items-center">
-                      <i class="ri-time-line mr-1 text-gray-400"></i>
+                      <i class="ri-time-line mr-1 text-gray-400" />
                       <span>{{ designer.workYears || designer.experience }} 年经验</span>
                     </div>
                     <div class="flex items-center">
-                      <i class="ri-user-line mr-1 text-gray-400"></i>
+                      <i class="ri-user-line mr-1 text-gray-400" />
                       <span>{{ designer.workStatus ? getWorkStatusLabel(designer.workStatus) : '未设置' }}</span>
                     </div>
                   </div>
@@ -126,10 +339,10 @@
                     联系我
                   </button>
                   <button class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                    <i class="ri-heart-line"></i>
+                    <i class="ri-heart-line" />
                   </button>
                   <button class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50">
-                    <i class="ri-share-line"></i>
+                    <i class="ri-share-line" />
                   </button>
                 </div>
               </div>
@@ -137,7 +350,7 @@
                 <SkillTagList
                   :tags="getDesignerSkills(designer)"
                   :group-by-category="true"
-                  :sort-order="'asc'"
+                  sort-order="asc"
                   size="sm"
                   :show-category="false"
                   :show-group-title="true"
@@ -151,7 +364,9 @@
 
         <!-- 个人简介 -->
         <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-4">个人简介</h2>
+          <h2 class="text-xl font-bold mb-4">
+            个人简介
+          </h2>
           <p class="text-gray-300 text-sm leading-relaxed">
             {{ designer.description }}
           </p>
@@ -160,19 +375,20 @@
         <!-- 作品集 -->
         <div class="mb-8">
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
-            <h2 class="text-xl font-bold">作品集</h2>
+            <h2 class="text-xl font-bold">
+              作品集
+            </h2>
             <div class="flex bg-gray-800/50 rounded-full p-1 overflow-x-auto max-w-full">
               <div class="flex space-x-1 min-w-max px-1">
                 <button
                   v-for="category in workCategories"
                   :key="category"
-                  @click="selectedWorkCategory = category"
-                  :class="[
-                    'px-3 py-2 sm:px-4 sm:py-1 rounded-full text-xs sm:text-xs transition-colors whitespace-nowrap min-h-[32px] sm:min-h-[auto] touch-manipulation',
+                  class="px-3 py-2 sm:px-4 sm:py-1 rounded-full text-xs sm:text-xs transition-colors whitespace-nowrap min-h-[32px] sm:min-h-[auto] touch-manipulation" :class="[
                     selectedWorkCategory === category
                       ? 'bg-primary/20 text-primary border border-primary/30'
-                      : 'text-gray-300 hover:bg-gray-700/30 active:bg-gray-700/50'
+                      : 'text-gray-300 hover:bg-gray-700/30 active:bg-gray-700/50',
                   ]"
+                  @click="selectedWorkCategory = category"
                 >
                   {{ category }}
                 </button>
@@ -188,8 +404,12 @@
             >
               <img :src="work.imageUrl" :alt="work.title" class="w-full h-48 object-cover">
               <div class="p-4 bg-gray-900/80">
-                <h3 class="text-base font-medium mb-1">{{ work.title }}</h3>
-                <p class="text-xs text-gray-400">{{ work.description }}</p>
+                <h3 class="text-base font-medium mb-1">
+                  {{ work.title }}
+                </h3>
+                <p class="text-xs text-gray-400">
+                  {{ work.description }}
+                </p>
               </div>
             </div>
           </div>
@@ -202,7 +422,9 @@
 
         <!-- 工作经历 -->
         <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-6">工作经历</h2>
+          <h2 class="text-xl font-bold mb-6">
+            工作经历
+          </h2>
           <div class="relative pl-6 border-l border-gray-700">
             <div
               v-for="(experience, index) in workExperiences"
@@ -212,48 +434,64 @@
               <div
                 class="absolute -left-[25px] w-5 h-5 rounded-full"
                 :class="experience.isCurrent ? 'bg-primary' : 'bg-gray-600'"
-              ></div>
+              />
               <div class="flex justify-between items-start mb-2">
                 <div>
-                  <h3 class="text-base font-medium">{{ experience.company }}</h3>
-                  <p class="text-sm text-gray-400">{{ experience.position }}</p>
+                  <h3 class="text-base font-medium">
+                    {{ experience.company }}
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    {{ experience.position }}
+                  </p>
                 </div>
                 <span class="text-xs text-gray-400">
                   {{ formatDate(experience.startDate) }} - {{ experience.endDate ? formatDate(experience.endDate) : '至今' }}
                 </span>
               </div>
-              <p class="text-sm text-gray-300">{{ experience.description }}</p>
+              <p class="text-sm text-gray-300">
+                {{ experience.description }}
+              </p>
             </div>
           </div>
         </div>
 
         <!-- 教育背景 -->
         <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-6">教育背景</h2>
+          <h2 class="text-xl font-bold mb-6">
+            教育背景
+          </h2>
           <div class="relative pl-6 border-l border-gray-700">
             <div
               v-for="edu in educations"
               :key="edu.id"
               class="mb-6 relative"
             >
-              <div class="absolute -left-[25px] w-5 h-5 rounded-full bg-blue-500"></div>
+              <div class="absolute -left-[25px] w-5 h-5 rounded-full bg-blue-500" />
               <div class="flex justify-between items-start mb-2">
                 <div>
-                  <h3 class="text-base font-medium">{{ edu.school }}</h3>
-                  <p class="text-sm text-gray-400">{{ edu.major }} · {{ edu.degree }}</p>
+                  <h3 class="text-base font-medium">
+                    {{ edu.school }}
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    {{ edu.major }} · {{ edu.degree }}
+                  </p>
                 </div>
                 <span class="text-xs text-gray-400">
                   {{ formatDate(edu.startDate) }} - {{ formatDate(edu.endDate) }}
                 </span>
               </div>
-              <p class="text-sm text-gray-300">{{ edu.description }}</p>
+              <p class="text-sm text-gray-300">
+                {{ edu.description }}
+              </p>
             </div>
           </div>
         </div>
 
         <!-- 获奖情况 -->
         <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-6">获奖与认证</h2>
+          <h2 class="text-xl font-bold mb-6">
+            获奖与认证
+          </h2>
           <div class="space-y-4">
             <div
               v-for="award in awards"
@@ -261,12 +499,18 @@
               class="flex items-start"
             >
               <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-500 mr-4">
-                <i class="ri-award-line text-xl"></i>
+                <i class="ri-award-line text-xl" />
               </div>
               <div>
-                <h3 class="text-base font-medium">{{ award.title }}</h3>
-                <p class="text-sm text-gray-400">{{ award.organization }} · {{ award.year }}</p>
-                <p v-if="award.description" class="text-sm text-gray-300 mt-1">{{ award.description }}</p>
+                <h3 class="text-base font-medium">
+                  {{ award.title }}
+                </h3>
+                <p class="text-sm text-gray-400">
+                  {{ award.organization }} · {{ award.year }}
+                </p>
+                <p v-if="award.description" class="text-sm text-gray-300 mt-1">
+                  {{ award.description }}
+                </p>
               </div>
             </div>
           </div>
@@ -274,42 +518,34 @@
 
         <!-- 联系方式 -->
         <div class="glass-card rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-bold mb-6">联系方式</h2>
+          <h2 class="text-xl font-bold mb-6">
+            联系方式
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex items-center">
               <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-4">
-                <i class="ri-mail-line text-xl"></i>
+                <i class="ri-mail-line text-xl" />
               </div>
               <div>
-                <p class="text-xs text-gray-400">邮箱</p>
-                <p class="text-sm">{{ designer.email }}</p>
+                <p class="text-xs text-gray-400">
+                  邮箱
+                </p>
+                <p class="text-sm">
+                  {{ designer.email }}
+                </p>
               </div>
             </div>
             <div class="flex items-center">
               <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-4">
-                <i class="ri-phone-line text-xl"></i>
+                <i class="ri-global-line text-xl" />
               </div>
               <div>
-                <p class="text-xs text-gray-400">电话</p>
-                <p class="text-sm">{{ formatPhone(designer.phone) }}</p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-4">
-                <i class="ri-global-line text-xl"></i>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400">个人网站</p>
-                <p class="text-sm">{{ designer.portfolio }}</p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-300 mr-4">
-                <i class="ri-wechat-line text-xl"></i>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400">微信</p>
-                <p class="text-sm">{{ getSocialLink('wechat') || '未设置' }}</p>
+                <p class="text-xs text-gray-400">
+                  个人网站
+                </p>
+                <p class="text-sm">
+                  {{ designer.portfolio }}
+                </p>
               </div>
             </div>
           </div>
@@ -318,180 +554,6 @@
     </main>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
-import TalentHeader from '@/components/talent/TalentHeader.vue'
-import { SkillTag, SkillTagList } from '@/components/common'
-import { useSkillTags } from '@/composables/useSkillTags'
-import type { Designer, Work, WorkExperience, Education, Award, Profession, WorkStatus } from '@/types/talent/designer'
-import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
-import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
-import { getNameInitial } from '@/utils/styleGenerator'
-import {
-  getDesignerComplete,
-  type DesignerCompleteDetail
-} from '@/api/talent/designer'
-
-const route = useRoute()
-const { debugSkillTags } = useSkillTags()
-
-// 根据登录状态和环境变量切换数据源
-import { shouldUseMockData } from '@/utils/authUtils'
-const USE_MOCK_DATA = computed(() => shouldUseMockData())
-
-console.log('🔍 设计师详情页面环境变量调试信息:')
-console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  DEV:', import.meta.env.DEV)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
-
-const loading = ref(true)
-const designer = ref<Designer | null>(null)
-const designerWorks = ref<Work[]>([])
-const workExperiences = ref<WorkExperience[]>([])
-const educations = ref<Education[]>([])
-const awards = ref<Award[]>([])
-const selectedWorkCategory = ref('全部')
-
-// 获取设计师ID
-const designerId = computed(() => {
-  const id = route.params.id as string
-  return parseInt(id)
-})
-
-// 获取设计师信息
-const getDesignerInfo = async () => {
-  try {
-    loading.value = true
-    const id = designerId.value
-
-    if (USE_MOCK_DATA.value) {
-      // 使用模拟数据（页面层面的直接处理，更快速的开发体验）
-      console.log('🔧 使用模拟数据 - 设计师详情页面')
-
-      const foundDesigner = mockDesigners.find(d => d.id === id)
-      if (foundDesigner) {
-        designer.value = foundDesigner
-
-        // 获取相关数据
-        designerWorks.value = mockWorks.filter(work => work.designerId === id)
-        workExperiences.value = mockWorkExperience.filter(exp => exp.designerId === id)
-          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-        educations.value = mockEducation.filter(edu => edu.designerId === id)
-          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-        awards.value = mockAwards.filter(award => award.designerId === id)
-          .sort((a, b) => (b.sort || 0) - (a.sort || 0))
-      } else {
-        // Mock数据中未找到设计师
-        designer.value = null
-        designerWorks.value = []
-        workExperiences.value = []
-        educations.value = []
-        awards.value = []
-      }
-    } else {
-      // 使用聚合API调用后端接口
-      console.log('🚀 使用聚合API - 设计师详情页面')
-
-      const response = await getDesignerComplete(id)
-      const data = response.data
-
-      if (data && data.designer) {
-        designer.value = data.designer
-        designerWorks.value = data.works || []
-        workExperiences.value = data.workExperience || []
-        educations.value = data.education || []
-        awards.value = data.awards || []
-      } else {
-        // 后端API返回空数据
-        designer.value = null
-        designerWorks.value = []
-        workExperiences.value = []
-        educations.value = []
-        awards.value = []
-      }
-    }
-  } catch (error) {
-    console.error('获取设计师信息失败:', error)
-    designer.value = null
-    designerWorks.value = []
-    workExperiences.value = []
-    educations.value = []
-    awards.value = []
-  } finally {
-    loading.value = false
-  }
-}
-
-
-
-// 作品分类
-const workCategories = ['全部', 'UI设计', 'Web设计', '产品设计', '交互设计']
-
-// 筛选后的作品
-const filteredWorks = computed(() => {
-  if (selectedWorkCategory.value === '全部') {
-    return designerWorks.value
-  }
-  return designerWorks.value.filter(work => work.category === selectedWorkCategory.value)
-})
-
-// 工具方法
-
-
-const getProfessionLabel = (profession: Profession) => {
-  return ProfessionLabels[profession] || profession
-}
-
-const getWorkStatusLabel = (status: WorkStatus) => {
-  const statuses = {
-    'EMPLOYED': '在职',
-    'FREELANCER': '自由职业',
-    'SEEKING': '求职中',
-    'STUDENT': '学生'
-  }
-  return statuses[status] || status
-}
-
-const getDesignerSkills = (designer: Designer) => {
-  try {
-    const skills = JSON.parse(designer.skillTags || '[]')
-    return Array.isArray(skills) ? skills : []
-  } catch {
-    return []
-  }
-}
-
-const getSocialLink = (platform: string) => {
-  if (!designer.value) return ''
-  try {
-    const links = JSON.parse(designer.value.socialLinks || '{}')
-    return links[platform] || ''
-  } catch {
-    return ''
-  }
-}
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return `${date.getFullYear()}年${date.getMonth() + 1}月`
-}
-
-const formatPhone = (phone: string) => {
-  if (!phone) return ''
-  return phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1****$3')
-}
-
-const viewWork = (work: Work) => {
-  console.log('查看作品:', work)
-  // 这里可以打开作品详情模态框或跳转到作品详情页
-}
-
-onMounted(async () => {
-  await getDesignerInfo()
-})
-</script>
 
 <style scoped>
 @import '@/styles/talent.css';

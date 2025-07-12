@@ -33,10 +33,10 @@ module.exports = {
         },
       },
       borderRadius: {
-        'lg': '16px',
+        lg: '16px',
       },
       fontFamily: {
-        'sans': ['Noto Sans SC', 'sans-serif'],
+        sans: ['Noto Sans SC', 'sans-serif'],
       },
     },
   },

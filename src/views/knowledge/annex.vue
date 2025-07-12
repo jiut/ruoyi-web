@@ -1,275 +1,277 @@
 <script setup lang="ts">
-import { h, onMounted, ref } from "vue";
+import { h, onMounted, ref } from 'vue'
+import type { UploadFileInfo } from 'naive-ui'
 import {
-	NButton,
-	NDataTable,
-	// DrawerPlacement,
-	NFormItem,
-	NSpin,
-	NSpace,
-	UploadFileInfo,
-	NUpload,
-	NUploadDragger,
-	NP,
-	useMessage,
-	NModal,
-	NCard,
-} from "naive-ui";
-import { SvgIcon } from "@/components/common";
-import { getToken } from "@/store/modules/auth/helper";
-import { getKnowledgeDetail, delKnowledgeDetail } from "@/api/knowledge";
-import to from "await-to-js";
-import { useRouter } from "vue-router";
-import { t } from "@/locales";
+  NButton,
+  NDataTable,
+  // DrawerPlacement,
+  NFormItem,
+  NSpin,
+  NSpace,
+  NUpload,
+  NUploadDragger,
+  NP,
+  useMessage,
+  NModal,
+  NCard,
+} from 'naive-ui'
+import to from 'await-to-js'
+import { useRouter } from 'vue-router'
+import { SvgIcon } from '@/components/common'
+import { getToken } from '@/store/modules/auth/helper'
+import { delKnowledgeDetail, getKnowledgeDetail } from '@/api/knowledge'
+import { t } from '@/locales'
 
-const router = useRouter();
-const message = useMessage();
-const token = getToken();
-const headers = { Authorization: `Bearer ${token}` };
+const router = useRouter()
+const message = useMessage()
+const token = getToken()
+const headers = { Authorization: `Bearer ${token}` }
 
 // 状态管理
-const kid = ref<string>("");
-const spinShow = ref(false);
-const showModal = ref(false);
-const tableData = ref([]);
+const kid = ref<string>('')
+const spinShow = ref(false)
+const showModal = ref(false)
+const tableData = ref([])
 const pagination = ref({
-	page: 1,
-	pageSize: 10,
-	showSizePicker: true,
-	pageSizes: [10, 20, 30, 40],
-	onChange: (page: number) => {
-		pagination.value.page = page;
-	},
-	onUpdatePageSize: (pageSize: number) => {
-		pagination.value.pageSize = pageSize;
-		pagination.value.page = 1;
-	},
-});
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 20, 30, 40],
+  onChange: (page: number) => {
+    pagination.value.page = page
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.value.pageSize = pageSize
+    pagination.value.page = 1
+  },
+})
 
 // 生命周期钩子
 onMounted(() => {
-	kid.value = router.currentRoute.value.query.kid as string;
-	fetchData();
-});
+  kid.value = router.currentRoute.value.query.kid as string
+  fetchData()
+})
 
 // 表格列定义
 const createColumns = () => {
-	return [
-		...(false
-			? [
-					{
-						title: "ID",
-						key: "id",
-						width: 80,
-						ellipsis: true,
-					},
+  return [
+    ...(false
+      ? [
+          {
+            title: 'ID',
+            key: 'id',
+            width: 80,
+            ellipsis: true,
+          },
 			  ]
-			: []),
-		{
-			title: t("annex.docId"),
-			key: "docId",
-		},
-		{
-			title: t("annex.docName"),
-			key: "docName",
-		},
-		{
-			title: t("annex.docType"),
-			key: "docType",
-		},
-		{
-			title: t("annex.action"),
-			key: "actions",
-			render: (row: any) => {
-				return [
-					h(
-						NButton,
-						{
-							onClick: () => delKnowledgeForm(row.docId),
-							style: "margin-left: 8px; color: #FF4500;",
-						},
-						{ default: () => t("annex.deleteAttachment") }
-					),
+      : []),
+    {
+      title: t('annex.docId'),
+      key: 'docId',
+    },
+    {
+      title: t('annex.docName'),
+      key: 'docName',
+    },
+    {
+      title: t('annex.docType'),
+      key: 'docType',
+    },
+    {
+      title: t('annex.action'),
+      key: 'actions',
+      render: (row: any) => {
+        return [
+          h(
+            NButton,
+            {
+              onClick: () => delKnowledgeForm(row.docId),
+              style: 'margin-left: 8px; color: #FF4500;',
+            },
+            { default: () => t('annex.deleteAttachment') },
+          ),
 
-					h(
-						NButton,
-						{
-							onClick: () => handleActionButtonClick(row, "action4"),
-							style: "margin-left: 8px; color: #32CD32;",
-						},
-						{ default: () => t("annex.knowledgeFragment") }
-					),
-				];
-			},
-		},
-	];
-};
-const columns = ref(createColumns());
+          h(
+            NButton,
+            {
+              onClick: () => handleActionButtonClick(row, 'action4'),
+              style: 'margin-left: 8px; color: #32CD32;',
+            },
+            { default: () => t('annex.knowledgeFragment') },
+          ),
+        ]
+      },
+    },
+  ]
+}
+const columns = ref(createColumns())
 
 // 数据获取
 const fetchData = async () => {
-	try {
-		const [err, result] = await to(getKnowledgeDetail(kid.value));
-		if (err) {
-			message.error(err.message);
-		} else {
-			tableData.value = result.rows;
-		}
-	} catch (error) {
-		console.error("Error fetching data:", error);
-	}
-};
+  try {
+    const [err, result] = await to(getKnowledgeDetail(kid.value))
+    if (err)
+      message.error(err.message)
+		 else
+      tableData.value = result.rows
+  }
+  catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
 
 // 上传相关函数
 function handleFinish({
-	file,
-	event,
+  file,
+  event,
 }: {
-	file: UploadFileInfo;
-	event?: ProgressEvent;
+  file: UploadFileInfo
+  event?: ProgressEvent
 }) {
-	const xhr = event?.currentTarget as XMLHttpRequest;
-	if (xhr) {
-		try {
-			const responseData = JSON.parse(xhr.responseText);
-			if (responseData.code == 500) {
-				message.error(responseData.msg);
-			} else {
-				message.success(t("annex.fileUploadSuccess"));
-			}
-		} catch (error) {
-			console.error("解析响应数据失败:", error);
-		}
-	}
-	showModal.value = false;
-	spinShow.value = false;
-	fetchData();
+  const xhr = event?.currentTarget as XMLHttpRequest
+  if (xhr) {
+    try {
+      const responseData = JSON.parse(xhr.responseText)
+      if (responseData.code == 500)
+        message.error(responseData.msg)
+			 else
+        message.success(t('annex.fileUploadSuccess'))
+    }
+    catch (error) {
+      console.error('解析响应数据失败:', error)
+    }
+  }
+  showModal.value = false
+  spinShow.value = false
+  fetchData()
 }
 
 function handleBeforeUpload() {
-	spinShow.value = true;
+  spinShow.value = true
 }
 
 // 操作函数
 function handleActionButtonClick(row: any, action1: string): void {
-	router.push({ path: "/fragment/t", query: { docId: row.docId } });
+  router.push({ path: '/fragment/t', query: { docId: row.docId } })
 }
 
 function activate() {
-	showModal.value = true;
+  showModal.value = true
 }
 
 // 删除附件
 async function delKnowledgeForm(docId: string) {
-	const req = {
-		kid: kid.value,
-		docId: docId,
-	};
+  const req = {
+    kid: kid.value,
+    docId,
+  }
 
-	const [err] = await to(delKnowledgeDetail(req));
+  const [err] = await to(delKnowledgeDetail(req))
 
-	if (err) {
-		message.error(t("annex.deletionFailed"));
-	} else {
-		message.success(t("annex.attachmentDeletedSuccess"));
-	}
-	await fetchData();
+  if (err)
+    message.error(t('annex.deletionFailed'))
+	 else
+    message.success(t('annex.attachmentDeletedSuccess'))
+
+  await fetchData()
 }
 
 // 返回上一页
 function goBack() {
-	router.go(-1);
+  router.go(-1)
 }
 </script>
 
 <template>
-	<n-card class="annex-container" :bordered="false">
-		<div class="annex-header">
-			<n-button @click="goBack" class="back-button">
-				<svg-icon icon="mage:arrow-left" class="back-icon"></svg-icon>
-				返回
-			</n-button>
-			<n-button
-				@click="activate"
-				type="primary"
-				:bordered="false"
-				class="upload-button"
-			>
-				{{ $t("annex.uploadAttachment") }}
-			</n-button>
-		</div>
+  <NCard class="annex-container" :bordered="false">
+    <div class="annex-header">
+      <NButton class="back-button" @click="goBack">
+        <SvgIcon icon="mage:arrow-left" class="back-icon" />
+        返回
+      </NButton>
+      <NButton
+        type="primary"
+        :bordered="false"
+        class="upload-button"
+        @click="activate"
+      >
+        {{ $t("annex.uploadAttachment") }}
+      </NButton>
+    </div>
 
-		<n-data-table
-			:columns="columns"
-			:data="tableData"
-			:pagination="pagination"
-			:bordered="false"
-			class="annex-table"
-		/>
-	</n-card>
+    <NDataTable
+      :columns="columns"
+      :data="tableData"
+      :pagination="pagination"
+      :bordered="false"
+      class="annex-table"
+    />
+  </NCard>
 
-	<n-modal
-		v-model:show="showModal"
-		:title="$t('annex.uploadAttachment')"
-		:auto-focus="false"
-		preset="dialog"
-	>
-		<n-space vertical>
-			<n-form-item>
-				<n-spin :show="spinShow">
-					<n-upload
-						class="annex-upload"
-						directory-dnd
-						action="/api/knowledge/attach/upload"
-						name="file"
-						:data="{ kid: kid }"
-						:on-before-upload="handleBeforeUpload"
-						:headers="headers"
-						@finish="handleFinish"
-						:max="1"
-					>
-						<n-upload-dragger class="upload-dragger">
-							<div class="upload-content">
-								<div class="upload-icon-container">
-									<SvgIcon icon="mage:upload" class="upload-icon"></SvgIcon>
-								</div>
+  <NModal
+    v-model:show="showModal"
+    :title="$t('annex.uploadAttachment')"
+    :auto-focus="false"
+    preset="dialog"
+  >
+    <NSpace vertical>
+      <NFormItem>
+        <NSpin :show="spinShow">
+          <NUpload
+            class="annex-upload"
+            directory-dnd
+            action="/api/knowledge/attach/upload"
+            name="file"
+            :data="{ kid }"
+            :on-before-upload="handleBeforeUpload"
+            :headers="headers"
+            :max="1"
+            @finish="handleFinish"
+          >
+            <NUploadDragger class="upload-dragger">
+              <div class="upload-content">
+                <div class="upload-icon-container">
+                  <SvgIcon icon="mage:upload" class="upload-icon" />
+                </div>
 
-								<div class="upload-info">
-									<n-p class="upload-title">
-										{{ $t("annex.pleaseUploadFile") }}
-									</n-p>
+                <div class="upload-info">
+                  <NP class="upload-title">
+                    {{ $t("annex.pleaseUploadFile") }}
+                  </NP>
 
-									<n-p class="upload-desc">
-										{{ $t("annex.supportedFormats") }}
-									</n-p>
-								</div>
+                  <NP class="upload-desc">
+                    {{ $t("annex.supportedFormats") }}
+                  </NP>
+                </div>
 
-								<div class="upload-warnings">
-									<div class="warning-title">{{ $t("annex.uploadNotes") }}</div>
-									<n-p class="upload-warning">
-										<span class="warning-dot">•</span>
-										{{ $t("annex.friendlyReminder") }}
-									</n-p>
-									<n-p class="upload-warning">
-										<span class="warning-dot">•</span>
-										{{ $t("annex.largeFileWarning") }}
-									</n-p>
-									<n-p class="upload-warning">
-										<span class="warning-dot">•</span>
-										{{ $t("annex.utf8Warning") }}
-									</n-p>
-									<n-p class="upload-warning">
-										<span class="warning-dot">•</span>
-										{{ $t("annex.uploadCharacterLimit") }}
-									</n-p>
-								</div>
-							</div>
-						</n-upload-dragger>
-					</n-upload>
-				</n-spin>
-			</n-form-item>
-		</n-space>
-	</n-modal>
+                <div class="upload-warnings">
+                  <div class="warning-title">
+                    {{ $t("annex.uploadNotes") }}
+                  </div>
+                  <NP class="upload-warning">
+                    <span class="warning-dot">•</span>
+                    {{ $t("annex.friendlyReminder") }}
+                  </NP>
+                  <NP class="upload-warning">
+                    <span class="warning-dot">•</span>
+                    {{ $t("annex.largeFileWarning") }}
+                  </NP>
+                  <NP class="upload-warning">
+                    <span class="warning-dot">•</span>
+                    {{ $t("annex.utf8Warning") }}
+                  </NP>
+                  <NP class="upload-warning">
+                    <span class="warning-dot">•</span>
+                    {{ $t("annex.uploadCharacterLimit") }}
+                  </NP>
+                </div>
+              </div>
+            </NUploadDragger>
+          </NUpload>
+        </NSpin>
+      </NFormItem>
+    </NSpace>
+  </NModal>
 </template>
 
 <style scoped>

@@ -2,33 +2,27 @@
  * 院校相关组合式函数
  */
 
-import { ref, computed, watch, unref, reactive, watchEffect } from 'vue'
-import type { Ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import { useSchoolStore } from '@/stores/talent/school'
 import type {
-  School,
-  SchoolQueryParams,
-  SchoolType,
   MajorCategory,
+  School,
+  SchoolLevel,
+  SchoolQueryParams,
   SchoolSortBy,
-  Major,
-  Faculty,
-  Employment,
-  Award,
-  Achievement,
-  SchoolLevel
+  SchoolType,
 } from '@/types/talent/school'
 import {
-  SchoolTypeLabels,
-  SchoolLevelLabels,
+  AwardLevelLabels,
   MajorCategoryLabels,
-  AwardLevelLabels
+  SchoolLevelLabels,
+  SchoolTypeLabels,
 } from '@/types/talent/school'
 import { achievementApi } from '@/api/talent/school'
-import { getStatusText, getStatusClass, getStatusTagType, getStatusIcon, isStatusActive, toggleStatus } from '@/utils/statusUtils'
+import { getStatusClass, getStatusIcon, getStatusTagType, getStatusText } from '@/utils/statusUtils'
 import { shouldUseMockData } from '@/utils/authUtils'
-import { getMockSchools, getMockSchoolById, getMockMajorCategories, getMockCourseSystem, getMockFacultyStats, getMockFacultyMembers, getMockEmploymentStats, getMockEmployers, getMockChartData, getMockAchievementStats, getMockTrendData, getMockAwardWorks } from '@/data/mockSchools'
+import { getMockSchoolById, getMockSchools } from '@/data/mockSchools'
 
 console.log('🔍 院校Composable调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
@@ -54,17 +48,21 @@ export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
           const result = getMockSchools(initialParams)
           mockSchools.value = result.rows
           mockTotal.value = result.total
-        } catch (error) {
+        }
+        catch (error) {
           console.error('获取院校列表失败:', error)
-        } finally {
+        }
+        finally {
           mockLoading.value = false
         }
-      } else {
+      }
+      else {
         console.log('🚀 使用后端API - 院校列表')
         await schoolStore.fetchSchools(initialParams)
       }
       isInitialized.value = true
-    } else {
+    }
+    else {
       console.log('🔄 院校列表已初始化，跳过重复加载')
     }
   }
@@ -76,23 +74,22 @@ export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
       mockSchools.value = result.rows
       mockTotal.value = result.total
       return Promise.resolve()
-    } else {
+    }
+    else {
       return schoolStore.fetchSchools({ pageNum: 1 })
     }
   }
 
   // 加载更多
   const loadMore = () => {
-    if (!shouldUseMockData()) {
+    if (!shouldUseMockData())
       schoolStore.loadMore()
-    }
   }
 
   // 重置筛选
   const resetFilters = () => {
-    if (!shouldUseMockData()) {
+    if (!shouldUseMockData())
       schoolStore.resetFilters()
-    }
   }
 
   return {
@@ -108,7 +105,7 @@ export function useSchoolList(initialParams?: Partial<SchoolQueryParams>) {
     refresh,
     loadMore,
     resetFilters,
-    updateFilters: shouldUseMockData() ? () => Promise.resolve() : schoolStore.updateFilters
+    updateFilters: shouldUseMockData() ? () => Promise.resolve() : schoolStore.updateFilters,
   }
 }
 
@@ -133,7 +130,8 @@ export function useSchoolSearch() {
 
   // 添加到搜索历史
   const addToHistory = (keyword: string) => {
-    if (!keyword.trim()) return
+    if (!keyword.trim())
+      return
 
     const history = searchHistory.value.filter(item => item !== keyword)
     searchHistory.value = [keyword, ...history].slice(0, 10)
@@ -156,7 +154,7 @@ export function useSchoolSearch() {
     search,
     addToHistory,
     clearHistory,
-    clearSearch
+    clearSearch,
   }
 }
 
@@ -179,7 +177,7 @@ export function useSchoolFilters() {
     is211: undefined,
     isDoubleFirst: undefined,
     sortBy: 'ranking',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
   })
 
   // 应用筛选
@@ -202,18 +200,18 @@ export function useSchoolFilters() {
       is211: undefined,
       isDoubleFirst: undefined,
       sortBy: 'ranking',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     })
     schoolStore.resetFilters()
   }
 
   // 切换筛选条件
   const toggleFilter = (key: keyof SchoolQueryParams, value: any) => {
-    if (filters[key] === value) {
+    if (filters[key] === value)
       filters[key] = undefined
-    } else {
+    else
       filters[key] = value
-    }
+
     applyFilters()
   }
 
@@ -227,15 +225,15 @@ export function useSchoolFilters() {
   // 是否有筛选条件
   const hasActiveFilters = computed(() => {
     return !!(
-      filters.schoolName ||
-      filters.schoolType ||
-      filters.province ||
-      filters.city ||
-      filters.level ||
-      filters.isKey !== undefined ||
-      filters.is985 !== undefined ||
-      filters.is211 !== undefined ||
-      filters.isDoubleFirst !== undefined
+      filters.schoolName
+      || filters.schoolType
+      || filters.province
+      || filters.city
+      || filters.level
+      || filters.isKey !== undefined
+      || filters.is985 !== undefined
+      || filters.is211 !== undefined
+      || filters.isDoubleFirst !== undefined
     )
   })
 
@@ -245,7 +243,7 @@ export function useSchoolFilters() {
     resetFilters,
     toggleFilter,
     setSorting,
-    hasActiveFilters
+    hasActiveFilters,
   }
 }
 
@@ -261,7 +259,8 @@ export function useSchoolSorting() {
   const setSorting = async (sortBy: SchoolSortBy, sortOrder: 'asc' | 'desc' = 'desc') => {
     try {
       await schoolStore.setSorting(sortBy, sortOrder)
-    } catch (error) {
+    }
+    catch (error) {
       message.error('设置排序失败')
       console.error('Set sorting error:', error)
     }
@@ -275,7 +274,8 @@ export function useSchoolSorting() {
 
     try {
       await schoolStore.setSorting(sortBy, newOrder)
-    } catch (error) {
+    }
+    catch (error) {
       message.error('切换排序失败')
       console.error('Toggle sort order error:', error)
     }
@@ -288,7 +288,7 @@ export function useSchoolSorting() {
 
     // 方法
     setSorting,
-    toggleSortOrder
+    toggleSortOrder,
   }
 }
 
@@ -306,7 +306,8 @@ export function useSchoolPagination() {
   const goToPage = async (page: number) => {
     try {
       await schoolStore.setPage(page)
-    } catch (error) {
+    }
+    catch (error) {
       message.error('跳转页面失败')
       console.error('Go to page error:', error)
     }
@@ -316,7 +317,8 @@ export function useSchoolPagination() {
   const changePageSize = async (size: number) => {
     try {
       await schoolStore.setPage(1, size)
-    } catch (error) {
+    }
+    catch (error) {
       message.error('改变页面大小失败')
       console.error('Change page size error:', error)
     }
@@ -324,17 +326,15 @@ export function useSchoolPagination() {
 
   // 上一页
   const prevPage = async () => {
-    if (currentPage.value > 1) {
+    if (currentPage.value > 1)
       await goToPage(currentPage.value - 1)
-    }
   }
 
   // 下一页
   const nextPage = async () => {
     const maxPage = Math.ceil(total.value / pageSize.value)
-    if (currentPage.value < maxPage) {
+    if (currentPage.value < maxPage)
       await goToPage(currentPage.value + 1)
-    }
   }
 
   return {
@@ -348,7 +348,7 @@ export function useSchoolPagination() {
     goToPage,
     changePageSize,
     prevPage,
-    nextPage
+    nextPage,
   }
 }
 
@@ -368,12 +368,15 @@ export function useSchoolDetail(schoolId?: number) {
       try {
         const result = getMockSchoolById(id)
         mockSchool.value = result
-      } catch (error) {
+      }
+      catch (error) {
         console.error('获取院校详情失败:', error)
-      } finally {
+      }
+      finally {
         mockLoading.value = false
       }
-    } else {
+    }
+    else {
       console.log('🚀 使用后端API - 院校详情')
       await schoolStore.fetchSchoolDetail(id)
 
@@ -383,7 +386,7 @@ export function useSchoolDetail(schoolId?: number) {
         schoolStore.fetchFacultiesBySchool(id),
         schoolStore.fetchEmploymentData(id),
         schoolStore.fetchAwards(id),
-        schoolStore.fetchAwardStats(id)
+        schoolStore.fetchAwardStats(id),
       ])
     }
   }
@@ -394,9 +397,8 @@ export function useSchoolDetail(schoolId?: number) {
   }
 
   // 初始化
-  if (schoolId) {
+  if (schoolId)
     loadDetail(schoolId)
-  }
 
   return {
     // 状态 - 根据登录状态返回不同的数据源
@@ -412,7 +414,7 @@ export function useSchoolDetail(schoolId?: number) {
     // 方法
     loadDetail,
     switchTab,
-    clearDetail: shouldUseMockData() ? () => {} : schoolStore.clearCurrentSchool
+    clearDetail: shouldUseMockData() ? () => {} : schoolStore.clearCurrentSchool,
   }
 }
 
@@ -433,7 +435,7 @@ export function useSchoolInteraction() {
   }
 
   // 分享院校
-  const shareSchool = async (schoolId: number, platform: string = 'copy') => {
+  const shareSchool = async (schoolId: number, platform = 'copy') => {
     await schoolStore.shareSchool(schoolId, platform)
   }
 
@@ -453,7 +455,7 @@ export function useSchoolInteraction() {
     shareSchool,
     downloadDetail,
     isFavorited: schoolStore.isFavorited,
-    isVisited: schoolStore.isVisited
+    isVisited: schoolStore.isVisited,
   }
 }
 
@@ -486,15 +488,16 @@ export function useSchoolFormatter() {
 
   // 格式化薪资
   const formatSalary = (salary: number) => {
-    if (salary >= 10000) {
+    if (salary >= 10000)
       return `${(salary / 10000).toFixed(1)}万`
-    }
+
     return `${salary.toLocaleString()}元`
   }
 
   // 格式化排名
   const formatRanking = (ranking: number) => {
-    if (ranking <= 0) return '未排名'
+    if (ranking <= 0)
+      return '未排名'
     return `第${ranking}名`
   }
 
@@ -502,10 +505,14 @@ export function useSchoolFormatter() {
   const formatSchoolTags = (school: School) => {
     const tags: string[] = []
 
-    if (school.is985) tags.push('985')
-    if (school.is211) tags.push('211')
-    if (school.isDoubleFirst) tags.push('双一流')
-    if (school.isKey) tags.push('重点院校')
+    if (school.is985)
+      tags.push('985')
+    if (school.is211)
+      tags.push('211')
+    if (school.isDoubleFirst)
+      tags.push('双一流')
+    if (school.isKey)
+      tags.push('重点院校')
 
     return tags
   }
@@ -539,7 +546,7 @@ export function useSchoolFormatter() {
     formatSchoolStatus,
     getSchoolStatusClass,
     getSchoolStatusTagType,
-    getSchoolStatusIcon
+    getSchoolStatusIcon,
   }
 }
 
@@ -562,7 +569,7 @@ export function useSchoolStats() {
         avgRanking: 0,
         top100Count: 0,
         keySchoolCount: 0,
-        employmentRateAvg: 0
+        employmentRateAvg: 0,
       }
     }
 
@@ -576,7 +583,7 @@ export function useSchoolStats() {
       avgRanking: Math.round(avgRanking),
       top100Count,
       keySchoolCount,
-      employmentRateAvg: 0 // 需要根据实际数据计算
+      employmentRateAvg: 0, // 需要根据实际数据计算
     }
   })
 
@@ -585,7 +592,7 @@ export function useSchoolStats() {
     const schools = schoolStore.schools
     const distribution: Record<string, number> = {}
 
-    schools.forEach(school => {
+    schools.forEach((school) => {
       const type = school.schoolType
       distribution[type] = (distribution[type] || 0) + 1
     })
@@ -594,7 +601,7 @@ export function useSchoolStats() {
       type,
       typeName: SchoolTypeLabels[type as SchoolType] || type,
       count,
-      percentage: schools.length > 0 ? (count / schools.length * 100).toFixed(1) : '0'
+      percentage: schools.length > 0 ? (count / schools.length * 100).toFixed(1) : '0',
     }))
   })
 
@@ -603,7 +610,7 @@ export function useSchoolStats() {
     const schools = schoolStore.schools
     const distribution: Record<string, number> = {}
 
-    schools.forEach(school => {
+    schools.forEach((school) => {
       const province = school.province
       distribution[province] = (distribution[province] || 0) + 1
     })
@@ -612,7 +619,7 @@ export function useSchoolStats() {
       .map(([province, count]) => ({
         province,
         count,
-        percentage: schools.length > 0 ? (count / schools.length * 100).toFixed(1) : '0'
+        percentage: schools.length > 0 ? (count / schools.length * 100).toFixed(1) : '0',
       }))
       .sort((a, b) => b.count - a.count)
   })
@@ -627,7 +634,7 @@ export function useSchoolStats() {
     // 计算属性
     getFilteredStats,
     getTypeDistribution,
-    getRegionDistribution
+    getRegionDistribution,
   }
 }
 
@@ -638,13 +645,11 @@ export function useSchoolComparison() {
 
   // 添加到对比
   const addToCompare = (school: School) => {
-    if (compareList.value.length >= maxCompareCount) {
+    if (compareList.value.length >= maxCompareCount)
       throw new Error(`最多只能对比${maxCompareCount}所院校`)
-    }
 
-    if (compareList.value.find(s => s.id === school.id)) {
+    if (compareList.value.find(s => s.id === school.id))
       throw new Error('该院校已在对比列表中')
-    }
 
     compareList.value.push(school)
   }
@@ -676,7 +681,7 @@ export function useSchoolComparison() {
     removeFromCompare,
     clearCompare,
     isInCompare,
-    canAddMore
+    canAddMore,
   }
 }
 
@@ -713,14 +718,14 @@ export const useSchoolAchievements = (schoolId: number) => {
     nationalAwards: 0,
     provincialAwards: 0,
     patents: 0,
-    description: ''
+    description: '',
   })
 
   const trendData = ref<TrendData>({
     years: [],
     internationalData: [],
     nationalData: [],
-    provincialData: []
+    provincialData: [],
   })
 
   const awardWorks = ref<AwardWork[]>([])
@@ -731,13 +736,14 @@ export const useSchoolAchievements = (schoolId: number) => {
       loading.value = true
       error.value = null
       const response = await achievementApi.getAwardStats(schoolId)
-      if (response.data) {
+      if (response.data)
         achievementStats.value = response.data
-      }
-    } catch (err) {
+    }
+    catch (err) {
       error.value = '获取获奖统计数据失败'
       console.error('获取获奖统计数据失败:', err)
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -748,13 +754,14 @@ export const useSchoolAchievements = (schoolId: number) => {
       loading.value = true
       error.value = null
       const response = await achievementApi.getTrendData(schoolId)
-      if (response.data) {
+      if (response.data)
         trendData.value = response.data
-      }
-    } catch (err) {
+    }
+    catch (err) {
       error.value = '获取趋势数据失败'
       console.error('获取趋势数据失败:', err)
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -765,13 +772,14 @@ export const useSchoolAchievements = (schoolId: number) => {
       loading.value = true
       error.value = null
       const response = await achievementApi.getAwardWorks(schoolId)
-      if (response.data) {
+      if (response.data)
         awardWorks.value = response.data
-      }
-    } catch (err) {
+    }
+    catch (err) {
       error.value = '获取获奖作品数据失败'
       console.error('获取获奖作品数据失败:', err)
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -781,7 +789,7 @@ export const useSchoolAchievements = (schoolId: number) => {
     await Promise.all([
       loadAchievementStats(),
       loadTrendData(),
-      loadAwardWorks()
+      loadAwardWorks(),
     ])
   }
 
@@ -794,7 +802,7 @@ export const useSchoolAchievements = (schoolId: number) => {
     loadAchievementStats,
     loadTrendData,
     loadAwardWorks,
-    initAchievements
+    initAchievements,
   }
 }
 
@@ -817,9 +825,8 @@ export function useSchool(options?: {
   const schoolComparison = useSchoolComparison()
 
   // 自动加载
-  if (autoLoad) {
+  if (autoLoad)
     schoolList.initialize()
-  }
 
   // 院校详情相关功能
   const schoolStore = useSchoolStore()
@@ -827,13 +834,14 @@ export function useSchool(options?: {
   // 获取院校详情
   const fetchSchoolDetail = async (schoolId: number) => {
     // 环境配置
-    const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-      (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+    const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
+      || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
     if (USE_MOCK_DATA) {
       const { getMockSchoolById } = await import('@/data/mockSchools')
       return getMockSchoolById(schoolId)
-    } else {
+    }
+    else {
       // 调用后端API
       return await schoolStore.fetchSchoolDetail(schoolId)
     }
@@ -901,7 +909,7 @@ export function useSchool(options?: {
     fetchSchools: schoolList.initialize,
     fetchSchoolDetail,
     refresh: schoolList.refresh,
-    loadMore: schoolList.loadMore
+    loadMore: schoolList.loadMore,
   }
 }
 

@@ -1,13 +1,3 @@
-<template>
-  <span
-    :class="tagClasses"
-    :title="tagTitle"
-    @click="handleClick"
-  >
-    <slot>{{ displayName }}</slot>
-  </span>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSkillTags } from '@/composables/useSkillTags'
@@ -32,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   selected: false,
   disabled: false,
   clickable: false,
-  showCategory: false
+  showCategory: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -42,7 +32,7 @@ const {
   getTagDisplayName,
   getTagClasses,
   categoryNames,
-  categoryDescriptions
+  categoryDescriptions,
 } = useSkillTags()
 
 // 计算标签分类（从英文简写获取）
@@ -56,23 +46,19 @@ const tagClasses = computed(() => {
   let classes = getTagClasses(props.tag, props.size)
 
   // 调试：输出生成的类名
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV)
     console.log(`🏷️ SkillTag: "${props.tag}" -> 类名: "${classes}"`)
-  }
 
   // 添加状态类
-  if (props.selected) {
+  if (props.selected)
     classes += ' selected'
-  }
 
-  if (props.disabled) {
+  if (props.disabled)
     classes += ' disabled'
-  }
 
   // 添加交互类
-  if (props.clickable && !props.disabled) {
+  if (props.clickable && !props.disabled)
     classes += ' cursor-pointer hover:scale-105 transition-transform duration-200'
-  }
 
   return classes
 })
@@ -85,9 +71,8 @@ const tagTitle = computed(() => {
 
   let title = `${displayName.value}`
 
-  if (props.showCategory) {
+  if (props.showCategory)
     title += ` (${categoryName})`
-  }
 
   title += `\n分类: ${categoryDesc}`
   title += `\n英文代码: ${props.tag}`
@@ -97,11 +82,20 @@ const tagTitle = computed(() => {
 
 // 处理点击事件
 const handleClick = () => {
-  if (props.clickable && !props.disabled) {
+  if (props.clickable && !props.disabled)
     emit('click', props.tag, tagCategory.value, displayName.value)
-  }
 }
 </script>
+
+<template>
+  <span
+    :class="tagClasses"
+    :title="tagTitle"
+    @click="handleClick"
+  >
+    <slot>{{ displayName }}</slot>
+  </span>
+</template>
 
 <style scoped>
 /* 样式通过全局CSS文件 skill-tags.css 控制 */

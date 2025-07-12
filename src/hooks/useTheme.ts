@@ -25,14 +25,14 @@ export function useTheme() {
       return {
         common: {
           fontSize: '16px', // 覆盖默认的 14px
-          fontFamily: "'Noto Sans SC', sans-serif", // 覆盖默认字体
+          fontFamily: '\'Noto Sans SC\', sans-serif', // 覆盖默认字体
         },
       }
     }
     return {
       common: {
         fontSize: '16px', // 覆盖默认的 14px
-        fontFamily: "'Noto Sans SC', sans-serif", // 覆盖默认字体
+        fontFamily: '\'Noto Sans SC\', sans-serif', // 覆盖默认字体
       },
     }
   })
@@ -60,4 +60,3 @@ export function useTheme() {
 
   return { theme, themeOverrides }
 }
-

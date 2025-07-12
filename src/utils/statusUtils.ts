@@ -8,7 +8,7 @@
  * @returns 显示文本
  */
 export function getStatusText(status: string): string {
-  return status === '0' ? '启用' : '停用';
+  return status === '0' ? '启用' : '停用'
 }
 
 /**
@@ -17,7 +17,7 @@ export function getStatusText(status: string): string {
  * @returns CSS类名
  */
 export function getStatusClass(status: string): string {
-  return status === '0' ? 'status-active' : 'status-inactive';
+  return status === '0' ? 'status-active' : 'status-inactive'
 }
 
 /**
@@ -26,7 +26,7 @@ export function getStatusClass(status: string): string {
  * @returns 颜色类型
  */
 export function getStatusTagType(status: string): 'success' | 'error' {
-  return status === '0' ? 'success' : 'error';
+  return status === '0' ? 'success' : 'error'
 }
 
 /**
@@ -35,7 +35,7 @@ export function getStatusTagType(status: string): 'success' | 'error' {
  * @returns 图标类名
  */
 export function getStatusIcon(status: string): string {
-  return status === '0' ? 'ri-check-circle-line' : 'ri-close-circle-line';
+  return status === '0' ? 'ri-check-circle-line' : 'ri-close-circle-line'
 }
 
 /**
@@ -44,7 +44,7 @@ export function getStatusIcon(status: string): string {
  * @returns 是否启用
  */
 export function isStatusActive(status: string): boolean {
-  return status === '0';
+  return status === '0'
 }
 
 /**
@@ -53,13 +53,13 @@ export function isStatusActive(status: string): boolean {
  * @returns 切换后的状态值
  */
 export function toggleStatus(status: string): string {
-  return status === '0' ? '1' : '0';
+  return status === '0' ? '1' : '0'
 }
 
 /**
  * 状态值的类型定义
  */
-export type StatusValue = '0' | '1';
+export type StatusValue = '0' | '1'
 
 /**
  * 验证状态值是否有效
@@ -67,5 +67,5 @@ export type StatusValue = '0' | '1';
  * @returns 是否有效
  */
 export function isValidStatus(status: string): status is StatusValue {
-  return status === '0' || status === '1';
+  return status === '0' || status === '1'
 }

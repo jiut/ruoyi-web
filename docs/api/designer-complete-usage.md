@@ -137,12 +137,12 @@ interface DesignerCompleteDetail {
 ### DesignerDetailDrawer.vue
 ```vue
 <script setup lang="ts">
-import { getDesignerComplete, type DesignerCompleteDetail } from '@/api/talent/designer'
-import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
+import { type DesignerCompleteDetail, getDesignerComplete } from '@/api/talent/designer'
+import { mockAwards, mockDesigners, mockEducation, mockWorkExperience, mockWorks } from '@/data/mockDesigners'
 
 // 环境配置
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
+  || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
 const loadDesignerData = async (designerId: number) => {
   loading.value = true
@@ -158,14 +158,15 @@ const loadDesignerData = async (designerId: number) => {
       const educationData = mockEducation.filter(e => e.designerId === designerId)
         .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
       const awardsData = mockAwards.filter(a => a.designerId === designerId)
-        .sort((a, b) => (b.sort || 0) - (a.sort || 0))
+        .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
 
       designer.value = designerData || null
       portfolioWorks.value = worksData
       workExperience.value = workExpData
       educationBackground.value = educationData
       awardsAndCertifications.value = awardsData
-    } else {
+    }
+    else {
       // 使用聚合API调用后端接口
       console.log('🚀 使用聚合API - 设计师完整详情')
 
@@ -180,10 +181,12 @@ const loadDesignerData = async (designerId: number) => {
         awardsAndCertifications.value = data.awards || []
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('加载设计师数据失败:', error)
     // 错误处理...
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -250,12 +253,12 @@ try {
 ### DesignerDetailPage.vue（设计师详情页）
 ```vue
 <script setup lang="ts">
-import { getDesignerComplete, type DesignerCompleteDetail } from '@/api/talent/designer'
-import { mockDesigners, mockWorks, mockWorkExperience, mockEducation, mockAwards } from '@/data/mockDesigners'
+import { type DesignerCompleteDetail, getDesignerComplete } from '@/api/talent/designer'
+import { mockAwards, mockDesigners, mockEducation, mockWorkExperience, mockWorks } from '@/data/mockDesigners'
 
 // 环境配置
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' ||
-  (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
+  || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
 const getDesignerInfo = async () => {
   try {
@@ -275,9 +278,10 @@ const getDesignerInfo = async () => {
         educations.value = mockEducation.filter(edu => edu.designerId === id)
           .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
         awards.value = mockAwards.filter(award => award.designerId === id)
-          .sort((a, b) => (b.sort || 0) - (a.sort || 0))
+          .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
       }
-    } else {
+    }
+    else {
       // 使用聚合API调用后端接口
       console.log('🚀 使用聚合API - 设计师详情页面')
 
@@ -292,10 +296,12 @@ const getDesignerInfo = async () => {
         awards.value = data.awards || []
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取设计师信息失败:', error)
     // 错误处理...
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }

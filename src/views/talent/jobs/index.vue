@@ -1,530 +1,5 @@
-<template>
-	<div class="talent-page">
-		<!-- 统一顶栏 -->
-		<TalentHeader />
-
-		<!-- 页面标题区 -->
-		<section class="py-6 md:py-12 relative mt-20 md:mt-16">
-			<div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30"></div>
-			<div class="container mx-auto px-10 relative z-10 title-section-container">
-				<div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-					<div>
-						<h1 class="text-4xl font-bold mb-2 text-white">企业需求池</h1>
-						<p class="text-gray-300 max-w-2xl">
-							汇聚 {{ jobCount.toLocaleString() }} 家企业实时招聘需求，精准匹配设计人才，提供智能推荐服务
-						</p>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- 主体内容区 -->
-		<section class="flex-grow pb-8">
-			<div class="container mx-auto px-4">
-				<div class="flex flex-col lg:flex-row gap-6">
-					<!-- 左侧筛选栏 - 桌面端显示 -->
-					<div class="lg:w-1/4 hidden lg:block">
-						<div class="filter-card rounded-lg p-6 sticky top-24">
-							<div class="space-y-6">
-								<!-- 职位类型筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">职位类型</h3>
-									<div class="space-y-2">
-										<label v-for="type in jobTypes" :key="type.value" class="flex items-center cursor-pointer">
-											<input type="checkbox" class="custom-checkbox" :checked="selectedJobTypes.includes(type.value)"
-												@change="toggleJobType(type.value)">
-											<span>{{ type.label }}</span>
-										</label>
-									</div>
-								</div>
-
-								<!-- 薪资范围筛选 -->
-								<div>
-									<div class="flex justify-between items-center mb-3">
-										<h3 class="text-lg font-medium mb-0">薪资范围</h3>
-										<span class="text-sm text-gray-400">{{ minSalary }}K - {{ maxSalary }}K</span>
-									</div>
-									<div class="px-1 py-2">
-										<div class="range-slider-container" @mousedown="handleMouseDown" @touchstart="handleTouchStart">
-											<div class="range-slider-track"></div>
-											<div class="range-slider-fill" :style="{
-                          left: `${(minSalary - 5) / (80 - 5) * 100}%`,
-                          width: `${(maxSalary - minSalary) / (80 - 5) * 100}%`
-                        }"></div>
-											<div class="range-slider-thumb range-slider-thumb-min"
-												:style="{ left: `${(minSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMin"
-												@touchstart="startDragMin">
-												<div class="range-slider-tooltip">{{ minSalary }}K</div>
-											</div>
-											<div class="range-slider-thumb range-slider-thumb-max"
-												:style="{ left: `${(maxSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMax"
-												@touchstart="startDragMax">
-												<div class="range-slider-tooltip">{{ maxSalary }}K</div>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<!-- 工作地点筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">工作地点</h3>
-									<div class="grid grid-cols-2 gap-2">
-										<label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
-											<input type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
-												@change="toggleCity(city)">
-											<span>{{ city }}</span>
-										</label>
-									</div>
-									<button class="text-blue-400 text-sm mt-2">更多城市</button>
-								</div>
-
-								<!-- 工作经验筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">工作经验</h3>
-									<div class="space-y-2">
-										<label v-for="exp in experiences" :key="exp.value" class="flex items-center cursor-pointer">
-											<input type="radio" name="experience" class="custom-radio" :value="exp.value"
-												v-model="selectedExperience">
-											<span>{{ exp.label }}</span>
-										</label>
-									</div>
-								</div>
-
-								<!-- 工作类型筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">工作类型</h3>
-									<div class="space-y-2">
-										<label v-for="type in workTypes" :key="type" class="flex items-center cursor-pointer">
-											<input type="checkbox" class="custom-checkbox" :checked="selectedWorkTypes.includes(type)"
-												@change="toggleWorkType(type)">
-											<span>{{ type }}</span>
-										</label>
-									</div>
-								</div>
-
-								<!-- 企业规模筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">企业规模</h3>
-									<div class="space-y-2">
-										<label v-for="scale in companyScales" :key="scale.value" class="flex items-center cursor-pointer">
-											<input type="checkbox" class="custom-checkbox" :checked="selectedScales.includes(scale.value)"
-												@change="toggleScale(scale.value)">
-											<span>{{ scale.label }}</span>
-										</label>
-									</div>
-								</div>
-
-								<!-- 更多筛选 -->
-								<div>
-									<h3 class="text-lg font-medium mb-3">更多筛选</h3>
-									<div class="space-y-3">
-										<div class="flex items-center justify-between">
-											<span>急聘岗位</span>
-											<label class="custom-switch">
-												<input type="checkbox" v-model="urgentJobs">
-												<span class="switch-slider"></span>
-											</label>
-										</div>
-										<div class="flex items-center justify-between">
-											<span>支持应届生</span>
-											<label class="custom-switch">
-												<input type="checkbox" v-model="freshGraduates">
-												<span class="switch-slider"></span>
-											</label>
-										</div>
-										<div class="flex items-center justify-between">
-											<span>周末双休</span>
-											<label class="custom-switch">
-												<input type="checkbox" v-model="weekends">
-												<span class="switch-slider"></span>
-											</label>
-										</div>
-									</div>
-								</div>
-
-								<!-- 筛选按钮 -->
-								<div class="flex space-x-3 pt-2">
-									<button @click="resetFilters"
-										class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors">
-										重置筛选
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- 右侧内容区 -->
-					<div class="lg:w-3/4 w-full">
-						<!-- 排序和结果统计 -->
-						<div
-							class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-							<div class="mb-4 sm:mb-0">
-								<p class="text-gray-300">找到 <span class="text-white font-medium">{{ filteredJobCount }}</span> 个符合条件的职位
-								</p>
-
-
-							</div>
-							<div class="flex items-center space-x-4 w-full sm:w-auto">
-								<div class="relative flex-grow sm:flex-grow-0">
-									<select v-model="sortBy"
-										class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8 bg-gray-800/80 border border-gray-700">
-										<option value="latest">最新发布</option>
-										<option value="salary-high">薪资从高到低</option>
-										<option value="salary-low">薪资从低到高</option>
-										<option value="hot">热门推荐</option>
-									</select>
-								</div>
-							</div>
-						</div>
-
-						<!-- 职位列表 -->
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-6 mb-8">
-							<!-- 使用完全匹配原HTML的卡片结构 -->
-							<div v-for="job in paginatedJobs" :key="job.id" :class="[
-                  'job-card rounded-lg glow-border card-hover cursor-pointer',
-                  isMobile ? 'mobile-card' : 'desktop-card',
-                  navigating && selectedJob?.id === job.id ? 'navigating' : ''
-                ]" @click="handleViewDetail(job.id)">
-								<div class="p-6">
-									<div class="flex items-start">
-										<!-- 公司Logo -->
-										<div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-											<img v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName"
-												class="w-full h-full object-cover rounded-lg">
-											<span v-else class="text-lg font-bold text-primary">
-												{{ getNameInitial(job.enterprise?.enterpriseName || '企') }}
-											</span>
-										</div>
-
-										<!-- 岗位信息 -->
-										<div class="flex-1 min-w-0">
-											<div class="flex justify-between items-start">
-												<h3 class="text-lg font-bold mb-1 truncate">{{ job.title }}</h3>
-												<span class="text-green-400 font-medium whitespace-nowrap ml-2">
-													{{ formatSalary(job) }}
-												</span>
-											</div>
-
-											<p class="text-gray-400 text-sm mb-3">
-												{{ job.enterprise?.enterpriseName }} · {{ job.workLocation }}
-											</p>
-
-											<!-- 标签信息 -->
-											<div class="flex flex-wrap gap-2 mb-4">
-												<span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
-													{{ job.experienceRequired }}
-												</span>
-												<span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
-													{{ job.educationRequired }}
-												</span>
-												<span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
-													{{ job.workType }}
-												</span>
-												<span v-if="isJobUrgent(job)"
-													class="skill-tag text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
-													急聘
-												</span>
-											</div>
-
-											<!-- 技能标签 -->
-											<div class="flex flex-wrap gap-2 mb-4">
-												<SkillTag v-for="skill in getJobSkills(job)" :key="skill" :tag="skill" :show-category="false" />
-											</div>
-
-											<!-- 底部信息 -->
-											<div class="flex justify-between items-center">
-												<p class="text-gray-400 text-xs">
-													发布于 {{ formatPublishDate(job.publishDate) }}
-												</p>
-												<button @click.stop="handleViewDetail(job.id)" :class="[
-                            'view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors whitespace-nowrap flex items-center',
-                            isMobile ? 'mobile-view-btn' : 'desktop-view-btn'
-                          ]">
-													<span>{{ isMobile ? '查看详情' : '查看详情' }}</span>
-													<i v-if="isMobile" class="ri-arrow-right-s-line ml-1"></i>
-												</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- 分页 -->
-						<div class="flex justify-center mt-10 mb-6">
-							<div class="flex space-x-2">
-								<button @click="prevPage" :disabled="currentPage === 1"
-									class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50">
-									<i class="ri-arrow-left-s-line"></i>
-								</button>
-								<button v-for="page in visiblePages" :key="page" @click="goToPage(page)" :class="[
-                    'pagination-button w-10 h-10 flex items-center justify-center rounded-lg',
-                    currentPage === page
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800/50 text-gray-300 border border-gray-700/50 hover:bg-blue-600/20'
-                  ]">
-									{{ page }}
-								</button>
-								<button @click="nextPage" :disabled="currentPage === totalPages"
-									class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50">
-									<i class="ri-arrow-right-s-line"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- 岗位详情模态框 - 仅在桌面端显示 -->
-		<JobDetailModal v-if="!isMobile" :visible="showJobDetail" :job="selectedJob"
-			@update:visible="showJobDetail = $event" @apply="handleApply" />
-
-		<!-- 岗位申请模态框 - 仅在桌面端显示 -->
-		<JobApplicationModal v-if="!isMobile" :visible="showJobApplication" :job="selectedJob"
-			@update:visible="showJobApplication = $event" @submit="handleApplicationSubmit" />
-
-		<!-- 移动端悬浮筛选按钮 -->
-		<button v-if="isMobile" @click="toggleFilterDrawer"
-			class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-out z-40 lg:hidden flex items-center justify-center floating-filter-btn"
-			:class="{ 'scale-110': showFilterDrawer }">
-			<i class="ri-filter-3-line text-xl"></i>
-			<!-- 活跃筛选条件徽章 -->
-			<span v-if="activeFiltersCount > 0"
-				class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-medium border-2 border-white">
-				{{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
-			</span>
-		</button>
-
-		<!-- 移动端筛选抽屉 -->
-		<div v-if="showFilterDrawer" class="fixed inset-0 z-50 lg:hidden overflow-hidden filter-drawer-container"
-			style="margin: 0; padding: 0; width: 100vw; height: 100vh;" @click="closeFilterDrawer">
-			<!-- 遮罩层 -->
-			<div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-
-			<!-- 抽屉内容 -->
-			<div
-				class="absolute top-0 bottom-0 filter-card filter-drawer transform transition-transform duration-300 ease-out flex flex-col"
-				:class="filterDrawerOpen ? 'translate-x-0' : 'translate-x-full'" style="right: 0px; width: min(320px, 85vw);"
-				@click.stop>
-				<!-- 抽屉头部 -->
-				<div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
-					<h3 class="text-lg font-medium">筛选条件</h3>
-					<button @click="closeFilterDrawer"
-						class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 transition-colors">
-						<i class="ri-close-line"></i>
-					</button>
-				</div>
-
-				<!-- 抽屉内容区 -->
-				<div class="flex-1 overflow-y-auto filter-drawer-content">
-					<div class="p-6">
-						<div class="space-y-6">
-							<!-- 职位类型筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">职位类型</h3>
-								<div class="space-y-2">
-									<label v-for="type in jobTypes" :key="type.value" class="flex items-center cursor-pointer">
-										<input type="checkbox" class="custom-checkbox" :checked="selectedJobTypes.includes(type.value)"
-											@change="toggleJobType(type.value)">
-										<span>{{ type.label }}</span>
-									</label>
-								</div>
-							</div>
-
-							<!-- 薪资范围筛选 -->
-							<div>
-								<div class="flex justify-between items-center mb-3">
-									<h3 class="text-lg font-medium mb-0">薪资范围</h3>
-									<span class="text-sm text-gray-400">{{ minSalary }}K - {{ maxSalary }}K</span>
-								</div>
-								<div class="px-1 py-2">
-									<div class="range-slider-container" @mousedown="handleMouseDown" @touchstart="handleTouchStart">
-										<div class="range-slider-track"></div>
-										<div class="range-slider-fill" :style="{
-                        left: `${(minSalary - 5) / (80 - 5) * 100}%`,
-                        width: `${(maxSalary - minSalary) / (80 - 5) * 100}%`
-                      }"></div>
-										<div class="range-slider-thumb range-slider-thumb-min"
-											:style="{ left: `${(minSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMin"
-											@touchstart="startDragMin">
-											<div class="range-slider-tooltip">{{ minSalary }}K</div>
-										</div>
-										<div class="range-slider-thumb range-slider-thumb-max"
-											:style="{ left: `${(maxSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMax"
-											@touchstart="startDragMax">
-											<div class="range-slider-tooltip">{{ maxSalary }}K</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- 工作地点筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">工作地点</h3>
-								<div class="grid grid-cols-2 gap-2">
-									<label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
-										<input type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
-											@change="toggleCity(city)">
-										<span>{{ city }}</span>
-									</label>
-								</div>
-								<button class="text-blue-400 text-sm mt-2">更多城市</button>
-							</div>
-
-							<!-- 工作经验筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">工作经验</h3>
-								<div class="space-y-2">
-									<label v-for="exp in experiences" :key="exp.value" class="flex items-center cursor-pointer">
-										<input type="radio" name="experience-mobile" class="custom-radio" :value="exp.value"
-											v-model="selectedExperience">
-										<span>{{ exp.label }}</span>
-									</label>
-								</div>
-							</div>
-
-							<!-- 工作类型筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">工作类型</h3>
-								<div class="space-y-2">
-									<label v-for="type in workTypes" :key="type" class="flex items-center cursor-pointer">
-										<input type="checkbox" class="custom-checkbox" :checked="selectedWorkTypes.includes(type)"
-											@change="toggleWorkType(type)">
-										<span>{{ type }}</span>
-									</label>
-								</div>
-							</div>
-
-							<!-- 企业规模筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">企业规模</h3>
-								<div class="space-y-2">
-									<label v-for="scale in companyScales" :key="scale.value" class="flex items-center cursor-pointer">
-										<input type="checkbox" class="custom-checkbox" :checked="selectedScales.includes(scale.value)"
-											@change="toggleScale(scale.value)">
-										<span>{{ scale.label }}</span>
-									</label>
-								</div>
-							</div>
-
-							<!-- 更多筛选 -->
-							<div>
-								<h3 class="text-lg font-medium mb-3">更多筛选</h3>
-								<div class="space-y-3">
-									<div class="flex items-center justify-between">
-										<span>急聘岗位</span>
-										<label class="custom-switch">
-											<input type="checkbox" v-model="urgentJobs">
-											<span class="switch-slider"></span>
-										</label>
-									</div>
-									<div class="flex items-center justify-between">
-										<span>支持应届生</span>
-										<label class="custom-switch">
-											<input type="checkbox" v-model="freshGraduates">
-											<span class="switch-slider"></span>
-										</label>
-									</div>
-									<div class="flex items-center justify-between">
-										<span>周末双休</span>
-										<label class="custom-switch">
-											<input type="checkbox" v-model="weekends">
-											<span class="switch-slider"></span>
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- 抽屉底部按钮 -->
-				<div class="border-t border-gray-700/50 p-6 flex-shrink-0">
-					<div class="flex space-x-3">
-						<button @click="resetFilters"
-							class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors">
-							重置筛选
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- 页脚 -->
-		<footer class="mt-16 py-12 border-t border-gray-800">
-			<div class="container mx-auto px-4">
-				<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-					<div>
-						<h3 class="text-lg font-bold mb-4">星海人才</h3>
-						<p class="text-gray-400 text-sm">连接创意与科技，为设计师和企业搭建智能化人才对接平台</p>
-					</div>
-					<div>
-						<h3 class="text-lg font-bold mb-4">功能模块</h3>
-						<ul class="space-y-2">
-							<li><router-link to="/talent/schools"
-									class="text-gray-400 text-sm hover:text-blue-400">院校数据库</router-link></li>
-							<li><router-link to="/talent/works" class="text-gray-400 text-sm hover:text-blue-400">学生作品库</router-link>
-							</li>
-							<li><router-link to="/talent/jobs" class="text-gray-400 text-sm hover:text-blue-400">企业需求池</router-link>
-							</li>
-							<li><router-link to="/talent/designers"
-									class="text-gray-400 text-sm hover:text-blue-400">设计师档案</router-link></li>
-						</ul>
-					</div>
-					<div>
-						<h3 class="text-lg font-bold mb-4">关于我们</h3>
-						<ul class="space-y-2">
-							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
-							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
-							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
-							<li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
-						</ul>
-					</div>
-					<div>
-						<h3 class="text-lg font-bold mb-4">联系方式</h3>
-						<ul class="space-y-2">
-							<li class="flex items-center text-gray-400 text-sm">
-								<i class="ri-mail-line mr-2"></i> contact@xinghairencai.com
-							</li>
-							<li class="flex items-center text-gray-400 text-sm">
-								<i class="ri-phone-line mr-2"></i> 400-888-9999
-							</li>
-							<li class="flex items-center text-gray-400 text-sm">
-								<i class="ri-map-pin-line mr-2"></i> 北京市海淀区中关村大街 18 号
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="section-divider mb-8"></div>
-				<div class="flex flex-col md:flex-row justify-between items-center">
-					<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 星海人才. 保留所有权利</p>
-					<div class="flex space-x-4">
-						<a href="#"
-							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-							<i class="ri-weibo-line"></i>
-						</a>
-						<a href="#"
-							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-							<i class="ri-wechat-line"></i>
-						</a>
-						<a href="#"
-							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-							<i class="ri-linkedin-line"></i>
-						</a>
-						<a href="#"
-							class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-							<i class="ri-github-line"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
 import JobDetailModal from '@/components/talent/JobDetailModal.vue'
@@ -533,7 +8,7 @@ import { SkillTag } from '@/components/common'
 import { useJob } from '@/composables/talent/useJob'
 import { useSkillTags } from '@/composables/useSkillTags'
 import type { JobPosting } from '@/types/talent/job'
-import { ProfessionLabels } from '@/types/talent/designer'
+import ProfessionUtils from '@/utils/professionUtils'
 import { getNameInitial } from '@/utils/styleGenerator'
 
 const router = useRouter()
@@ -555,9 +30,9 @@ const checkDevice = () => {
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
   // 综合判断移动设备
-  isMobile.value = screenWidth < 1024 ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) ||
-    (isTouchDevice && screenWidth < 1200)
+  isMobile.value = screenWidth < 1024
+    || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+    || (isTouchDevice && screenWidth < 1200)
 }
 
 // 监听窗口大小变化
@@ -567,9 +42,8 @@ const handleResize = () => {
 
 // 添加触觉反馈（仅移动端）
 const addHapticFeedback = () => {
-  if (isMobile.value && 'vibrate' in navigator) {
+  if (isMobile.value && 'vibrate' in navigator)
     navigator.vibrate(50) // 轻微震动 50ms
-  }
 }
 
 // 筛选条件
@@ -599,10 +73,7 @@ const showFilterDrawer = ref(false)
 const filterDrawerOpen = ref(false)
 
 // 筛选选项
-const jobTypes = Object.entries(ProfessionLabels).map(([value, label]) => ({
-  value,
-  label
-}))
+const jobTypes = ProfessionUtils.getSelectOptions()
 
 const cities = ['北京', '上海', '广州', '深圳', '杭州', '成都']
 const workTypes = ['全职', '兼职', '实习', '远程', '项目制']
@@ -612,14 +83,14 @@ const experiences = [
   { value: '1-3', label: '1-3 年' },
   { value: '3-5', label: '3-5 年' },
   { value: '5-10', label: '5-10 年' },
-  { value: '10+', label: '10 年以上' }
+  { value: '10+', label: '10 年以上' },
 ]
 
 const companyScales = [
   { value: '初创企业', label: '初创企业 (≤50人)' },
   { value: '中小企业', label: '中小企业 (50-500人)' },
   { value: '大型企业', label: '大型企业 (500-2000人)' },
-  { value: '超大型企业', label: '超大型企业 (>2000人)' }
+  { value: '超大型企业', label: '超大型企业 (>2000人)' },
 ]
 
 // 计算属性
@@ -629,40 +100,40 @@ const filteredJobs = computed(() => {
   let filtered = [...jobs.value]
 
   // 职位类型筛选
-  if (selectedJobTypes.value.length > 0) {
+  if (selectedJobTypes.value.length > 0)
     filtered = filtered.filter(job => selectedJobTypes.value.includes(job.profession))
-  }
 
   // 城市筛选
   if (selectedCities.value.length > 0) {
     filtered = filtered.filter(job =>
-      selectedCities.value.some(city => job.workLocation.includes(city))
+      selectedCities.value.some(city => job.workLocation.includes(city)),
     )
   }
 
   // 工作经验筛选
   if (selectedExperience.value) {
     filtered = filtered.filter(job =>
-      job.experienceRequired.includes(selectedExperience.value)
+      job.experienceRequired.includes(selectedExperience.value),
     )
   }
 
   // 工作类型筛选
   if (selectedWorkTypes.value.length > 0) {
     filtered = filtered.filter(job =>
-      selectedWorkTypes.value.includes(job.workType)
+      selectedWorkTypes.value.includes(job.workType),
     )
   }
 
-    // 薪资范围筛选
+  // 薪资范围筛选
   if (minSalary.value > 5 || maxSalary.value < 80) {
-    filtered = filtered.filter(job => {
+    filtered = filtered.filter((job) => {
       if (job.salaryMin && job.salaryMax) {
         const jobMinSalary = job.salaryMin / 1000
         const jobMaxSalary = job.salaryMax / 1000
         // 检查职位薪资范围是否与筛选条件有重叠
         return jobMaxSalary >= minSalary.value && jobMinSalary <= maxSalary.value
-      } else {
+      }
+      else {
         return true // 没有薪资信息的职位默认显示
       }
     })
@@ -672,7 +143,7 @@ const filteredJobs = computed(() => {
 })
 
 const sortedJobs = computed(() => {
-  let sorted = [...filteredJobs.value]
+  const sorted = [...filteredJobs.value]
 
   switch (sortBy.value) {
     case 'salary-high':
@@ -709,9 +180,8 @@ const visiblePages = computed(() => {
   const startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
   const endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1)
 
-  for (let i = startPage; i <= endPage; i++) {
+  for (let i = startPage; i <= endPage; i++)
     pages.push(i)
-  }
 
   return pages
 })
@@ -719,53 +189,58 @@ const visiblePages = computed(() => {
 // 活跃筛选条件数量
 const activeFiltersCount = computed(() => {
   let count = 0
-  if (selectedJobTypes.value.length > 0) count += selectedJobTypes.value.length
-  if (selectedCities.value.length > 0) count += selectedCities.value.length
-  if (selectedExperience.value) count += 1
-  if (selectedWorkTypes.value.length > 0) count += selectedWorkTypes.value.length
-  if (selectedScales.value.length > 0) count += selectedScales.value.length
-  if (minSalary.value > 5 || maxSalary.value < 80) count += 1
-  if (urgentJobs.value) count += 1
-  if (freshGraduates.value) count += 1
-  if (weekends.value) count += 1
+  if (selectedJobTypes.value.length > 0)
+    count += selectedJobTypes.value.length
+  if (selectedCities.value.length > 0)
+    count += selectedCities.value.length
+  if (selectedExperience.value)
+    count += 1
+  if (selectedWorkTypes.value.length > 0)
+    count += selectedWorkTypes.value.length
+  if (selectedScales.value.length > 0)
+    count += selectedScales.value.length
+  if (minSalary.value > 5 || maxSalary.value < 80)
+    count += 1
+  if (urgentJobs.value)
+    count += 1
+  if (freshGraduates.value)
+    count += 1
+  if (weekends.value)
+    count += 1
   return count
 })
 
 // 方法
 const toggleJobType = (type: string) => {
   const index = selectedJobTypes.value.indexOf(type)
-  if (index > -1) {
+  if (index > -1)
     selectedJobTypes.value.splice(index, 1)
-  } else {
+  else
     selectedJobTypes.value.push(type)
-  }
 }
 
 const toggleCity = (city: string) => {
   const index = selectedCities.value.indexOf(city)
-  if (index > -1) {
+  if (index > -1)
     selectedCities.value.splice(index, 1)
-  } else {
+  else
     selectedCities.value.push(city)
-  }
 }
 
 const toggleWorkType = (type: string) => {
   const index = selectedWorkTypes.value.indexOf(type)
-  if (index > -1) {
+  if (index > -1)
     selectedWorkTypes.value.splice(index, 1)
-  } else {
+  else
     selectedWorkTypes.value.push(type)
-  }
 }
 
 const toggleScale = (scale: string) => {
   const index = selectedScales.value.indexOf(scale)
-  if (index > -1) {
+  if (index > -1)
     selectedScales.value.splice(index, 1)
-  } else {
+  else
     selectedScales.value.push(scale)
-  }
 }
 
 const resetFilters = () => {
@@ -811,11 +286,13 @@ const handleViewDetail = async (jobId: number) => {
       navigating.value = true
       try {
         await router.push(`/talent/jobs/${jobId}`)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Navigation failed:', error)
         navigating.value = false
       }
-    } else {
+    }
+    else {
       // 桌面端：打开模态框
       showJobDetail.value = true
     }
@@ -834,8 +311,6 @@ const handleApplicationSubmit = (formData: any) => {
   // 这里可以添加提交申请的逻辑
 }
 
-
-
 const formatSalary = (job: JobPosting) => {
   if (job.salaryMin && job.salaryMax) {
     const minK = Math.round(job.salaryMin / 1000)
@@ -846,7 +321,8 @@ const formatSalary = (job: JobPosting) => {
 }
 
 const formatPublishDate = (publishDate: string) => {
-  if (!publishDate) return ''
+  if (!publishDate)
+    return ''
 
   const now = new Date()
   const published = new Date(publishDate)
@@ -860,17 +336,19 @@ const formatPublishDate = (publishDate: string) => {
       return `${diffMinutes} 分钟前`
     }
     return `${diffHours} 小时前`
-  } else if (diffDays < 7) {
+  }
+  else if (diffDays < 7) {
     return `${diffDays} 天前`
-  } else {
+  }
+  else {
     return published.toLocaleDateString('zh-CN')
   }
 }
 
 const extractSalaryNumber = (job: JobPosting) => {
-  if (job.salaryMin && job.salaryMax) {
+  if (job.salaryMin && job.salaryMax)
     return (job.salaryMin + job.salaryMax) / 2 / 1000 // 返回平均薪资的K值
-  }
+
   return 0
 }
 
@@ -883,7 +361,8 @@ const isJobUrgent = (job: JobPosting) => {
 const getJobSkills = (job: JobPosting) => {
   try {
     const skills = JSON.parse(job.skillsRequired || '[]')
-    if (!Array.isArray(skills)) return []
+    if (!Array.isArray(skills))
+      return []
 
     // 按分类分组标签
     const grouped = groupTagsByCategory(skills)
@@ -892,22 +371,20 @@ const getJobSkills = (job: JobPosting) => {
     const result = []
 
     // 添加工具类标签（优先显示）
-    if (grouped.tool && grouped.tool.length > 0) {
+    if (grouped.tool && grouped.tool.length > 0)
       result.push(grouped.tool[0])
-    }
 
     // 添加领域类标签
-    if (grouped.field && grouped.field.length > 0) {
+    if (grouped.field && grouped.field.length > 0)
       result.push(grouped.field[0])
-    }
 
     // 添加技能类标签
-    if (grouped.skill && grouped.skill.length > 0) {
+    if (grouped.skill && grouped.skill.length > 0)
       result.push(grouped.skill[0])
-    }
 
     return result
-  } catch {
+  }
+  catch {
     return []
   }
 }
@@ -917,7 +394,8 @@ const getAllJobSkills = (job: JobPosting) => {
   try {
     const skills = JSON.parse(job.skillsRequired || '[]')
     return Array.isArray(skills) ? skills : []
-  } catch {
+  }
+  catch {
     return []
   }
 }
@@ -939,7 +417,8 @@ const startDragMin = (e: MouseEvent | TouchEvent) => {
 
   const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
     moveEvent.preventDefault()
-    if (!isDragging.value || dragTarget.value !== 'min') return
+    if (!isDragging.value || dragTarget.value !== 'min')
+      return
     updateSliderValue(moveEvent, 'min')
   }
 
@@ -971,7 +450,8 @@ const startDragMax = (e: MouseEvent | TouchEvent) => {
 
   const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
     moveEvent.preventDefault()
-    if (!isDragging.value || dragTarget.value !== 'max') return
+    if (!isDragging.value || dragTarget.value !== 'max')
+      return
     updateSliderValue(moveEvent, 'max')
   }
 
@@ -992,15 +472,13 @@ const startDragMax = (e: MouseEvent | TouchEvent) => {
 }
 
 const handleMouseDown = (e: MouseEvent) => {
-  if (e.target === e.currentTarget) {
+  if (e.target === e.currentTarget)
     updateSliderFromTrack(e)
-  }
 }
 
 const handleTouchStart = (e: TouchEvent) => {
-  if (e.target === e.currentTarget) {
+  if (e.target === e.currentTarget)
     updateSliderFromTrack(e)
-  }
 }
 
 const updateSliderFromTrack = (e: MouseEvent | TouchEvent) => {
@@ -1013,37 +491,35 @@ const updateSliderFromTrack = (e: MouseEvent | TouchEvent) => {
   const distanceToMin = Math.abs(value - minSalary.value)
   const distanceToMax = Math.abs(value - maxSalary.value)
 
-  if (distanceToMin < distanceToMax) {
+  if (distanceToMin < distanceToMax)
     minSalary.value = Math.min(value, maxSalary.value - 1)
-  } else {
+  else
     maxSalary.value = Math.max(value, minSalary.value + 1)
-  }
 
   addHapticFeedback()
 }
 
 const updateSliderValue = (e: MouseEvent | TouchEvent, target: 'min' | 'max') => {
-  if (!sliderContainer) return
+  if (!sliderContainer)
+    return
 
   const rect = sliderContainer.getBoundingClientRect()
   const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
   const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
   const value = Math.round(5 + percentage * (80 - 5))
 
-  if (target === 'min') {
+  if (target === 'min')
     minSalary.value = Math.min(value, maxSalary.value - 1)
-  } else {
+  else
     maxSalary.value = Math.max(value, minSalary.value + 1)
-  }
 }
 
 // 抽屉相关方法
 const toggleFilterDrawer = () => {
-  if (showFilterDrawer.value) {
+  if (showFilterDrawer.value)
     closeFilterDrawer()
-  } else {
+  else
     openFilterDrawer()
-  }
 }
 
 const openFilterDrawer = () => {
@@ -1080,10 +556,10 @@ onMounted(() => {
       console.log('🧪 技能标签系统调试 - 英文简写到中文转换测试:')
       console.log(`📊 职位: "${firstJob.title}"`)
       console.log(`📊 原始技能数据(英文简写): ${firstJob.skillsRequired}`)
-      console.log(`📊 解析后的英文简写数组:`, allSkills)
-      console.log('=' .repeat(80))
+      console.log('📊 解析后的英文简写数组:', allSkills)
+      console.log('='.repeat(80))
       debugSkillTags(allSkills)
-      console.log('=' .repeat(80))
+      console.log('='.repeat(80))
       console.log('✅ 标准架构验证完成：后端返回英文简写 -> 前端自动转换中文显示 + 分类着色')
     }
   }, 1000)
@@ -1095,6 +571,685 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 })
 </script>
+
+<template>
+  <div class="talent-page">
+    <!-- 统一顶栏 -->
+    <TalentHeader />
+
+    <!-- 页面标题区 -->
+    <section class="py-6 md:py-12 relative mt-20 md:mt-16">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-30" />
+      <div class="container mx-auto px-10 relative z-10 title-section-container">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 class="text-4xl font-bold mb-2 text-white">
+              企业需求池
+            </h1>
+            <p class="text-gray-300 max-w-2xl">
+              汇聚 {{ jobCount.toLocaleString() }} 家企业实时招聘需求，精准匹配设计人才，提供智能推荐服务
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主体内容区 -->
+    <section class="flex-grow pb-8">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- 左侧筛选栏 - 桌面端显示 -->
+          <div class="lg:w-1/4 hidden lg:block">
+            <div class="filter-card rounded-lg p-6 sticky top-24">
+              <div class="space-y-6">
+                <!-- 职位类型筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    职位类型
+                  </h3>
+                  <div class="space-y-2">
+                    <label v-for="type in jobTypes" :key="type.value" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox" class="custom-checkbox" :checked="selectedJobTypes.includes(type.value)"
+                        @change="toggleJobType(type.value)"
+                      >
+                      <span>{{ type.label }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 薪资范围筛选 -->
+                <div>
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-medium mb-0">
+                      薪资范围
+                    </h3>
+                    <span class="text-sm text-gray-400">{{ minSalary }}K - {{ maxSalary }}K</span>
+                  </div>
+                  <div class="px-1 py-2">
+                    <div class="range-slider-container" @mousedown="handleMouseDown" @touchstart="handleTouchStart">
+                      <div class="range-slider-track" />
+                      <div
+                        class="range-slider-fill" :style="{
+                          left: `${(minSalary - 5) / (80 - 5) * 100}%`,
+                          width: `${(maxSalary - minSalary) / (80 - 5) * 100}%`,
+                        }"
+                      />
+                      <div
+                        class="range-slider-thumb range-slider-thumb-min"
+                        :style="{ left: `${(minSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMin"
+                        @touchstart="startDragMin"
+                      >
+                        <div class="range-slider-tooltip">
+                          {{ minSalary }}K
+                        </div>
+                      </div>
+                      <div
+                        class="range-slider-thumb range-slider-thumb-max"
+                        :style="{ left: `${(maxSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMax"
+                        @touchstart="startDragMax"
+                      >
+                        <div class="range-slider-tooltip">
+                          {{ maxSalary }}K
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 工作地点筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    工作地点
+                  </h3>
+                  <div class="grid grid-cols-2 gap-2">
+                    <label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
+                        @change="toggleCity(city)"
+                      >
+                      <span>{{ city }}</span>
+                    </label>
+                  </div>
+                  <button class="text-blue-400 text-sm mt-2">
+                    更多城市
+                  </button>
+                </div>
+
+                <!-- 工作经验筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    工作经验
+                  </h3>
+                  <div class="space-y-2">
+                    <label v-for="exp in experiences" :key="exp.value" class="flex items-center cursor-pointer">
+                      <input
+                        v-model="selectedExperience" type="radio" name="experience" class="custom-radio"
+                        :value="exp.value"
+                      >
+                      <span>{{ exp.label }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 工作类型筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    工作类型
+                  </h3>
+                  <div class="space-y-2">
+                    <label v-for="type in workTypes" :key="type" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox" class="custom-checkbox" :checked="selectedWorkTypes.includes(type)"
+                        @change="toggleWorkType(type)"
+                      >
+                      <span>{{ type }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 企业规模筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    企业规模
+                  </h3>
+                  <div class="space-y-2">
+                    <label v-for="scale in companyScales" :key="scale.value" class="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox" class="custom-checkbox" :checked="selectedScales.includes(scale.value)"
+                        @change="toggleScale(scale.value)"
+                      >
+                      <span>{{ scale.label }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 更多筛选 -->
+                <div>
+                  <h3 class="text-lg font-medium mb-3">
+                    更多筛选
+                  </h3>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span>急聘岗位</span>
+                      <label class="custom-switch">
+                        <input v-model="urgentJobs" type="checkbox">
+                        <span class="switch-slider" />
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>支持应届生</span>
+                      <label class="custom-switch">
+                        <input v-model="freshGraduates" type="checkbox">
+                        <span class="switch-slider" />
+                      </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span>周末双休</span>
+                      <label class="custom-switch">
+                        <input v-model="weekends" type="checkbox">
+                        <span class="switch-slider" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 筛选按钮 -->
+                <div class="flex space-x-3 pt-2">
+                  <button
+                    class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors"
+                    @click="resetFilters"
+                  >
+                    重置筛选
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧内容区 -->
+          <div class="lg:w-3/4 w-full">
+            <!-- 排序和结果统计 -->
+            <div
+              class="glass-card rounded-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center"
+            >
+              <div class="mb-4 sm:mb-0">
+                <p class="text-gray-300">
+                  找到 <span class="text-white font-medium">{{ filteredJobCount }}</span> 个符合条件的职位
+                </p>
+              </div>
+              <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="relative flex-grow sm:flex-grow-0">
+                  <select
+                    v-model="sortBy"
+                    class="custom-select w-full sm:w-48 py-2 px-3 rounded-lg text-white focus:outline-none text-sm pr-8 bg-gray-800/80 border border-gray-700"
+                  >
+                    <option value="latest">
+                      最新发布
+                    </option>
+                    <option value="salary-high">
+                      薪资从高到低
+                    </option>
+                    <option value="salary-low">
+                      薪资从低到高
+                    </option>
+                    <option value="hot">
+                      热门推荐
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- 职位列表 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-6 mb-8">
+              <!-- 使用完全匹配原HTML的卡片结构 -->
+              <div
+                v-for="job in paginatedJobs" :key="job.id" class="job-card rounded-lg glow-border card-hover cursor-pointer" :class="[
+                  isMobile ? 'mobile-card' : 'desktop-card',
+                  navigating && selectedJob?.id === job.id ? 'navigating' : '',
+                ]" @click="handleViewDetail(job.id)"
+              >
+                <div class="p-6">
+                  <div class="flex items-start">
+                    <!-- 公司Logo -->
+                    <div class="w-12 h-12 company-logo rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                      <img
+                        v-if="job.enterprise?.logo" :src="job.enterprise.logo" :alt="job.enterprise?.enterpriseName"
+                        class="w-full h-full object-cover rounded-lg"
+                      >
+                      <span v-else class="text-lg font-bold text-primary">
+                        {{ getNameInitial(job.enterprise?.enterpriseName || '企') }}
+                      </span>
+                    </div>
+
+                    <!-- 岗位信息 -->
+                    <div class="flex-1 min-w-0">
+                      <div class="flex justify-between items-start">
+                        <h3 class="text-lg font-bold mb-1 truncate">
+                          {{ job.title }}
+                        </h3>
+                        <span class="text-green-400 font-medium whitespace-nowrap ml-2">
+                          {{ formatSalary(job) }}
+                        </span>
+                      </div>
+
+                      <p class="text-gray-400 text-sm mb-3">
+                        {{ job.enterprise?.enterpriseName }} · {{ job.workLocation }}
+                      </p>
+
+                      <!-- 标签信息 -->
+                      <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
+                          {{ job.experienceRequired }}
+                        </span>
+                        <span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
+                          {{ job.educationRequired }}
+                        </span>
+                        <span class="skill-tag text-xs px-2 py-1 rounded-full" style="color: #e2e8f0;">
+                          {{ job.workType }}
+                        </span>
+                        <span
+                          v-if="isJobUrgent(job)"
+                          class="skill-tag text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30"
+                        >
+                          急聘
+                        </span>
+                      </div>
+
+                      <!-- 技能标签 -->
+                      <div class="flex flex-wrap gap-2 mb-4">
+                        <SkillTag v-for="skill in getJobSkills(job)" :key="skill" :tag="skill" :show-category="false" />
+                      </div>
+
+                      <!-- 底部信息 -->
+                      <div class="flex justify-between items-center">
+                        <p class="text-gray-400 text-xs">
+                          发布于 {{ formatPublishDate(job.publishDate) }}
+                        </p>
+                        <button
+                          class="view-job-btn px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg text-sm hover:bg-primary/20 transition-colors whitespace-nowrap flex items-center" :class="[
+                            isMobile ? 'mobile-view-btn' : 'desktop-view-btn',
+                          ]" @click.stop="handleViewDetail(job.id)"
+                        >
+                          <span>{{ isMobile ? '查看详情' : '查看详情' }}</span>
+                          <i v-if="isMobile" class="ri-arrow-right-s-line ml-1" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex justify-center mt-10 mb-6">
+              <div class="flex space-x-2">
+                <button
+                  :disabled="currentPage === 1" class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
+                  @click="prevPage"
+                >
+                  <i class="ri-arrow-left-s-line" />
+                </button>
+                <button
+                  v-for="page in visiblePages" :key="page" class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg" :class="[
+                    currentPage === page
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-800/50 text-gray-300 border border-gray-700/50 hover:bg-blue-600/20',
+                  ]" @click="goToPage(page)"
+                >
+                  {{ page }}
+                </button>
+                <button
+                  :disabled="currentPage === totalPages" class="pagination-button w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 border border-gray-700/50 disabled:opacity-50"
+                  @click="nextPage"
+                >
+                  <i class="ri-arrow-right-s-line" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 岗位详情模态框 - 仅在桌面端显示 -->
+    <JobDetailModal
+      v-if="!isMobile" :visible="showJobDetail" :job="selectedJob"
+      @update:visible="showJobDetail = $event" @apply="handleApply"
+    />
+
+    <!-- 岗位申请模态框 - 仅在桌面端显示 -->
+    <JobApplicationModal
+      v-if="!isMobile" :visible="showJobApplication" :job="selectedJob"
+      @update:visible="showJobApplication = $event" @submit="handleApplicationSubmit"
+    />
+
+    <!-- 移动端悬浮筛选按钮 -->
+    <button
+      v-if="isMobile" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-out z-40 lg:hidden flex items-center justify-center floating-filter-btn"
+      :class="{ 'scale-110': showFilterDrawer }"
+      @click="toggleFilterDrawer"
+    >
+      <i class="ri-filter-3-line text-xl" />
+      <!-- 活跃筛选条件徽章 -->
+      <span
+        v-if="activeFiltersCount > 0"
+        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-medium border-2 border-white"
+      >
+        {{ activeFiltersCount > 9 ? '9+' : activeFiltersCount }}
+      </span>
+    </button>
+
+    <!-- 移动端筛选抽屉 -->
+    <div
+      v-if="showFilterDrawer" class="fixed inset-0 z-50 lg:hidden overflow-hidden filter-drawer-container"
+      style="margin: 0; padding: 0; width: 100vw; height: 100vh;" @click="closeFilterDrawer"
+    >
+      <!-- 遮罩层 -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      <!-- 抽屉内容 -->
+      <div
+        class="absolute top-0 bottom-0 filter-card filter-drawer transform transition-transform duration-300 ease-out flex flex-col"
+        :class="filterDrawerOpen ? 'translate-x-0' : 'translate-x-full'" style="right: 0px; width: min(320px, 85vw);"
+        @click.stop
+      >
+        <!-- 抽屉头部 -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
+          <h3 class="text-lg font-medium">
+            筛选条件
+          </h3>
+          <button
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-400 hover:bg-gray-700/50 transition-colors"
+            @click="closeFilterDrawer"
+          >
+            <i class="ri-close-line" />
+          </button>
+        </div>
+
+        <!-- 抽屉内容区 -->
+        <div class="flex-1 overflow-y-auto filter-drawer-content">
+          <div class="p-6">
+            <div class="space-y-6">
+              <!-- 职位类型筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  职位类型
+                </h3>
+                <div class="space-y-2">
+                  <label v-for="type in jobTypes" :key="type.value" class="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox" class="custom-checkbox" :checked="selectedJobTypes.includes(type.value)"
+                      @change="toggleJobType(type.value)"
+                    >
+                    <span>{{ type.label }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 薪资范围筛选 -->
+              <div>
+                <div class="flex justify-between items-center mb-3">
+                  <h3 class="text-lg font-medium mb-0">
+                    薪资范围
+                  </h3>
+                  <span class="text-sm text-gray-400">{{ minSalary }}K - {{ maxSalary }}K</span>
+                </div>
+                <div class="px-1 py-2">
+                  <div class="range-slider-container" @mousedown="handleMouseDown" @touchstart="handleTouchStart">
+                    <div class="range-slider-track" />
+                    <div
+                      class="range-slider-fill" :style="{
+                        left: `${(minSalary - 5) / (80 - 5) * 100}%`,
+                        width: `${(maxSalary - minSalary) / (80 - 5) * 100}%`,
+                      }"
+                    />
+                    <div
+                      class="range-slider-thumb range-slider-thumb-min"
+                      :style="{ left: `${(minSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMin"
+                      @touchstart="startDragMin"
+                    >
+                      <div class="range-slider-tooltip">
+                        {{ minSalary }}K
+                      </div>
+                    </div>
+                    <div
+                      class="range-slider-thumb range-slider-thumb-max"
+                      :style="{ left: `${(maxSalary - 5) / (80 - 5) * 100}%` }" @mousedown="startDragMax"
+                      @touchstart="startDragMax"
+                    >
+                      <div class="range-slider-tooltip">
+                        {{ maxSalary }}K
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 工作地点筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  工作地点
+                </h3>
+                <div class="grid grid-cols-2 gap-2">
+                  <label v-for="city in cities" :key="city" class="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox" class="custom-checkbox" :checked="selectedCities.includes(city)"
+                      @change="toggleCity(city)"
+                    >
+                    <span>{{ city }}</span>
+                  </label>
+                </div>
+                <button class="text-blue-400 text-sm mt-2">
+                  更多城市
+                </button>
+              </div>
+
+              <!-- 工作经验筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  工作经验
+                </h3>
+                <div class="space-y-2">
+                  <label v-for="exp in experiences" :key="exp.value" class="flex items-center cursor-pointer">
+                    <input
+                      v-model="selectedExperience" type="radio" name="experience-mobile" class="custom-radio"
+                      :value="exp.value"
+                    >
+                    <span>{{ exp.label }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 工作类型筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  工作类型
+                </h3>
+                <div class="space-y-2">
+                  <label v-for="type in workTypes" :key="type" class="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox" class="custom-checkbox" :checked="selectedWorkTypes.includes(type)"
+                      @change="toggleWorkType(type)"
+                    >
+                    <span>{{ type }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 企业规模筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  企业规模
+                </h3>
+                <div class="space-y-2">
+                  <label v-for="scale in companyScales" :key="scale.value" class="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox" class="custom-checkbox" :checked="selectedScales.includes(scale.value)"
+                      @change="toggleScale(scale.value)"
+                    >
+                    <span>{{ scale.label }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 更多筛选 -->
+              <div>
+                <h3 class="text-lg font-medium mb-3">
+                  更多筛选
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span>急聘岗位</span>
+                    <label class="custom-switch">
+                      <input v-model="urgentJobs" type="checkbox">
+                      <span class="switch-slider" />
+                    </label>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span>支持应届生</span>
+                    <label class="custom-switch">
+                      <input v-model="freshGraduates" type="checkbox">
+                      <span class="switch-slider" />
+                    </label>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span>周末双休</span>
+                    <label class="custom-switch">
+                      <input v-model="weekends" type="checkbox">
+                      <span class="switch-slider" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 抽屉底部按钮 -->
+        <div class="border-t border-gray-700/50 p-6 flex-shrink-0">
+          <div class="flex space-x-3">
+            <button
+              class="w-full py-2.5 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-sm hover:border-gray-500 transition-colors"
+              @click="resetFilters"
+            >
+              重置筛选
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-16 py-12 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 class="text-lg font-bold mb-4">
+              星海人才
+            </h3>
+            <p class="text-gray-400 text-sm">
+              连接创意与科技，为设计师和企业搭建智能化人才对接平台
+            </p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">
+              功能模块
+            </h3>
+            <ul class="space-y-2">
+              <li>
+                <router-link
+                  to="/talent/schools"
+                  class="text-gray-400 text-sm hover:text-blue-400"
+                >
+                  院校数据库
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/talent/works" class="text-gray-400 text-sm hover:text-blue-400">
+                  学生作品库
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/talent/jobs" class="text-gray-400 text-sm hover:text-blue-400">
+                  企业需求池
+                </router-link>
+              </li>
+              <li>
+                <router-link
+                  to="/talent/designers"
+                  class="text-gray-400 text-sm hover:text-blue-400"
+                >
+                  设计师档案
+                </router-link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">
+              关于我们
+            </h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
+              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">
+              联系方式
+            </h3>
+            <ul class="space-y-2">
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-mail-line mr-2" /> contact@xinghairencai.com
+              </li>
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-phone-line mr-2" /> 400-888-9999
+              </li>
+              <li class="flex items-center text-gray-400 text-sm">
+                <i class="ri-map-pin-line mr-2" /> 北京市海淀区中关村大街 18 号
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-divider mb-8" />
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm mb-4 md:mb-0">
+            © 2025 星海人才. 保留所有权利
+          </p>
+          <div class="flex space-x-4">
+            <a
+              href="#"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+            >
+              <i class="ri-weibo-line" />
+            </a>
+            <a
+              href="#"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+            >
+              <i class="ri-wechat-line" />
+            </a>
+            <a
+              href="#"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+            >
+              <i class="ri-linkedin-line" />
+            </a>
+            <a
+              href="#"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+            >
+              <i class="ri-github-line" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
 
 <style>
 @import '@/styles/talent.css';

@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
-import { useRouter } from "vue-router";
+import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
-  NButton, NInput, NSpin, NText, useMessage,
-  NIcon, useThemeVars
-} from "naive-ui";
+  NButton, NIcon, NInput, NSpin, NText,
+  useMessage, useThemeVars,
+} from 'naive-ui'
 import {
-  PersonOutline,
-  LockClosedOutline,
   KeyOutline,
-  LogInOutline
-} from '@vicons/ionicons5';
+  LockClosedOutline,
+  LogInOutline,
+  PersonOutline,
+} from '@vicons/ionicons5'
 
+import { useI18n } from 'vue-i18n'
 import { doRegist, getVerificationCode } from '@/api/user'
-import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
-const router = useRouter();
-const message = useMessage();
-const themeVars = useThemeVars();
+const { t } = useI18n()
+const router = useRouter()
+const message = useMessage()
+const themeVars = useThemeVars()
 
 // 表单状态管理
 const registerForm = reactive({
   email: '',
   code: '',
   password: '',
-  confirmPassword: ''
-});
+  confirmPassword: '',
+})
 
 // 加载状态管理
-const registerLoading = ref(false);
-const pageLoading = ref(false);
+const registerLoading = ref(false)
+const pageLoading = ref(false)
 
 // 表单验证
 const formErrors = reactive({
@@ -38,129 +38,142 @@ const formErrors = reactive({
   email: '',
   code: '',
   password: '',
-  confirmPassword: ''
-});
+  confirmPassword: '',
+})
 
 // 验证表单
 function validateForm() {
-  let isValid = true;
+  let isValid = true
 
   // 邮箱验证
   if (!registerForm.email) {
-    formErrors.email = t('register.enter_email');
-    isValid = false;
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
-    formErrors.email = t('register.invalidEmail');
-    isValid = false;
-  } else {
-    formErrors.email = '';
+    formErrors.email = t('register.enter_email')
+    isValid = false
+  }
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
+    formErrors.email = t('register.invalidEmail')
+    isValid = false
+  }
+  else {
+    formErrors.email = ''
   }
 
   // 验证码验证
   if (!registerForm.code) {
-    formErrors.code = t('register.codeRequired');
-    isValid = false;
-  } else {
-    formErrors.code = '';
+    formErrors.code = t('register.codeRequired')
+    isValid = false
+  }
+  else {
+    formErrors.code = ''
   }
 
   // 密码验证
   if (!registerForm.password) {
-    formErrors.password = t('register.passwordRequired');
-    isValid = false;
-  } else if (registerForm.password.length < 6) {
-    formErrors.password = t('register.passwordTooShort');
-    isValid = false;
-  } else {
-    formErrors.password = '';
+    formErrors.password = t('register.passwordRequired')
+    isValid = false
+  }
+  else if (registerForm.password.length < 6) {
+    formErrors.password = t('register.passwordTooShort')
+    isValid = false
+  }
+  else {
+    formErrors.password = ''
   }
 
   // 确认密码验证
   if (!registerForm.confirmPassword) {
-    formErrors.confirmPassword = t('register.confirmPasswordRequired');
-    isValid = false;
-  } else if (registerForm.password !== registerForm.confirmPassword) {
-    formErrors.confirmPassword = t('register.passwordMismatch');
-    isValid = false;
-  } else {
-    formErrors.confirmPassword = '';
+    formErrors.confirmPassword = t('register.confirmPasswordRequired')
+    isValid = false
+  }
+  else if (registerForm.password !== registerForm.confirmPassword) {
+    formErrors.confirmPassword = t('register.passwordMismatch')
+    isValid = false
+  }
+  else {
+    formErrors.confirmPassword = ''
   }
 
-  return isValid;
+  return isValid
 }
 
 // 用户注册
 async function handleRegister(e: MouseEvent) {
-  e.preventDefault();
-  if (!validateForm()) return;
+  e.preventDefault()
+  if (!validateForm())
+    return
 
   try {
-    registerLoading.value = true;
+    registerLoading.value = true
     await doRegist(
       registerForm.email,
       registerForm.password,
       registerForm.code,
-    );
-    message.success(t("register.registration_success"));
-    router.push("/login");
-  } catch (error: any) {
-    message.error(error.message || t("register.registration_failed"));
-  } finally {
-    registerLoading.value = false;
+    )
+    message.success(t('register.registration_success'))
+    router.push('/login')
+  }
+  catch (error: any) {
+    message.error(error.message || t('register.registration_failed'))
+  }
+  finally {
+    registerLoading.value = false
   }
 }
 
 // 验证码发送相关
-const isSending = ref(false);
-const countdown = ref(60);
+const isSending = ref(false)
+const countdown = ref(60)
 const codeButtonText = computed(() => {
-  return isSending.value ? `${countdown.value}s` : t('register.get_verification_code');
-});
+  return isSending.value ? `${countdown.value}s` : t('register.get_verification_code')
+})
 
 async function sendVerificationCode() {
   // 验证邮箱
   if (!registerForm.email) {
-    message.error("邮箱不能为空!");
-    return;
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
-     message.error("请输入正确的邮箱!");
-    return;
+    message.error('邮箱不能为空!')
+    return
+  }
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
+    message.error('请输入正确的邮箱!')
+    return
   }
 
-  if (isSending.value) return;
+  if (isSending.value)
+    return
 
   try {
-    isSending.value = true;
-    await getVerificationCode(registerForm.email);
-    message.success(t('register.send_success'));
+    isSending.value = true
+    await getVerificationCode(registerForm.email)
+    message.success(t('register.send_success'))
 
     // 开始倒计时
-    countdown.value = 60;
+    countdown.value = 60
     const timer = setInterval(() => {
-      countdown.value--;
+      countdown.value--
       if (countdown.value <= 0) {
-        clearInterval(timer);
-        isSending.value = false;
+        clearInterval(timer)
+        isSending.value = false
       }
-    }, 1000);
-  } catch (error: any) {
-    message.error(error.message || t("register.sendCodeFailed"));
-    isSending.value = false;
+    }, 1000)
+  }
+  catch (error: any) {
+    message.error(error.message || t('register.sendCodeFailed'))
+    isSending.value = false
   }
 }
 
 // 计算背景样式，适配暗黑模式
 const brandSectionStyle = computed(() => {
-  const isDark = themeVars.value.bodyColor.startsWith('#1') ||
-    themeVars.value.bodyColor.startsWith('#2') ||
-    themeVars.value.bodyColor.startsWith('#3');
+  const isDark = themeVars.value.bodyColor.startsWith('#1')
+    || themeVars.value.bodyColor.startsWith('#2')
+    || themeVars.value.bodyColor.startsWith('#3')
 
   return {
     background: isDark
       ? 'linear-gradient(135deg, #003b8e, #0058d9)'
-      : 'linear-gradient(135deg, #1867c0, #5cbbf6)'
-  };
-});
+      : 'linear-gradient(135deg, #1867c0, #5cbbf6)',
+  }
+})
 </script>
 
 <template>
@@ -170,7 +183,9 @@ const brandSectionStyle = computed(() => {
         <!-- 左侧品牌区域 -->
         <div class="brand-section" :style="brandSectionStyle">
           <div class="brand-content">
-            <h1 class="brand-title">AI知识库系统</h1>
+            <h1 class="brand-title">
+              AI知识库系统
+            </h1>
             <p class="brand-description">
               企业级智能知识管理平台，助力数字化转型
             </p>
@@ -179,9 +194,10 @@ const brandSectionStyle = computed(() => {
 
         <!-- 右侧注册表单 -->
         <div class="form-wrapper">
-
           <div class="login-methods">
-            <div class="active-method">{{ $t("register.create_account") }}</div>
+            <div class="active-method">
+              {{ $t("register.create_account") }}
+            </div>
           </div>
 
           <div class="form-content">
@@ -191,10 +207,14 @@ const brandSectionStyle = computed(() => {
                 <NText strong class="input-label">
                   {{ $t("register.email") }}
                 </NText>
-                <div v-if="formErrors.email" class="error-message">{{ formErrors.email }}</div>
+                <div v-if="formErrors.email" class="error-message">
+                  {{ formErrors.email }}
+                </div>
               </div>
-              <NInput v-model:value="registerForm.email" :placeholder="$t('register.enter_email')" round clearable
-                class="custom-input" :status="formErrors.email ? 'error' : undefined">
+              <NInput
+                v-model:value="registerForm.email" :placeholder="$t('register.enter_email')" round clearable
+                class="custom-input" :status="formErrors.email ? 'error' : undefined"
+              >
                 <template #prefix>
                   <NIcon :component="PersonOutline" />
                 </template>
@@ -207,16 +227,20 @@ const brandSectionStyle = computed(() => {
                 <NText strong class="input-label">
                   {{ $t("register.verification_code") }}
                 </NText>
-                <div v-if="formErrors.code" class="error-message">{{ formErrors.code }}</div>
+                <div v-if="formErrors.code" class="error-message">
+                  {{ formErrors.code }}
+                </div>
               </div>
               <div class="verification-code-row">
-                <NInput v-model:value="registerForm.code" :placeholder="$t('register.enter_verification_code')" round
-                  class="verification-input" :status="formErrors.code ? 'error' : undefined">
+                <NInput
+                  v-model:value="registerForm.code" :placeholder="$t('register.enter_verification_code')" round
+                  class="verification-input" :status="formErrors.code ? 'error' : undefined"
+                >
                   <template #prefix>
                     <NIcon :component="KeyOutline" />
                   </template>
                 </NInput>
-                <NButton :disabled="isSending" @click="sendVerificationCode" class="send-code-button">
+                <NButton :disabled="isSending" class="send-code-button" @click="sendVerificationCode">
                   {{ codeButtonText }}
                 </NButton>
               </div>
@@ -228,10 +252,14 @@ const brandSectionStyle = computed(() => {
                 <NText strong class="input-label">
                   {{ $t("register.password") }}
                 </NText>
-                <div v-if="formErrors.password" class="error-message">{{ formErrors.password }}</div>
+                <div v-if="formErrors.password" class="error-message">
+                  {{ formErrors.password }}
+                </div>
               </div>
-              <NInput v-model:value="registerForm.password" type="password" :placeholder="$t('register.enter_password')" round
-                show-password-on="click" class="custom-input" :status="formErrors.password ? 'error' : undefined">
+              <NInput
+                v-model:value="registerForm.password" type="password" :placeholder="$t('register.enter_password')" round
+                show-password-on="click" class="custom-input" :status="formErrors.password ? 'error' : undefined"
+              >
                 <template #prefix>
                   <NIcon :component="LockClosedOutline" />
                 </template>
@@ -244,10 +272,14 @@ const brandSectionStyle = computed(() => {
                 <NText strong class="input-label">
                   {{ $t("register.confirm_password") }}
                 </NText>
-                <div v-if="formErrors.confirmPassword" class="error-message">{{ formErrors.confirmPassword }}</div>
+                <div v-if="formErrors.confirmPassword" class="error-message">
+                  {{ formErrors.confirmPassword }}
+                </div>
               </div>
-              <NInput v-model:value="registerForm.confirmPassword" type="password" :placeholder="$t('register.enter_confirm_password')" round
-                show-password-on="click" class="custom-input" :status="formErrors.confirmPassword ? 'error' : undefined">
+              <NInput
+                v-model:value="registerForm.confirmPassword" type="password" :placeholder="$t('register.enter_confirm_password')" round
+                show-password-on="click" class="custom-input" :status="formErrors.confirmPassword ? 'error' : undefined"
+              >
                 <template #prefix>
                   <NIcon :component="LockClosedOutline" />
                 </template>
@@ -256,7 +288,7 @@ const brandSectionStyle = computed(() => {
 
             <!-- 注册按钮 -->
             <div class="action-buttons">
-              <NButton type="primary" block :loading="registerLoading" @click="handleRegister" class="register-button">
+              <NButton type="primary" block :loading="registerLoading" class="register-button" @click="handleRegister">
                 <template #icon>
                   <NIcon :component="LogInOutline" />
                 </template>

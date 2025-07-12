@@ -1,382 +1,406 @@
 <script setup lang="ts">
-import { h, onMounted, reactive, ref } from "vue";
+import { h, onMounted, reactive, ref } from 'vue'
+import type {
+  // NDataTable, // NDataTable 已被移除，可以注释或删除
+  DrawerPlacement,
+} from 'naive-ui'
 import {
-	NButton,
-	// NDataTable, // NDataTable 已被移除，可以注释或删除
-	DrawerPlacement,
-	NDrawer,
-	NDrawerContent,
-	NForm,
-	NFormItem,
-	NInput,
-	NSpace,
-	useMessage,
-	NGrid,
-	NGi,
-	NSwitch,
-	NInputNumber,
-	NSelect,
-	NPagination,
-	NCard, // 添加 NCard 导入
-} from "naive-ui";
+  NButton,
+  NCard,
+  NDrawer,
+  NDrawerContent,
+  NForm,
+  NFormItem,
+  NGi,
+  NGrid,
+  NInput,
+  NInputNumber,
+  NPagination,
+  NSelect,
+  NSpace,
+  NSwitch,
+  useMessage, // 添加 NCard 导入
+} from 'naive-ui'
+import { useRouter } from 'vue-router'
 import {
-	createKnowledgeReq,
-	getKnowledge,
-	delKnowledge,
-} from "@/api/knowledge";
-import { useRouter } from "vue-router";
-import { t } from "@/locales";
-import { getModelListByCategory } from "@/api/model";
-import { getPromptTemplateListByCategory } from "@/api/promptTemplate";
+  createKnowledgeReq,
+  delKnowledge,
+  getKnowledge,
+} from '@/api/knowledge'
+import { t } from '@/locales'
+import { getModelListByCategory } from '@/api/model'
+import { getPromptTemplateListByCategory } from '@/api/promptTemplate'
 
 onMounted(() => {
-	fetchData(), getModelList(), getPromptTemplateList();
-});
+  fetchData(), getModelList(), getPromptTemplateList()
+})
 
-const router = useRouter();
-const message = useMessage();
+const router = useRouter()
+const message = useMessage()
 
 // 初始化表单数据对象
 const formValue = ref({
-	id: "", // 知识库id
-	kid: "", // 附件id
-	uid: "", // 用户id
-	kname: "", // 知识库名称
-	share: "0", // 是否分享
-	description: "", // 知识库描述
-	knowledgeSeparator: "", // 知识分隔符
-	questionSeparator: "", // 提问分隔符
-	overlapChar: 50, // 重叠字符数
-	retrieveLimit: 3, // 知识库中检索的条数
-	textBlockSize: 500, // 文本块大小
-	vectorModelName: "weaviate", //  向量库
-	embeddingModelName: "baai/bge-m3", //  向量模型
-	promptTemplateId: "", //  提示词模板ID
-});
+  id: '', // 知识库id
+  kid: '', // 附件id
+  uid: '', // 用户id
+  kname: '', // 知识库名称
+  share: '0', // 是否分享
+  description: '', // 知识库描述
+  knowledgeSeparator: '', // 知识分隔符
+  questionSeparator: '', // 提问分隔符
+  overlapChar: 50, // 重叠字符数
+  retrieveLimit: 3, // 知识库中检索的条数
+  textBlockSize: 500, // 文本块大小
+  vectorModelName: 'weaviate', //  向量库
+  embeddingModelName: 'baai/bge-m3', //  向量模型
+  promptTemplateId: '', //  提示词模板ID
+})
 
 async function submitForm() {
-	// 关闭弹框
-	active.value = false;
-	const result = await createKnowledgeReq(formValue.value);
-	if (result.code == 200) {
-		message.success("添加成功");
-		// 重新获取数据，更新表格
-		await fetchData();
-	}
+  // 关闭弹框
+  active.value = false
+  const result = await createKnowledgeReq(formValue.value)
+  if (result.code == 200) {
+    message.success('添加成功')
+    // 重新获取数据，更新表格
+    await fetchData()
+  }
 }
 
 async function delKnowledgeForm(id: string) {
-	// 发起一个请求
-	const req = {
-		id: id, // 附件id
-	};
-	const result = await delKnowledge(req);
-	if (result.code == 200) {
-		message.success("删除成功!");
-	} else {
-		message.error("删除失败!" + result.data.msg);
-	}
-	// 重新获取数据，更新表格
-	await fetchData();
+  // 发起一个请求
+  const req = {
+    id, // 附件id
+  }
+  const result = await delKnowledge(req)
+  if (result.code == 200)
+    message.success('删除成功!')
+	 else
+    message.error(`删除失败!${result.data.msg}`)
+
+  // 重新获取数据，更新表格
+  await fetchData()
 }
 
 function handleActionButtonClick(row: any, action1: string): void {
-	// 跳转到知识库附件页面
-	router.push({ path: "/annex/t", query: { kid: row.id } });
+  // 跳转到知识库附件页面
+  router.push({ path: '/annex/t', query: { kid: row.id } })
 }
 
 function handleUpdateValue(value: string) {
-	formValue.value.share = value;
+  formValue.value.share = value
 }
 
 // 定义一个激活抽屉的函数，接受一个 DrawerPlacement 类型的参数
 const activate = (place: DrawerPlacement) => {
-	active.value = true;
-	placement.value = place;
-};
+  active.value = true
+  placement.value = place
+}
 
 // 使用 ref 来创建响应式变量
-const active = ref(false);
-const placement = ref<DrawerPlacement>("right");
+const active = ref(false)
+const placement = ref<DrawerPlacement>('right')
 
 const getVector = reactive([
-	{ label: "weaviate", value: "weaviate" },
-]);
+  { label: 'weaviate', value: 'weaviate' },
+])
 
-const getVectorModel = ref([]);
-const getPromptTemplate = ref([]);
+const getVectorModel = ref([])
+const getPromptTemplate = ref([])
 
 async function getModelList() {
-	try {
-		const res = await getModelListByCategory('vector');
-		getVectorModel.value = res.rows;
-	} catch (error) {
-		message.error("获取模型列表失败");
-	}
+  try {
+    const res = await getModelListByCategory('vector')
+    getVectorModel.value = res.rows
+  }
+  catch (error) {
+    message.error('获取模型列表失败')
+  }
 }
 
 async function getPromptTemplateList() {
-	try {
-		const res = await getPromptTemplateListByCategory('vector');
-		getPromptTemplate.value = res.rows;
-	} catch (error) {
-		message.error("获取提示词模板列表失败");
-	}
+  try {
+    const res = await getPromptTemplateListByCategory('vector')
+    getPromptTemplate.value = res.rows
+  }
+  catch (error) {
+    message.error('获取提示词模板列表失败')
+  }
 }
 
-
 const createColumns = () => {
-	return [
-		...(false
-			? [
-				{
-					title: "ID",
-					key: "id",
-					width: 80,
-					ellipsis: true,
-				},
-			]
-			: []),
-		{
-			title: t("knowledge.number"),
-			key: "kid",
-			width: 200,
-		},
-		{
-			title: t("knowledge.name"),
-			key: "kname",
-			width: 200,
-		},
-		{
-			title: t("knowledge.description"),
-			key: "description",
-			width: 200,
-		},
-		{
-			title: t("knowledge.actions"),
-			key: "actions",
-			width: 200,
-			render: (row: any) => {
-				return [
-					h(
-						NButton,
-						{
-							onClick: () => delKnowledgeForm(row.id),
-							style: "margin-left: 8px; color: #FF4500;",
-							class: "table-button",
-							bordered: false,
-						},
-						{ default: () => t("knowledge.delete") }
-					),
+  return [
+    ...(false
+      ? [
+          {
+            title: 'ID',
+            key: 'id',
+            width: 80,
+            ellipsis: true,
+          },
+        ]
+      : []),
+    {
+      title: t('knowledge.number'),
+      key: 'kid',
+      width: 200,
+    },
+    {
+      title: t('knowledge.name'),
+      key: 'kname',
+      width: 200,
+    },
+    {
+      title: t('knowledge.description'),
+      key: 'description',
+      width: 200,
+    },
+    {
+      title: t('knowledge.actions'),
+      key: 'actions',
+      width: 200,
+      render: (row: any) => {
+        return [
+          h(
+            NButton,
+            {
+              onClick: () => delKnowledgeForm(row.id),
+              style: 'margin-left: 8px; color: #FF4500;',
+              class: 'table-button',
+              bordered: false,
+            },
+            { default: () => t('knowledge.delete') },
+          ),
 
-					h(
-						NButton,
-						{
-							onClick: () => handleActionButtonClick(row, "action3"),
-							style: "margin-left: 8px; color: #32CD32;",
-							class: "table-button",
-							bordered: false,
-						},
-						{ default: () => t("knowledge.attachment") }
-					),
-				];
-			},
-		},
-	];
-};
+          h(
+            NButton,
+            {
+              onClick: () => handleActionButtonClick(row, 'action3'),
+              style: 'margin-left: 8px; color: #32CD32;',
+              class: 'table-button',
+              bordered: false,
+            },
+            { default: () => t('knowledge.attachment') },
+          ),
+        ]
+      },
+    },
+  ]
+}
 
-const tableData = ref([]);
+const tableData = ref([])
 
 const pagination = reactive({
-	page: 1,
-	pageSize: 12,
-	itemCount: 0,
-	pageSizes: [12, 24, 36, 48],
-	onUpdatePage: (page: number) => {
-		pagination.page = page;
-		fetchData();
-	},
-	onUpdatePageSize: (pageSize: number) => {
-		pagination.pageSize = pageSize;
-		pagination.page = 1;
-		fetchData();
-	},
-});
+  page: 1,
+  pageSize: 12,
+  itemCount: 0,
+  pageSizes: [12, 24, 36, 48],
+  onUpdatePage: (page: number) => {
+    pagination.page = page
+    fetchData()
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize
+    pagination.page = 1
+    fetchData()
+  },
+})
 
 const fetchData = async () => {
-	// 发起一个请求
-	const result = await getKnowledge(pagination.page, pagination.pageSize);
-	if (result.code == 200) {
-		tableData.value = result.rows;
-		console.log('Knowledge data:', result);
-		pagination.itemCount = result.total; // 根据后端返回的数据结构，使用 total 作为总数
-	}
-};
-
-
+  // 发起一个请求
+  const result = await getKnowledge(pagination.page, pagination.pageSize)
+  if (result.code == 200) {
+    tableData.value = result.rows
+    console.log('Knowledge data:', result)
+    pagination.itemCount = result.total // 根据后端返回的数据结构，使用 total 作为总数
+  }
+}
 </script>
 
 <template>
-	<div class="page-container">
-		<div class="create-app-panel">
-			<n-button type="primary" @click="activate('right')">
-				创建知识库
-			</n-button>
-		</div>
+  <div class="page-container">
+    <div class="create-app-panel">
+      <NButton type="primary" @click="activate('right')">
+        创建知识库
+      </NButton>
+    </div>
 
-		<div class="content-panel">
-			<div class="knowledge-card-list">
-				<n-grid :x-gap="8" :y-gap="8" :cols="4" item-responsive responsive="screen">
-					<n-gi v-for="item in tableData" :key="item.id">
-						<n-card :title="item.kname" hoverable class="knowledge-card">
-							<!-- Add icon and subtitle similar to the image -->
-							<template #cover>
-								<!-- Placeholder for an icon, e.g., using an NIcon component or an img tag -->
-							</template>
-							<div class="card-meta">
-								<span class="card-author">{{ item.id || 'N/A2' }}</span> - <span class="card-date">{{ item.createTime || 'N/A1' }}</span>
-							</div>
-							<p class="card-description">{{ item.description }}</p>
-							<template #action>
-								<n-space justify="end">
-									<n-button size="small" @click="handleActionButtonClick(item, 'action3')" type="primary" ghost>
-										{{ $t("knowledge.attachment") }}
-									</n-button>
-									<n-button size="small" @click="delKnowledgeForm(item.id)" type="error" ghost>
-										{{ $t("knowledge.delete") }}
-									</n-button>
-								</n-space>
-							</template>
-						</n-card>
-					</n-gi>
-				</n-grid>
-			</div>
+    <div class="content-panel">
+      <div class="knowledge-card-list">
+        <NGrid :x-gap="8" :y-gap="8" :cols="4" item-responsive responsive="screen">
+          <NGi v-for="item in tableData" :key="item.id">
+            <NCard :title="item.kname" hoverable class="knowledge-card">
+              <!-- Add icon and subtitle similar to the image -->
+              <template #cover>
+                <!-- Placeholder for an icon, e.g., using an NIcon component or an img tag -->
+              </template>
+              <div class="card-meta">
+                <span class="card-author">{{ item.id || 'N/A2' }}</span> - <span class="card-date">{{ item.createTime || 'N/A1' }}</span>
+              </div>
+              <p class="card-description">
+                {{ item.description }}
+              </p>
+              <template #action>
+                <NSpace justify="end">
+                  <NButton size="small" type="primary" ghost @click="handleActionButtonClick(item, 'action3')">
+                    {{ $t("knowledge.attachment") }}
+                  </NButton>
+                  <NButton size="small" type="error" ghost @click="delKnowledgeForm(item.id)">
+                    {{ $t("knowledge.delete") }}
+                  </NButton>
+                </NSpace>
+              </template>
+            </NCard>
+          </NGi>
+        </NGrid>
+      </div>
 
-			<div class="pagination-wrapper">
-				<n-pagination
-					v-model:page="pagination.page"
-					:item-count="pagination.itemCount"
-					v-model:page-size="pagination.pageSize"
-					:page-sizes="pagination.pageSizes"
-					show-size-picker
-					@update:page="pagination.onUpdatePage"
-					@update:page-size="pagination.onUpdatePageSize"
-				/>
-			</div>
-		</div>
-	</div>
+      <div class="pagination-wrapper">
+        <NPagination
+          v-model:page="pagination.page"
+          v-model:page-size="pagination.pageSize"
+          :item-count="pagination.itemCount"
+          :page-sizes="pagination.pageSizes"
+          show-size-picker
+          @update:page="pagination.onUpdatePage"
+          @update:page-size="pagination.onUpdatePageSize"
+        />
+      </div>
+    </div>
+  </div>
 
-	<n-drawer class="knowledge-drawer" v-model:show="active" :width="800" :placement="placement"
-		display-directive="show" :mask-closable="false">
-		<n-drawer-content :title="$t('knowledge.createKnowledgeBase')" class="drawer-content" closable>
-			<n-space vertical>
-				<n-form ref="formRef" :label-width="100" :model="formValue" class="knowledge-form"
-					label-placement="left">
-					<n-grid :cols="24" :x-gap="24" :y-gap="16">
-						<n-gi :span="12">
-							<n-form-item label="知识库名称" required>
-								<n-input v-model:value="formValue.kname" placeholder="请输入知识库名称" clearable />
-							</n-form-item>
-						</n-gi>
+  <NDrawer
+    v-model:show="active" class="knowledge-drawer" :width="800" :placement="placement"
+    display-directive="show" :mask-closable="false"
+  >
+    <NDrawerContent :title="$t('knowledge.createKnowledgeBase')" class="drawer-content" closable>
+      <NSpace vertical>
+        <NForm
+          ref="formRef" :label-width="100" :model="formValue" class="knowledge-form"
+          label-placement="left"
+        >
+          <NGrid :cols="24" :x-gap="24" :y-gap="16">
+            <NGi :span="12">
+              <NFormItem label="知识库名称" required>
+                <NInput v-model:value="formValue.kname" placeholder="请输入知识库名称" clearable />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="分隔符">
-								<n-input v-model:value="formValue.knowledgeSeparator" placeholder="请输入知识分隔符"
-									clearable />
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="分隔符">
+                <NInput
+                  v-model:value="formValue.knowledgeSeparator" placeholder="请输入知识分隔符"
+                  clearable
+                />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="检索条数" required>
-								<n-input-number v-model:value="formValue.retrieveLimit" placeholder="请输入检索条数" :min="1"
-									:max="10" class="full-width" />
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="检索条数" required>
+                <NInputNumber
+                  v-model:value="formValue.retrieveLimit" placeholder="请输入检索条数" :min="1"
+                  :max="10" class="full-width"
+                />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="文本块大小" required>
-								<n-input-number v-model:value="formValue.textBlockSize" placeholder="请输入文本块大小"
-									:min="100" :max="2000" class="full-width" />
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="文本块大小" required>
+                <NInputNumber
+                  v-model:value="formValue.textBlockSize" placeholder="请输入文本块大小"
+                  :min="100" :max="2000" class="full-width"
+                />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="重叠字符">
-								<n-input-number v-model:value="formValue.overlapChar" placeholder="请输入重叠字符数" :min="0"
-									:max="200" class="full-width" />
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="重叠字符">
+                <NInputNumber
+                  v-model:value="formValue.overlapChar" placeholder="请输入重叠字符数" :min="0"
+                  :max="200" class="full-width"
+                />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="向量库" required>
-								<n-select :options="getVector" v-model:value="formValue.vectorModelName"
-									placeholder="请选择向量库" clearable></n-select>
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="向量库" required>
+                <NSelect
+                  :options="getVector" v-model:value="formValue.vectorModelName"
+                  placeholder="请选择向量库" clearable
+                ></NSelect>
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="提问分割符">
-								<n-input v-model:value="formValue.questionSeparator" placeholder="请输入提问分割符" clearable />
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="提问分割符">
+                <NInput v-model:value="formValue.questionSeparator" placeholder="请输入提问分割符" clearable />
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="向量模型" required>
-								<n-select :options="getVectorModel" v-model:value="formValue.embeddingModelName"
-									value-field="modelName" label-field="modelName" placeholder="请选择向量模型"
-									clearable></n-select>
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="向量模型" required>
+                <NSelect
+                  :options="getVectorModel" v-model:value="formValue.embeddingModelName"
+                  value-field="modelName" label-field="modelName" placeholder="请选择向量模型"
+                  clearable
+                ></NSelect>
+              </NFormItem>
+            </NGi>
 
-						<n-gi :span="12">
-							<n-form-item label="提示词模板">
-								<n-select
-									:options="getPromptTemplate"
-									v-model:value="formValue.promptTemplateId"
-									value-field="id"
-									label-field="templateContent"
-									placeholder="请选择提示词模板"
-									clearable
-								>
-								</n-select>
-							</n-form-item>
-						</n-gi>
+            <NGi :span="12">
+              <NFormItem label="提示词模板">
+                <NSelect
+                  v-model:value="formValue.promptTemplateId"
+                  :options="getPromptTemplate"
+                  value-field="id"
+                  label-field="templateContent"
+                  placeholder="请选择提示词模板"
+                  clearable
+                />
+              </NFormItem>
+            </NGi>
 
+            <NGi :span="24">
+              <NFormItem :label="$t('knowledge.knowledgeDescription')">
+                <NInput
+                  v-model:value="formValue.description" maxlength="1000" type="textarea"
+                  :placeholder="$t('knowledge.enterKnowledgeDescription')"
+                  :autosize="{ minRows: 3, maxRows: 5 }" show-count
+                />
+              </NFormItem>
+            </NGi>
 
+            <NGi :span="24">
+              <NFormItem label="是否公开" label-placement="left">
+                <NSwitch
+                  size="large" checked-value="1" unchecked-value="0"
+                  @update:value="handleUpdateValue"
+                >
+                  <template #checked>
+                    是
+                  </template>
+                  <template #unchecked>
+                    否
+                  </template>
+                </NSwitch>
+              </NFormItem>
+            </NGi>
+          </NGrid>
+        </NForm>
+      </NSpace>
 
-						<n-gi :span="24">
-							<n-form-item :label="$t('knowledge.knowledgeDescription')">
-								<n-input maxlength="1000" type="textarea" v-model:value="formValue.description"
-									:placeholder="$t('knowledge.enterKnowledgeDescription')"
-									:autosize="{ minRows: 3, maxRows: 5 }" show-count />
-							</n-form-item>
-						</n-gi>
-
-						<n-gi :span="24">
-							<n-form-item label="是否公开" label-placement="left">
-								<n-switch size="large" checked-value="1" unchecked-value="0"
-									@update:value="handleUpdateValue">
-									<template #checked>是</template>
-									<template #unchecked>否</template>
-								</n-switch>
-							</n-form-item>
-						</n-gi>
-					</n-grid>
-				</n-form>
-			</n-space>
-
-			<template #footer>
-				<div>
-					<n-button @click="active = false" :bordered="true" style="margin-right: 10px">
-						取消
-					</n-button>
-					<n-button @click="submitForm" :bordered="false" type="primary">
-						{{ $t("knowledge.add") }}
-					</n-button>
-				</div>
-			</template>
-		</n-drawer-content>
-	</n-drawer>
+      <template #footer>
+        <div>
+          <NButton :bordered="true" style="margin-right: 10px" @click="active = false">
+            取消
+          </NButton>
+          <NButton :bordered="false" type="primary" @click="submitForm">
+            {{ $t("knowledge.add") }}
+          </NButton>
+        </div>
+      </template>
+    </NDrawerContent>
+  </NDrawer>
 </template>
 
 <style scoped>
@@ -420,7 +444,6 @@ const fetchData = async () => {
 .content-panel {
 	flex: 1; /* Takes the remaining space */
 }
-
 
 .knowledge-card {
 	border-radius: 20px;
@@ -543,8 +566,6 @@ const fetchData = async () => {
 	width: 100%;
 }
 
-
-
 .knowledge-table {
 	--n-td-color: transparent;
 	--n-td-color-hover: rgba(0, 0, 0, 0.02);
@@ -663,7 +684,6 @@ const fetchData = async () => {
 .knowledge-form :deep(.n-input-number) {
 	width: 100%;
 }
-
 
 	height: 40px;
 	font-size: 14px;

@@ -1,66 +1,7 @@
-<template>
-  <div class="school-achievements">
-    <!-- 获奖概况 -->
-    <div class="mb-6">
-      <h4 class="text-lg font-bold mb-4">学生获奖情况</h4>
-      <div class="glass-card rounded-lg p-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
-            <p class="text-xs text-gray-400 mb-1">国际奖项</p>
-            <p class="text-2xl font-bold mb-0 gradient-text">{{ achievementStats.internationalAwards || 0 }}</p>
-          </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
-            <p class="text-xs text-gray-400 mb-1">国家级奖项</p>
-            <p class="text-2xl font-bold mb-0 gradient-text">{{ achievementStats.nationalAwards || 0 }}</p>
-          </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
-            <p class="text-xs text-gray-400 mb-1">省部级奖项</p>
-            <p class="text-2xl font-bold mb-0 gradient-text">{{ achievementStats.provincialAwards || 0 }}</p>
-          </div>
-          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
-            <p class="text-xs text-gray-400 mb-1">专利授权</p>
-            <p class="text-2xl font-bold mb-0 gradient-text">{{ achievementStats.patents || 0 }}</p>
-          </div>
-        </div>
-        <p class="text-sm text-gray-300 mb-0">
-          {{ achievementStats.description }}
-        </p>
-      </div>
-    </div>
-
-    <!-- 获奖趋势图表 -->
-    <div class="mb-6">
-      <h4 class="text-lg font-bold mb-4">近年获奖趋势</h4>
-      <div class="glass-card rounded-lg p-6 flex items-center justify-center">
-        <div ref="trendChartRef" class="w-full h-80" style="width: 100%; height: 320px;"></div>
-      </div>
-    </div>
-
-    <!-- 代表性获奖作品 -->
-    <div class="mb-6">
-      <h4 class="text-lg font-bold mb-4">代表性获奖作品</h4>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div v-for="work in awardWorks" :key="work.id" class="glass-card rounded-lg overflow-hidden">
-          <div class="h-40 bg-gradient-to-br from-primary/30 to-purple-500/30 flex items-center justify-center">
-            <i class="ri-image-line text-4xl text-gray-400"></i>
-          </div>
-          <div class="p-4">
-            <h5 class="text-base font-bold mb-1">{{ work.title }}</h5>
-            <p class="text-xs text-gray-400 mb-2">{{ work.award }}</p>
-            <p class="text-xs text-gray-300 mb-0">{{ work.description }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import * as echarts from 'echarts'
-import type { AchievementStatsData, TrendData, AwardWorkData } from '@/types/talent/school'
+import type { AchievementStatsData, AwardWorkData, TrendData } from '@/types/talent/school'
 
 interface Props {
   schoolId: number
@@ -81,13 +22,13 @@ const achievementStats = computed(() => props.achievementStats || {
   nationalAwards: 0,
   provincialAwards: 0,
   patents: 0,
-  description: '暂无成果描述'
+  description: '暂无成果描述',
 })
 const trendData = computed(() => props.trendData || {
   years: [],
   internationalData: [],
   nationalData: [],
-  provincialData: []
+  provincialData: [],
 })
 const awardWorks = computed(() => props.awardWorks || [])
 
@@ -106,7 +47,7 @@ const initTrendChart = async () => {
 
     trendChart = echarts.init(container, 'dark', {
       width: parentWidth,
-      height: 320
+      height: 320,
     })
     const trendOption = {
       backgroundColor: 'transparent',
@@ -114,30 +55,30 @@ const initTrendChart = async () => {
         trigger: 'axis',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         borderColor: 'rgba(255, 255, 255, 0.8)',
-        textStyle: { color: '#1f2937' }
+        textStyle: { color: '#1f2937' },
       },
       legend: {
         data: ['国际奖项', '国家级奖项', '省部级奖项'],
-        textStyle: { color: '#e2e8f0' }
+        textStyle: { color: '#e2e8f0' },
       },
       grid: {
         left: '3%',
         right: '4%',
         bottom: '3%',
-        containLabel: true
+        containLabel: true,
       },
       xAxis: {
         type: 'category',
         boundaryGap: false,
         data: trendData.value.years,
         axisLine: { lineStyle: { color: '#475569' } },
-        axisLabel: { color: '#e2e8f0' }
+        axisLabel: { color: '#e2e8f0' },
       },
       yAxis: {
         type: 'value',
         axisLine: { lineStyle: { color: '#475569' } },
         axisLabel: { color: '#e2e8f0' },
-        splitLine: { lineStyle: { color: '#334155' } }
+        splitLine: { lineStyle: { color: '#334155' } },
       },
       series: [
         {
@@ -149,16 +90,19 @@ const initTrendChart = async () => {
           areaStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: 'rgba(10, 132, 255, 0.2)' },
-                { offset: 1, color: 'rgba(10, 132, 255, 0.01)' }
-              ]
-            }
+                { offset: 1, color: 'rgba(10, 132, 255, 0.01)' },
+              ],
+            },
           },
           emphasis: { focus: 'series' },
           symbol: 'none',
-          data: trendData.value.internationalData
+          data: trendData.value.internationalData,
         },
         {
           name: '国家级奖项',
@@ -169,16 +113,19 @@ const initTrendChart = async () => {
           areaStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: 'rgba(48, 209, 88, 0.2)' },
-                { offset: 1, color: 'rgba(48, 209, 88, 0.01)' }
-              ]
-            }
+                { offset: 1, color: 'rgba(48, 209, 88, 0.01)' },
+              ],
+            },
           },
           emphasis: { focus: 'series' },
           symbol: 'none',
-          data: trendData.value.nationalData
+          data: trendData.value.nationalData,
         },
         {
           name: '省部级奖项',
@@ -189,18 +136,21 @@ const initTrendChart = async () => {
           areaStyle: {
             color: {
               type: 'linear',
-              x: 0, y: 0, x2: 0, y2: 1,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
               colorStops: [
                 { offset: 0, color: 'rgba(255, 159, 10, 0.2)' },
-                { offset: 1, color: 'rgba(255, 159, 10, 0.01)' }
-              ]
-            }
+                { offset: 1, color: 'rgba(255, 159, 10, 0.01)' },
+              ],
+            },
           },
           emphasis: { focus: 'series' },
           symbol: 'none',
-          data: trendData.value.provincialData
-        }
-      ]
+          data: trendData.value.provincialData,
+        },
+      ],
     }
     trendChart.setOption(trendOption)
     // 强制调整大小以确保图表撑满容器
@@ -218,7 +168,7 @@ const handleResize = () => {
     container.style.width = `${parentWidth}px`
     trendChart.resize({
       width: parentWidth,
-      height: 320
+      height: 320,
     })
   }
 }
@@ -230,9 +180,8 @@ const initResizeObserver = () => {
       handleResize()
     })
 
-    if (trendChartRef.value?.parentElement) {
+    if (trendChartRef.value?.parentElement)
       resizeObserver.observe(trendChartRef.value.parentElement)
-    }
   }
 }
 
@@ -259,6 +208,91 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 </script>
+
+<template>
+  <div class="school-achievements">
+    <!-- 获奖概况 -->
+    <div class="mb-6">
+      <h4 class="text-lg font-bold mb-4">
+        学生获奖情况
+      </h4>
+      <div class="glass-card rounded-lg p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <p class="text-xs text-gray-400 mb-1">
+              国际奖项
+            </p>
+            <p class="text-2xl font-bold mb-0 gradient-text">
+              {{ achievementStats.internationalAwards || 0 }}
+            </p>
+          </div>
+          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <p class="text-xs text-gray-400 mb-1">
+              国家级奖项
+            </p>
+            <p class="text-2xl font-bold mb-0 gradient-text">
+              {{ achievementStats.nationalAwards || 0 }}
+            </p>
+          </div>
+          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <p class="text-xs text-gray-400 mb-1">
+              省部级奖项
+            </p>
+            <p class="text-2xl font-bold mb-0 gradient-text">
+              {{ achievementStats.provincialAwards || 0 }}
+            </p>
+          </div>
+          <div class="text-center p-3 bg-gray-800/30 rounded-lg">
+            <p class="text-xs text-gray-400 mb-1">
+              专利授权
+            </p>
+            <p class="text-2xl font-bold mb-0 gradient-text">
+              {{ achievementStats.patents || 0 }}
+            </p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-300 mb-0">
+          {{ achievementStats.description }}
+        </p>
+      </div>
+    </div>
+
+    <!-- 获奖趋势图表 -->
+    <div class="mb-6">
+      <h4 class="text-lg font-bold mb-4">
+        近年获奖趋势
+      </h4>
+      <div class="glass-card rounded-lg p-6 flex items-center justify-center">
+        <div ref="trendChartRef" class="w-full h-80" style="width: 100%; height: 320px;" />
+      </div>
+    </div>
+
+    <!-- 代表性获奖作品 -->
+    <div class="mb-6">
+      <h4 class="text-lg font-bold mb-4">
+        代表性获奖作品
+      </h4>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div v-for="work in awardWorks" :key="work.id" class="glass-card rounded-lg overflow-hidden">
+          <div class="h-40 bg-gradient-to-br from-primary/30 to-purple-500/30 flex items-center justify-center">
+            <i class="ri-image-line text-4xl text-gray-400" />
+          </div>
+          <div class="p-4">
+            <h5 class="text-base font-bold mb-1">
+              {{ work.title }}
+            </h5>
+            <p class="text-xs text-gray-400 mb-2">
+              {{ work.award }}
+            </p>
+            <p class="text-xs text-gray-300 mb-0">
+              {{ work.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .glass-card {

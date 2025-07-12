@@ -31,7 +31,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
-   {
+  {
     path: '/m',
     name: 'm',
     component: ChatLayout,
@@ -61,18 +61,18 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-		path: "/ppt",
-		name: "Ppt",
-		component: pptlayout,
-		redirect: "/ppt/index",
-		children: [
-			{
-				path: "index",
-				name: "ppt",
-				component: () => import('@/views/ppt/ppt.vue'),
-			},
-		],
-	},
+    path: '/ppt',
+    name: 'Ppt',
+    component: pptlayout,
+    redirect: '/ppt/index',
+    children: [
+      {
+        path: 'index',
+        name: 'ppt',
+        component: () => import('@/views/ppt/ppt.vue'),
+      },
+    ],
+  },
 
   {
     path: '/video',
@@ -88,19 +88,19 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
-	{
-		path: "/music",
-		name: "Music",
-		component: musiclayout,
-		redirect: "/music/index",
-		children: [
-			{
-				path: "/music/:uuid?",
-				name: "music",
-				component: () => import('@/views/suno/music.vue'),
-			},
-		],
-	},
+  {
+    path: '/music',
+    name: 'Music',
+    component: musiclayout,
+    redirect: '/music/index',
+    children: [
+      {
+        path: '/music/:uuid?',
+        name: 'music',
+        component: () => import('@/views/suno/music.vue'),
+      },
+    ],
+  },
 
   {
     path: '/knowledge',
@@ -171,14 +171,14 @@ const routes: RouteRecordRaw[] = [
     path: '/role-selection',
     name: 'RoleSelection',
     component: () => import('@/views/role-selection/index.vue'),
-    meta: { title: '选择角色' }
+    meta: { title: '选择角色' },
   },
 
   {
     path: '/role-test',
     name: 'RoleTest',
     component: () => import('@/views/role-test/index.vue'),
-    meta: { title: '角色测试' }
+    meta: { title: '角色测试' },
   },
 
   // 角色注册页面
@@ -186,25 +186,25 @@ const routes: RouteRecordRaw[] = [
     path: '/registration/designer',
     name: 'DesignerRegistration',
     component: () => import('@/views/registration/designer.vue'),
-    meta: { title: '设计师注册' }
+    meta: { title: '设计师注册' },
   },
   {
     path: '/registration/enterprise',
     name: 'EnterpriseRegistration',
     component: () => import('@/views/registration/enterprise.vue'),
-    meta: { title: '企业注册' }
+    meta: { title: '企业注册' },
   },
   {
     path: '/registration/school',
     name: 'SchoolRegistration',
     component: () => import('@/views/registration/school.vue'),
-    meta: { title: '院校注册' }
+    meta: { title: '院校注册' },
   },
   {
     path: '/registration/test',
     name: 'RegistrationTest',
     component: () => import('@/views/registration/test.vue'),
-    meta: { title: '注册功能测试' }
+    meta: { title: '注册功能测试' },
   },
 
   // 信息补充页面
@@ -216,33 +216,33 @@ const routes: RouteRecordRaw[] = [
         path: 'welcome',
         name: 'ProfileWelcome',
         component: () => import('@/views/profile/welcome.vue'),
-        meta: { title: '完善资料' }
+        meta: { title: '完善资料' },
       },
       {
         path: 'designer/basic',
         name: 'DesignerBasicProfile',
         component: () => import('@/views/profile/designer/basic.vue'),
-        meta: { title: '基础信息' }
+        meta: { title: '基础信息' },
       },
       {
         path: 'designer/portfolio',
         name: 'DesignerPortfolio',
         component: () => import('@/views/profile/designer/portfolio.vue'),
-        meta: { title: '作品集' }
+        meta: { title: '作品集' },
       },
       {
         path: 'designer/experience',
         name: 'DesignerExperience',
         component: () => import('@/views/profile/designer/experience.vue'),
-        meta: { title: '工作经历' }
+        meta: { title: '工作经历' },
       },
       {
         path: 'designer/education',
         name: 'DesignerEducation',
         component: () => import('@/views/profile/designer/education.vue'),
-        meta: { title: '教育背景' }
-      }
-    ]
+        meta: { title: '教育背景' },
+      },
+    ],
   },
 
   {
@@ -250,8 +250,6 @@ const routes: RouteRecordRaw[] = [
     name: '500',
     component: () => import('@/views/exception/500/index.vue'),
   },
-
-
 
   // 人才模块
   {
@@ -264,25 +262,25 @@ const routes: RouteRecordRaw[] = [
         path: 'jobs',
         name: 'Jobs',
         component: () => import('@/views/talent/jobs/index.vue'),
-        meta: { title: '企业需求池' }
+        meta: { title: '企业需求池' },
       },
       {
         path: 'jobs/:id',
         name: 'JobDetail',
         component: () => import('@/views/talent/jobs/detail.vue'),
-        meta: { title: '岗位详情' }
+        meta: { title: '岗位详情' },
       },
       {
         path: 'designers',
         name: 'Designers',
         component: () => import('@/views/talent/designers/index.vue'),
-        meta: { title: '设计师档案' }
+        meta: { title: '设计师档案' },
       },
       {
         path: 'designers/:id',
         name: 'DesignerDetail',
         component: () => import('@/views/talent/designers/detail.vue'),
-        meta: { title: '设计师详情' }
+        meta: { title: '设计师详情' },
       },
       // {
       //   path: 'works',
@@ -300,19 +298,19 @@ const routes: RouteRecordRaw[] = [
         path: 'schools',
         name: 'Schools',
         component: () => import('@/views/talent/schools/index.vue'),
-        meta: { title: '院校数据库' }
+        meta: { title: '院校数据库' },
       },
       {
         path: 'schools/:id',
         name: 'SchoolDetail',
         component: () => import('@/views/talent/schools/detail.vue'),
-        meta: { title: '院校详情' }
+        meta: { title: '院校详情' },
       },
       {
         path: 'debug',
         name: 'TalentDebug',
         component: () => import('@/views/talent/debug.vue'),
-        meta: { title: '调试页面' }
+        meta: { title: '调试页面' },
       },
       // {
       //   path: 'profile',
@@ -339,7 +337,7 @@ const routes: RouteRecordRaw[] = [
       //     }
       //   ]
       // }
-    ]
+    ],
   },
 
   {

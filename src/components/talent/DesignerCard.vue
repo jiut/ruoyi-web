@@ -1,75 +1,8 @@
-<template>
-  <div
-    class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer"
-    @click="$emit('click', designer)"
-  >
-    <div class="flex flex-col items-center">
-      <!-- 头像 -->
-      <div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
-        <img
-          v-if="designer.avatar"
-          :src="designer.avatar"
-          :alt="designer.designerName"
-          class="w-full h-full object-cover"
-        />
-        <div
-          v-else
-          class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-2xl font-bold"
-        >
-          {{ getInitial(designer.designerName) }}
-        </div>
-      </div>
-
-      <!-- 基本信息 -->
-      <h3 class="text-lg font-bold mb-1">{{ designer.designerName }}</h3>
-      <p class="text-gray-400 text-sm mb-3">{{ getProfessionLabel(designer.profession) }}</p>
-
-      <!-- 技能标签 -->
-      <div class="flex flex-wrap justify-center gap-2 mb-4">
-        <n-tag
-          v-for="skill in getDisplaySkills(designer.skillTags)"
-          :key="skill"
-          size="small"
-          :color="getSkillTagColor(skill)"
-          class="text-xs"
-        >
-          {{ getSkillTagLabel(skill) }}
-        </n-tag>
-      </div>
-
-      <!-- 统计信息 -->
-      <div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
-        <span>作品: {{ designer.works?.length || 0 }}</span>
-        <span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
-        <span class="flex items-center">
-          <div
-            :class="[
-              'w-2 h-2 rounded-full mr-1',
-              getStatusColor(designer.status)
-            ]"
-          />
-          {{ getStatusText(designer.status) }}
-        </span>
-      </div>
-
-      <!-- 操作按钮 -->
-      <n-button
-        class="w-full"
-        type="primary"
-        ghost
-        size="small"
-        @click.stop="$emit('detail', designer)"
-      >
-        查看档案
-      </n-button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { NButton, NTag } from 'naive-ui'
 import type { Designer, Profession, SkillTag } from '@/types/talent/designer'
-import { ProfessionLabels, SkillTagLabels } from '@/types/talent/designer'
+import { SkillTagLabels } from '@/types/talent/designer'
+import ProfessionUtils from '@/utils/professionUtils'
 
 interface Props {
   designer: Designer
@@ -89,7 +22,7 @@ const getInitial = (name: string): string => {
 
 // 获取职业标签
 const getProfessionLabel = (profession: Profession): string => {
-  return ProfessionLabels[profession] || profession
+  return ProfessionUtils.getDisplayName(profession)
 }
 
 // 获取技能标签显示（最多显示3个）
@@ -97,7 +30,8 @@ const getDisplaySkills = (skillTagsJson: string): SkillTag[] => {
   try {
     const skills = JSON.parse(skillTagsJson) as SkillTag[]
     return skills.slice(0, 3)
-  } catch {
+  }
+  catch {
     return []
   }
 }
@@ -115,7 +49,7 @@ const getSkillTagColor = (skill: SkillTag) => {
     ADOBE_XD: { color: '#FF61F6', borderColor: '#FF61F6' },
     PHOTOSHOP: { color: '#31A8FF', borderColor: '#31A8FF' },
     ILLUSTRATOR: { color: '#FF9A00', borderColor: '#FF9A00' },
-    default: { color: 'rgba(99, 102, 241, 0.8)', borderColor: 'rgba(99, 102, 241, 0.3)' }
+    default: { color: 'rgba(99, 102, 241, 0.8)', borderColor: 'rgba(99, 102, 241, 0.3)' },
   }
 
   return colorMap[skill] || colorMap.default
@@ -127,7 +61,7 @@ const getStatusColor = (status: string): string => {
     active: 'bg-green-500',
     inactive: 'bg-gray-500',
     busy: 'bg-yellow-500',
-    offline: 'bg-red-500'
+    offline: 'bg-red-500',
   }
 
   return statusColorMap[status] || 'bg-gray-500'
@@ -139,12 +73,83 @@ const getStatusText = (status: string): string => {
     active: '活跃',
     inactive: '离线',
     busy: '忙碌',
-    offline: '离线'
+    offline: '离线',
   }
 
   return statusTextMap[status] || '未知'
 }
 </script>
+
+<template>
+  <div
+    class="glass-card rounded-lg p-6 glow-border card-hover cursor-pointer"
+    @click="$emit('click', designer)"
+  >
+    <div class="flex flex-col items-center">
+      <!-- 头像 -->
+      <div class="w-20 h-20 rounded-full overflow-hidden mb-4 avatar-glow">
+        <img
+          v-if="designer.avatar"
+          :src="designer.avatar"
+          :alt="designer.designerName"
+          class="w-full h-full object-cover"
+        >
+        <div
+          v-else
+          class="w-full h-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white text-2xl font-bold"
+        >
+          {{ getInitial(designer.designerName) }}
+        </div>
+      </div>
+
+      <!-- 基本信息 -->
+      <h3 class="text-lg font-bold mb-1">
+        {{ designer.designerName }}
+      </h3>
+      <p class="text-gray-400 text-sm mb-3">
+        {{ getProfessionLabel(designer.profession) }}
+      </p>
+
+      <!-- 技能标签 -->
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
+        <NTag
+          v-for="skill in getDisplaySkills(designer.skillTags)"
+          :key="skill"
+          size="small"
+          :color="getSkillTagColor(skill)"
+          class="text-xs"
+        >
+          {{ getSkillTagLabel(skill) }}
+        </NTag>
+      </div>
+
+      <!-- 统计信息 -->
+      <div class="w-full flex justify-between items-center text-xs text-gray-400 mb-4">
+        <span>作品: {{ designer.works?.length || 0 }}</span>
+        <span>经验: {{ designer.workYears || designer.experience || 0 }}年</span>
+        <span class="flex items-center">
+          <div
+            class="w-2 h-2 rounded-full mr-1" :class="[
+              getStatusColor(designer.status),
+            ]"
+          />
+          {{ getStatusText(designer.status) }}
+        </span>
+      </div>
+
+      <!-- 操作按钮 -->
+      <NButton
+        class="w-full"
+        type="primary"
+        ghost
+        size="small"
+        @click.stop="$emit('detail', designer)"
+      >
+        查看档案
+      </NButton>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .glass-card {

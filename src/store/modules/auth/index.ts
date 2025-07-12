@@ -31,10 +31,11 @@ export const useAuthStore = defineStore('auth-store', {
       try {
         const { data } = await fetchSession<SessionResponse>()
         this.session = { ...data }
-        homeStore.setMyData({session: data });
+        homeStore.setMyData({ session: data })
 
-        let str = localStorage.getItem('gptConfigStore');
-        if( ! str ) setTimeout( ()=>  gptConfigStore.setInit() , 500); 
+        const str = localStorage.getItem('gptConfigStore')
+        if (!str)
+          setTimeout(() => gptConfigStore.setInit(), 500)
         return Promise.resolve(data)
       }
       catch (error) {

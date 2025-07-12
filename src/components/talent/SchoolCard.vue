@@ -1,9 +1,250 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import type { School, SchoolType } from '@/types/talent/school'
+import { useSchoolFormatter, useSchoolInteraction } from '@/composables/talent/useSchool'
+import {
+  getMockAdvantagePrograms,
+  getMockEmploymentRate,
+  getMockFacultyStrength,
+  getMockStudentScore,
+} from '@/data/mockSchools'
+
+// 根据登录状态和环境变量切换数据源
+import { shouldUseMockData } from '@/utils/authUtils'
+
+interface Props {
+  school: School
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  click: [school: School]
+  detail: [school: School]
+}>()
+
+// 设备检测和导航状态
+const isMobile = ref(false)
+const navigating = ref(false)
+const selectedSchool = ref<School | null>(null)
+
+const checkDevice = () => {
+  const screenWidth = window.innerWidth
+  const userAgent = navigator.userAgent
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
+  isMobile.value = screenWidth < 1024
+    || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+    || (isTouchDevice && screenWidth < 1200)
+}
+
+const handleResize = () => {
+  checkDevice()
+}
+
+// 使用组合式函数
+const { formatSchoolType } = useSchoolFormatter()
+const { isFavorited, toggleFavorite: toggleFav } = useSchoolInteraction()
+const USE_MOCK_DATA = computed(() => shouldUseMockData())
+
+console.log('🔍 SchoolCard 环境变量调试信息:')
+console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
+console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
+
+// 处理卡片点击
+const handleCardClick = () => {
+  console.log('🔍 SchoolCard 点击事件:', props.school.schoolName, props.school.id)
+  selectedSchool.value = props.school
+  emit('click', props.school)
+  emit('detail', props.school)
+  console.log('📤 已发送 click 和 detail 事件')
+}
+
+// 切换收藏状态
+const toggleFavorite = async () => {
+  try {
+    await toggleFav(props.school.id)
+  }
+  catch (error) {
+    console.error('Toggle favorite error:', error)
+  }
+}
+
+// 生命周期
+onMounted(() => {
+  checkDevice()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 获取院校Logo首字母
+const getSchoolInitial = (schoolName: string) => {
+  return schoolName.charAt(0).toUpperCase()
+}
+
+// 获取院校主题色
+const getSchoolTheme = (schoolName: string) => {
+  const themes = [
+    'bg-gradient-to-br from-primary to-purple-500',
+    'bg-gradient-to-br from-blue-500 to-cyan-400',
+    'bg-gradient-to-br from-pink-500 to-red-500',
+    'bg-gradient-to-br from-purple-500 to-indigo-500',
+    'bg-gradient-to-br from-green-500 to-emerald-500',
+    'bg-gradient-to-br from-yellow-500 to-orange-500',
+  ]
+
+  // 根据学校名称生成稳定的主题色
+  const hash = schoolName.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0)
+    return a & a
+  }, 0)
+
+  return themes[Math.abs(hash) % themes.length]
+}
+
+// 获取院校副标题
+const getSchoolSubtitle = (school: School) => {
+  // 可以显示学院信息或者其他相关信息
+  if (school.schoolType === 'ART')
+    return '设计学院'
+  else if (school.schoolType === 'COMPREHENSIVE')
+    return '设计创意学院'
+  else
+    return formatSchoolType(school.schoolType)
+}
+
+// 获取院校类型标签样式 - 完整的颜色主题配置
+const getSchoolTypeTagStyle = (schoolType: SchoolType) => {
+  const styleMap: Record<string, string> = {
+    // 综合类 - 蓝色主题（主色调）
+    COMPREHENSIVE: 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
+
+    // 艺术类 - 紫色主题
+    ART: 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+    ART_DESIGN: 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
+
+    // 理工类 - 深蓝色主题
+    ENGINEERING: 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+    SCIENCE: 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
+    SCIENCE_ENGINEERING: 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
+
+    // 师范类 - 绿色主题
+    NORMAL: 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
+
+    // 财经类 - 橙色主题
+    FINANCE: 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
+
+    // 医学类 - 红色主题
+    MEDICAL: 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
+
+    // 文科类 - 粉色主题
+    LIBERAL_ARTS: 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
+
+    // 农林类 - 绿色主题
+    AGRICULTURE: 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
+
+    // 体育类 - 黄绿色主题
+    SPORTS: 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
+
+    // 政法类 - 深灰色主题
+    POLITICS_LAW: 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
+
+    // 民族类 - 琥珀色主题
+    ETHNIC: 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
+
+    // 军事类 - 深绿色主题
+    MILITARY: 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
+
+    // 职业院校 - 橙色主题
+    VOCATIONAL: 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
+
+    // 独立学院 - 灰蓝色主题
+    INDEPENDENT: 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border',
+  }
+  return styleMap[schoolType] || 'school-tag school-tag-default bg-gray-700/50 text-gray-300 border'
+}
+
+// 格式化地区信息
+const formatLocation = (school: School) => {
+  if (school.city && school.province)
+    return school.city === school.province ? school.city : school.city
+
+  return school.location || school.province || school.city || '未知'
+}
+
+// 格式化就业率 - 优先使用后端数据，其次使用Mock数据
+const formatEmploymentRate = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.employmentRate)
+    return school.employmentRate
+
+  // 如果没有后端数据，根据环境变量决定
+  if (USE_MOCK_DATA.value) {
+    return getMockEmploymentRate(school.id)
+  }
+  else {
+    // 后端暂未提供数据，显示默认值
+    return '--'
+  }
+}
+
+// 格式化师资力量评分 - 优先使用后端数据，其次使用Mock数据
+const formatFacultyStrength = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.facultyStrength)
+    return school.facultyStrength
+
+  // 如果没有后端数据，根据环境变量决定
+  if (USE_MOCK_DATA.value) {
+    return getMockFacultyStrength(school.id)
+  }
+  else {
+    // 后端暂未提供数据，显示默认值
+    return '--'
+  }
+}
+
+// 格式化学生评分 - 优先使用后端数据，其次使用Mock数据
+const formatStudentScore = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.studentScore)
+    return school.studentScore
+
+  // 如果没有后端数据，根据环境变量决定
+  if (USE_MOCK_DATA.value) {
+    return getMockStudentScore(school.id)
+  }
+  else {
+    // 后端暂未提供数据，显示默认值
+    return '--'
+  }
+}
+
+// 获取优势专业 - 优先使用后端数据，其次使用Mock数据
+const getAdvantagePrograms = (school: School) => {
+  // 优先使用后端返回的数据
+  if (school.advantagePrograms)
+    return school.advantagePrograms
+
+  // 如果没有后端数据，根据环境变量决定
+  if (USE_MOCK_DATA.value) {
+    return getMockAdvantagePrograms(school)
+  }
+  else {
+    // 后端暂未提供数据，显示默认值
+    return '待完善'
+  }
+}
+</script>
+
 <template>
   <div
-    :class="[
-      'glass-card rounded-lg glow-border card-hover cursor-pointer',
+    class="glass-card rounded-lg glow-border card-hover cursor-pointer" :class="[
       isMobile ? 'mobile-card' : 'desktop-card',
-      navigating && selectedSchool?.id === school.id ? 'navigating' : ''
+      navigating && selectedSchool?.id === school.id ? 'navigating' : '',
     ]"
     @click="handleCardClick"
   >
@@ -13,9 +254,8 @@
         <div class="flex items-center">
           <!-- 院校Logo -->
           <div
-            :class="[
-              'w-12 h-12 rounded-lg flex items-center justify-center text-white text-xl font-bold mr-3',
-              getSchoolTheme(school.schoolName)
+            class="w-12 h-12 rounded-lg flex items-center justify-center text-white text-xl font-bold mr-3" :class="[
+              getSchoolTheme(school.schoolName),
             ]"
           >
             <img
@@ -23,12 +263,16 @@
               :src="school.logo"
               :alt="school.schoolName"
               class="w-full h-full object-cover rounded-lg"
-            />
+            >
             <span v-else>{{ getSchoolInitial(school.schoolName) }}</span>
           </div>
           <div>
-            <h3 class="text-lg font-bold mb-0">{{ school.schoolName }}</h3>
-            <p class="text-gray-400 text-sm">{{ getSchoolSubtitle(school) }}</p>
+            <h3 class="text-lg font-bold mb-0">
+              {{ school.schoolName }}
+            </h3>
+            <p class="text-gray-400 text-sm">
+              {{ getSchoolSubtitle(school) }}
+            </p>
           </div>
         </div>
         <!-- 收藏按钮 -->
@@ -36,9 +280,11 @@
           class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
           @click.stop="toggleFavorite"
         >
-          <i :class="[
-            isFavorited(school.id) ? 'ri-bookmark-fill text-primary' : 'ri-bookmark-line'
-          ]"></i>
+          <i
+            :class="[
+              isFavorited(school.id) ? 'ri-bookmark-fill text-primary' : 'ri-bookmark-line',
+            ]"
+          />
         </button>
       </div>
 
@@ -46,9 +292,8 @@
       <div class="flex flex-wrap gap-2 mb-4">
         <!-- 院校类型标签 -->
         <span
-          :class="[
-            'text-xs px-2 py-1 rounded-full',
-            getSchoolTypeTagStyle(school.schoolType)
+          class="text-xs px-2 py-1 rounded-full" :class="[
+            getSchoolTypeTagStyle(school.schoolType),
           ]"
         >
           {{ formatSchoolType(school.schoolType) }}
@@ -84,18 +329,30 @@
       <div class="grid grid-cols-3 gap-2 mb-4">
         <!-- 就业率 -->
         <div class="text-center p-2 bg-gray-800/30 rounded-lg">
-          <p class="text-xs text-gray-400 mb-1">就业率</p>
-          <p class="text-lg font-bold text-green-400">{{ formatEmploymentRate(school) }}</p>
+          <p class="text-xs text-gray-400 mb-1">
+            就业率
+          </p>
+          <p class="text-lg font-bold text-green-400">
+            {{ formatEmploymentRate(school) }}
+          </p>
         </div>
         <!-- 师资力量 -->
         <div class="text-center p-2 bg-gray-800/30 rounded-lg">
-          <p class="text-xs text-gray-400 mb-1">师资力量</p>
-          <p class="text-lg font-bold gradient-text">{{ formatFacultyStrength(school) }}</p>
+          <p class="text-xs text-gray-400 mb-1">
+            师资力量
+          </p>
+          <p class="text-lg font-bold gradient-text">
+            {{ formatFacultyStrength(school) }}
+          </p>
         </div>
         <!-- 学生评分 -->
         <div class="text-center p-2 bg-gray-800/30 rounded-lg">
-          <p class="text-xs text-gray-400 mb-1">学生评分</p>
-          <p class="text-lg font-bold text-yellow-400">{{ formatStudentScore(school) }}</p>
+          <p class="text-xs text-gray-400 mb-1">
+            学生评分
+          </p>
+          <p class="text-lg font-bold text-yellow-400">
+            {{ formatStudentScore(school) }}
+          </p>
         </div>
       </div>
 
@@ -107,8 +364,8 @@
           </p>
         </div>
         <button
-          @click.stop="$emit('detail', school)"
           class="px-4 py-2 bg-primary/10 text-primary border border-primary/30 !rounded-[8px] text-sm hover:bg-primary/20 transition-colors whitespace-nowrap"
+          @click.stop="$emit('detail', school)"
         >
           查看详情
         </button>
@@ -116,248 +373,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
-import type { School, SchoolType } from '@/types/talent/school'
-import { useSchoolFormatter, useSchoolInteraction } from '@/composables/talent/useSchool'
-import {
-  getMockEmploymentRate,
-  getMockFacultyStrength,
-  getMockStudentScore,
-  getMockAdvantagePrograms
-} from '@/data/mockSchools'
-
-interface Props {
-  school: School
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  click: [school: School]
-  detail: [school: School]
-}>()
-
-// 设备检测和导航状态
-const isMobile = ref(false)
-const navigating = ref(false)
-const selectedSchool = ref<School | null>(null)
-
-const checkDevice = () => {
-  const screenWidth = window.innerWidth
-  const userAgent = navigator.userAgent
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-
-  isMobile.value = screenWidth < 1024 ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) ||
-    (isTouchDevice && screenWidth < 1200)
-}
-
-const handleResize = () => {
-  checkDevice()
-}
-
-// 使用组合式函数
-const { formatSchoolType } = useSchoolFormatter()
-const { isFavorited, toggleFavorite: toggleFav } = useSchoolInteraction()
-
-// 根据登录状态和环境变量切换数据源
-import { shouldUseMockData } from '@/utils/authUtils'
-const USE_MOCK_DATA = computed(() => shouldUseMockData())
-
-console.log('🔍 SchoolCard 环境变量调试信息:')
-console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
-console.log('  USE_MOCK_DATA:', USE_MOCK_DATA.value)
-
-// 处理卡片点击
-const handleCardClick = () => {
-  console.log('🔍 SchoolCard 点击事件:', props.school.schoolName, props.school.id)
-  selectedSchool.value = props.school
-  emit('click', props.school)
-  emit('detail', props.school)
-  console.log('📤 已发送 click 和 detail 事件')
-}
-
-// 切换收藏状态
-const toggleFavorite = async () => {
-  try {
-    await toggleFav(props.school.id)
-  } catch (error) {
-    console.error('Toggle favorite error:', error)
-  }
-}
-
-// 生命周期
-onMounted(() => {
-  checkDevice()
-  window.addEventListener('resize', handleResize)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
-
-// 获取院校Logo首字母
-const getSchoolInitial = (schoolName: string) => {
-  return schoolName.charAt(0).toUpperCase()
-}
-
-// 获取院校主题色
-const getSchoolTheme = (schoolName: string) => {
-  const themes = [
-    'bg-gradient-to-br from-primary to-purple-500',
-    'bg-gradient-to-br from-blue-500 to-cyan-400',
-    'bg-gradient-to-br from-pink-500 to-red-500',
-    'bg-gradient-to-br from-purple-500 to-indigo-500',
-    'bg-gradient-to-br from-green-500 to-emerald-500',
-    'bg-gradient-to-br from-yellow-500 to-orange-500'
-  ]
-
-  // 根据学校名称生成稳定的主题色
-  const hash = schoolName.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0)
-    return a & a
-  }, 0)
-
-  return themes[Math.abs(hash) % themes.length]
-}
-
-// 获取院校副标题
-const getSchoolSubtitle = (school: School) => {
-  // 可以显示学院信息或者其他相关信息
-  if (school.schoolType === 'ART') {
-    return '设计学院'
-  } else if (school.schoolType === 'COMPREHENSIVE') {
-    return '设计创意学院'
-  } else {
-    return formatSchoolType(school.schoolType)
-  }
-}
-
-// 获取院校类型标签样式 - 完整的颜色主题配置
-const getSchoolTypeTagStyle = (schoolType: SchoolType) => {
-  const styleMap: Record<string, string> = {
-    // 综合类 - 蓝色主题（主色调）
-    'COMPREHENSIVE': 'school-tag school-tag-comprehensive bg-primary/10 text-primary border',
-
-    // 艺术类 - 紫色主题
-    'ART': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
-    'ART_DESIGN': 'school-tag school-tag-art bg-purple-500/10 text-purple-400 border',
-
-    // 理工类 - 深蓝色主题
-    'ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
-    'SCIENCE': 'school-tag school-tag-science bg-cyan-500/10 text-cyan-400 border',
-    'SCIENCE_ENGINEERING': 'school-tag school-tag-engineering bg-blue-600/10 text-blue-400 border',
-
-    // 师范类 - 绿色主题
-    'NORMAL': 'school-tag school-tag-normal bg-green-500/10 text-green-400 border',
-
-    // 财经类 - 橙色主题
-    'FINANCE': 'school-tag school-tag-finance bg-orange-500/10 text-orange-400 border',
-
-    // 医学类 - 红色主题
-    'MEDICAL': 'school-tag school-tag-medical bg-red-500/10 text-red-400 border',
-
-    // 文科类 - 粉色主题
-    'LIBERAL_ARTS': 'school-tag school-tag-liberal bg-pink-500/10 text-pink-400 border',
-
-    // 农林类 - 绿色主题
-    'AGRICULTURE': 'school-tag school-tag-agriculture bg-emerald-500/10 text-emerald-400 border',
-
-    // 体育类 - 黄绿色主题
-    'SPORTS': 'school-tag school-tag-sports bg-lime-500/10 text-lime-400 border',
-
-    // 政法类 - 深灰色主题
-    'POLITICS_LAW': 'school-tag school-tag-law bg-slate-500/10 text-slate-400 border',
-
-    // 民族类 - 琥珀色主题
-    'ETHNIC': 'school-tag school-tag-ethnic bg-amber-500/10 text-amber-400 border',
-
-    // 军事类 - 深绿色主题
-    'MILITARY': 'school-tag school-tag-military bg-green-800/10 text-green-300 border',
-
-    // 职业院校 - 橙色主题
-    'VOCATIONAL': 'school-tag school-tag-vocational bg-orange-500/10 text-orange-400 border',
-
-    // 独立学院 - 灰蓝色主题
-    'INDEPENDENT': 'school-tag school-tag-independent bg-gray-500/10 text-gray-400 border'
-  }
-  return styleMap[schoolType] || 'school-tag school-tag-default bg-gray-700/50 text-gray-300 border'
-}
-
-// 格式化地区信息
-const formatLocation = (school: School) => {
-  if (school.city && school.province) {
-    return school.city === school.province ? school.city : school.city
-  }
-  return school.location || school.province || school.city || '未知'
-}
-
-// 格式化就业率 - 优先使用后端数据，其次使用Mock数据
-const formatEmploymentRate = (school: School) => {
-  // 优先使用后端返回的数据
-  if (school.employmentRate) {
-    return school.employmentRate
-  }
-
-  // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA.value) {
-    return getMockEmploymentRate(school.id)
-  } else {
-    // 后端暂未提供数据，显示默认值
-    return '--'
-  }
-}
-
-// 格式化师资力量评分 - 优先使用后端数据，其次使用Mock数据
-const formatFacultyStrength = (school: School) => {
-  // 优先使用后端返回的数据
-  if (school.facultyStrength) {
-    return school.facultyStrength
-  }
-
-  // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA.value) {
-    return getMockFacultyStrength(school.id)
-  } else {
-    // 后端暂未提供数据，显示默认值
-    return '--'
-  }
-}
-
-// 格式化学生评分 - 优先使用后端数据，其次使用Mock数据
-const formatStudentScore = (school: School) => {
-  // 优先使用后端返回的数据
-  if (school.studentScore) {
-    return school.studentScore
-  }
-
-  // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA.value) {
-    return getMockStudentScore(school.id)
-  } else {
-    // 后端暂未提供数据，显示默认值
-    return '--'
-  }
-}
-
-// 获取优势专业 - 优先使用后端数据，其次使用Mock数据
-const getAdvantagePrograms = (school: School) => {
-  // 优先使用后端返回的数据
-  if (school.advantagePrograms) {
-    return school.advantagePrograms
-  }
-
-  // 如果没有后端数据，根据环境变量决定
-  if (USE_MOCK_DATA.value) {
-    return getMockAdvantagePrograms(school)
-  } else {
-    // 后端暂未提供数据，显示默认值
-    return '待完善'
-  }
-}
-</script>
 
 <style scoped>
 .glass-card {

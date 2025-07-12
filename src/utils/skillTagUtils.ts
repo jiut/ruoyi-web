@@ -113,7 +113,7 @@ class SkillTagUtils {
     ['effects', 'skill'],
     ['3d_modeling', 'skill'],
     ['photography', 'skill'],
-    ['video_editing', 'skill']
+    ['video_editing', 'skill'],
   ])
 
   // 英文简写到中文显示名称的映射表
@@ -176,21 +176,21 @@ class SkillTagUtils {
     ['effects', '动效'],
     ['3d_modeling', '3D建模'],
     ['photography', '摄影'],
-    ['video_editing', '视频剪辑']
+    ['video_editing', '视频剪辑'],
   ])
 
   // 分类名称映射
   static categoryNames: Record<SkillTagCategory, string> = {
     tool: '🔵 设计工具',
     field: '🟣 专业领域',
-    skill: '🩷 技能方法'
+    skill: '🩷 技能方法',
   }
 
   // 分类描述映射
   static categoryDescriptions: Record<SkillTagCategory, string> = {
     tool: '设计工具/软件类',
     field: '设计专业领域类',
-    skill: '设计技能/方法类'
+    skill: '设计技能/方法类',
   }
 
   // 主题配置（仅保留默认主题）
@@ -199,19 +199,19 @@ class SkillTagUtils {
       tool: {
         bg: 'bg-blue-500/20',
         text: 'text-blue-400',
-        border: 'border-blue-500/30'
+        border: 'border-blue-500/30',
       },
       field: {
         bg: 'bg-purple-500/20',
         text: 'text-purple-400',
-        border: 'border-purple-500/30'
+        border: 'border-purple-500/30',
       },
       skill: {
         bg: 'bg-pink-500/20',
         text: 'text-pink-400',
-        border: 'border-pink-500/30'
-      }
-    }
+        border: 'border-pink-500/30',
+      },
+    },
   }
 
   /**
@@ -242,9 +242,8 @@ class SkillTagUtils {
     const category = this.getTagCategory(tag)
     let classes = `skill-tag skill-tag-${category}`
 
-    if (size !== 'md') {
+    if (size !== 'md')
       classes += ` skill-tag-${size}`
-    }
 
     return classes
   }
@@ -273,16 +272,15 @@ class SkillTagUtils {
     const defaultOptions = {
       gap: 'gap-2',
       wrapper: 'div',
-      wrapperClasses: 'flex flex-wrap'
+      wrapperClasses: 'flex flex-wrap',
     }
 
     const config = { ...defaultOptions, ...options }
 
     const tagsHTML = tags.map(tag => this.generateTagHTML(tag, theme, config)).join(' ')
 
-    if (config.wrapper) {
+    if (config.wrapper)
       return `<${config.wrapper} class="${config.wrapperClasses} ${config.gap}">${tagsHTML}</${config.wrapper}>`
-    }
 
     return tagsHTML
   }
@@ -313,10 +311,10 @@ class SkillTagUtils {
     const grouped: Record<SkillTagCategory, string[]> = {
       tool: [],
       field: [],
-      skill: []
+      skill: [],
     }
 
-    tags.forEach(tag => {
+    tags.forEach((tag) => {
       const category = this.getTagCategory(tag)
       grouped[category].push(tag)
     })
@@ -342,13 +340,13 @@ class SkillTagUtils {
     const categoryNames = {
       tool: '🔵 设计工具',
       field: '🟣 专业领域',
-      skill: '🩷 技能方法'
+      skill: '🩷 技能方法',
     }
 
     const defaultOptions = {
       showGroupTitle: true,
       groupGap: 'gap-4',
-      itemGap: 'gap-2'
+      itemGap: 'gap-2',
     }
 
     const config = { ...defaultOptions, ...options }
@@ -357,21 +355,20 @@ class SkillTagUtils {
 
     Object.entries(grouped).forEach(([category, categoryTags]) => {
       if (categoryTags.length > 0) {
-        html += `<div class="skill-group">`
+        html += '<div class="skill-group">'
 
-        if (config.showGroupTitle) {
+        if (config.showGroupTitle)
           html += `<h4 class="text-sm font-medium text-gray-600 mb-2">${categoryNames[category as SkillTagCategory]}</h4>`
-        }
 
         html += `<div class="flex flex-wrap ${config.itemGap}">`
-        categoryTags.forEach(tag => {
+        categoryTags.forEach((tag) => {
           html += this.generateTagHTML(tag, theme, config)
         })
-        html += `</div></div>`
+        html += '</div></div>'
       }
     })
 
-    html += `</div>`
+    html += '</div>'
     element.innerHTML = html
   }
 
@@ -400,7 +397,7 @@ class SkillTagUtils {
   static getCategoryStats(tags: string[]): CategoryStats {
     const stats: CategoryStats = { tool: 0, field: 0, skill: 0 }
 
-    tags.forEach(tag => {
+    tags.forEach((tag) => {
       const category = this.getTagCategory(tag)
       stats[category]++
     })
@@ -417,7 +414,7 @@ class SkillTagUtils {
     return tags.map(tag => ({
       code: tag,
       name: this.getTagDisplayName(tag),
-      category: this.getTagCategory(tag)
+      category: this.getTagCategory(tag),
     }))
   }
 
@@ -427,12 +424,14 @@ class SkillTagUtils {
    * @returns 英文简写标签数组
    */
   static parseSkillTags(skillsStr: string): string[] {
-    if (!skillsStr) return []
+    if (!skillsStr)
+      return []
 
     try {
       const parsed = JSON.parse(skillsStr)
       return Array.isArray(parsed) ? parsed : []
-    } catch {
+    }
+    catch {
       // 如果不是JSON格式，尝试按逗号分割
       return skillsStr.split(',').map(s => s.trim()).filter(Boolean)
     }
@@ -466,9 +465,9 @@ class SkillTagUtils {
    */
   private static getCategoryPriority(category: SkillTagCategory): number {
     switch (category) {
-      case 'tool': return 1    // 🔵 工具类优先
-      case 'field': return 2   // 🟣 专业领域次之
-      case 'skill': return 3   // 🩷 技能方法最后
+      case 'tool': return 1 // 🔵 工具类优先
+      case 'field': return 2 // 🟣 专业领域次之
+      case 'skill': return 3 // 🩷 技能方法最后
       default: return 999
     }
   }
@@ -488,9 +487,8 @@ class SkillTagUtils {
       const priorityB = this.getCategoryPriority(categoryB)
 
       // 首先按分类排序
-      if (priorityA !== priorityB) {
+      if (priorityA !== priorityB)
         return sortOrder === 'asc' ? priorityA - priorityB : priorityB - priorityA
-      }
 
       // 分类相同时按中文显示名称排序
       const nameA = this.getTagDisplayName(a)
@@ -512,7 +510,7 @@ class SkillTagUtils {
     const grouped = this.groupTagsByCategory(tags)
 
     // 对每个分组内的标签进行排序
-    Object.keys(grouped).forEach(category => {
+    Object.keys(grouped).forEach((category) => {
       const categoryKey = category as SkillTagCategory
       grouped[categoryKey] = grouped[categoryKey].sort((a, b) => {
         const nameA = this.getTagDisplayName(a)

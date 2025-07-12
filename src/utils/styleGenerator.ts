@@ -16,7 +16,7 @@ const AVATAR_GRADIENTS = [
   'bg-gradient-to-br from-rose-500 to-pink-400',
   'bg-gradient-to-br from-teal-500 to-cyan-500',
   'bg-gradient-to-br from-orange-500 to-red-400',
-  'bg-gradient-to-br from-violet-500 to-purple-500'
+  'bg-gradient-to-br from-violet-500 to-purple-500',
 ]
 
 // 预定义的标签颜色方案
@@ -35,7 +35,7 @@ const TAG_COLOR_SCHEMES = [
   { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
   { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
   { bg: 'bg-violet-500/10', text: 'text-violet-400', border: 'border-violet-500/20' },
-  { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' }
+  { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' },
 ]
 
 // 预定义的雇主背景颜色方案
@@ -63,7 +63,7 @@ const EMPLOYER_COLOR_SCHEMES = [
   'bg-gray-600/20',
   'bg-gray-700/20',
   'bg-blue-700/20',
-  'bg-blue-800/20'
+  'bg-blue-800/20',
 ]
 
 // 扩展的图表颜色方案（hex格式，用于ECharts）- 确保有足够的不同颜色
@@ -178,20 +178,20 @@ export function generateTagClasses(teacherId: number, expertise: string[]): stri
  * @returns 包含样式属性的完整教师数据
  */
 export function generateTeacherStyles<T extends { id: number; name: string; expertise: string[] }>(
-  teacher: T
+  teacher: T,
 ): T & { avatarClass: string; tagClasses: string[] } {
   return {
     ...teacher,
     avatarClass: generateAvatarClass(teacher.id, teacher.name),
-    tagClasses: generateTagClasses(teacher.id, teacher.expertise)
+    tagClasses: generateTagClasses(teacher.id, teacher.expertise),
   }
 }
 
 // 工具函数：获取名称的首字母
 export function getNameInitial(name: string): string {
-  if (!name || name.trim().length === 0) {
+  if (!name || name.trim().length === 0)
     return '?'
-  }
+
   return name.trim().charAt(0).toUpperCase()
 }
 
@@ -213,11 +213,11 @@ export function generateEmployerColorClass(employerId: number, employerName: str
  * @returns 包含样式属性的完整雇主数据
  */
 export function generateEmployerStyles<T extends { id: number; name: string }>(
-  employer: T
+  employer: T,
 ): T & { colorClass: string } {
   return {
     ...employer,
-    colorClass: generateEmployerColorClass(employer.id, employer.name)
+    colorClass: generateEmployerColorClass(employer.id, employer.name),
   }
 }
 
@@ -227,7 +227,7 @@ export function generateEmployerStyles<T extends { id: number; name: string }>(
  * @param index 数据项索引（用于备用随机性）
  * @returns hex颜色值
  */
-export function generateChartColor(itemName: string, index: number = 0): string {
+export function generateChartColor(itemName: string, index = 0): string {
   const seed = hashString(itemName)
   const colorIndex = (seed + index) % CHART_COLORS.length
   return CHART_COLORS[colorIndex]
@@ -245,7 +245,7 @@ export function generateUniqueChartColor(
   itemName: string,
   index: number,
   totalItems: number,
-  dataSetId: string = 'default'
+  dataSetId = 'default',
 ): string {
   // 使用数据集ID、项目名称和索引组合来确保唯一性
   const combinedSeed = hashString(`${dataSetId}_${itemName}_${index}`)
@@ -258,7 +258,8 @@ export function generateUniqueChartColor(
     const offset = combinedSeed % step
     const colorIndex = (baseIndex + offset) % CHART_COLORS.length
     return CHART_COLORS[colorIndex]
-  } else {
+  }
+  else {
     // 数据项较多时，使用hash分布
     const colorIndex = combinedSeed % CHART_COLORS.length
     return CHART_COLORS[colorIndex]
@@ -271,13 +272,13 @@ export function generateUniqueChartColor(
  * @returns 包含itemStyle的图表数据
  */
 export function generateChartItemStyles<T extends { name: string; value: number }>(
-  data: T[]
+  data: T[],
 ): (T & { itemStyle: { color: string } })[] {
   return data.map((item, index) => ({
     ...item,
     itemStyle: {
-      color: generateChartColor(item.name, index)
-    }
+      color: generateChartColor(item.name, index),
+    },
   }))
 }
 
@@ -289,13 +290,13 @@ export function generateChartItemStyles<T extends { name: string; value: number 
  */
 export function generateUniqueChartItemStyles<T extends { name: string; value: number }>(
   data: T[],
-  dataSetId: string = 'default'
+  dataSetId = 'default',
 ): (T & { itemStyle: { color: string } })[] {
   return data.map((item, index) => ({
     ...item,
     itemStyle: {
-      color: generateUniqueChartColor(item.name, index, data.length, dataSetId)
-    }
+      color: generateUniqueChartColor(item.name, index, data.length, dataSetId),
+    },
   }))
 }
 
@@ -305,9 +306,7 @@ export function generateUniqueChartItemStyles<T extends { name: string; value: n
  * @returns 包含itemStyle的行业分布数据
  */
 export function generateIndustryChartData<T extends { name: string; value: number }>(
-  industryData: T[]
+  industryData: T[],
 ): (T & { itemStyle: { color: string } })[] {
   return generateUniqueChartItemStyles(industryData, 'industry')
 }
-
-

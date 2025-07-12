@@ -39,7 +39,7 @@ GET /designer/designer/{id}/complete
       "location": "北京市",
       "experience": 5,
       "workStatus": "EMPLOYED",
-      "company": "腾讯",
+      "company": "腾讯"
       // ... 其他设计师字段
     },
     "works": [
@@ -49,7 +49,7 @@ GET /designer/designer/{id}/complete
         "description": "...",
         "imageUrl": "...",
         "category": "移动应用",
-        "designerId": 1,
+        "designerId": 1
         // ... 其他作品字段
       }
       // ... 更多作品
@@ -63,7 +63,7 @@ GET /designer/designer/{id}/complete
         "endDate": null,
         "description": "...",
         "isCurrent": true,
-        "designerId": 1,
+        "designerId": 1
         // ... 其他工作经历字段
       }
       // ... 更多工作经历，按开始时间倒序排列
@@ -77,7 +77,7 @@ GET /designer/designer/{id}/complete
         "startDate": "2018-09-01",
         "endDate": "2022-06-30",
         "description": "...",
-        "designerId": 1,
+        "designerId": 1
         // ... 其他教育背景字段
       }
       // ... 更多教育背景，按开始时间倒序排列
@@ -91,10 +91,10 @@ GET /designer/designer/{id}/complete
         "description": "...",
         "designerId": 1,
         "level": "GOLD",
-        "category": "DESIGN_AWARD",
+        "category": "DESIGN_AWARD"
         // ... 其他获奖字段
       }
-      // ... 更多获奖信息，按sort字段或年份倒序排列
+      // ... 更多获奖信息，按year倒序排列
     ]
   }
 }
@@ -153,7 +153,7 @@ public class DesignerController {
 ## 数据排序要求
 - **工作经历**: 按 `startDate` 倒序排列（最新的在前）
 - **教育背景**: 按 `startDate` 倒序排列（最新的在前）
-- **获奖情况**: 按 `sort` 字段或 `year` 倒序排列（最新的在前）
+- **获奖情况**: 按 `year` 倒序排列（最新的在前）
 - **作品集**: 可按创建时间或更新时间排序
 
 ## 性能优化建议

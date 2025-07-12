@@ -1,11 +1,11 @@
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import {
-  isNormalRole,
+  getCurrentRole,
   hasProfessionalRole,
+  isNormalRole,
   needsRoleSelection,
-  getCurrentRole
 } from '@/utils/authUtils'
 
 export function useRoleCheck() {
@@ -32,10 +32,11 @@ export function useRoleCheck() {
       // 更新状态
       currentRole.value = getCurrentRole()
       needsSelection.value = needsRoleSelection()
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error('检查角色状态失败:', error)
-    } finally {
+    }
+    finally {
       isLoading.value = false
     }
   }
@@ -57,13 +58,14 @@ export function useRoleCheck() {
 
   // 获取角色显示名称
   const getRoleDisplayName = () => {
-    if (!currentRole.value) return '未知'
+    if (!currentRole.value)
+      return '未知'
 
     const roleMap: Record<string, string> = {
       '1932319128081666050': '设计师',
       '1932319128081666051': '企业管理员',
       '1932319128081666052': '院校管理员',
-      '2': '普通用户'
+      '2': '普通用户',
     }
 
     return roleMap[currentRole.value.roleId] || currentRole.value.roleName || '未知'
@@ -107,6 +109,6 @@ export function useRoleCheck() {
     goToHome,
     goToTalent,
     getRoleDisplayName,
-    isRole
+    isRole,
   }
 }

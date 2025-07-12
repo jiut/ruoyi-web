@@ -17,7 +17,7 @@ export interface HttpOption {
 export interface Response<T = any> {
   data: T
   msg: string | undefined
-  code: number,
+  code: number
   rows: []
 }
 
@@ -28,17 +28,19 @@ function http<T = any>(
     const authStore = useAuthStore()
     if (res.data.code === 200) {
       return res.data
-    } else if (res.data.code === 401) {
+    }
+    else if (res.data.code === 401) {
       // 只有认证失败时才清除token和重定向
       authStore.removeToken()
       // 如果当前不在登录页面，才进行跳转
       // if (!window.location.hash.includes('/login')) {
       //   window.location.href = '#/login'
       // }
-    } else {
+    }
+    else {
       // 其他错误直接抛出，不刷新页面
       return Promise.reject(res.data)
-          }
+    }
   }
 
   const failHandler = (error: any) => {
@@ -58,10 +60,12 @@ function http<T = any>(
         // }
       }
       return Promise.reject(data || error)
-    } else if (error.request) {
+    }
+    else if (error.request) {
       // 请求发出了但没有收到响应
       return Promise.reject({ error: true, message: '网络请求失败，请检查网络连接' })
-    } else {
+    }
+    else {
       // 其他错误
       return Promise.reject({ error: true, message: error.message || '请求失败' })
     }
@@ -75,13 +79,17 @@ function http<T = any>(
 
   if (method === 'GET') {
     return request.get(url, { params, signal, onDownloadProgress }).then(successHandler, failHandler)
-  } else if (method === 'POST') {
+  }
+  else if (method === 'POST') {
     return request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
-  } else if (method === 'PUT') {
+  }
+  else if (method === 'PUT') {
     return request.put(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
-  } else if (method === 'DELETE') {
+  }
+  else if (method === 'DELETE') {
     return request.delete(url, { params, headers, signal, onDownloadProgress }).then(successHandler, failHandler)
-  } else {
+  }
+  else {
     // 默认使用POST
     return request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
   }

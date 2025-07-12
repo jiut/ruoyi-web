@@ -206,6 +206,20 @@ const grouped = groupAndSortTagsByCategory(skills, 'asc')
 ### Vue组件中使用
 
 ```vue
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useSkillTags } from '@/composables/useSkillTags'
+
+const { sortTagsByCategory } = useSkillTags()
+
+const allSkills = ['figma', 'ui_design', 'user_experience', 'sketch']
+
+// 自动按分类排序
+const sortedSkills = computed(() =>
+  sortTagsByCategory(allSkills, 'asc')
+)
+</script>
+
 <template>
   <div class="skill-section">
     <!-- 简单排序模式 -->
@@ -226,20 +240,6 @@ const grouped = groupAndSortTagsByCategory(skills, 'asc')
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useSkillTags } from '@/composables/useSkillTags'
-
-const { sortTagsByCategory } = useSkillTags()
-
-const allSkills = ['figma', 'ui_design', 'user_experience', 'sketch']
-
-// 自动按分类排序
-const sortedSkills = computed(() =>
-  sortTagsByCategory(allSkills, 'asc')
-)
-</script>
 ```
 
 ## 🎨 样式规范

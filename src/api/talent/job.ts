@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 import type {
+  JobApplicationData,
   JobPosting,
   JobQueryParams,
-  JobApplicationData,
   ProcessApplicationData,
   Profession,
-  SkillTag
+  SkillTag,
 } from '@/types/talent/job'
 
 // 查询岗位列表
@@ -13,7 +13,7 @@ export function listJob(query: JobQueryParams) {
   return request({
     url: '/designer/job/list',
     method: 'get',
-    params: query
+    params: query,
   })
 }
 
@@ -21,7 +21,7 @@ export function listJob(query: JobQueryParams) {
 export function getJob(id: number) {
   return request({
     url: `/designer/job/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -30,7 +30,7 @@ export function addJob(data: Partial<JobPosting>) {
   return request({
     url: '/designer/job',
     method: 'post',
-    data: data
+    data,
   })
 }
 
@@ -39,7 +39,7 @@ export function updateJob(data: Partial<JobPosting>) {
   return request({
     url: '/designer/job',
     method: 'put',
-    data: data
+    data,
   })
 }
 
@@ -47,7 +47,7 @@ export function updateJob(data: Partial<JobPosting>) {
 export function delJob(ids: number[]) {
   return request({
     url: `/designer/job/${ids.join(',')}`,
-    method: 'delete'
+    method: 'delete',
   })
 }
 
@@ -55,7 +55,7 @@ export function delJob(ids: number[]) {
 export function getJobsByProfession(profession: Profession) {
   return request({
     url: `/designer/job/profession/${profession}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -64,7 +64,7 @@ export function getJobsBySkills(skillTags: SkillTag[]) {
   return request({
     url: '/designer/job/skills',
     method: 'get',
-    params: { skillTags: skillTags.join(',') }
+    params: { skillTags: skillTags.join(',') },
   })
 }
 
@@ -73,7 +73,7 @@ export function getJobsBySkillsAny(skillTags: SkillTag[]) {
   return request({
     url: '/designer/job/skills-any',
     method: 'get',
-    params: { skillTags: skillTags.join(',') }
+    params: { skillTags: skillTags.join(',') },
   })
 }
 
@@ -81,7 +81,7 @@ export function getJobsBySkillsAny(skillTags: SkillTag[]) {
 export function getJobsByEnterprise(enterpriseId: number) {
   return request({
     url: `/designer/job/enterprise/${enterpriseId}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -90,7 +90,7 @@ export function applyJob(data: JobApplicationData) {
   return request({
     url: '/designer/application/apply',
     method: 'post',
-    data: data
+    data,
   })
 }
 
@@ -99,7 +99,7 @@ export function processApplication(data: ProcessApplicationData) {
   return request({
     url: '/designer/application/process',
     method: 'put',
-    data: data
+    data,
   })
 }
 
@@ -108,7 +108,7 @@ export function withdrawApplication(applicationId: number) {
   return request({
     url: '/designer/application/withdraw',
     method: 'put',
-    data: { applicationId }
+    data: { applicationId },
   })
 }
 
@@ -116,7 +116,7 @@ export function withdrawApplication(applicationId: number) {
 export function getJobApplications(jobId: number) {
   return request({
     url: `/designer/application/job/${jobId}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -124,7 +124,7 @@ export function getJobApplications(jobId: number) {
 export function getDesignerApplications(designerId: number) {
   return request({
     url: `/designer/application/designer/${designerId}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -132,7 +132,7 @@ export function getDesignerApplications(designerId: number) {
 export function getApplicationDetail(id: number) {
   return request({
     url: `/designer/application/${id}`,
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -141,6 +141,6 @@ export function listApplications(query?: any) {
   return request({
     url: '/designer/application/list',
     method: 'get',
-    params: query
+    params: query,
   })
 }

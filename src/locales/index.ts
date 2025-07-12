@@ -16,7 +16,8 @@ let defaultLocale = 'zh-CN'
 try {
   const appStore = useAppStoreWithOut()
   defaultLocale = appStore.language || 'zh-CN'
-} catch (error) {
+}
+catch (error) {
   console.warn('Unable to access app store during i18n initialization, using default locale')
 }
 

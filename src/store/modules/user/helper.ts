@@ -6,7 +6,7 @@ export interface UserInfo {
   avatar: string
   name: string
   userBalance: number
-  userGrade: string,
+  userGrade: string
   userName: string
   userId?: string | number // 添加userId字段
   roles?: Array<{
@@ -29,7 +29,7 @@ export function defaultSetting(): UserState {
       userGrade: '0',
       userName: '',
       userId: undefined, // 添加userId字段
-      roles: []
+      roles: [],
     },
   }
 }
@@ -42,4 +42,3 @@ export function getLocalState(): UserState {
 export function setLocalState(setting: UserState): void {
   ss.set(LOCAL_NAME, setting)
 }
-

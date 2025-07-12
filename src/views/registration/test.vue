@@ -1,292 +1,5 @@
-<template>
-  <div class="talent-page">
-    <!-- 统一顶栏 -->
-    <TalentHeader />
-
-    <!-- 页面标题区 -->
-    <section class="py-6 md:py-12 relative mt-20 md:mt-16">
-      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-30"></div>
-      <div class="container mx-auto px-10 relative z-10">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold mb-2 text-white">🧪 注册功能测试页面</h1>
-          <p class="text-gray-300 max-w-2xl mx-auto">测试设计师、企业、院校注册功能的开发工具</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 主体内容区 -->
-    <section class="flex-grow pb-8">
-      <div class="container mx-auto px-4">
-
-        <!-- 快速导航区 -->
-        <div class="glass-card rounded-lg glow-border p-6 mb-8">
-          <div class="flex items-center mb-6">
-            <i class="ri-navigation-line ri-lg text-gradient mr-2"></i>
-            <h2 class="text-xl font-bold text-white">快速导航</h2>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- 设计师注册 -->
-            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-4">
-                  <i class="ri-palette-line text-xl text-white"></i>
-                </div>
-                <div>
-                  <h3 class="text-lg font-medium text-white">设计师注册</h3>
-                  <p class="text-sm text-gray-400">测试设计师身份注册</p>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <button @click="goToDesignerRegistration" class="w-full neon-button py-2 px-4 text-sm">
-                  打开注册页面
-                </button>
-                <button @click="fillDesignerMockData" class="w-full secondary-button py-2 px-4 text-sm">
-                  生成Mock数据
-                </button>
-              </div>
-            </div>
-
-            <!-- 企业注册 -->
-            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg flex items-center justify-center mr-4">
-                  <i class="ri-building-line text-xl text-white"></i>
-                </div>
-                <div>
-                  <h3 class="text-lg font-medium text-white">企业注册</h3>
-                  <p class="text-sm text-gray-400">测试企业身份注册</p>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <button @click="goToEnterpriseRegistration" class="w-full neon-button py-2 px-4 text-sm">
-                  打开注册页面
-                </button>
-                <button @click="fillEnterpriseMockData" class="w-full secondary-button py-2 px-4 text-sm">
-                  生成Mock数据
-                </button>
-              </div>
-            </div>
-
-            <!-- 院校注册 -->
-            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center mr-4">
-                  <i class="ri-school-line text-xl text-white"></i>
-                </div>
-                <div>
-                  <h3 class="text-lg font-medium text-white">院校注册</h3>
-                  <p class="text-sm text-gray-400">测试院校身份注册</p>
-                </div>
-              </div>
-              <div class="space-y-2">
-                <button @click="goToSchoolRegistration" class="w-full neon-button py-2 px-4 text-sm">
-                  打开注册页面
-                </button>
-                <button @click="fillSchoolMockData" class="w-full secondary-button py-2 px-4 text-sm">
-                  生成Mock数据
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mock数据生成器 -->
-        <div class="glass-card rounded-lg glow-border p-6 mb-8">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center">
-              <i class="ri-code-line ri-lg text-gradient mr-2"></i>
-              <h2 class="text-xl font-bold text-white">Mock数据生成器</h2>
-            </div>
-            <div class="flex space-x-2">
-              <button @click="generateAllMockData" class="secondary-button px-4 py-2 text-sm">
-                生成全部
-              </button>
-              <button @click="clearAllMockData" class="secondary-button px-4 py-2 text-sm">
-                清空全部
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- 设计师Mock数据 -->
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-white flex items-center">
-                <i class="ri-palette-line mr-2"></i>
-                设计师数据
-              </h3>
-              <div class="bg-gray-900/50 rounded-lg p-4">
-                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.designer, null, 2) }}</pre>
-              </div>
-              <div class="flex space-x-2">
-                <button @click="copyMockData('designer')" class="flex-1 secondary-button py-2 text-xs">
-                  <i class="ri-file-copy-line mr-1"></i>复制
-                </button>
-                <button @click="testDesignerRegistration" class="flex-1 neon-button py-2 text-xs">
-                  <i class="ri-send-plane-line mr-1"></i>测试API
-                </button>
-              </div>
-            </div>
-
-            <!-- 企业Mock数据 -->
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-white flex items-center">
-                <i class="ri-building-line mr-2"></i>
-                企业数据
-              </h3>
-              <div class="bg-gray-900/50 rounded-lg p-4">
-                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.enterprise, null, 2) }}</pre>
-              </div>
-              <div class="flex space-x-2">
-                <button @click="copyMockData('enterprise')" class="flex-1 secondary-button py-2 text-xs">
-                  <i class="ri-file-copy-line mr-1"></i>复制
-                </button>
-                <button @click="testEnterpriseRegistration" class="flex-1 neon-button py-2 text-xs">
-                  <i class="ri-send-plane-line mr-1"></i>测试API
-                </button>
-              </div>
-            </div>
-
-            <!-- 院校Mock数据 -->
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-white flex items-center">
-                <i class="ri-school-line mr-2"></i>
-                院校数据
-              </h3>
-              <div class="bg-gray-900/50 rounded-lg p-4">
-                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.school, null, 2) }}</pre>
-              </div>
-              <div class="flex space-x-2">
-                <button @click="copyMockData('school')" class="flex-1 secondary-button py-2 text-xs">
-                  <i class="ri-file-copy-line mr-1"></i>复制
-                </button>
-                <button @click="testSchoolRegistration" class="flex-1 neon-button py-2 text-xs">
-                  <i class="ri-send-plane-line mr-1"></i>测试API
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- API测试工具 -->
-        <div class="glass-card rounded-lg glow-border p-6 mb-8">
-          <div class="flex items-center mb-6">
-            <i class="ri-api-line ri-lg text-gradient mr-2"></i>
-            <h2 class="text-xl font-bold text-white">API测试工具</h2>
-          </div>
-
-          <div class="space-y-4">
-            <!-- API测试结果 -->
-            <div v-if="apiTestResult" class="bg-gray-900/50 rounded-lg p-4">
-              <div class="flex items-center justify-between mb-2">
-                <h4 class="text-sm font-medium text-white">最后测试结果</h4>
-                <span :class="[
-                  'px-2 py-1 rounded text-xs',
-                  apiTestResult.success ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'
-                ]">
-                  {{ apiTestResult.success ? '成功' : '失败' }}
-                </span>
-              </div>
-              <pre class="text-xs text-gray-300 overflow-auto max-h-32">{{ JSON.stringify(apiTestResult.data, null, 2) }}</pre>
-            </div>
-
-            <!-- 测试按钮 -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                @click="testRegistrationAPI('designer')"
-                :disabled="apiTesting"
-                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <i class="ri-palette-line mr-2"></i>
-                {{ apiTesting ? '测试中...' : '测试设计师注册' }}
-              </button>
-
-              <button
-                @click="testRegistrationAPI('enterprise')"
-                :disabled="apiTesting"
-                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <i class="ri-building-line mr-2"></i>
-                {{ apiTesting ? '测试中...' : '测试企业注册' }}
-              </button>
-
-              <button
-                @click="testRegistrationAPI('school')"
-                :disabled="apiTesting"
-                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <i class="ri-school-line mr-2"></i>
-                {{ apiTesting ? '测试中...' : '测试院校注册' }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 测试场景 -->
-        <div class="glass-card rounded-lg glow-border p-6">
-          <div class="flex items-center mb-6">
-            <i class="ri-test-tube-line ri-lg text-gradient mr-2"></i>
-            <h2 class="text-xl font-bold text-white">测试场景</h2>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">极简注册测试</h4>
-              <p class="text-xs text-gray-400 mb-3">只填写必填字段进行注册</p>
-              <button @click="runMinimalRegistrationTest" class="w-full secondary-button py-2 text-xs">
-                运行测试
-              </button>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">完整注册测试</h4>
-              <p class="text-xs text-gray-400 mb-3">填写所有字段进行注册</p>
-              <button @click="runCompleteRegistrationTest" class="w-full secondary-button py-2 text-xs">
-                运行测试
-              </button>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">字段验证测试</h4>
-              <p class="text-xs text-gray-400 mb-3">测试表单验证规则</p>
-              <button @click="runValidationTest" class="w-full secondary-button py-2 text-xs">
-                运行测试
-              </button>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">重复名称测试</h4>
-              <p class="text-xs text-gray-400 mb-3">测试名称唯一性验证</p>
-              <button @click="runDuplicateNameTest" class="w-full secondary-button py-2 text-xs">
-                运行测试
-              </button>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">流程完整性测试</h4>
-              <p class="text-xs text-gray-400 mb-3">测试完整注册流程</p>
-              <button @click="runFullFlowTest" class="w-full secondary-button py-2 text-xs">
-                运行测试
-              </button>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
-              <h4 class="text-sm font-medium text-white mb-2">清理测试数据</h4>
-              <p class="text-xs text-gray-400 mb-3">清理所有测试产生的数据</p>
-              <button @click="cleanTestData" class="w-full secondary-button py-2 text-xs">
-                清理数据
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
@@ -309,7 +22,7 @@ const mockData = reactive({
     profession: 'UI_DESIGNER',
     workYears: 3,
     skillTags: ['UI设计', 'Figma', 'Sketch', 'Photoshop'],
-    description: '具有3年UI设计经验，擅长移动端界面设计和用户体验优化。'
+    description: '具有3年UI设计经验，擅长移动端界面设计和用户体验优化。',
   },
   enterprise: {
     enterpriseName: '创新科技有限公司',
@@ -319,7 +32,7 @@ const mockData = reactive({
     phone: '010-12345678',
     email: 'hr@innovation-tech.com',
     website: 'https://www.innovation-tech.com',
-    description: '专注于移动互联网产品开发，为用户提供优质的数字化解决方案。'
+    description: '专注于移动互联网产品开发，为用户提供优质的数字化解决方案。',
   },
   school: {
     schoolName: '北京设计学院',
@@ -329,8 +42,8 @@ const mockData = reactive({
     phone: '010-87654321',
     email: 'info@bda.edu.cn',
     website: 'https://www.bda.edu.cn',
-    description: '国内知名艺术设计院校，培养高水平设计人才。'
-  }
+    description: '国内知名艺术设计院校，培养高水平设计人才。',
+  },
 })
 
 // 导航方法
@@ -355,17 +68,16 @@ const generateAllMockData = () => {
 }
 
 const clearAllMockData = () => {
-  Object.keys(mockData.designer).forEach(key => {
-    if (key === 'skillTags') {
+  Object.keys(mockData.designer).forEach((key) => {
+    if (key === 'skillTags')
       mockData.designer[key] = []
-    } else {
+    else
       mockData.designer[key] = ''
-    }
   })
-  Object.keys(mockData.enterprise).forEach(key => {
+  Object.keys(mockData.enterprise).forEach((key) => {
     mockData.enterprise[key] = ''
   })
-  Object.keys(mockData.school).forEach(key => {
+  Object.keys(mockData.school).forEach((key) => {
     mockData.school[key] = ''
   })
   message.success('已清空所有Mock数据')
@@ -378,7 +90,7 @@ const generateDesignerMockData = () => {
     ['UI设计', 'Figma', 'Sketch'],
     ['用户研究', 'Axure', 'Principle'],
     ['品牌设计', 'AI', 'PS'],
-    ['交互设计', 'Framer', 'XD']
+    ['交互设计', 'Framer', 'XD'],
   ]
 
   const randomName = names[Math.floor(Math.random() * names.length)]
@@ -448,7 +160,8 @@ const copyMockData = async (type: string) => {
   try {
     await navigator.clipboard.writeText(JSON.stringify(mockData[type], null, 2))
     message.success('数据已复制到剪贴板')
-  } catch (err) {
+  }
+  catch (err) {
     message.error('复制失败，请手动复制')
   }
 }
@@ -472,19 +185,21 @@ const testRegistrationAPI = async (type: 'designer' | 'enterprise' | 'school') =
       data: {
         code: 200,
         message: '注册成功',
-        data: { id: Math.floor(Math.random() * 1000) }
-      }
+        data: { id: Math.floor(Math.random() * 1000) },
+      },
     }
 
     message.success(`${type}注册测试成功`)
-  } catch (error) {
+  }
+  catch (error) {
     apiTestResult.value = {
       success: false,
       type,
-      data: error
+      data: error,
     }
     message.error(`${type}注册测试失败`)
-  } finally {
+  }
+  finally {
     apiTesting.value = false
   }
 }
@@ -531,6 +246,342 @@ const testSchoolRegistration = () => testRegistrationAPI('school')
 // 初始化
 generateAllMockData()
 </script>
+
+<template>
+  <div class="talent-page">
+    <!-- 统一顶栏 -->
+    <TalentHeader />
+
+    <!-- 页面标题区 -->
+    <section class="py-6 md:py-12 relative mt-20 md:mt-16">
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-30" />
+      <div class="container mx-auto px-10 relative z-10">
+        <div class="text-center">
+          <h1 class="text-4xl font-bold mb-2 text-white">
+            🧪 注册功能测试页面
+          </h1>
+          <p class="text-gray-300 max-w-2xl mx-auto">
+            测试设计师、企业、院校注册功能的开发工具
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主体内容区 -->
+    <section class="flex-grow pb-8">
+      <div class="container mx-auto px-4">
+        <!-- 快速导航区 -->
+        <div class="glass-card rounded-lg glow-border p-6 mb-8">
+          <div class="flex items-center mb-6">
+            <i class="ri-navigation-line ri-lg text-gradient mr-2" />
+            <h2 class="text-xl font-bold text-white">
+              快速导航
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 设计师注册 -->
+            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-4">
+                  <i class="ri-palette-line text-xl text-white" />
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-white">
+                    设计师注册
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    测试设计师身份注册
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <button class="w-full neon-button py-2 px-4 text-sm" @click="goToDesignerRegistration">
+                  打开注册页面
+                </button>
+                <button class="w-full secondary-button py-2 px-4 text-sm" @click="fillDesignerMockData">
+                  生成Mock数据
+                </button>
+              </div>
+            </div>
+
+            <!-- 企业注册 -->
+            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg flex items-center justify-center mr-4">
+                  <i class="ri-building-line text-xl text-white" />
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-white">
+                    企业注册
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    测试企业身份注册
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <button class="w-full neon-button py-2 px-4 text-sm" @click="goToEnterpriseRegistration">
+                  打开注册页面
+                </button>
+                <button class="w-full secondary-button py-2 px-4 text-sm" @click="fillEnterpriseMockData">
+                  生成Mock数据
+                </button>
+              </div>
+            </div>
+
+            <!-- 院校注册 -->
+            <div class="bg-gray-800/50 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg flex items-center justify-center mr-4">
+                  <i class="ri-school-line text-xl text-white" />
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-white">
+                    院校注册
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    测试院校身份注册
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <button class="w-full neon-button py-2 px-4 text-sm" @click="goToSchoolRegistration">
+                  打开注册页面
+                </button>
+                <button class="w-full secondary-button py-2 px-4 text-sm" @click="fillSchoolMockData">
+                  生成Mock数据
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mock数据生成器 -->
+        <div class="glass-card rounded-lg glow-border p-6 mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+              <i class="ri-code-line ri-lg text-gradient mr-2" />
+              <h2 class="text-xl font-bold text-white">
+                Mock数据生成器
+              </h2>
+            </div>
+            <div class="flex space-x-2">
+              <button class="secondary-button px-4 py-2 text-sm" @click="generateAllMockData">
+                生成全部
+              </button>
+              <button class="secondary-button px-4 py-2 text-sm" @click="clearAllMockData">
+                清空全部
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 设计师Mock数据 -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-white flex items-center">
+                <i class="ri-palette-line mr-2" />
+                设计师数据
+              </h3>
+              <div class="bg-gray-900/50 rounded-lg p-4">
+                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.designer, null, 2) }}</pre>
+              </div>
+              <div class="flex space-x-2">
+                <button class="flex-1 secondary-button py-2 text-xs" @click="copyMockData('designer')">
+                  <i class="ri-file-copy-line mr-1" />复制
+                </button>
+                <button class="flex-1 neon-button py-2 text-xs" @click="testDesignerRegistration">
+                  <i class="ri-send-plane-line mr-1" />测试API
+                </button>
+              </div>
+            </div>
+
+            <!-- 企业Mock数据 -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-white flex items-center">
+                <i class="ri-building-line mr-2" />
+                企业数据
+              </h3>
+              <div class="bg-gray-900/50 rounded-lg p-4">
+                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.enterprise, null, 2) }}</pre>
+              </div>
+              <div class="flex space-x-2">
+                <button class="flex-1 secondary-button py-2 text-xs" @click="copyMockData('enterprise')">
+                  <i class="ri-file-copy-line mr-1" />复制
+                </button>
+                <button class="flex-1 neon-button py-2 text-xs" @click="testEnterpriseRegistration">
+                  <i class="ri-send-plane-line mr-1" />测试API
+                </button>
+              </div>
+            </div>
+
+            <!-- 院校Mock数据 -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-white flex items-center">
+                <i class="ri-school-line mr-2" />
+                院校数据
+              </h3>
+              <div class="bg-gray-900/50 rounded-lg p-4">
+                <pre class="text-xs text-green-400 overflow-auto max-h-40">{{ JSON.stringify(mockData.school, null, 2) }}</pre>
+              </div>
+              <div class="flex space-x-2">
+                <button class="flex-1 secondary-button py-2 text-xs" @click="copyMockData('school')">
+                  <i class="ri-file-copy-line mr-1" />复制
+                </button>
+                <button class="flex-1 neon-button py-2 text-xs" @click="testSchoolRegistration">
+                  <i class="ri-send-plane-line mr-1" />测试API
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- API测试工具 -->
+        <div class="glass-card rounded-lg glow-border p-6 mb-8">
+          <div class="flex items-center mb-6">
+            <i class="ri-api-line ri-lg text-gradient mr-2" />
+            <h2 class="text-xl font-bold text-white">
+              API测试工具
+            </h2>
+          </div>
+
+          <div class="space-y-4">
+            <!-- API测试结果 -->
+            <div v-if="apiTestResult" class="bg-gray-900/50 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="text-sm font-medium text-white">
+                  最后测试结果
+                </h4>
+                <span
+                  class="px-2 py-1 rounded text-xs" :class="[
+                    apiTestResult.success ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400',
+                  ]"
+                >
+                  {{ apiTestResult.success ? '成功' : '失败' }}
+                </span>
+              </div>
+              <pre class="text-xs text-gray-300 overflow-auto max-h-32">{{ JSON.stringify(apiTestResult.data, null, 2) }}</pre>
+            </div>
+
+            <!-- 测试按钮 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                :disabled="apiTesting"
+                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="testRegistrationAPI('designer')"
+              >
+                <i class="ri-palette-line mr-2" />
+                {{ apiTesting ? '测试中...' : '测试设计师注册' }}
+              </button>
+
+              <button
+                :disabled="apiTesting"
+                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="testRegistrationAPI('enterprise')"
+              >
+                <i class="ri-building-line mr-2" />
+                {{ apiTesting ? '测试中...' : '测试企业注册' }}
+              </button>
+
+              <button
+                :disabled="apiTesting"
+                class="neon-button py-3 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="testRegistrationAPI('school')"
+              >
+                <i class="ri-school-line mr-2" />
+                {{ apiTesting ? '测试中...' : '测试院校注册' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 测试场景 -->
+        <div class="glass-card rounded-lg glow-border p-6">
+          <div class="flex items-center mb-6">
+            <i class="ri-test-tube-line ri-lg text-gradient mr-2" />
+            <h2 class="text-xl font-bold text-white">
+              测试场景
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                极简注册测试
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                只填写必填字段进行注册
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="runMinimalRegistrationTest">
+                运行测试
+              </button>
+            </div>
+
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                完整注册测试
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                填写所有字段进行注册
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="runCompleteRegistrationTest">
+                运行测试
+              </button>
+            </div>
+
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                字段验证测试
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                测试表单验证规则
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="runValidationTest">
+                运行测试
+              </button>
+            </div>
+
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                重复名称测试
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                测试名称唯一性验证
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="runDuplicateNameTest">
+                运行测试
+              </button>
+            </div>
+
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                流程完整性测试
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                测试完整注册流程
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="runFullFlowTest">
+                运行测试
+              </button>
+            </div>
+
+            <div class="bg-gray-800/50 rounded-lg p-4 card-hover">
+              <h4 class="text-sm font-medium text-white mb-2">
+                清理测试数据
+              </h4>
+              <p class="text-xs text-gray-400 mb-3">
+                清理所有测试产生的数据
+              </p>
+              <button class="w-full secondary-button py-2 text-xs" @click="cleanTestData">
+                清理数据
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
 
 <style scoped>
 /* 深色主题样式定义 */

@@ -1,9 +1,9 @@
-import { ref, reactive, computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useDesignerStore } from '@/stores/talent/designer'
-import type { DesignerQueryParams, Profession, SkillTag, WorkStatus } from '@/types/talent/designer'
+import type { DesignerQueryParams, Profession, WorkStatus } from '@/types/talent/designer'
 // 添加mock数据导入，用于支持环境变量切换
 import { mockDesigners, mockWorks } from '@/data/mockDesigners'
-import { ProfessionLabels, WorkStatusLabels } from '@/types/talent/designer'
+import ProfessionUtils from '@/utils/professionUtils'
 import SkillTagUtils from '@/utils/skillTagUtils'
 import { shouldUseMockData } from '@/utils/authUtils'
 import { useUserStore } from '@/store/modules/user'
@@ -20,7 +20,7 @@ export function useDesigner() {
   // 筛选参数
   const queryParams = reactive<DesignerQueryParams>({
     pageNum: 1,
-    pageSize: 20
+    pageSize: 20,
   })
 
   // 搜索关键词
@@ -45,40 +45,38 @@ export function useDesigner() {
         let filtered = [...mockDesigners]
 
         // 按职业筛选
-        if (queryParams.profession) {
+        if (queryParams.profession)
           filtered = filtered.filter(d => d.profession === queryParams.profession)
-        }
 
         // 按地区筛选
-        if (queryParams.location) {
+        if (queryParams.location)
           filtered = filtered.filter(d => d.location?.includes(queryParams.location || ''))
-        }
 
         // 按工作状态筛选
-        if (queryParams.workStatus) {
+        if (queryParams.workStatus)
           filtered = filtered.filter(d => d.workStatus === queryParams.workStatus)
-        }
 
         // 按工作年限筛选
-        if (queryParams.minExperience !== undefined) {
+        if (queryParams.minExperience !== undefined)
           filtered = filtered.filter(d => (d.workYears || d.experience || 0) >= queryParams.minExperience!)
-        }
-        if (queryParams.maxExperience !== undefined) {
+
+        if (queryParams.maxExperience !== undefined)
           filtered = filtered.filter(d => (d.workYears || d.experience || 0) <= queryParams.maxExperience!)
-        }
 
         // 按姓名搜索
-        if (queryParams.designerName) {
+        if (queryParams.designerName)
           filtered = filtered.filter(d => d.designerName.includes(queryParams.designerName!))
-        }
 
         mockDesignerList.value = filtered
-      } catch (error) {
+      }
+      catch (error) {
         console.error('获取设计师列表失败:', error)
-      } finally {
+      }
+      finally {
         mockLoading.value = false
       }
-    } else {
+    }
+    else {
       console.log('🚀 使用后端API - 设计师列表')
       await store.fetchDesigners(queryParams, reset)
     }
@@ -87,18 +85,18 @@ export function useDesigner() {
   // 搜索设计师
   const searchDesigners = async () => {
     if (shouldUseMockData()) {
-      if (searchKeyword.value.trim()) {
+      if (searchKeyword.value.trim())
         queryParams.designerName = searchKeyword.value.trim()
-      } else {
+      else
         delete queryParams.designerName
-      }
+
       await fetchDesigners(true)
-    } else {
-      if (searchKeyword.value.trim()) {
+    }
+    else {
+      if (searchKeyword.value.trim())
         await store.searchDesigner(searchKeyword.value.trim())
-      } else {
+      else
         await fetchDesigners(true)
-      }
     }
   }
 
@@ -113,13 +111,14 @@ export function useDesigner() {
       location: undefined,
       workStatus: undefined,
       minExperience: undefined,
-      maxExperience: undefined
+      maxExperience: undefined,
     })
     searchKeyword.value = ''
 
     if (shouldUseMockData()) {
       mockDesignerList.value = [...mockDesigners]
-    } else {
+    }
+    else {
       store.resetDesigners()
       await fetchDesigners(true)
     }
@@ -129,7 +128,8 @@ export function useDesigner() {
   const applyFilters = async () => {
     if (shouldUseMockData()) {
       await fetchDesigners(true)
-    } else {
+    }
+    else {
       store.resetDesigners()
       await fetchDesigners(true)
     }
@@ -139,8 +139,9 @@ export function useDesigner() {
   const loadMoreDesigners = async () => {
     if (shouldUseMockData()) {
       // Mock数据一次性加载完毕，无需分页
-      return
-    } else {
+
+    }
+    else {
       await store.loadMore(queryParams)
     }
   }
@@ -150,17 +151,18 @@ export function useDesigner() {
     const uniqueProfessions = [...new Set(mockDesigners.map(d => d.profession))]
     return uniqueProfessions.map(profession => ({
       value: profession,
-      label: ProfessionLabels[profession] || profession
+      label: ProfessionUtils.getDisplayName(profession),
     }))
   }
 
   const getSkillTags = () => {
     const allSkills = new Set<string>()
-    mockDesigners.forEach(designer => {
+    mockDesigners.forEach((designer) => {
       try {
         const skills = SkillTagUtils.parseSkillTags(designer.skillTags)
         skills.forEach(skill => allSkills.add(skill))
-      } catch (error) {
+      }
+      catch (error) {
         console.error('解析技能标签失败:', error)
       }
     })
@@ -171,7 +173,7 @@ export function useDesigner() {
     const uniqueCities = [...new Set(mockDesigners
       .map(d => d.location)
       .filter((location): location is string => !!location)
-      .map(location => location.split('市')[0] + '市')
+      .map(location => `${location.split('市')[0]}市`),
     )]
     return uniqueCities.sort()
   }
@@ -182,7 +184,7 @@ export function useDesigner() {
       { value: 'EMPLOYED', label: '在职' },
       { value: 'FREELANCER', label: '自由职业' },
       { value: 'SEEKING', label: '求职中' },
-      { value: 'STUDENT', label: '学生' }
+      { value: 'STUDENT', label: '学生' },
     ]
   }
 
@@ -191,17 +193,18 @@ export function useDesigner() {
     const uniqueProfessions = [...new Set(store.designers.map(d => d.profession))]
     return uniqueProfessions.map(profession => ({
       value: profession,
-      label: ProfessionLabels[profession] || profession
+      label: ProfessionUtils.getDisplayName(profession),
     }))
   }
 
   const getApiSkillTags = () => {
     const allSkills = new Set<string>()
-    store.designers.forEach(designer => {
+    store.designers.forEach((designer) => {
       try {
         const skills = SkillTagUtils.parseSkillTags(designer.skillTags)
         skills.forEach(skill => allSkills.add(skill))
-      } catch (error) {
+      }
+      catch (error) {
         console.error('解析技能标签失败:', error)
       }
     })
@@ -212,7 +215,7 @@ export function useDesigner() {
     const uniqueCities = [...new Set(store.designers
       .map(d => d.location)
       .filter((location): location is string => !!location)
-      .map(location => location.split('市')[0] + '市')
+      .map(location => `${location.split('市')[0]}市`),
     )]
     return uniqueCities.sort()
   }
@@ -246,7 +249,7 @@ export function useDesigner() {
     applyFilters,
     loadMoreDesigners,
     getDesignerWorksCount,
-    fetchFilterOptions: shouldUseMockData() ? () => Promise.resolve() : store.fetchFilterOptions
+    fetchFilterOptions: shouldUseMockData() ? () => Promise.resolve() : store.fetchFilterOptions,
   }
 }
 
@@ -258,8 +261,8 @@ export function useDesignerDetail() {
     if (shouldUseMockData()) {
       console.log('🔧 使用模拟数据 - 设计师详情')
       // Mock模式下不需要获取详情，因为列表中已包含所有信息
-      return
-    } else {
+    }
+    else {
       console.log('🚀 使用后端API - 设计师详情')
       await store.fetchDesignerDetail(id)
     }
@@ -267,9 +270,8 @@ export function useDesignerDetail() {
 
   // 重置设计师详情
   const resetDesignerDetail = () => {
-    if (!shouldUseMockData()) {
+    if (!shouldUseMockData())
       store.resetCurrentDesigner()
-    }
   }
 
   return {
@@ -283,7 +285,7 @@ export function useDesignerDetail() {
 
     // 方法
     fetchDesignerDetail,
-    resetDesignerDetail
+    resetDesignerDetail,
   }
 }
 
@@ -310,21 +312,17 @@ export function useDesignerFilter() {
   const getFilterParams = (): DesignerQueryParams => {
     const params: DesignerQueryParams = {}
 
-    if (selectedProfessions.value.length > 0) {
+    if (selectedProfessions.value.length > 0)
       params.profession = selectedProfessions.value[0] as Profession // 简化处理，只取第一个
-    }
 
-    if (selectedSkillTags.value.length > 0) {
+    if (selectedSkillTags.value.length > 0)
       params.skillTags = selectedSkillTags.value.join(',')
-    }
 
-    if (selectedRegion.value) {
+    if (selectedRegion.value)
       params.location = selectedRegion.value
-    }
 
-    if (selectedWorkStatus.value) {
+    if (selectedWorkStatus.value)
       params.workStatus = selectedWorkStatus.value
-    }
 
     if (advancedFilter.value) {
       params.minExperience = 0
@@ -345,7 +343,7 @@ export function useDesignerFilter() {
 
     // 方法
     resetFilters,
-    getFilterParams
+    getFilterParams,
   }
 }
 
@@ -355,7 +353,7 @@ export function useDesignerSort() {
     { label: '最近活跃', value: 'recent_active' },
     { label: '工作年限', value: 'experience' },
     { label: '作品数量', value: 'works_count' },
-    { label: '注册时间', value: 'created_at' }
+    { label: '注册时间', value: 'created_at' },
   ]
 
   const currentSort = ref('recent_active')
@@ -363,13 +361,13 @@ export function useDesignerSort() {
   const getSortParams = () => {
     return {
       orderBy: currentSort.value,
-      orderDirection: 'desc'
+      orderDirection: 'desc',
     }
   }
 
   return {
     sortOptions,
     currentSort,
-    getSortParams
+    getSortParams,
   }
 }

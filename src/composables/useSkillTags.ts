@@ -8,8 +8,8 @@
  * 3. 按照分类显示不同颜色（tool/field/skill）
  */
 
-import { computed, ref, unref, type Ref, type ComputedRef } from 'vue'
-import SkillTagUtils, { type SkillTagCategory, type SkillTagData, type CategoryStats } from '@/utils/skillTagUtils'
+import { type ComputedRef, type Ref, computed, unref } from 'vue'
+import SkillTagUtils, { type CategoryStats, type SkillTagCategory, type SkillTagData } from '@/utils/skillTagUtils'
 
 export interface UseSkillTagsOptions {
   defaultCategory?: SkillTagCategory
@@ -53,17 +53,14 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
 
     let classes = `${baseClass} ${categoryClass}`
 
-    if (size && size !== 'md') {
+    if (size && size !== 'md')
       classes += ` skill-tag-${size}`
-    }
 
-    if (selected) {
+    if (selected)
       classes += ' selected'
-    }
 
-    if (disabled) {
+    if (disabled)
       classes += ' disabled'
-    }
 
     return classes
   }
@@ -159,20 +156,20 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
       bg: 'bg-blue-500/20',
       text: 'text-blue-400',
       border: 'border-blue-500/30',
-      ring: 'ring-blue-400'
+      ring: 'ring-blue-400',
     },
     field: {
       bg: 'bg-purple-500/20',
       text: 'text-purple-400',
       border: 'border-purple-500/30',
-      ring: 'ring-purple-400'
+      ring: 'ring-purple-400',
     },
     skill: {
       bg: 'bg-pink-500/20',
       text: 'text-pink-400',
       border: 'border-pink-500/30',
-      ring: 'ring-pink-400'
-    }
+      ring: 'ring-pink-400',
+    },
   }
 
   /**
@@ -181,16 +178,16 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
   const predefinedTags = {
     tools: [
       'Figma', 'Sketch', 'Photoshop', 'Illustrator', 'After Effects',
-      'Adobe XD', 'InVision', 'Framer', 'Principle', 'Axure RP', 'Lottie'
+      'Adobe XD', 'InVision', 'Framer', 'Principle', 'Axure RP', 'Lottie',
     ],
     fields: [
       '交互设计', 'UI设计', '品牌设计', '产品设计', '动效设计', '游戏美术',
-      '网页设计', '移动端设计', '平面设计', 'LOGO设计'
+      '网页设计', '移动端设计', '平面设计', 'LOGO设计',
     ],
     skills: [
       '用户体验', '用户研究', '原型设计', '设计系统', '信息架构', '视觉系统',
-      '用户测试', '用户画像', '用户旅程', '可用性测试'
-    ]
+      '用户测试', '用户画像', '用户旅程', '可用性测试',
+    ],
   }
 
   /**
@@ -322,7 +319,7 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
     groupAndSortTagsByCategory,
     getSortedCategories,
     createSortedTags,
-    createGroupedSortedTags
+    createGroupedSortedTags,
   }
 }
 
@@ -331,5 +328,5 @@ export function useSkillTags(options: UseSkillTagsOptions = {}) {
  * 仅使用默认主题
  */
 export const globalSkillTagState = {
-  theme: 'default' as const
+  theme: 'default' as const,
 }

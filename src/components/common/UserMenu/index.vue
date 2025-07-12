@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { h } from 'vue'
-import { NMenu, NIcon } from 'naive-ui'
+import { NIcon, NMenu } from 'naive-ui'
 import {
+  LogOut as out,
   Settings as settings,
   Storefront as storefront,
-  LogOut as out
 } from '@vicons/ionicons5'
+
+const emit = defineEmits(['select'])
 
 function renderIcon(icon: any) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -15,21 +17,19 @@ const menuOptions = [
   {
     label: '账号设置',
     key: 'accountSettings',
-    icon: renderIcon(settings)
+    icon: renderIcon(settings),
   },
   {
     label: '购买套餐',
     key: 'buy',
-    icon: renderIcon(storefront)
+    icon: renderIcon(storefront),
   },
   {
     label: '退出账号',
     key: 'logout',
-    icon: renderIcon(out)
-  }
+    icon: renderIcon(out),
+  },
 ]
-
-const emit = defineEmits(['select'])
 
 function handleSelect(key: string) {
   emit('select', key)

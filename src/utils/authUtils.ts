@@ -21,7 +21,7 @@ export function getLoginStatus() {
     hasToken: !!token,
     hasValidUser: !!(userStore.userInfo?.name && userStore.userInfo.name !== '熊猫助手'),
     isLoggedIn: isLoggedIn(),
-    userInfo: userStore.userInfo
+    userInfo: userStore.userInfo,
   }
 }
 
@@ -50,7 +50,7 @@ export function hasProfessionalRole(): boolean {
   const professionalRoleIds = [
     '1932319128081666050', // 设计师
     '1932319128081666051', // 企业管理员
-    '1932319128081666052'  // 院校管理员
+    '1932319128081666052', // 院校管理员
   ]
 
   return roles.some(role => professionalRoleIds.includes(String(role.roleId)))
@@ -64,17 +64,19 @@ export function getCurrentRole() {
   const userStore = useUserStore()
   const roles = userStore.userInfo?.roles || []
 
-  if (roles.length === 0) return null
+  if (roles.length === 0)
+    return null
 
   // 优先返回专业角色
   const professionalRoleIds = [
     '1932319128081666050', // 设计师
     '1932319128081666051', // 企业管理员
-    '1932319128081666052'  // 院校管理员
+    '1932319128081666052', // 院校管理员
   ]
 
   const professionalRole = roles.find(role => professionalRoleIds.includes(String(role.roleId)))
-  if (professionalRole) return professionalRole
+  if (professionalRole)
+    return professionalRole
 
   // 如果没有专业角色，返回第一个角色
   return roles[0]
@@ -95,14 +97,12 @@ export function needsRoleSelection(): boolean {
  */
 export function shouldUseMockData(): boolean {
   // 如果环境变量明确设置为true，强制使用mock数据
-  if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+  if (import.meta.env.VITE_USE_MOCK_DATA === 'true')
     return true
-  }
 
   // 如果环境变量明确设置为false，强制使用后端API
-  if (import.meta.env.VITE_USE_MOCK_DATA === 'false') {
+  if (import.meta.env.VITE_USE_MOCK_DATA === 'false')
     return false
-  }
 
   // 默认情况下，根据登录状态决定：未登录使用mock，登录后使用API
   return !isLoggedIn()

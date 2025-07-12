@@ -18,16 +18,18 @@
 ### 基础用法
 
 ```vue
-<template>
-  <div class="header">
-    <div class="logo">星海人才</div>
-    <TalentUserMenu />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { TalentUserMenu } from '@/components/talent'
 </script>
+
+<template>
+  <div class="header">
+    <div class="logo">
+      星海人才
+    </div>
+    <TalentUserMenu />
+  </div>
+</template>
 ```
 
 ### 在导航栏中使用

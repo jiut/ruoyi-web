@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计师身份注册</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0a84ff',secondary:'#bf5af2'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: #000000;
+    color: #E2E8F0;
+    min-height: 100vh;
+}
+.glass-card {
+    background: rgba(28, 28, 30, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(99, 99, 102, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.glow-input:focus {
+    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.5);
+}
+.gradient-text {
+    background: linear-gradient(90deg, #007AFF, #AF52DE, #FF2D92);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.gradient-bg {
+    background: linear-gradient(37deg, #007AFF, #AF52DE, #FF2D92);
+}
+.gradient-border {
+    position: relative;
+}
+.gradient-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(90deg, #007AFF, #AF52DE, #FF2D92);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+.skill-tag {
+    transition: all 0.3s ease;
+}
+.skill-tag-ui {
+    background: rgba(10, 132, 255, 0.2);
+    border: 1px solid rgba(10, 132, 255, 0.3);
+}
+.skill-tag-visual {
+    background: rgba(191, 90, 242, 0.2);
+    border: 1px solid rgba(191, 90, 242, 0.3);
+}
+.skill-tag-tool {
+    background: rgba(255, 45, 146, 0.2);
+    border: 1px solid rgba(255, 45, 146, 0.3);
+}
+.skill-tag-tech {
+    background: rgba(48, 209, 88, 0.2);
+    border: 1px solid rgba(48, 209, 88, 0.3);
+}
+.progress-step {
+    transition: all 0.3s ease;
+}
+.progress-step.active {
+    background: linear-gradient(90deg, #007AFF, #AF52DE);
+}
+.avatar-upload {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(255, 255, 255, 0.5)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M12 4v16m8-8H4'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 24px;
+}
+.shimmer-button {
+    position: relative;
+    overflow: hidden;
+}
+.shimmer-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+    100% {
+        left: 150%;
+    }
+}
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(99, 99, 102, 0.3);
+    border-radius: 3px;
+    outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #007AFF, #AF52DE);
+    cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #007AFF, #AF52DE);
+    cursor: pointer;
+    border: none;
+}
+.custom-checkbox {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: rgba(28, 28, 30, 0.8);
+    border: 1px solid rgba(99, 99, 102, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.custom-checkbox.checked {
+    background: linear-gradient(90deg, #007AFF, #AF52DE);
+    border-color: transparent;
+}
+.custom-checkbox.checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.custom-radio {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: rgba(28, 28, 30, 0.8);
+    border: 1px solid rgba(99, 99, 102, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.custom-radio.checked {
+    border-color: #0a84ff;
+}
+.custom-radio.checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #007AFF, #AF52DE);
+}
+</style>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+    <!-- 标题区 -->
+    <header class="w-full py-8 gradient-bg">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">🎨 设计师身份注册</h1>
+            <p class="text-gray-200">完善您的设计师档案，开启专业设计之旅</p>
+        </div>
+    </header>
+
+    <!-- 主表单卡片 -->
+    <main class="flex-1 container mx-auto px-4 py-8">
+        <div class="glass-card max-w-6xl mx-auto rounded-lg overflow-hidden">
+            <!-- 进度指示器 -->
+            <div class="flex justify-center py-6 px-4 border-b border-gray-700">
+                <div class="flex items-center">
+                    <div class="progress-step active w-8 h-8 rounded-full flex items-center justify-center text-white font-medium">1</div>
+                    <div class="w-16 h-1 bg-gray-700"></div>
+                    <div class="progress-step w-8 h-8 rounded-full flex items-center justify-center bg-gray-700 text-white font-medium">2</div>
+                    <div class="w-16 h-1 bg-gray-700"></div>
+                    <div class="progress-step w-8 h-8 rounded-full flex items-center justify-center bg-gray-700 text-white font-medium">3</div>
+                </div>
+            </div>
+
+            <!-- 必填说明 -->
+            <div class="px-6 py-4 text-sm text-gray-400">
+                <span class="text-red-500">*</span> 为必填项，其他为选填项
+            </div>
+
+            <!-- 表单内容 -->
+            <form id="designerForm" class="px-6 pb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 左栏：基础信息 -->
+                    <div>
+                        <div class="mb-6">
+                            <h2 class="text-xl font-bold mb-4 flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/20 text-primary mr-2">
+                                    <i class="ri-user-line"></i>
+                                </div>
+                                基础信息
+                            </h2>
+
+                            <!-- 姓名 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">
+                                    姓名 <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="请输入您的真实姓名">
+                            </div>
+
+                            <!-- 头像上传 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">头像</label>
+                                <div class="flex items-center">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden bg-gray-800 avatar-upload flex items-center justify-center mr-4"></div>
+                                    <button type="button" class="px-4 py-2 bg-gray-800 border border-gray-600 rounded text-gray-300 hover:bg-gray-700 transition-colors !rounded-button whitespace-nowrap">选择图片</button>
+                                </div>
+                            </div>
+
+                            <!-- 性别和出生日期 -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-gray-300 mb-2">性别</label>
+                                    <div class="relative">
+                                        <div class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 flex justify-between items-center cursor-pointer">
+                                            <span id="genderText">请选择</span>
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        </div>
+                                        <div id="genderDropdown" class="hidden absolute z-10 w-full mt-1 bg-[rgba(28,28,30,0.9)] border border-gray-700 rounded shadow-lg">
+                                            <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="male">男</div>
+                                            <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="female">女</div>
+                                            <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="other">其他</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 mb-2">出生日期</label>
+                                    <input type="date" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary">
+                                </div>
+                            </div>
+
+                            <!-- 手机号和邮箱 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">
+                                    手机号 <span class="text-red-500">*</span>
+                                </label>
+                                <input type="tel" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="请输入您的手机号码">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">
+                                    邮箱 <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="请输入您的邮箱地址">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右栏：专业信息 -->
+                    <div>
+                        <div class="mb-6">
+                            <h2 class="text-xl font-bold mb-4 flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-secondary/20 text-secondary mr-2">
+                                    <i class="ri-briefcase-line"></i>
+                                </div>
+                                专业信息
+                            </h2>
+
+                            <!-- 职业类型 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">
+                                    职业类型 <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 flex justify-between items-center cursor-pointer">
+                                        <span id="jobTypeText">请选择您的职业类型</span>
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                    <div id="jobTypeDropdown" class="hidden absolute z-10 w-full mt-1 bg-[rgba(28,28,30,0.9)] border border-gray-700 rounded shadow-lg max-h-60 overflow-y-auto">
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="ui">UI 设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="ux">UX 设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="visual">视觉设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="interaction">交互设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="product">产品设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="graphic">平面设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="motion">动效设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="3d">3D 设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="game">游戏美术设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="industrial">工业设计师</div>
+                                        <div class="py-2 px-4 hover:bg-gray-800 cursor-pointer" data-value="other">其他设计师</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 工作年限 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">工作年限</label>
+                                <div class="flex items-center">
+                                    <input type="range" min="0" max="20" value="3" class="flex-1 mr-4" id="experienceRange">
+                                    <span class="text-white font-medium w-8" id="experienceValue">3</span>
+                                    <span class="text-gray-400 ml-1">年</span>
+                                </div>
+                            </div>
+
+                            <!-- 技能标签 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">技能标签</label>
+                                <div class="relative mb-2">
+                                    <input type="text" id="skillInput" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="输入技能标签，按回车添加">
+                                </div>
+                                <div id="skillTags" class="flex flex-wrap gap-2 min-h-8">
+                                    <span class="skill-tag skill-tag-ui px-3 py-1 rounded-full text-sm flex items-center">
+                                        Figma
+                                        <button type="button" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20">
+                                            <i class="ri-close-line text-xs"></i>
+                                        </button>
+                                    </span>
+                                    <span class="skill-tag skill-tag-ui px-3 py-1 rounded-full text-sm flex items-center">
+                                        UI 设计
+                                        <button type="button" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20">
+                                            <i class="ri-close-line text-xs"></i>
+                                        </button>
+                                    </span>
+                                    <span class="skill-tag skill-tag-visual px-3 py-1 rounded-full text-sm flex items-center">
+                                        Photoshop
+                                        <button type="button" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20">
+                                            <i class="ri-close-line text-xs"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- 个人简介 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">个人简介</label>
+                                <textarea class="w-full h-24 bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="请简要介绍您的设计经历、专长和风格特点"></textarea>
+                            </div>
+
+                            <!-- 作品集链接 -->
+                            <div class="mb-4">
+                                <label class="block text-gray-300 mb-2">作品集链接</label>
+                                <input type="url" class="w-full bg-[rgba(28,28,30,0.8)] border border-gray-700 rounded text-white px-4 py-3 glow-input focus:outline-none focus:border-primary" placeholder="请输入您的作品集网址（如 Behance、Dribbble 等）">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 隐私协议 -->
+                <div class="border-t border-gray-700 pt-6 mt-6">
+                    <div class="flex items-start mb-6">
+                        <div id="privacyCheckbox" class="custom-checkbox mt-1 mr-3"></div>
+                        <div>
+                            <p class="text-gray-300 text-sm">我已阅读并同意 <a href="#" class="text-primary">《用户协议》</a>和<a href="#" class="text-primary">《隐私政策》</a></p>
+                            <p class="text-gray-500 text-xs mt-1">我们将严格保护您的个人信息安全，未经您的许可不会向第三方透露</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="flex justify-center space-x-4 border-t border-gray-700 pt-6">
+                    <button type="button" id="skipButton" class="px-6 py-3 bg-transparent border border-gray-600 rounded text-gray-300 hover:bg-gray-800 transition-colors !rounded-button whitespace-nowrap">稍后完善</button>
+                    <button type="submit" class="px-6 py-3 gradient-bg rounded text-white font-medium shimmer-button !rounded-button whitespace-nowrap">完成注册</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- 跳过确认弹窗 -->
+    <div id="skipModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="glass-card rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 mb-4">
+                    <i class="ri-question-line ri-2x"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">确认跳过信息完善？</h3>
+                <p class="text-gray-400 text-center mb-6">完善资料有助于获得更多机会、提升排名、展示能力</p>
+                <div class="flex space-x-4 w-full">
+                    <button id="continueButton" class="flex-1 py-3 bg-transparent border border-gray-600 rounded text-gray-300 hover:bg-gray-800 transition-colors !rounded-button whitespace-nowrap">继续完善</button>
+                    <button id="confirmSkipButton" class="flex-1 py-3 gradient-bg rounded text-white font-medium !rounded-button whitespace-nowrap">稍后完善</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="form-interactions">
+document.addEventListener('DOMContentLoaded', function() {
+    // 性别下拉菜单交互
+    const genderSelector = document.querySelector('#genderText').parentElement;
+    const genderDropdown = document.querySelector('#genderDropdown');
+    const genderOptions = document.querySelectorAll('#genderDropdown div');
+    const genderText = document.querySelector('#genderText');
+
+    genderSelector.addEventListener('click', function() {
+        genderDropdown.classList.toggle('hidden');
+    });
+
+    genderOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            genderText.textContent = this.textContent;
+            genderDropdown.classList.add('hidden');
+        });
+    });
+
+    // 职业类型下拉菜单交互
+    const jobTypeSelector = document.querySelector('#jobTypeText').parentElement;
+    const jobTypeDropdown = document.querySelector('#jobTypeDropdown');
+    const jobTypeOptions = document.querySelectorAll('#jobTypeDropdown div');
+    const jobTypeText = document.querySelector('#jobTypeText');
+
+    jobTypeSelector.addEventListener('click', function() {
+        jobTypeDropdown.classList.toggle('hidden');
+    });
+
+    jobTypeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            jobTypeText.textContent = this.textContent;
+            jobTypeDropdown.classList.add('hidden');
+        });
+    });
+
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', function(event) {
+        if (!genderSelector.contains(event.target)) {
+            genderDropdown.classList.add('hidden');
+        }
+        if (!jobTypeSelector.contains(event.target)) {
+            jobTypeDropdown.classList.add('hidden');
+        }
+    });
+
+    // 工作年限滑块交互
+    const experienceRange = document.querySelector('#experienceRange');
+    const experienceValue = document.querySelector('#experienceValue');
+
+    experienceRange.addEventListener('input', function() {
+        experienceValue.textContent = this.value;
+    });
+
+    // 技能标签添加交互
+    const skillInput = document.querySelector('#skillInput');
+    const skillTags = document.querySelector('#skillTags');
+
+    skillInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && this.value.trim() !== '') {
+            e.preventDefault();
+
+            // 创建新标签
+            const tagType = getRandomTagType();
+            const newTag = document.createElement('span');
+            newTag.className = `skill-tag skill-tag-${tagType} px-3 py-1 rounded-full text-sm flex items-center`;
+
+            newTag.innerHTML = `
+                ${this.value.trim()}
+                <button type="button" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20">
+                    <i class="ri-close-line text-xs"></i>
+                </button>
+            `;
+
+            // 添加删除功能
+            const deleteButton = newTag.querySelector('button');
+            deleteButton.addEventListener('click', function() {
+                newTag.remove();
+            });
+
+            skillTags.appendChild(newTag);
+            this.value = '';
+        }
+    });
+
+    // 随机获取标签类型
+    function getRandomTagType() {
+        const types = ['ui', 'visual', 'tool', 'tech'];
+        return types[Math.floor(Math.random() * types.length)];
+    }
+
+    // 删除已有标签
+    const existingDeleteButtons = document.querySelectorAll('#skillTags button');
+    existingDeleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.parentElement.remove();
+        });
+    });
+
+    // 隐私协议复选框交互
+    const privacyCheckbox = document.querySelector('#privacyCheckbox');
+    let isChecked = false;
+
+    privacyCheckbox.addEventListener('click', function() {
+        isChecked = !isChecked;
+        if (isChecked) {
+            this.classList.add('checked');
+        } else {
+            this.classList.remove('checked');
+        }
+    });
+
+    // 跳过确认弹窗交互
+    const skipButton = document.querySelector('#skipButton');
+    const skipModal = document.querySelector('#skipModal');
+    const continueButton = document.querySelector('#continueButton');
+    const confirmSkipButton = document.querySelector('#confirmSkipButton');
+
+    skipButton.addEventListener('click', function() {
+        skipModal.classList.remove('hidden');
+    });
+
+    continueButton.addEventListener('click', function() {
+        skipModal.classList.add('hidden');
+    });
+
+    confirmSkipButton.addEventListener('click', function() {
+        // 这里可以添加跳过后的逻辑
+        window.location.href = '/dashboard'; // 示例：跳转到仪表盘
+    });
+
+    // 表单提交
+    const designerForm = document.querySelector('#designerForm');
+
+    designerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 表单验证逻辑
+        if (!isChecked) {
+            alert('请阅读并同意用户协议和隐私政策');
+            return;
+        }
+
+        // 这里可以添加表单提交逻辑
+        alert('注册成功！');
+        // window.location.href = '/dashboard'; // 示例：跳转到仪表盘
+    });
+});
+</script>
+
+<script id="avatar-upload">
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarUpload = document.querySelector('.avatar-upload');
+    const uploadButton = avatarUpload.nextElementSibling;
+
+    let hasAvatar = false;
+
+    uploadButton.addEventListener('click', function() {
+        // 模拟文件上传
+        if (!hasAvatar) {
+            // 模拟上传成功后显示头像
+            avatarUpload.style.backgroundImage = "url('https://readdy.ai/api/search-image?query=professional%20asian%20young%20designer%20portrait%20with%20neutral%20expression%2C%20high%20quality%20professional%20headshot%2C%20simple%20dark%20background%2C%20modern%20minimal%20style%2C%20soft%20lighting&width=200&height=200&seq=avatar001&orientation=squarish')";
+            avatarUpload.style.backgroundSize = "cover";
+            avatarUpload.style.backgroundPosition = "center";
+            uploadButton.textContent = "更换图片";
+            hasAvatar = true;
+        } else {
+            // 如果已有头像，则显示一个不同的头像
+            avatarUpload.style.backgroundImage = "url('https://readdy.ai/api/search-image?query=professional%20asian%20young%20male%20designer%20portrait%20with%20neutral%20expression%2C%20high%20quality%20professional%20headshot%2C%20simple%20dark%20background%2C%20modern%20minimal%20style%2C%20soft%20lighting&width=200&height=200&seq=avatar002&orientation=squarish')";
+        }
+    });
+});
+</script>
+
+<script id="animation-effects">
+document.addEventListener('DOMContentLoaded', function() {
+    // 页面加载动画
+    document.body.style.opacity = "0";
+    setTimeout(() => {
+        document.body.style.transition = "opacity 0.6s ease";
+        document.body.style.opacity = "1";
+    }, 100);
+
+    // 按钮悬停效果
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        if (button.classList.contains('gradient-bg')) {
+            button.addEventListener('mouseover', function() {
+                this.style.transform = "translateY(-2px)";
+                this.style.boxShadow = "0 4px 12px rgba(10, 132, 255, 0.3)";
+            });
+            button.addEventListener('mouseout', function() {
+                this.style.transform = "translateY(0)";
+                this.style.boxShadow = "none";
+            });
+        }
+    });
+
+    // 输入框焦点效果
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('relative');
+            const glow = document.createElement('div');
+            glow.className = 'absolute inset-0 rounded pointer-events-none';
+            glow.style.boxShadow = "0 0 0 2px rgba(10, 132, 255, 0.3)";
+            glow.style.zIndex = "-1";
+            this.parentElement.appendChild(glow);
+        });
+        input.addEventListener('blur', function() {
+            const glow = this.parentElement.querySelector('.absolute');
+            if (glow) {
+                glow.remove();
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

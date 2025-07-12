@@ -1,3 +1,104 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import TalentUserMenu from './TalentUserMenu.vue'
+
+const router = useRouter()
+const route = useRoute()
+
+// 响应式数据
+const searchQuery = ref('')
+const mobileSearchQuery = ref('')
+const showNotifications = ref(false)
+const showMobileSearch = ref(false)
+const showMobileMenu = ref(false)
+
+// 用户信息
+const unreadCount = ref(3)
+
+// 引用
+const notificationRef = ref<HTMLElement | null>(null)
+
+// 通知数据
+const notifications = ref([
+  {
+    id: 1,
+    message: '腾讯发布新的UI设计师职位',
+    time: '2分钟前',
+    dotColor: 'bg-blue-600',
+  },
+  {
+    id: 2,
+    message: '您的简历被字节跳动查看',
+    time: '1小时前',
+    dotColor: 'bg-green-500',
+  },
+  {
+    id: 3,
+    message: '有3个新的职位匹配您的技能',
+    time: '3小时前',
+    dotColor: 'bg-yellow-500',
+  },
+])
+
+// 计算属性
+const currentPageTitle = computed(() => {
+  const routeMap: Record<string, string> = {
+    '/talent/jobs': '企业需求池',
+    '/talent/designers': '设计师档案',
+    '/talent/works': '学生作品库',
+    '/talent/schools': '院校数据库',
+  }
+  return routeMap[route.path] || '人才平台'
+})
+
+// 方法
+const goBack = () => {
+  router.go(-1)
+}
+
+const handleSearch = () => {
+  if (searchQuery.value.trim())
+    console.log('搜索:', searchQuery.value)
+    // 这里可以添加搜索逻辑
+}
+
+const handleMobileSearch = () => {
+  if (mobileSearchQuery.value.trim())
+    console.log('移动端搜索:', mobileSearchQuery.value)
+    // 这里可以添加搜索逻辑
+}
+
+const toggleNotifications = () => {
+  showNotifications.value = !showNotifications.value
+}
+
+const toggleMobileSearch = () => {
+  showMobileSearch.value = !showMobileSearch.value
+  showMobileMenu.value = false
+}
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+  showMobileSearch.value = false
+}
+
+// 点击外部关闭下拉菜单
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (notificationRef.value && !(notificationRef.value as HTMLElement).contains(target))
+    showNotifications.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+</script>
+
 <template>
   <!-- 统一顶栏组件 -->
   <header class="glass-card fixed top-0 left-0 right-0 z-50 py-0">
@@ -7,25 +108,31 @@
         <div class="flex items-center space-x-4">
           <!-- 返回按钮 -->
           <button
-            @click="goBack"
             class="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
+            @click="goBack"
           >
-            <i class="ri-arrow-left-line ri-lg mr-2"></i>
+            <i class="ri-arrow-left-line ri-lg mr-2" />
             <span class="hidden sm:inline">返回</span>
           </button>
 
           <!-- 分隔线 -->
-          <div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
+          <div class="h-4 w-px bg-gray-700 hidden sm:block" />
 
           <!-- Logo -->
           <router-link to="/" class="flex items-center">
-            <h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block mb-0">星海人才</h1>
-            <h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden mb-0">星海</h1>
+            <h1 class="text-xl font-bold gradient-text font-['Pacifico'] hidden sm:block mb-0">
+              星海人才
+            </h1>
+            <h1 class="text-lg font-bold gradient-text font-['Pacifico'] sm:hidden mb-0">
+              星海
+            </h1>
           </router-link>
 
           <!-- 面包屑导航 -->
           <nav class="hidden md:flex items-center space-x-2 text-sm">
-            <router-link to="/" class="text-gray-400 hover:text-blue-400 transition-colors">首页</router-link>
+            <router-link to="/" class="text-gray-400 hover:text-blue-400 transition-colors">
+              首页
+            </router-link>
             <span class="breadcrumb-separator">/</span>
             <span class="text-white">{{ currentPageTitle }}</span>
           </nav>
@@ -69,45 +176,45 @@
           <div class="relative hidden md:block">
             <div class="search-input flex items-center rounded-lg overflow-hidden">
               <input
-                type="text"
                 v-model="searchQuery"
-                @keypress.enter="handleSearch"
+                type="text"
                 placeholder="搜索职位、公司、技能..."
                 class="w-64 py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+                @keypress.enter="handleSearch"
               >
               <button
-                @click="handleSearch"
                 class="w-10 h-10 flex items-center justify-center text-blue-400"
+                @click="handleSearch"
               >
-                <i class="ri-search-line"></i>
+                <i class="ri-search-line" />
               </button>
             </div>
           </div>
 
-                    <!-- 移动端搜索按钮 -->
+          <!-- 移动端搜索按钮 -->
           <button
-            @click="toggleMobileSearch"
             class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 md:hidden"
+            @click="toggleMobileSearch"
           >
-            <i class="ri-search-line"></i>
+            <i class="ri-search-line" />
           </button>
 
           <!-- 通知 -->
-          <div class="relative" ref="notificationRef">
+          <div ref="notificationRef" class="relative">
             <button
-              @click="toggleNotifications"
               class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 transition-colors"
-                          >
-                <i class="ri-notification-3-line"></i>
-                <!-- 未读消息小红点 -->
-                <span
-                  v-if="unreadCount > 0"
-                  class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white"
-                  style="font-size: 10px;"
-                >
-                  {{ unreadCount }}
-                </span>
-              </button>
+              @click="toggleNotifications"
+            >
+              <i class="ri-notification-3-line" />
+              <!-- 未读消息小红点 -->
+              <span
+                v-if="unreadCount > 0"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center text-white"
+                style="font-size: 10px;"
+              >
+                {{ unreadCount }}
+              </span>
+            </button>
 
             <!-- 通知下拉菜单 -->
             <div
@@ -115,7 +222,9 @@
               class="dropdown-menu rounded-lg mt-2 right-0 w-80"
             >
               <div class="p-4 border-b border-gray-700">
-                <h3 class="text-lg font-medium">通知中心</h3>
+                <h3 class="text-lg font-medium">
+                  通知中心
+                </h3>
               </div>
               <div class="max-h-64 overflow-y-auto">
                 <div
@@ -127,10 +236,14 @@
                     <div
                       class="w-2 h-2 rounded-full mt-2 mr-3"
                       :class="notification.dotColor"
-                    ></div>
+                    />
                     <div>
-                      <p class="text-sm">{{ notification.message }}</p>
-                      <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
+                      <p class="text-sm">
+                        {{ notification.message }}
+                      </p>
+                      <p class="text-xs text-gray-400 mt-1">
+                        {{ notification.time }}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -148,10 +261,10 @@
 
           <!-- 移动端菜单按钮 -->
           <button
-            @click="toggleMobileMenu"
             class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 lg:hidden"
+            @click="toggleMobileMenu"
           >
-            <i class="ri-menu-line"></i>
+            <i class="ri-menu-line" />
           </button>
         </div>
       </div>
@@ -164,17 +277,17 @@
     >
       <div class="search-input flex items-center rounded-lg overflow-hidden">
         <input
-          type="text"
           v-model="mobileSearchQuery"
-          @keypress.enter="handleMobileSearch"
+          type="text"
           placeholder="搜索职位、公司、技能..."
           class="w-full py-2 px-4 bg-transparent text-white border-none focus:outline-none text-sm"
+          @keypress.enter="handleMobileSearch"
         >
         <button
-          @click="handleMobileSearch"
           class="w-10 h-10 flex items-center justify-center text-blue-400"
+          @click="handleMobileSearch"
         >
-          <i class="ri-search-line"></i>
+          <i class="ri-search-line" />
         </button>
       </div>
     </div>
@@ -217,110 +330,6 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import TalentUserMenu from './TalentUserMenu.vue'
-
-const router = useRouter()
-const route = useRoute()
-
-// 响应式数据
-const searchQuery = ref('')
-const mobileSearchQuery = ref('')
-const showNotifications = ref(false)
-const showMobileSearch = ref(false)
-const showMobileMenu = ref(false)
-
-// 用户信息
-const unreadCount = ref(3)
-
-// 引用
-const notificationRef = ref<HTMLElement | null>(null)
-
-// 通知数据
-const notifications = ref([
-  {
-    id: 1,
-    message: '腾讯发布新的UI设计师职位',
-    time: '2分钟前',
-    dotColor: 'bg-blue-600'
-  },
-  {
-    id: 2,
-    message: '您的简历被字节跳动查看',
-    time: '1小时前',
-    dotColor: 'bg-green-500'
-  },
-  {
-    id: 3,
-    message: '有3个新的职位匹配您的技能',
-    time: '3小时前',
-    dotColor: 'bg-yellow-500'
-  }
-])
-
-// 计算属性
-const currentPageTitle = computed(() => {
-  const routeMap: Record<string, string> = {
-    '/talent/jobs': '企业需求池',
-    '/talent/designers': '设计师档案',
-    '/talent/works': '学生作品库',
-    '/talent/schools': '院校数据库'
-  }
-  return routeMap[route.path] || '人才平台'
-})
-
-// 方法
-const goBack = () => {
-  router.go(-1)
-}
-
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    console.log('搜索:', searchQuery.value)
-    // 这里可以添加搜索逻辑
-  }
-}
-
-const handleMobileSearch = () => {
-  if (mobileSearchQuery.value.trim()) {
-    console.log('移动端搜索:', mobileSearchQuery.value)
-    // 这里可以添加搜索逻辑
-  }
-}
-
-const toggleNotifications = () => {
-  showNotifications.value = !showNotifications.value
-}
-
-const toggleMobileSearch = () => {
-  showMobileSearch.value = !showMobileSearch.value
-  showMobileMenu.value = false
-}
-
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value
-  showMobileSearch.value = false
-}
-
-// 点击外部关闭下拉菜单
-const handleClickOutside = (event: Event) => {
-  const target = event.target as HTMLElement
-  if (notificationRef.value && !(notificationRef.value as HTMLElement).contains(target)) {
-    showNotifications.value = false
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
-</script>
 
 <style scoped>
 .glass-card {

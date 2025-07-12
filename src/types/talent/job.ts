@@ -1,5 +1,5 @@
 // 岗位相关类型定义
-import type { Profession, Designer } from './designer'
+import type { Designer, Profession } from './designer'
 
 export interface JobPosting {
   id: number
@@ -28,7 +28,7 @@ export enum JobStatus {
   DRAFT = 'DRAFT',
   PUBLISHED = 'PUBLISHED',
   EXPIRED = 'EXPIRED',
-  CLOSED = 'CLOSED'
+  CLOSED = 'CLOSED',
 }
 
 export interface JobApplication {
@@ -54,7 +54,7 @@ export enum ApplicationStatus {
   INTERVIEW_SCHEDULED = 'INTERVIEW_SCHEDULED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  WITHDRAWN = 'WITHDRAWN'
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export enum SkillTag {
@@ -69,7 +69,7 @@ export enum SkillTag {
   ILLUSTRATION = 'ILLUSTRATION',
   WEB_DESIGN = 'WEB_DESIGN',
   MOBILE_DESIGN = 'MOBILE_DESIGN',
-  PRINT_DESIGN = 'PRINT_DESIGN'
+  PRINT_DESIGN = 'PRINT_DESIGN',
 }
 
 export interface Enterprise {

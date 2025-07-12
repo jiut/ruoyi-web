@@ -27,17 +27,24 @@ parameters:
     in: query
     required: true
     description: 技能标签列表，使用逗号分隔
-    example: "PROTOTYPE_DESIGN,VISUAL_DESIGN,USER_INTERFACE_DESIGN"
+    example: 'PROTOTYPE_DESIGN,VISUAL_DESIGN,USER_INTERFACE_DESIGN'
     schema:
       type: array
       items:
         type: string
-        enum: [
-          "ANIMATION_DESIGN", "PROTOTYPE_DESIGN", "CHARACTER_DESIGN",
-          "VISUAL_DESIGN", "USER_INTERFACE_DESIGN", "USER_EXPERIENCE_DESIGN",
-          "GRAPHIC_DESIGN", "BRANDING_DESIGN", "ILLUSTRATION",
-          "WEB_DESIGN", "MOBILE_DESIGN", "PRINT_DESIGN"
-        ]
+        enum:
+          - ANIMATION_DESIGN
+          - PROTOTYPE_DESIGN
+          - CHARACTER_DESIGN
+          - VISUAL_DESIGN
+          - USER_INTERFACE_DESIGN
+          - USER_EXPERIENCE_DESIGN
+          - GRAPHIC_DESIGN
+          - BRANDING_DESIGN
+          - ILLUSTRATION
+          - WEB_DESIGN
+          - MOBILE_DESIGN
+          - PRINT_DESIGN
 ```
 
 ### 4. 响应示例
@@ -46,22 +53,22 @@ parameters:
 
 ```json
 {
-    "code": 200,
-    "msg": "操作成功",
-    "data": [
-        {
-            "jobId": 1,
-            "jobTitle": "高级UI设计师",
-            "enterpriseId": 1,
-            "requiredProfession": "UI_DESIGNER",
-            "requiredSkills": "[\"PROTOTYPE_DESIGN\", \"VISUAL_DESIGN\", \"USER_INTERFACE_DESIGN\"]",
-            "salaryMin": 15000,
-            "salaryMax": 25000,
-            "location": "北京市朝阳区",
-            "jobType": "全职",
-            "status": "0"
-        }
-    ]
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "jobId": 1,
+      "jobTitle": "高级UI设计师",
+      "enterpriseId": 1,
+      "requiredProfession": "UI_DESIGNER",
+      "requiredSkills": "[\"PROTOTYPE_DESIGN\", \"VISUAL_DESIGN\", \"USER_INTERFACE_DESIGN\"]",
+      "salaryMin": 15000,
+      "salaryMax": 25000,
+      "location": "北京市朝阳区",
+      "jobType": "全职",
+      "status": "0"
+    }
+  ]
 }
 ```
 

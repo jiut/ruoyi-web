@@ -1,6 +1,6 @@
 // 直接使用 any 避免多版本 vue-router 类型冲突
 
-const whiteList = ['/login', '/regist','/resetpassword', '/role-selection']; // 不重定向白名单
+const whiteList = ['/login', '/regist', '/resetpassword', '/role-selection'] // 不重定向白名单
 
 export function setupPageGuard(router: any) {
   router.beforeEach(async (to: any, from: any, next: any) => {
@@ -17,7 +17,8 @@ export function setupPageGuard(router: any) {
       try {
         await userStore.fetchUserInfo()
         console.log('用户信息初始化完成:', userStore.userInfo)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('初始化用户信息失败:', error)
       }
     }
@@ -37,6 +38,6 @@ export function setupPageGuard(router: any) {
       return
     }
 
-    next();
-  });
+    next()
+  })
 }

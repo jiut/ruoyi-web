@@ -3,34 +3,29 @@
  */
 
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import type {
-  School,
-  SchoolQueryParams,
-  SchoolListParams,
-  Major,
-  Faculty,
-  Employment,
-  Award,
   Achievement,
-  SchoolType,
-  SchoolLevel,
-  MajorCategory,
-  EmploymentStatistics,
+  Award,
+  Employment,
   EmploymentDistribution,
-  FavoriteResponse,
-  ShareResponse
+  EmploymentStatistics,
+  Faculty,
+  Major,
+  School,
+  SchoolListParams,
+  SchoolQueryParams,
 } from '@/types/talent/school'
 import {
-  schoolApi,
-  majorApi,
-  facultyApi,
-  employmentApi,
   achievementApi,
+  employmentApi,
+  facultyApi,
+  majorApi,
+  schoolApi,
   schoolInteractionApi,
-  statisticsApi
+  statisticsApi,
 } from '@/api/talent/school'
-import { mockSchools, getMockSchools } from '@/data/mockSchools'
+import { getMockSchools, mockSchools } from '@/data/mockSchools'
 import { shouldUseMockData } from '@/utils/authUtils'
 
 // API响应类型定义
@@ -43,7 +38,6 @@ interface ApiResponse<T> {
 }
 
 export const useSchoolStore = defineStore('school', () => {
-
   console.log('🔍 院校Store调试信息:')
   console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
   console.log('  DEV:', import.meta.env.DEV)
@@ -95,7 +89,7 @@ export const useSchoolStore = defineStore('school', () => {
     is211: undefined,
     isDoubleFirst: undefined,
     sortBy: 'ranking',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
   })
 
   // 用户交互状态
@@ -109,72 +103,72 @@ export const useSchoolStore = defineStore('school', () => {
     // 按名称筛选
     if (filters.value.schoolName) {
       result = result.filter(school =>
-        school.schoolName.includes(filters.value.schoolName!)
+        school.schoolName.includes(filters.value.schoolName!),
       )
     }
 
     // 按类型筛选
     if (filters.value.schoolType) {
       result = result.filter(school =>
-        school.schoolType === filters.value.schoolType
+        school.schoolType === filters.value.schoolType,
       )
     }
 
     // 按地区筛选
     if (filters.value.province) {
       result = result.filter(school =>
-        school.province === filters.value.province
+        school.province === filters.value.province,
       )
     }
 
     if (filters.value.city) {
       result = result.filter(school =>
-        school.city === filters.value.city
+        school.city === filters.value.city,
       )
     }
 
     // 按层次筛选
     if (filters.value.level) {
       result = result.filter(school =>
-        school.level === filters.value.level
+        school.level === filters.value.level,
       )
     }
 
     // 按特殊标识筛选
     if (filters.value.isKey !== undefined) {
       result = result.filter(school =>
-        school.isKey === filters.value.isKey
+        school.isKey === filters.value.isKey,
       )
     }
 
     if (filters.value.is985 !== undefined) {
       result = result.filter(school =>
-        school.is985 === filters.value.is985
+        school.is985 === filters.value.is985,
       )
     }
 
     if (filters.value.is211 !== undefined) {
       result = result.filter(school =>
-        school.is211 === filters.value.is211
+        school.is211 === filters.value.is211,
       )
     }
 
     if (filters.value.isDoubleFirst !== undefined) {
       result = result.filter(school =>
-        school.isDoubleFirst === filters.value.isDoubleFirst
+        school.isDoubleFirst === filters.value.isDoubleFirst,
       )
     }
 
     // 按排名筛选
     if (filters.value.minRanking !== undefined) {
       result = result.filter(school =>
-        school.ranking >= filters.value.minRanking!
+        school.ranking >= filters.value.minRanking!,
       )
     }
 
     if (filters.value.maxRanking !== undefined) {
       result = result.filter(school =>
-        school.ranking <= filters.value.maxRanking!
+        school.ranking <= filters.value.maxRanking!,
       )
     }
 
@@ -196,26 +190,26 @@ export const useSchoolStore = defineStore('school', () => {
       const queryParams = {
         pageNum: 1,
         pageSize: 20,
-        ...params
+        ...params,
       }
       const response = await schoolApi.list(queryParams) as ApiResponse<School>
 
-      if (params?.pageNum === 1) {
+      if (params?.pageNum === 1)
         schools.value = response.rows || []
-      } else {
+      else
         schools.value.push(...(response.rows || []))
-      }
 
       totalSchools.value = response.total || 0
       schoolCount.value = response.total || 0
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取院校列表失败:', error)
       // 使用模拟数据作为后备
       schools.value = mockSchools
       totalSchools.value = mockSchools.length
       schoolCount.value = mockSchools.length
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -225,13 +219,13 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const [statsResponse, distributionResponse] = await Promise.all([
         schoolApi.getEmploymentStats(schoolId) as Promise<ApiResponse<EmploymentStatistics>>,
-        schoolApi.getEmploymentDistribution(schoolId) as Promise<ApiResponse<EmploymentDistribution>>
+        schoolApi.getEmploymentDistribution(schoolId) as Promise<ApiResponse<EmploymentDistribution>>,
       ])
 
       employmentStats.value = statsResponse.data || null
       employmentDistribution.value = distributionResponse.data || null
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取就业数据失败:', error)
     }
   }
@@ -256,14 +250,15 @@ export const useSchoolStore = defineStore('school', () => {
           isKey: queryParams.isKey,
           is985: queryParams.is985,
           is211: queryParams.is211,
-          isDoubleFirst: queryParams.isDoubleFirst
+          isDoubleFirst: queryParams.isDoubleFirst,
         })
 
         // 始终替换数据，避免重复
         schools.value = mockResponse.rows
         totalSchools.value = mockResponse.total
         schoolCount.value = mockResponse.total
-      } else {
+      }
+      else {
         console.log('🚀 使用后端API - fetchSchools')
         const response = await schoolApi.list(queryParams) as ApiResponse<School>
 
@@ -275,14 +270,16 @@ export const useSchoolStore = defineStore('school', () => {
 
       // 更新筛选条件
       Object.assign(filters.value, queryParams)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取院校列表失败:', error)
       // 使用模拟数据作为后备
       const mockResponse = getMockSchools()
       schools.value = mockResponse.rows
       totalSchools.value = mockResponse.total
       schoolCount.value = mockResponse.total
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -296,7 +293,8 @@ export const useSchoolStore = defineStore('school', () => {
         // 使用模拟数据
         const mockSchool = mockSchools.find(school => school.id === id)
         currentSchool.value = mockSchool || null
-      } else {
+      }
+      else {
         console.log('🚀 使用后端API - fetchSchoolDetail', id)
         const response = await schoolApi.get(id) as ApiResponse<School>
         currentSchool.value = response.data || null
@@ -306,16 +304,17 @@ export const useSchoolStore = defineStore('school', () => {
       if (currentSchool.value && !viewHistory.value.includes(id)) {
         viewHistory.value.unshift(id)
         // 限制历史记录数量
-        if (viewHistory.value.length > 50) {
+        if (viewHistory.value.length > 50)
           viewHistory.value = viewHistory.value.slice(0, 50)
-        }
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取院校详情失败:', error)
       // 使用模拟数据作为后备
       const mockSchool = mockSchools.find(school => school.id === id)
       currentSchool.value = mockSchool || null
-    } finally {
+    }
+    finally {
       detailLoading.value = false
     }
   }
@@ -328,27 +327,30 @@ export const useSchoolStore = defineStore('school', () => {
         console.log('🔧 使用Mock数据 - searchSchools', keyword)
         // 模拟搜索逻辑
         const filteredMockSchools = mockSchools.filter(school =>
-          school.schoolName.includes(keyword) ||
-          school.description.includes(keyword)
+          school.schoolName.includes(keyword)
+          || school.description.includes(keyword),
         )
         schools.value = filteredMockSchools
         totalSchools.value = filteredMockSchools.length
-      } else {
+      }
+      else {
         console.log('🚀 使用后端API - searchSchools', keyword)
         const response = await schoolApi.search(keyword) as ApiResponse<School>
         schools.value = response.data ? [response.data] : (response.rows || [])
         totalSchools.value = schools.value.length
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('搜索院校失败:', error)
       // 模拟搜索逻辑作为后备
       const filteredMockSchools = mockSchools.filter(school =>
-        school.schoolName.includes(keyword) ||
-        school.description.includes(keyword)
+        school.schoolName.includes(keyword)
+        || school.description.includes(keyword),
       )
       schools.value = filteredMockSchools
       totalSchools.value = filteredMockSchools.length
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -358,7 +360,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await majorApi.list(schoolId, category) as ApiResponse<Major>
       majors.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取专业列表失败:', error)
     }
   }
@@ -367,7 +370,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await majorApi.getBySchool(schoolId) as ApiResponse<Major>
       majors.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取院校专业失败:', error)
     }
   }
@@ -377,7 +381,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await facultyApi.list(schoolId) as ApiResponse<Faculty>
       faculties.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取学院列表失败:', error)
     }
   }
@@ -386,7 +391,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await facultyApi.getBySchool(schoolId) as ApiResponse<Faculty>
       faculties.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取院校学院失败:', error)
     }
   }
@@ -396,7 +402,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await employmentApi.getBySchool(schoolId, year) as ApiResponse<Employment>
       employmentData.value = response.data || null
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取就业数据失败:', error)
     }
   }
@@ -405,7 +412,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await employmentApi.getTrend(schoolId, years) as ApiResponse<Employment>
       employmentTrend.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取就业趋势失败:', error)
     }
   }
@@ -415,7 +423,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await achievementApi.getAwards(schoolId, level, year) as ApiResponse<Award>
       awards.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取获奖列表失败:', error)
     }
   }
@@ -424,7 +433,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await achievementApi.getAchievements(schoolId, type, year) as ApiResponse<Achievement>
       achievements.value = response.data ? [response.data] : (response.rows || [])
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取成果列表失败:', error)
     }
   }
@@ -433,7 +443,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await achievementApi.getAwardStats(schoolId) as ApiResponse<any>
       awardStats.value = response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取获奖统计失败:', error)
     }
   }
@@ -443,7 +454,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       const response = await statisticsApi.getOverview() as ApiResponse<any>
       statistics.value = response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取统计数据失败:', error)
     }
   }
@@ -456,19 +468,20 @@ export const useSchoolStore = defineStore('school', () => {
       if (isFavorited) {
         await schoolInteractionApi.unfavorite(schoolId)
         favoriteSchools.value = favoriteSchools.value.filter(id => id !== schoolId)
-      } else {
+      }
+      else {
         await schoolInteractionApi.favorite(schoolId)
         favoriteSchools.value.push(schoolId)
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('切换收藏状态失败:', error)
       // 模拟收藏操作
       const isFavorited = favoriteSchools.value.includes(schoolId)
-      if (isFavorited) {
+      if (isFavorited)
         favoriteSchools.value = favoriteSchools.value.filter(id => id !== schoolId)
-      } else {
+      else
         favoriteSchools.value.push(schoolId)
-      }
     }
   }
 
@@ -476,7 +489,8 @@ export const useSchoolStore = defineStore('school', () => {
     try {
       // 简化逻辑：直接检查本地状态，避免API调用错误
       return favoriteSchools.value.includes(schoolId)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('检查收藏状态失败:', error)
       return favoriteSchools.value.includes(schoolId)
     }
@@ -485,7 +499,8 @@ export const useSchoolStore = defineStore('school', () => {
   const shareSchool = async (schoolId: number, platform: string) => {
     try {
       await schoolInteractionApi.share(schoolId)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('分享院校失败:', error)
     }
   }
@@ -495,7 +510,8 @@ export const useSchoolStore = defineStore('school', () => {
       // 简化下载逻辑，因为API可能不存在
       console.log(`下载院校详情：${schoolId}`)
       // 模拟下载成功
-    } catch (error) {
+    }
+    catch (error) {
       console.error('下载院校详情失败:', error)
     }
   }
@@ -519,7 +535,7 @@ export const useSchoolStore = defineStore('school', () => {
       is211: undefined,
       isDoubleFirst: undefined,
       sortBy: 'ranking',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     }
   }
 
@@ -608,6 +624,6 @@ export const useSchoolStore = defineStore('school', () => {
     isFavorited,
     isVisited,
     clearCurrentSchool,
-    clearSearch
+    clearSearch,
   }
 })

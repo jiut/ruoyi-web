@@ -1,74 +1,3 @@
-<template>
-  <div class="school-faculty">
-    <div v-if="loading" class="text-center py-8">
-      <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-      <p class="mt-2 text-gray-400 text-sm">加载师资信息中...</p>
-    </div>
-
-    <div v-else>
-      <!-- 师资概况 -->
-      <div class="mb-6">
-        <h4 class="text-lg font-bold mb-4">师资概况</h4>
-        <div class="glass-card rounded-lg p-3 sm:p-4">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4">
-            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
-              <p class="text-xs text-gray-400 mb-1">专任教师</p>
-              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.totalFaculty || 0 }}</p>
-            </div>
-            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
-              <p class="text-xs text-gray-400 mb-1">教授/副教授</p>
-              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.professors || 0 }}</p>
-            </div>
-            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
-              <p class="text-xs text-gray-400 mb-1">博士学位教师</p>
-              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.doctorDegree || 0 }}</p>
-            </div>
-            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
-              <p class="text-xs text-gray-400 mb-1">海外背景教师</p>
-              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">{{ facultyStats?.overseasBackground || 0 }}</p>
-            </div>
-          </div>
-          <p class="text-sm text-gray-300 mb-0">
-            {{ facultyStats?.description || '暂无师资描述' }}
-          </p>
-        </div>
-      </div>
-
-      <!-- 代表性教师 -->
-      <div>
-        <h4 class="text-lg font-bold mb-4">代表性教师</h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          <div v-for="teacher in styledFacultyMembers" :key="teacher.id" class="glass-card rounded-lg p-3 sm:p-4">
-            <div class="flex flex-col items-center">
-              <div
-                class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold mb-3"
-                :class="teacher.avatarClass"
-              >
-                {{ getNameInitial(teacher.name) }}
-              </div>
-              <h5 class="text-base font-bold mb-1">{{ teacher.name }}</h5>
-              <p class="text-xs text-gray-400 mb-2">{{ teacher.title }}</p>
-              <div class="flex flex-wrap justify-center gap-1 mb-3">
-                <span
-                  v-for="(expertise, index) in teacher.expertise"
-                  :key="expertise"
-                  :class="teacher.tagClasses[index]"
-                  class="text-xs px-2 py-0.5 rounded-full border"
-                >
-                  {{ expertise }}
-                </span>
-              </div>
-              <p class="text-xs text-gray-300 text-center mb-0">
-                {{ teacher.description }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { generateTeacherStyles, getNameInitial } from '@/utils/styleGenerator'
@@ -92,6 +21,103 @@ const styledFacultyMembers = computed(() => {
   return facultyMembers.value.map(teacher => generateTeacherStyles(teacher))
 })
 </script>
+
+<template>
+  <div class="school-faculty">
+    <div v-if="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+      <p class="mt-2 text-gray-400 text-sm">
+        加载师资信息中...
+      </p>
+    </div>
+
+    <div v-else>
+      <!-- 师资概况 -->
+      <div class="mb-6">
+        <h4 class="text-lg font-bold mb-4">
+          师资概况
+        </h4>
+        <div class="glass-card rounded-lg p-3 sm:p-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4">
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
+              <p class="text-xs text-gray-400 mb-1">
+                专任教师
+              </p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">
+                {{ facultyStats?.totalFaculty || 0 }}
+              </p>
+            </div>
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
+              <p class="text-xs text-gray-400 mb-1">
+                教授/副教授
+              </p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">
+                {{ facultyStats?.professors || 0 }}
+              </p>
+            </div>
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
+              <p class="text-xs text-gray-400 mb-1">
+                博士学位教师
+              </p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">
+                {{ facultyStats?.doctorDegree || 0 }}
+              </p>
+            </div>
+            <div class="text-center p-2 sm:p-3 bg-gray-800/30 rounded-lg">
+              <p class="text-xs text-gray-400 mb-1">
+                海外背景教师
+              </p>
+              <p class="text-lg sm:text-2xl font-bold gradient-text mb-0">
+                {{ facultyStats?.overseasBackground || 0 }}
+              </p>
+            </div>
+          </div>
+          <p class="text-sm text-gray-300 mb-0">
+            {{ facultyStats?.description || '暂无师资描述' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- 代表性教师 -->
+      <div>
+        <h4 class="text-lg font-bold mb-4">
+          代表性教师
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <div v-for="teacher in styledFacultyMembers" :key="teacher.id" class="glass-card rounded-lg p-3 sm:p-4">
+            <div class="flex flex-col items-center">
+              <div
+                class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold mb-3"
+                :class="teacher.avatarClass"
+              >
+                {{ getNameInitial(teacher.name) }}
+              </div>
+              <h5 class="text-base font-bold mb-1">
+                {{ teacher.name }}
+              </h5>
+              <p class="text-xs text-gray-400 mb-2">
+                {{ teacher.title }}
+              </p>
+              <div class="flex flex-wrap justify-center gap-1 mb-3">
+                <span
+                  v-for="(expertise, index) in teacher.expertise"
+                  :key="expertise"
+                  :class="teacher.tagClasses[index]"
+                  class="text-xs px-2 py-0.5 rounded-full border"
+                >
+                  {{ expertise }}
+                </span>
+              </div>
+              <p class="text-xs text-gray-300 text-center mb-0">
+                {{ teacher.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .glass-card {

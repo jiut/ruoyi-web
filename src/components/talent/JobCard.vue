@@ -1,3 +1,83 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { NButton } from 'naive-ui'
+import type { JobPosting } from '@/types/talent/job'
+import SkillTagList from '@/components/common/SkillTagList/index.vue'
+import { useSkillTags } from '@/composables/useSkillTags'
+import type { SkillTagCategory } from '@/utils/skillTagUtils'
+
+interface Props {
+  job: JobPosting
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  'view-detail': [jobId: number]
+}>()
+
+const { parseSkillTags } = useSkillTags()
+
+// 解析技能标签（从JSON字符串转换为英文简写数组）
+const skillTags = computed(() => {
+  return parseSkillTags(props.job.skillsRequired || '[]')
+})
+
+const isUrgent = computed(() => {
+  // 可以根据实际业务逻辑判断是否为急聘岗位
+  return props.job.deadline && new Date(props.job.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+})
+
+// 方法
+const getCompanyInitial = (companyName: string) => {
+  return companyName.charAt(0).toUpperCase()
+}
+
+const formatSalary = (salaryMin?: number, salaryMax?: number) => {
+  if (!salaryMin && !salaryMax)
+    return '面议'
+
+  if (salaryMin && salaryMax)
+    return `${(salaryMin / 1000).toFixed(0)}K-${(salaryMax / 1000).toFixed(0)}K`
+
+  if (salaryMin)
+    return `${(salaryMin / 1000).toFixed(0)}K+`
+
+  return '面议'
+}
+
+const formatPublishDate = (publishDate: string) => {
+  if (!publishDate)
+    return ''
+
+  const now = new Date()
+  const published = new Date(publishDate)
+  const diffTime = now.getTime() - published.getTime()
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) {
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
+    if (diffHours === 0) {
+      const diffMinutes = Math.floor(diffTime / (1000 * 60))
+      return `${diffMinutes} 分钟前`
+    }
+    return `${diffHours} 小时前`
+  }
+  else if (diffDays < 7) {
+    return `${diffDays} 天前`
+  }
+  else {
+    return published.toLocaleDateString('zh-CN')
+  }
+}
+
+// 处理技能标签点击（可选功能）
+const handleSkillTagClick = (tag: string, category: SkillTagCategory, displayName: string) => {
+  console.log('技能标签被点击:', { tag, category, displayName })
+  // 可以在这里实现技能标签的搜索或过滤功能
+}
+</script>
+
 <template>
   <div class="job-card glass-card rounded-lg p-6 cursor-pointer transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-lg">
     <div class="flex items-start">
@@ -12,7 +92,9 @@
       <!-- 岗位信息 -->
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-start mb-2">
-          <h3 class="text-lg font-bold text-white truncate">{{ job.title }}</h3>
+          <h3 class="text-lg font-bold text-white truncate">
+            {{ job.title }}
+          </h3>
           <span class="text-green-400 font-medium whitespace-nowrap ml-2">
             {{ formatSalary(job.salaryMin, job.salaryMax) }}
           </span>
@@ -59,98 +141,20 @@
           <p class="text-gray-400 text-xs">
             发布于 {{ formatPublishDate(job.publishDate) }}
           </p>
-          <n-button
+          <NButton
             size="small"
             type="primary"
             ghost
-            @click.stop="$emit('view-detail', job.id)"
             class="hover:bg-primary/20"
+            @click.stop="$emit('view-detail', job.id)"
           >
             查看详情
-          </n-button>
+          </NButton>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { NButton } from 'naive-ui'
-import type { JobPosting } from '@/types/talent/job'
-import SkillTagList from '@/components/common/SkillTagList/index.vue'
-import { useSkillTags } from '@/composables/useSkillTags'
-import type { SkillTagCategory } from '@/utils/skillTagUtils'
-
-interface Props {
-  job: JobPosting
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  'view-detail': [jobId: number]
-}>()
-
-const { parseSkillTags } = useSkillTags()
-
-// 解析技能标签（从JSON字符串转换为英文简写数组）
-const skillTags = computed(() => {
-  return parseSkillTags(props.job.skillsRequired || '[]')
-})
-
-const isUrgent = computed(() => {
-  // 可以根据实际业务逻辑判断是否为急聘岗位
-  return props.job.deadline && new Date(props.job.deadline) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-})
-
-// 方法
-const getCompanyInitial = (companyName: string) => {
-  return companyName.charAt(0).toUpperCase()
-}
-
-const formatSalary = (salaryMin?: number, salaryMax?: number) => {
-  if (!salaryMin && !salaryMax) return '面议'
-
-  if (salaryMin && salaryMax) {
-    return `${(salaryMin / 1000).toFixed(0)}K-${(salaryMax / 1000).toFixed(0)}K`
-  }
-
-  if (salaryMin) {
-    return `${(salaryMin / 1000).toFixed(0)}K+`
-  }
-
-  return '面议'
-}
-
-const formatPublishDate = (publishDate: string) => {
-  if (!publishDate) return ''
-
-  const now = new Date()
-  const published = new Date(publishDate)
-  const diffTime = now.getTime() - published.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) {
-    const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
-    if (diffHours === 0) {
-      const diffMinutes = Math.floor(diffTime / (1000 * 60))
-      return `${diffMinutes} 分钟前`
-    }
-    return `${diffHours} 小时前`
-  } else if (diffDays < 7) {
-    return `${diffDays} 天前`
-  } else {
-    return published.toLocaleDateString('zh-CN')
-  }
-}
-
-// 处理技能标签点击（可选功能）
-const handleSkillTagClick = (tag: string, category: SkillTagCategory, displayName: string) => {
-  console.log('技能标签被点击:', { tag, category, displayName })
-  // 可以在这里实现技能标签的搜索或过滤功能
-}
-</script>
 
 <style scoped>
 .job-card {

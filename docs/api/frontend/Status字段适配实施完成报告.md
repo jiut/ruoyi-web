@@ -80,21 +80,6 @@ const isActive = isStatusActive('0') // true
 
 ### 在Vue组件中使用
 ```vue
-<template>
-  <div>
-    <!-- 状态文本 -->
-    <span :class="getSchoolStatusClass(school.status)">
-      {{ formatSchoolStatus(school.status) }}
-    </span>
-
-    <!-- 状态标签 -->
-    <span :class="['status-tag', getSchoolStatusClass(school.status)]">
-      <i :class="getSchoolStatusIcon(school.status)"></i>
-      {{ formatSchoolStatus(school.status) }}
-    </span>
-  </div>
-</template>
-
 <script setup>
 import { useSchoolFormatter } from '@/composables/talent/useSchool'
 
@@ -104,6 +89,21 @@ const {
   getSchoolStatusIcon
 } = useSchoolFormatter()
 </script>
+
+<template>
+  <div>
+    <!-- 状态文本 -->
+    <span :class="getSchoolStatusClass(school.status)">
+      {{ formatSchoolStatus(school.status) }}
+    </span>
+
+    <!-- 状态标签 -->
+    <span class="status-tag" :class="[getSchoolStatusClass(school.status)]">
+      <i :class="getSchoolStatusIcon(school.status)" />
+      {{ formatSchoolStatus(school.status) }}
+    </span>
+  </div>
+</template>
 ```
 
 ## 📊 数据格式对照

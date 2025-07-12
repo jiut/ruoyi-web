@@ -44,8 +44,8 @@ export const mockJobs: JobPosting[] = [
       phone: '0755-86013388',
       userId: 101,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-24T10:00:00Z'
-    }
+      updatedAt: '2025-01-24T10:00:00Z',
+    },
   },
   {
     id: 2,
@@ -89,8 +89,8 @@ export const mockJobs: JobPosting[] = [
       phone: '0571-85022088',
       userId: 102,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-26T09:00:00Z'
-    }
+      updatedAt: '2025-01-26T09:00:00Z',
+    },
   },
   {
     id: 3,
@@ -134,8 +134,8 @@ export const mockJobs: JobPosting[] = [
       phone: '010-82600000',
       userId: 103,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-25T14:00:00Z'
-    }
+      updatedAt: '2025-01-25T14:00:00Z',
+    },
   },
   {
     id: 4,
@@ -179,8 +179,8 @@ export const mockJobs: JobPosting[] = [
       phone: '020-85105163',
       userId: 104,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-22T11:00:00Z'
-    }
+      updatedAt: '2025-01-22T11:00:00Z',
+    },
   },
   {
     id: 5,
@@ -224,8 +224,8 @@ export const mockJobs: JobPosting[] = [
       phone: '010-59928888',
       userId: 105,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-25T16:00:00Z'
-    }
+      updatedAt: '2025-01-25T16:00:00Z',
+    },
   },
   {
     id: 6,
@@ -269,9 +269,9 @@ export const mockJobs: JobPosting[] = [
       phone: '010-60606666',
       userId: 106,
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2025-01-23T13:00:00Z'
-    }
-  }
+      updatedAt: '2025-01-23T13:00:00Z',
+    },
+  },
 ]
 
 // 获取模拟数据的函数
@@ -285,19 +285,18 @@ export function getMockJobs(params?: {
   let filteredJobs = [...mockJobs]
 
   // 应用筛选条件
-  if (params?.profession) {
+  if (params?.profession)
     filteredJobs = filteredJobs.filter(job => job.profession === params.profession)
-  }
 
   if (params?.workLocation) {
     filteredJobs = filteredJobs.filter(job =>
-      job.workLocation.includes(params.workLocation!)
+      job.workLocation.includes(params.workLocation!),
     )
   }
 
   if (params?.experienceRequired) {
     filteredJobs = filteredJobs.filter(job =>
-      job.experienceRequired.includes(params.experienceRequired!)
+      job.experienceRequired.includes(params.experienceRequired!),
     )
   }
 
@@ -311,7 +310,7 @@ export function getMockJobs(params?: {
     rows: filteredJobs.slice(startIndex, endIndex),
     total: filteredJobs.length,
     pageNum,
-    pageSize
+    pageSize,
   }
 }
 

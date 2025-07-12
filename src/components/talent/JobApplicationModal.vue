@@ -1,213 +1,5 @@
-<template>
-  <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center" @click="handleBackdropClick">
-    <div class="absolute inset-0 bg-black/70"></div>
-    <div
-      class="job-detail-modal relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl p-8 m-4"
-      @click.stop
-    >
-      <button
-        @click="closeModal"
-        class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700/80 transition-colors"
-      >
-        <i class="ri-close-line ri-lg"></i>
-      </button>
-
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-2 text-white">申请职位：{{ job?.title }}</h2>
-        <p class="text-gray-300">{{ job?.enterprise?.enterpriseName }} · {{ job?.workLocation }}</p>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- 基本信息 -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
-            <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
-            基本信息
-          </h3>
-          <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-gray-300 mb-2">姓名</label>
-                <input
-                  type="text"
-                  v-model="formData.name"
-                  class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                  placeholder="请输入姓名"
-                  required
-                >
-              </div>
-              <div>
-                <label class="block text-gray-300 mb-2">手机号码</label>
-                <input
-                  type="tel"
-                  v-model="formData.phone"
-                  class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                  placeholder="请输入手机号码"
-                  required
-                >
-              </div>
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">电子邮箱</label>
-              <input
-                type="email"
-                v-model="formData.email"
-                class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                placeholder="请输入电子邮箱"
-                required
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- 工作经验 -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
-            <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
-            工作经验
-          </h3>
-          <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-gray-300 mb-2">工作年限</label>
-                <select
-                  v-model="formData.experience"
-                  class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
-                  required
-                >
-                  <option value="">请选择工作年限</option>
-                  <option value="0-1">应届/1年以内</option>
-                  <option value="1-3">1-3年</option>
-                  <option value="3-5">3-5年</option>
-                  <option value="5-10">5-10年</option>
-                  <option value="10+">10年以上</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-gray-300 mb-2">当前状态</label>
-                <select
-                  v-model="formData.currentStatus"
-                  class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
-                  required
-                >
-                  <option value="">请选择当前状态</option>
-                  <option value="在职">在职，看看机会</option>
-                  <option value="离职">离职，正在找工作</option>
-                  <option value="应届">应届毕业生</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">期望薪资</label>
-              <select
-                v-model="formData.expectedSalary"
-                class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
-                required
-              >
-                <option value="">请选择期望薪资</option>
-                <option value="10k-">10k以下</option>
-                <option value="10k-15k">10k-15k</option>
-                <option value="15k-20k">15k-20k</option>
-                <option value="20k-30k">20k-30k</option>
-                <option value="30k-50k">30k-50k</option>
-                <option value="50k+">50k以上</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- 简历上传 -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
-            <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
-            简历上传
-          </h3>
-          <div class="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center hover:border-gray-600 transition-colors">
-            <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/20 text-primary">
-              <i class="ri-upload-cloud-line ri-2x"></i>
-            </div>
-            <p class="text-gray-300 mb-2">点击或拖拽文件到此处上传</p>
-            <p class="text-gray-500 text-sm">支持 PDF、Word 格式，文件大小不超过 10MB</p>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              @change="handleFileUpload"
-              class="hidden"
-              ref="fileInput"
-            >
-            <button
-              type="button"
-              @click="triggerFileUpload"
-              class="mt-4 px-4 py-2 bg-gray-800 border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-colors"
-            >
-              选择文件
-            </button>
-            <p v-if="formData.resumeFileName" class="mt-2 text-sm text-green-400">
-              已选择：{{ formData.resumeFileName }}
-            </p>
-          </div>
-        </div>
-
-        <!-- 作品集链接 -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
-            <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
-            作品集链接（可选）
-          </h3>
-          <div>
-            <label class="block text-gray-300 mb-2">作品集URL</label>
-            <input
-              type="url"
-              v-model="formData.portfolioUrl"
-              class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-              placeholder="请输入作品集链接（如：Behance、Dribbble等）"
-            >
-          </div>
-        </div>
-
-        <!-- 自我介绍 -->
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
-            <div class="w-1 h-6 bg-primary rounded-full mr-3"></div>
-            自我介绍
-          </h3>
-          <div>
-            <label class="block text-gray-300 mb-2">求职信</label>
-            <textarea
-              v-model="formData.coverLetter"
-              class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary h-32"
-              placeholder="请简要介绍自己的技能、经验和优势，以及为什么适合这个职位（选填）"
-              maxlength="1000"
-            ></textarea>
-            <div class="text-right text-xs text-gray-500 mt-1">
-              {{ formData.coverLetter.length }}/1000
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8 flex justify-center space-x-4">
-          <button
-            type="button"
-            @click="closeModal"
-            class="px-6 py-3 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-base hover:border-gray-500 transition-colors"
-          >
-            取消
-          </button>
-          <button
-            type="submit"
-            :disabled="loading"
-            class="px-8 py-3 bg-primary text-white rounded-lg text-base font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
-          >
-            {{ loading ? '提交中...' : '提交申请' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import type { JobPosting } from '@/types/talent/job'
 
 interface Props {
@@ -249,7 +41,7 @@ const formData = reactive<ApplicationFormData>({
   resumeFile: null,
   resumeFileName: '',
   portfolioUrl: '',
-  coverLetter: ''
+  coverLetter: '',
 })
 
 // 方法
@@ -273,7 +65,7 @@ const resetForm = () => {
     resumeFile: null,
     resumeFileName: '',
     portfolioUrl: '',
-    coverLetter: ''
+    coverLetter: '',
   })
 }
 
@@ -288,7 +80,7 @@ const handleFileUpload = (event: Event) => {
   if (file) {
     // 检查文件类型
     const allowedTypes = ['.pdf', '.doc', '.docx']
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
+    const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`
 
     if (!allowedTypes.includes(fileExtension)) {
       alert('请上传 PDF 或 Word 格式的文件')
@@ -332,15 +124,266 @@ const handleSubmit = async () => {
 
     // 提交表单数据
     emit('submit', { ...formData })
-
-  } catch (error) {
+  }
+  catch (error) {
     console.error('提交申请失败:', error)
     alert('提交失败，请稍后重试')
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
 </script>
+
+<template>
+  <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center" @click="handleBackdropClick">
+    <div class="absolute inset-0 bg-black/70" />
+    <div
+      class="job-detail-modal relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl p-8 m-4"
+      @click.stop
+    >
+      <button
+        class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700/80 transition-colors"
+        @click="closeModal"
+      >
+        <i class="ri-close-line ri-lg" />
+      </button>
+
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-2 text-white">
+          申请职位：{{ job?.title }}
+        </h2>
+        <p class="text-gray-300">
+          {{ job?.enterprise?.enterpriseName }} · {{ job?.workLocation }}
+        </p>
+      </div>
+
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <!-- 基本信息 -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+            <div class="w-1 h-6 bg-primary rounded-full mr-3" />
+            基本信息
+          </h3>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">姓名</label>
+                <input
+                  v-model="formData.name"
+                  type="text"
+                  class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
+                  placeholder="请输入姓名"
+                  required
+                >
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">手机号码</label>
+                <input
+                  v-model="formData.phone"
+                  type="tel"
+                  class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
+                  placeholder="请输入手机号码"
+                  required
+                >
+              </div>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">电子邮箱</label>
+              <input
+                v-model="formData.email"
+                type="email"
+                class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
+                placeholder="请输入电子邮箱"
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- 工作经验 -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+            <div class="w-1 h-6 bg-primary rounded-full mr-3" />
+            工作经验
+          </h3>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">工作年限</label>
+                <select
+                  v-model="formData.experience"
+                  class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
+                  required
+                >
+                  <option value="">
+                    请选择工作年限
+                  </option>
+                  <option value="0-1">
+                    应届/1年以内
+                  </option>
+                  <option value="1-3">
+                    1-3年
+                  </option>
+                  <option value="3-5">
+                    3-5年
+                  </option>
+                  <option value="5-10">
+                    5-10年
+                  </option>
+                  <option value="10+">
+                    10年以上
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">当前状态</label>
+                <select
+                  v-model="formData.currentStatus"
+                  class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
+                  required
+                >
+                  <option value="">
+                    请选择当前状态
+                  </option>
+                  <option value="在职">
+                    在职，看看机会
+                  </option>
+                  <option value="离职">
+                    离职，正在找工作
+                  </option>
+                  <option value="应届">
+                    应届毕业生
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-2">期望薪资</label>
+              <select
+                v-model="formData.expectedSalary"
+                class="custom-select w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary pr-8"
+                required
+              >
+                <option value="">
+                  请选择期望薪资
+                </option>
+                <option value="10k-">
+                  10k以下
+                </option>
+                <option value="10k-15k">
+                  10k-15k
+                </option>
+                <option value="15k-20k">
+                  15k-20k
+                </option>
+                <option value="20k-30k">
+                  20k-30k
+                </option>
+                <option value="30k-50k">
+                  30k-50k
+                </option>
+                <option value="50k+">
+                  50k以上
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 简历上传 -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+            <div class="w-1 h-6 bg-primary rounded-full mr-3" />
+            简历上传
+          </h3>
+          <div class="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center hover:border-gray-600 transition-colors">
+            <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+              <i class="ri-upload-cloud-line ri-2x" />
+            </div>
+            <p class="text-gray-300 mb-2">
+              点击或拖拽文件到此处上传
+            </p>
+            <p class="text-gray-500 text-sm">
+              支持 PDF、Word 格式，文件大小不超过 10MB
+            </p>
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".pdf,.doc,.docx"
+              class="hidden"
+              @change="handleFileUpload"
+            >
+            <button
+              type="button"
+              class="mt-4 px-4 py-2 bg-gray-800 border border-gray-600 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-colors"
+              @click="triggerFileUpload"
+            >
+              选择文件
+            </button>
+            <p v-if="formData.resumeFileName" class="mt-2 text-sm text-green-400">
+              已选择：{{ formData.resumeFileName }}
+            </p>
+          </div>
+        </div>
+
+        <!-- 作品集链接 -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+            <div class="w-1 h-6 bg-primary rounded-full mr-3" />
+            作品集链接（可选）
+          </h3>
+          <div>
+            <label class="block text-gray-300 mb-2">作品集URL</label>
+            <input
+              v-model="formData.portfolioUrl"
+              type="url"
+              class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
+              placeholder="请输入作品集链接（如：Behance、Dribbble等）"
+            >
+          </div>
+        </div>
+
+        <!-- 自我介绍 -->
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center text-white">
+            <div class="w-1 h-6 bg-primary rounded-full mr-3" />
+            自我介绍
+          </h3>
+          <div>
+            <label class="block text-gray-300 mb-2">求职信</label>
+            <textarea
+              v-model="formData.coverLetter"
+              class="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary h-32"
+              placeholder="请简要介绍自己的技能、经验和优势，以及为什么适合这个职位（选填）"
+              maxlength="1000"
+            />
+            <div class="text-right text-xs text-gray-500 mt-1">
+              {{ formData.coverLetter.length }}/1000
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-center space-x-4">
+          <button
+            type="button"
+            class="px-6 py-3 bg-transparent border border-gray-600 text-gray-300 rounded-lg text-base hover:border-gray-500 transition-colors"
+            @click="closeModal"
+          >
+            取消
+          </button>
+          <button
+            type="submit"
+            :disabled="loading"
+            class="px-8 py-3 bg-primary text-white rounded-lg text-base font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
+          >
+            {{ loading ? '提交中...' : '提交申请' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 @import '@/styles/talent.css';

@@ -1,12 +1,12 @@
 import type {
-  Designer,
-  Work,
-  WorkExperience,
-  Education,
   Award,
+  Designer,
+  Education,
   Profession,
   SkillTag,
-  WorkStatus
+  Work,
+  WorkExperience,
+  WorkStatus,
 } from '@/types/talent/designer'
 
 // 模拟设计师数据
@@ -21,7 +21,7 @@ export const mockDesigners: Designer[] = [
     socialLinks: JSON.stringify({
       dribbble: 'https://dribbble.com/chenyu',
       behance: 'https://behance.net/chenyu',
-      linkedin: 'https://linkedin.com/in/chenyu'
+      linkedin: 'https://linkedin.com/in/chenyu',
     }),
     portfolio: 'https://chenyudesign.com',
     description: '拥有 5 年 UI/UX 设计经验，专注于移动应用和 Web 产品的用户体验设计。擅长用户研究、交互设计和视觉设计，能够从用户需求出发，打造直观易用的产品界面。曾主导腾讯多个核心产品的设计工作，包括社交、游戏和企业应用等领域。精通用户研究方法，具备敏锐的用户洞察力和优秀的设计执行力。',
@@ -39,7 +39,7 @@ export const mockDesigners: Designer[] = [
     birthDate: '1995-06-15',
     workYears: 5,
     graduationDate: '2018-06-30',
-    joinDate: '2022-03-01'
+    joinDate: '2022-03-01',
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['photoshop', 'illustrator', 'brand_design', 'typography', 'visual_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       instagram: 'https://instagram.com/linzihao',
-      behance: 'https://behance.net/linzihao'
+      behance: 'https://behance.net/linzihao',
     }),
     portfolio: 'https://linzihaodesign.com',
     description: '专业视觉设计师，专注于品牌设计和视觉传达。拥有丰富的品牌标识设计经验，善于通过视觉语言传达品牌价值。曾为多家知名企业设计品牌形象，包括LOGO设计、VI系统、包装设计等。在色彩搭配和字体设计方面有独到见解，作品风格简约而富有张力。',
@@ -65,7 +65,7 @@ export const mockDesigners: Designer[] = [
     gender: '0',
     birthDate: '1990-03-22',
     workYears: 7,
-    enterpriseId: 2
+    enterpriseId: 2,
   },
   {
     id: 3,
@@ -75,7 +75,7 @@ export const mockDesigners: Designer[] = [
     phone: '13634567890',
     skillTags: JSON.stringify(['blender', 'cinema_4d', 'animation_design', 'character_design', 'visual_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
-      artstation: 'https://artstation.com/wangmengqi'
+      artstation: 'https://artstation.com/wangmengqi',
     }),
     portfolio: 'https://wangmengqi3d.com',
     description: '3D 动画设计师，专注于三维建模和动画制作。拥有丰富的影视和游戏行业经验，擅长角色建模、场景设计和动画制作。作品曾在多个国际动画节获奖，具备扎实的美术功底和前沿的技术实力。',
@@ -89,7 +89,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '1',
     birthDate: '1992-08-10',
-    workYears: 4
+    workYears: 4,
   },
   {
     id: 4,
@@ -99,7 +99,7 @@ export const mockDesigners: Designer[] = [
     phone: '13745678901',
     skillTags: JSON.stringify(['sketch', 'prototype_design', 'user_experience', 'design_system', 'user_research'] as SkillTag[]),
     socialLinks: JSON.stringify({
-      medium: 'https://medium.com/@zhaomingyu'
+      medium: 'https://medium.com/@zhaomingyu',
     }),
     portfolio: 'https://zhaomingyu.design',
     description: '产品设计师，专注于数字产品的用户体验设计和产品策略。拥有深厚的产品思维和用户洞察能力，善于从商业目标出发，设计既美观又实用的产品界面。在B端产品设计方面经验丰富，曾主导多个企业级产品的设计工作。',
@@ -114,7 +114,7 @@ export const mockDesigners: Designer[] = [
     gender: '0',
     birthDate: '1991-12-05',
     workYears: 6,
-    enterpriseId: 3
+    enterpriseId: 3,
   },
   {
     id: 5,
@@ -125,7 +125,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['figma', 'prototype_design', 'user_research', 'wireframing', 'user_testing'] as SkillTag[]),
     socialLinks: JSON.stringify({
       dribbble: 'https://dribbble.com/lisiyu',
-      github: 'https://github.com/lisiyu'
+      github: 'https://github.com/lisiyu',
     }),
     portfolio: 'https://lisiyu.design',
     description: '交互设计师，专注于数字产品的交互体验设计。具备丰富的用户研究经验和交互设计技能，善于通过原型设计和用户测试验证设计方案。曾参与多个大型互联网产品的交互设计工作，在移动端交互设计方面有深入研究。',
@@ -142,7 +142,7 @@ export const mockDesigners: Designer[] = [
     workYears: 3,
     schoolId: 2,
     graduationDate: '2020-06-30',
-    joinDate: '2020-07-15'
+    joinDate: '2020-07-15',
   },
   {
     id: 6,
@@ -153,7 +153,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['illustrator', 'photoshop', 'brand_design', 'typography', 'color_theory'] as SkillTag[]),
     socialLinks: JSON.stringify({
       behance: 'https://behance.net/zhangweiqiang',
-      instagram: 'https://instagram.com/zhangweiqiang'
+      instagram: 'https://instagram.com/zhangweiqiang',
     }),
     portfolio: 'https://zhangweiqiang.design',
     description: '品牌设计师，专注于企业品牌形象设计和视觉识别系统构建。拥有多年品牌设计经验，为众多知名企业提供过品牌设计服务。擅长将品牌理念转化为视觉符号，在LOGO设计、VI系统、包装设计等领域具备专业能力。',
@@ -167,7 +167,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '0',
     birthDate: '1989-09-30',
-    workYears: 8
+    workYears: 8,
   },
   {
     id: 7,
@@ -178,7 +178,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['after_effects', 'cinema_4d', 'animation_design', 'visual_design', 'illustration'] as SkillTag[]),
     socialLinks: JSON.stringify({
       vimeo: 'https://vimeo.com/liuxiaoya',
-      behance: 'https://behance.net/liuxiaoya'
+      behance: 'https://behance.net/liuxiaoya',
     }),
     portfolio: 'https://liuxiaoya.motion',
     description: '动效设计师，专注于数字媒体动画和视觉特效设计。具备丰富的动效制作经验，善于运用各种动效技术创造引人入胜的视觉体验。作品涵盖品牌动画、产品演示动画、UI动效等多个领域，在创意表达和技术实现方面都有出色表现。',
@@ -193,7 +193,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1994-07-12',
     workYears: 4,
-    enterpriseId: 4
+    enterpriseId: 4,
   },
   {
     id: 8,
@@ -204,7 +204,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['illustrator', 'photoshop', 'illustration', 'character_design', 'visual_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       instagram: 'https://instagram.com/sunzhihua',
-      artstation: 'https://artstation.com/sunzhihua'
+      artstation: 'https://artstation.com/sunzhihua',
     }),
     portfolio: 'https://sunzhihua.art',
     description: '插画师，专注于商业插画和角色设计。具备扎实的美术功底和独特的创作风格，作品风格多样，能够根据不同项目需求调整创作方向。在儿童绘本、品牌插画、游戏角色设计等领域有丰富经验，作品多次获得业内认可。',
@@ -218,7 +218,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '0',
     birthDate: '1990-11-28',
-    workYears: 6
+    workYears: 6,
   },
   {
     id: 9,
@@ -229,7 +229,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['photoshop', 'illustrator', 'graphic_design', 'typography', 'layout_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       behance: 'https://behance.net/zhouyaqi',
-      pinterest: 'https://pinterest.com/zhouyaqi'
+      pinterest: 'https://pinterest.com/zhouyaqi',
     }),
     portfolio: 'https://zhouyaqi.design',
     description: '平面设计师，专注于印刷品设计和数字媒体设计。在杂志排版、海报设计、宣传册制作等方面有丰富经验。善于运用色彩和排版创造视觉冲击力，作品风格现代简约，注重信息传达的清晰性和美观性。',
@@ -244,7 +244,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1993-05-14',
     workYears: 5,
-    enterpriseId: 5
+    enterpriseId: 5,
   },
   {
     id: 10,
@@ -255,7 +255,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['figma', 'sketch', 'ui_design', 'visual_design', 'design_system'] as SkillTag[]),
     socialLinks: JSON.stringify({
       dribbble: 'https://dribbble.com/wuzhiqiang',
-      linkedin: 'https://linkedin.com/in/wuzhiqiang'
+      linkedin: 'https://linkedin.com/in/wuzhiqiang',
     }),
     portfolio: 'https://wuzhiqiang.design',
     description: 'UI设计师，专注于移动应用和Web界面的视觉设计。具备敏锐的视觉感知能力和优秀的设计执行力，善于将品牌元素融入界面设计中。在电商、金融、教育等多个行业有丰富的设计经验，作品注重用户体验和视觉美感的平衡。',
@@ -270,7 +270,7 @@ export const mockDesigners: Designer[] = [
     gender: '0',
     birthDate: '1994-09-20',
     workYears: 4,
-    enterpriseId: 6
+    enterpriseId: 6,
   },
   {
     id: 11,
@@ -281,7 +281,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['user_research', 'prototype_design', 'user_testing', 'information_architecture', 'wireframing'] as SkillTag[]),
     socialLinks: JSON.stringify({
       medium: 'https://medium.com/@linxiaoyu',
-      linkedin: 'https://linkedin.com/in/linxiaoyu'
+      linkedin: 'https://linkedin.com/in/linxiaoyu',
     }),
     portfolio: 'https://linxiaoyu.ux',
     description: 'UX设计师，专注于用户体验研究和交互设计。具备深厚的用户研究背景，善于通过数据分析和用户访谈洞察用户需求。在复杂业务场景的UX设计方面有丰富经验，曾为多个大型企业级产品提供用户体验优化服务。',
@@ -296,7 +296,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1991-12-08',
     workYears: 6,
-    enterpriseId: 7
+    enterpriseId: 7,
   },
   {
     id: 12,
@@ -307,7 +307,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['after_effects', 'cinema_4d', 'motion_design', 'animation', 'visual_effects'] as SkillTag[]),
     socialLinks: JSON.stringify({
       vimeo: 'https://vimeo.com/chenzhiming',
-      instagram: 'https://instagram.com/chenzhiming'
+      instagram: 'https://instagram.com/chenzhiming',
     }),
     portfolio: 'https://chenzhiming.motion',
     description: '动效设计师，专注于数字媒体动画和视觉特效制作。具备丰富的影视后期制作经验，善于运用各种动效技术创造震撼的视觉体验。作品涵盖广告动画、产品演示、品牌宣传片等多个领域，在创意表达和技术实现方面都有出色表现。',
@@ -321,7 +321,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '0',
     birthDate: '1989-04-16',
-    workYears: 7
+    workYears: 7,
   },
   {
     id: 13,
@@ -332,7 +332,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['figma', 'sketch', 'user_research', 'prototype_design', 'design_system'] as SkillTag[]),
     socialLinks: JSON.stringify({
       dribbble: 'https://dribbble.com/huangyating',
-      linkedin: 'https://linkedin.com/in/huangyating'
+      linkedin: 'https://linkedin.com/in/huangyating',
     }),
     portfolio: 'https://huangyating.design',
     description: 'UI/UX设计师，专注于移动应用和Web产品的用户体验设计。具备深厚的用户研究背景和优秀的设计执行力，善于通过数据驱动的方法优化产品体验。在电商、社交、教育等多个领域有丰富经验，作品注重用户需求和商业目标的平衡。',
@@ -347,7 +347,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1992-07-25',
     workYears: 5,
-    enterpriseId: 8
+    enterpriseId: 8,
   },
   {
     id: 14,
@@ -358,7 +358,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['illustrator', 'photoshop', 'brand_design', 'typography', 'visual_identity'] as SkillTag[]),
     socialLinks: JSON.stringify({
       behance: 'https://behance.net/yangzhiqiang',
-      instagram: 'https://instagram.com/yangzhiqiang'
+      instagram: 'https://instagram.com/yangzhiqiang',
     }),
     portfolio: 'https://yangzhiqiang.brand',
     description: '品牌设计师，专注于企业品牌形象设计和视觉识别系统构建。拥有多年品牌设计经验，为众多知名企业提供过品牌设计服务。擅长将品牌理念转化为视觉符号，在LOGO设计、VI系统、品牌应用等方面具备专业能力。',
@@ -372,7 +372,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '0',
     birthDate: '1988-11-12',
-    workYears: 8
+    workYears: 8,
   },
   {
     id: 15,
@@ -383,7 +383,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['blender', 'maya', '3d_modeling', 'character_design', 'animation_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       artstation: 'https://artstation.com/liumengqi',
-      instagram: 'https://instagram.com/liumengqi'
+      instagram: 'https://instagram.com/liumengqi',
     }),
     portfolio: 'https://liumengqi.3d',
     description: '3D设计师，专注于三维建模和角色设计。具备扎实的美术功底和前沿的技术实力，在游戏美术、影视特效、产品展示等领域有丰富经验。擅长角色建模、场景设计和动画制作，作品风格独特，技术精湛。',
@@ -398,7 +398,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1991-03-18',
     workYears: 6,
-    enterpriseId: 9
+    enterpriseId: 9,
   },
   {
     id: 16,
@@ -409,7 +409,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['sketch', 'figma', 'user_experience', 'prototype_design', 'design_system'] as SkillTag[]),
     socialLinks: JSON.stringify({
       medium: 'https://medium.com/@zhangyawen',
-      linkedin: 'https://linkedin.com/in/zhangyawen'
+      linkedin: 'https://linkedin.com/in/zhangyawen',
     }),
     portfolio: 'https://zhangyawen.product',
     description: '产品设计师，专注于数字产品的用户体验设计和产品策略。具备深厚的产品思维和用户洞察能力，善于从商业目标出发，设计既美观又实用的产品界面。在B端产品设计方面经验丰富，曾主导多个企业级产品的设计工作。',
@@ -424,7 +424,7 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1995-08-30',
     workYears: 4,
-    enterpriseId: 10
+    enterpriseId: 10,
   },
   {
     id: 17,
@@ -435,7 +435,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['figma', 'axure_rp', 'user_research', 'wireframing', 'user_testing'] as SkillTag[]),
     socialLinks: JSON.stringify({
       dribbble: 'https://dribbble.com/wanghaoran',
-      github: 'https://github.com/wanghaoran'
+      github: 'https://github.com/wanghaoran',
     }),
     portfolio: 'https://wanghaoran.interaction',
     description: '交互设计师，专注于数字产品的交互体验设计。具备丰富的用户研究经验和交互设计技能，善于通过原型设计和用户测试验证设计方案。曾参与多个大型互联网产品的交互设计工作，在移动端交互设计方面有深入研究。',
@@ -450,7 +450,7 @@ export const mockDesigners: Designer[] = [
     gender: '0',
     birthDate: '1993-01-15',
     workYears: 5,
-    enterpriseId: 11
+    enterpriseId: 11,
   },
   {
     id: 18,
@@ -461,7 +461,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['photoshop', 'illustrator', 'visual_design', 'color_theory', 'typography'] as SkillTag[]),
     socialLinks: JSON.stringify({
       behance: 'https://behance.net/liyaqin',
-      pinterest: 'https://pinterest.com/liyaqin'
+      pinterest: 'https://pinterest.com/liyaqin',
     }),
     portfolio: 'https://liyaqin.visual',
     description: '视觉设计师，专注于品牌视觉设计和视觉传达。拥有丰富的视觉设计经验，善于通过色彩、字体、图形等视觉元素传达品牌价值。在品牌标识设计、视觉系统构建、创意广告设计等方面有专业能力。',
@@ -475,7 +475,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '1',
     birthDate: '1990-06-22',
-    workYears: 7
+    workYears: 7,
   },
   {
     id: 19,
@@ -486,7 +486,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['illustrator', 'photoshop', 'illustration', 'character_design', 'scene_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       instagram: 'https://instagram.com/chenzhihao',
-      artstation: 'https://artstation.com/chenzhihao'
+      artstation: 'https://artstation.com/chenzhihao',
     }),
     portfolio: 'https://chenzhihao.art',
     description: '插画师，专注于商业插画和概念设计。具备扎实的美术功底和独特的创作风格，作品风格多样，能够根据不同项目需求调整创作方向。在游戏美术、品牌插画、概念设计等领域有丰富经验，作品多次获得业内认可。',
@@ -500,7 +500,7 @@ export const mockDesigners: Designer[] = [
     updatedAt: '2023-12-01T00:00:00Z',
     gender: '0',
     birthDate: '1992-12-08',
-    workYears: 5
+    workYears: 5,
   },
   {
     id: 20,
@@ -511,7 +511,7 @@ export const mockDesigners: Designer[] = [
     skillTags: JSON.stringify(['photoshop', 'illustrator', 'graphic_design', 'layout_design', 'print_design'] as SkillTag[]),
     socialLinks: JSON.stringify({
       behance: 'https://behance.net/zhaoyaqi',
-      linkedin: 'https://linkedin.com/in/zhaoyaqi'
+      linkedin: 'https://linkedin.com/in/zhaoyaqi',
     }),
     portfolio: 'https://zhaoyaqi.graphic',
     description: '平面设计师，专注于印刷品设计和数字媒体设计。在杂志排版、海报设计、宣传册制作等方面有丰富经验。善于运用色彩和排版创造视觉冲击力，作品风格现代简约，注重信息传达的清晰性和美观性。',
@@ -526,8 +526,8 @@ export const mockDesigners: Designer[] = [
     gender: '1',
     birthDate: '1991-09-14',
     workYears: 6,
-    enterpriseId: 12
-  }
+    enterpriseId: 12,
+  },
 ]
 
 // 模拟作品数据
@@ -549,7 +549,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-06-01T00:00:00Z',
-    updatedAt: '2023-06-01T00:00:00Z'
+    updatedAt: '2023-06-01T00:00:00Z',
   },
   {
     id: 2,
@@ -565,7 +565,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-08-01T00:00:00Z',
-    updatedAt: '2023-08-01T00:00:00Z'
+    updatedAt: '2023-08-01T00:00:00Z',
   },
   {
     id: 3,
@@ -581,7 +581,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-10-01T00:00:00Z',
-    updatedAt: '2023-10-01T00:00:00Z'
+    updatedAt: '2023-10-01T00:00:00Z',
   },
   // 林子豪的作品
   {
@@ -598,7 +598,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-07-15T00:00:00Z',
-    updatedAt: '2023-07-15T00:00:00Z'
+    updatedAt: '2023-07-15T00:00:00Z',
   },
   {
     id: 5,
@@ -614,7 +614,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-09-20T00:00:00Z',
-    updatedAt: '2023-09-20T00:00:00Z'
+    updatedAt: '2023-09-20T00:00:00Z',
   },
   // 王梦琪的作品
   {
@@ -631,7 +631,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-05-10T00:00:00Z',
-    updatedAt: '2023-05-10T00:00:00Z'
+    updatedAt: '2023-05-10T00:00:00Z',
   },
   {
     id: 7,
@@ -647,7 +647,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-11-05T00:00:00Z',
-    updatedAt: '2023-11-05T00:00:00Z'
+    updatedAt: '2023-11-05T00:00:00Z',
   },
   // 赵明宇的作品
   {
@@ -664,7 +664,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-08-15T00:00:00Z',
-    updatedAt: '2023-08-15T00:00:00Z'
+    updatedAt: '2023-08-15T00:00:00Z',
   },
   // 李思雨的作品
   {
@@ -681,7 +681,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-09-10T00:00:00Z',
-    updatedAt: '2023-09-10T00:00:00Z'
+    updatedAt: '2023-09-10T00:00:00Z',
   },
   // 张伟强的作品
   {
@@ -698,7 +698,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-07-20T00:00:00Z',
-    updatedAt: '2023-07-20T00:00:00Z'
+    updatedAt: '2023-07-20T00:00:00Z',
   },
   // 刘小雅的作品
   {
@@ -715,7 +715,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-10-15T00:00:00Z',
-    updatedAt: '2023-10-15T00:00:00Z'
+    updatedAt: '2023-10-15T00:00:00Z',
   },
   // 孙志华的作品
   {
@@ -732,7 +732,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-06-25T00:00:00Z',
-    updatedAt: '2023-06-25T00:00:00Z'
+    updatedAt: '2023-06-25T00:00:00Z',
   },
   // 周雅琪的作品
   {
@@ -749,7 +749,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-11-20T00:00:00Z',
-    updatedAt: '2023-11-20T00:00:00Z'
+    updatedAt: '2023-11-20T00:00:00Z',
   },
   // 吴志强的作品
   {
@@ -766,7 +766,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-08-30T00:00:00Z',
-    updatedAt: '2023-08-30T00:00:00Z'
+    updatedAt: '2023-08-30T00:00:00Z',
   },
   // 黄雅婷的作品
   {
@@ -783,7 +783,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-10-05T00:00:00Z',
-    updatedAt: '2023-10-05T00:00:00Z'
+    updatedAt: '2023-10-05T00:00:00Z',
   },
   // 杨志强的作品
   {
@@ -800,7 +800,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-07-12T00:00:00Z',
-    updatedAt: '2023-07-12T00:00:00Z'
+    updatedAt: '2023-07-12T00:00:00Z',
   },
   // 刘梦琪的作品
   {
@@ -817,7 +817,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-09-18T00:00:00Z',
-    updatedAt: '2023-09-18T00:00:00Z'
+    updatedAt: '2023-09-18T00:00:00Z',
   },
   // 张雅文的作品
   {
@@ -834,7 +834,7 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-11-08T00:00:00Z',
-    updatedAt: '2023-11-08T00:00:00Z'
+    updatedAt: '2023-11-08T00:00:00Z',
   },
   // 王浩然的作品
   {
@@ -851,7 +851,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-08-22T00:00:00Z',
-    updatedAt: '2023-08-22T00:00:00Z'
+    updatedAt: '2023-08-22T00:00:00Z',
   },
   // 李雅琴的作品
   {
@@ -868,7 +868,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-06-15T00:00:00Z',
-    updatedAt: '2023-06-15T00:00:00Z'
+    updatedAt: '2023-06-15T00:00:00Z',
   },
   // 陈志豪的作品
   {
@@ -885,7 +885,7 @@ export const mockWorks: Work[] = [
     isFeatured: '1',
     status: '0',
     createdAt: '2023-07-28T00:00:00Z',
-    updatedAt: '2023-07-28T00:00:00Z'
+    updatedAt: '2023-07-28T00:00:00Z',
   },
   // 赵雅琪的作品
   {
@@ -902,8 +902,8 @@ export const mockWorks: Work[] = [
     isFeatured: '0',
     status: '0',
     createdAt: '2023-10-12T00:00:00Z',
-    updatedAt: '2023-10-12T00:00:00Z'
-  }
+    updatedAt: '2023-10-12T00:00:00Z',
+  },
 ]
 
 // 模拟工作经历数据
@@ -919,7 +919,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 1,
     location: '深圳市南山区',
-    industry: '互联网'
+    industry: '互联网',
   },
   {
     id: 2,
@@ -931,7 +931,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: false,
     designerId: 1,
     location: '北京市朝阳区',
-    industry: '互联网'
+    industry: '互联网',
   },
   {
     id: 3,
@@ -943,7 +943,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: false,
     designerId: 1,
     location: '北京市朝阳区',
-    industry: '互联网'
+    industry: '互联网',
   },
   // 林子豪的工作经历
   {
@@ -956,7 +956,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 2,
     location: '上海市静安区',
-    industry: '广告'
+    industry: '广告',
   },
   {
     id: 5,
@@ -968,7 +968,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: false,
     designerId: 2,
     location: '上海市徐汇区',
-    industry: '设计服务'
+    industry: '设计服务',
   },
   // 其他设计师的工作经历
   {
@@ -981,7 +981,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 3,
     location: '北京市海淀区',
-    industry: '游戏'
+    industry: '游戏',
   },
   {
     id: 7,
@@ -993,7 +993,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 4,
     location: '杭州市西湖区',
-    industry: '互联网'
+    industry: '互联网',
   },
   // 李思雨的工作经历
   {
@@ -1006,7 +1006,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 5,
     location: '成都市高新区',
-    industry: '互联网'
+    industry: '互联网',
   },
   // 张伟强的工作经历
   {
@@ -1019,7 +1019,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 6,
     location: '广州市天河区',
-    industry: '设计服务'
+    industry: '设计服务',
   },
   {
     id: 10,
@@ -1031,7 +1031,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: false,
     designerId: 6,
     location: '广州市越秀区',
-    industry: '广告'
+    industry: '广告',
   },
   // 刘小雅的工作经历
   {
@@ -1044,7 +1044,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 7,
     location: '武汉市洪山区',
-    industry: '数字媒体'
+    industry: '数字媒体',
   },
   // 孙志华的工作经历
   {
@@ -1057,7 +1057,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 8,
     location: '西安市雁塔区',
-    industry: '设计服务'
+    industry: '设计服务',
   },
   // 周雅琪的工作经历
   {
@@ -1070,7 +1070,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 9,
     location: '南京市鼓楼区',
-    industry: '出版'
+    industry: '出版',
   },
   // 吴志强的工作经历
   {
@@ -1083,7 +1083,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 10,
     location: '苏州市工业园区',
-    industry: '互联网'
+    industry: '互联网',
   },
   // 林小雨的工作经历
   {
@@ -1096,7 +1096,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 11,
     location: '重庆市渝北区',
-    industry: '科技'
+    industry: '科技',
   },
   // 陈志明的工作经历
   {
@@ -1109,7 +1109,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 12,
     location: '天津市和平区',
-    industry: '影视制作'
+    industry: '影视制作',
   },
   {
     id: 17,
@@ -1121,7 +1121,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 13,
     location: '厦门市思明区',
-    industry: '互联网'
+    industry: '互联网',
   },
   {
     id: 18,
@@ -1133,7 +1133,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 14,
     location: '青岛市市南区',
-    industry: '设计服务'
+    industry: '设计服务',
   },
   {
     id: 19,
@@ -1145,7 +1145,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: false,
     designerId: 14,
     location: '青岛市市北区',
-    industry: '广告'
+    industry: '广告',
   },
   // 刘梦琪的工作经历
   {
@@ -1158,7 +1158,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 15,
     location: '大连市中山区',
-    industry: '游戏'
+    industry: '游戏',
   },
   // 张雅文的工作经历
   {
@@ -1171,7 +1171,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 16,
     location: '无锡市滨湖区',
-    industry: '金融科技'
+    industry: '金融科技',
   },
   // 王浩然的工作经历
   {
@@ -1184,7 +1184,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 17,
     location: '福州市鼓楼区',
-    industry: '教育科技'
+    industry: '教育科技',
   },
   // 李雅琴的工作经历
   {
@@ -1197,7 +1197,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 18,
     location: '济南市历下区',
-    industry: '设计服务'
+    industry: '设计服务',
   },
   // 陈志豪的工作经历
   {
@@ -1210,7 +1210,7 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 19,
     location: '郑州市金水区',
-    industry: '游戏美术'
+    industry: '游戏美术',
   },
   // 赵雅琪的工作经历
   {
@@ -1223,8 +1223,8 @@ export const mockWorkExperience: WorkExperience[] = [
     isCurrent: true,
     designerId: 20,
     location: '长沙市岳麓区',
-    industry: '广告传媒'
-  }
+    industry: '广告传媒',
+  },
 ]
 
 // 模拟教育背景数据
@@ -1242,7 +1242,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 5,
     totalStudents: 48,
-    isCurrent: false
+    isCurrent: false,
   },
   {
     id: 2,
@@ -1256,7 +1256,7 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 8,
     totalStudents: 120,
-    isCurrent: false
+    isCurrent: false,
   },
   // 林子豪的教育背景
   {
@@ -1271,7 +1271,7 @@ export const mockEducation: Education[] = [
     gpa: 3.9,
     ranking: 2,
     totalStudents: 60,
-    isCurrent: false
+    isCurrent: false,
   },
   // 王梦琪的教育背景
   {
@@ -1286,7 +1286,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 6,
     totalStudents: 80,
-    isCurrent: false
+    isCurrent: false,
   },
   // 赵明宇的教育背景
   {
@@ -1301,7 +1301,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 3,
     totalStudents: 40,
-    isCurrent: false
+    isCurrent: false,
   },
   {
     id: 6,
@@ -1315,7 +1315,7 @@ export const mockEducation: Education[] = [
     gpa: 3.5,
     ranking: 15,
     totalStudents: 90,
-    isCurrent: false
+    isCurrent: false,
   },
   // 李思雨的教育背景
   {
@@ -1330,7 +1330,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 4,
     totalStudents: 70,
-    isCurrent: false
+    isCurrent: false,
   },
   // 张伟强的教育背景
   {
@@ -1345,7 +1345,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 3,
     totalStudents: 65,
-    isCurrent: false
+    isCurrent: false,
   },
   // 刘小雅的教育背景
   {
@@ -1360,7 +1360,7 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 8,
     totalStudents: 75,
-    isCurrent: false
+    isCurrent: false,
   },
   // 孙志华的教育背景
   {
@@ -1375,7 +1375,7 @@ export const mockEducation: Education[] = [
     gpa: 3.9,
     ranking: 2,
     totalStudents: 55,
-    isCurrent: false
+    isCurrent: false,
   },
   // 周雅琪的教育背景
   {
@@ -1390,7 +1390,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 5,
     totalStudents: 80,
-    isCurrent: false
+    isCurrent: false,
   },
   // 吴志强的教育背景
   {
@@ -1405,7 +1405,7 @@ export const mockEducation: Education[] = [
     gpa: 3.5,
     ranking: 12,
     totalStudents: 85,
-    isCurrent: false
+    isCurrent: false,
   },
   // 林小雨的教育背景
   {
@@ -1420,7 +1420,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 4,
     totalStudents: 35,
-    isCurrent: false
+    isCurrent: false,
   },
   {
     id: 14,
@@ -1434,7 +1434,7 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 10,
     totalStudents: 95,
-    isCurrent: false
+    isCurrent: false,
   },
   // 陈志明的教育背景
   {
@@ -1449,7 +1449,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 6,
     totalStudents: 70,
-    isCurrent: false
+    isCurrent: false,
   },
   // 黄雅婷的教育背景
   {
@@ -1464,7 +1464,7 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 8,
     totalStudents: 75,
-    isCurrent: false
+    isCurrent: false,
   },
   // 杨志强的教育背景
   {
@@ -1479,7 +1479,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 4,
     totalStudents: 60,
-    isCurrent: false
+    isCurrent: false,
   },
   // 刘梦琪的教育背景
   {
@@ -1494,7 +1494,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 5,
     totalStudents: 65,
-    isCurrent: false
+    isCurrent: false,
   },
   // 张雅文的教育背景
   {
@@ -1509,7 +1509,7 @@ export const mockEducation: Education[] = [
     gpa: 3.5,
     ranking: 12,
     totalStudents: 85,
-    isCurrent: false
+    isCurrent: false,
   },
   // 王浩然的教育背景
   {
@@ -1524,7 +1524,7 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 9,
     totalStudents: 70,
-    isCurrent: false
+    isCurrent: false,
   },
   // 李雅琴的教育背景
   {
@@ -1539,7 +1539,7 @@ export const mockEducation: Education[] = [
     gpa: 3.8,
     ranking: 3,
     totalStudents: 55,
-    isCurrent: false
+    isCurrent: false,
   },
   // 陈志豪的教育背景
   {
@@ -1554,7 +1554,7 @@ export const mockEducation: Education[] = [
     gpa: 3.7,
     ranking: 6,
     totalStudents: 60,
-    isCurrent: false
+    isCurrent: false,
   },
   // 赵雅琪的教育背景
   {
@@ -1569,8 +1569,8 @@ export const mockEducation: Education[] = [
     gpa: 3.6,
     ranking: 8,
     totalStudents: 75,
-    isCurrent: false
-  }
+    isCurrent: false,
+  },
 ]
 
 // 模拟获奖数据
@@ -1586,7 +1586,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: 'UI/UX设计',
     workTitle: '腾讯社交产品界面设计',
-    sort: 1
   },
   {
     id: 2,
@@ -1597,7 +1596,6 @@ export const mockAwards: Award[] = [
     designerId: 1,
     level: '认证',
     category: '专业认证',
-    sort: 2
   },
   {
     id: 3,
@@ -1609,7 +1607,6 @@ export const mockAwards: Award[] = [
     level: '银奖',
     category: 'UI设计',
     workTitle: '智慧出行APP界面设计',
-    sort: 3
   },
   // 林子豪的获奖记录
   {
@@ -1622,7 +1619,6 @@ export const mockAwards: Award[] = [
     level: '铜奖',
     category: '品牌设计',
     workTitle: '绿色科技公司品牌设计',
-    sort: 1
   },
   {
     id: 5,
@@ -1634,7 +1630,6 @@ export const mockAwards: Award[] = [
     level: '优秀奖',
     category: '包装设计',
     workTitle: '咖啡品牌包装设计',
-    sort: 2
   },
   // 王梦琪的获奖记录
   {
@@ -1647,7 +1642,6 @@ export const mockAwards: Award[] = [
     level: '最佳奖',
     category: '角色设计',
     workTitle: '科幻角色设计系列',
-    sort: 1
   },
   {
     id: 7,
@@ -1659,7 +1653,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: '3D动画',
     workTitle: '产品宣传动画',
-    sort: 2
   },
   // 其他设计师的获奖记录
   {
@@ -1671,7 +1664,6 @@ export const mockAwards: Award[] = [
     designerId: 4,
     level: '优秀奖',
     category: '用户体验设计',
-    sort: 1
   },
   {
     id: 9,
@@ -1682,7 +1674,6 @@ export const mockAwards: Award[] = [
     designerId: 5,
     level: '一等奖',
     category: '交互设计',
-    sort: 1
   },
   // 张伟强的获奖记录
   {
@@ -1695,7 +1686,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: '品牌设计',
     workTitle: '科技公司VI系统设计',
-    sort: 1
   },
   {
     id: 11,
@@ -1706,7 +1696,6 @@ export const mockAwards: Award[] = [
     designerId: 6,
     level: '优秀奖',
     category: '包装设计',
-    sort: 2
   },
   // 刘小雅的获奖记录
   {
@@ -1719,7 +1708,6 @@ export const mockAwards: Award[] = [
     level: '银奖',
     category: '动效设计',
     workTitle: '品牌宣传动画',
-    sort: 1
   },
   // 孙志华的获奖记录
   {
@@ -1732,7 +1720,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: '插画设计',
     workTitle: '儿童绘本插画系列',
-    sort: 1
   },
   {
     id: 14,
@@ -1743,7 +1730,6 @@ export const mockAwards: Award[] = [
     designerId: 8,
     level: '优秀奖',
     category: '儿童插画',
-    sort: 2
   },
   // 周雅琪的获奖记录
   {
@@ -1756,7 +1742,6 @@ export const mockAwards: Award[] = [
     level: '铜奖',
     category: '平面设计',
     workTitle: '时尚杂志排版设计',
-    sort: 1
   },
   // 吴志强的获奖记录
   {
@@ -1769,7 +1754,6 @@ export const mockAwards: Award[] = [
     level: '优秀奖',
     category: 'UI设计',
     workTitle: '电商平台UI设计',
-    sort: 1
   },
   // 林小雨的获奖记录
   {
@@ -1781,7 +1765,6 @@ export const mockAwards: Award[] = [
     designerId: 11,
     level: '认证',
     category: '专业认证',
-    sort: 1
   },
   {
     id: 18,
@@ -1792,7 +1775,6 @@ export const mockAwards: Award[] = [
     designerId: 11,
     level: '优秀奖',
     category: '企业产品设计',
-    sort: 2
   },
   // 陈志明的获奖记录
   {
@@ -1804,7 +1786,6 @@ export const mockAwards: Award[] = [
     designerId: 12,
     level: '银奖',
     category: '影视后期',
-    sort: 1
   },
   {
     id: 20,
@@ -1815,7 +1796,6 @@ export const mockAwards: Award[] = [
     designerId: 12,
     level: '铜奖',
     category: '广告动效',
-    sort: 2
   },
   // 黄雅婷的获奖记录
   {
@@ -1828,7 +1808,6 @@ export const mockAwards: Award[] = [
     level: '优秀奖',
     category: '移动应用设计',
     workTitle: '社交应用用户体验设计',
-    sort: 1
   },
   // 杨志强的获奖记录
   {
@@ -1841,7 +1820,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: '餐饮品牌设计',
     workTitle: '餐饮连锁品牌设计',
-    sort: 1
   },
   {
     id: 23,
@@ -1852,7 +1830,6 @@ export const mockAwards: Award[] = [
     designerId: 14,
     level: '认证',
     category: '专业认证',
-    sort: 2
   },
   // 刘梦琪的获奖记录
   {
@@ -1865,7 +1842,6 @@ export const mockAwards: Award[] = [
     level: '银奖',
     category: '游戏美术设计',
     workTitle: '游戏角色设计系列',
-    sort: 1
   },
   // 张雅文的获奖记录
   {
@@ -1878,7 +1854,6 @@ export const mockAwards: Award[] = [
     level: '优秀奖',
     category: '金融产品设计',
     workTitle: '金融产品界面设计',
-    sort: 1
   },
   // 王浩然的获奖记录
   {
@@ -1891,7 +1866,6 @@ export const mockAwards: Award[] = [
     level: '铜奖',
     category: '教育产品设计',
     workTitle: '教育平台交互设计',
-    sort: 1
   },
   // 李雅琴的获奖记录
   {
@@ -1904,7 +1878,6 @@ export const mockAwards: Award[] = [
     level: '金奖',
     category: '时尚设计',
     workTitle: '时尚品牌视觉设计',
-    sort: 1
   },
   // 陈志豪的获奖记录
   {
@@ -1917,7 +1890,6 @@ export const mockAwards: Award[] = [
     level: '银奖',
     category: '概念设计',
     workTitle: '科幻概念插画系列',
-    sort: 1
   },
   {
     id: 29,
@@ -1928,7 +1900,6 @@ export const mockAwards: Award[] = [
     designerId: 19,
     level: '优秀奖',
     category: '游戏概念设计',
-    sort: 2
   },
   // 赵雅琪的获奖记录
   {
@@ -1941,6 +1912,5 @@ export const mockAwards: Award[] = [
     level: '铜奖',
     category: '平面设计',
     workTitle: '企业宣传册设计',
-    sort: 1
-  }
+  },
 ]

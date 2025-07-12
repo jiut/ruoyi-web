@@ -1,15 +1,14 @@
 <script setup lang='ts'>
-import { computed, ref, onUnmounted, watch } from 'vue'
-import { NModal, NButton, NImage, NInput, NDivider, NCard, NIcon, NSpace, NTag } from 'naive-ui'
-import { useMessage } from 'naive-ui'
-import { payUrl, getOrderInfo } from '@/api/pay'
-import to from "await-to-js"
-import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { 
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { NButton, NDivider, NIcon, NImage, NInput, NModal, NTag, useMessage } from 'naive-ui'
+import to from 'await-to-js'
+import {
+  ImageOutline as ImageIcon,
   AtCircle as MessageIcon,
   RocketOutline as RobotIcon,
-  ImageOutline as ImageIcon
 } from '@vicons/ionicons5'
+import { getOrderInfo, payUrl } from '@/api/pay'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
 
 interface Props {
   visible: boolean
@@ -20,9 +19,8 @@ interface Emit {
 }
 
 const props = defineProps<Props>()
-const { isMobile } = useBasicLayout()
 const emit = defineEmits<Emit>()
-
+const { isMobile } = useBasicLayout()
 const show = computed({
   get() {
     return props.visible
@@ -36,64 +34,64 @@ const message = useMessage()
 
 // 支付相关状态
 const showPayModal = ref(false)
-const imageUrl = ref("")
-const orderMoney = ref("9.9")
-const orderName = ref("初级套餐")
-const orderNo = ref("")
-let intervalId: string | number | NodeJS.Timer | undefined;
+const imageUrl = ref('')
+const orderMoney = ref('9.9')
+const orderName = ref('初级套餐')
+const orderNo = ref('')
+let intervalId: string | number | NodeJS.Timer | undefined
 
 // 获取支付二维码
 async function getPayUrl(money: string, name: string) {
   try {
-    const response = await payUrl({ money: money, name: name });
-    imageUrl.value = response.data.url;
+    const response = await payUrl({ money, name })
+    imageUrl.value = response.data.url
     orderMoney.value = money
     orderName.value = name
     orderNo.value = response.data.orderNo
     showPayModal.value = true
-    intervalId = setInterval(fetchData, POLLING_INTERVAL);
-  } catch (error) {
+    intervalId = setInterval(fetchData, POLLING_INTERVAL)
+  }
+  catch (error) {
     message.error('获取支付二维码失败')
   }
 }
 
 // 获取订单信息
 async function fetchData() {
-  const [err, result] = await to(getOrderInfo(orderNo.value));
+  const [err, result] = await to(getOrderInfo(orderNo.value))
   if (err) {
     message.error(err.message)
-    showPayModal.value = false;
-    clearInterval(intervalId);
-  } else {
+    showPayModal.value = false
+    clearInterval(intervalId)
+  }
+  else {
     if (result.data.paymentStatus === '2') {
       message.success('您的订单已成功支付。感谢您的购买。')
-      showPayModal.value = false;
-      clearInterval(intervalId);
+      showPayModal.value = false
+      clearInterval(intervalId)
     }
   }
 }
 
 // 定义轮询间隔时间，例如每5秒轮询一次
-const POLLING_INTERVAL = 5000;
+const POLLING_INTERVAL = 5000
 
 onUnmounted(() => {
-  if (intervalId !== undefined) {
-    clearInterval(intervalId);
-  }
-});
+  if (intervalId !== undefined)
+    clearInterval(intervalId)
+})
 
 // 监听showPayModal,如果弹框关闭了,则取消定时器
 watch(showPayModal, (newValue) => {
-  if (!newValue) {
-    clearInterval(intervalId);
-  }
-});
+  if (!newValue)
+    clearInterval(intervalId)
+})
 
 // 充值金额选项
 const defaultAmounts = ref([
   { value: '9.9', label: '¥9.9', name: '初级套餐' },
   { value: '29.9', label: '¥29.9', name: '标准套餐' },
-  { value: '59.9', label: '¥59.9', name: '高级套餐' }
+  { value: '59.9', label: '¥59.9', name: '高级套餐' },
 ])
 
 // 自定义金额输入
@@ -108,9 +106,9 @@ const currentAmount = computed(() => {
 
 // 获取当前套餐名称
 const currentPlanName = computed(() => {
-  if (isCustomAmount.value) {
+  if (isCustomAmount.value)
     return `自定义充值${customAmount.value}元`
-  }
+
   const plan = defaultAmounts.value.find(item => item.value === selectedAmount.value)
   return plan ? plan.name : '初级套餐'
 })
@@ -121,10 +119,10 @@ async function handleRecharge() {
     message.error('请输入有效的充值金额')
     return
   }
-  
+
   const amount = currentAmount.value
   loading.value = true
-  
+
   try {
     // 演示模式下
     message.success('本系统仅用于演示，暂不支持此功能！')
@@ -137,12 +135,14 @@ async function handleRecharge() {
       orderName.value = currentPlanName.value
       showPayModal.value = true
     }, 1000)
-    
+
     // 实际环境下取消注释以下代码
     // await getPayUrl(amount, currentPlanName.value)
-  } catch (error) {
+  }
+  catch (error) {
     message.error('充值请求失败')
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -154,117 +154,133 @@ const modelFeatures = [
   {
     title: '对话模型',
     icon: MessageIcon,
-    items: ['通义千问', '文心一言', '讯飞星火', '智谱清言(ChatGLM)', '月之暗面(Kimi)', 'ChatGPT(3.5、4.0)']
+    items: ['通义千问', '文心一言', '讯飞星火', '智谱清言(ChatGLM)', '月之暗面(Kimi)', 'ChatGPT(3.5、4.0)'],
   },
   {
     title: '图像生成',
     icon: ImageIcon,
-    items: ['多模型支持', '更高分辨率1024*1024', '更好画图效果，支持MJ/SD']
+    items: ['多模型支持', '更高分辨率1024*1024', '更好画图效果，支持MJ/SD'],
   },
   {
     title: 'AI工具',
     icon: RobotIcon,
-    items: ['文档对话，支持pdf、png等', '知识库在线问答']
-  }
+    items: ['文档对话，支持pdf、png等', '知识库在线问答'],
+  },
 ]
 </script>
 
 <template>
-  <NModal 
-    v-model:show="show" 
-    :auto-focus="false" 
-    preset="card" 
+  <NModal
+    v-model:show="show"
+    :auto-focus="false"
+    preset="card"
     style="max-width: 900px; position: fixed; left: 50%; top: 5vh; transform: translate(-50%, 0%);"
     :class="[isMobile ? 'mobile-recharge-modal' : 'recharge-modal']"
   >
     <div class="recharge-container" :class="{ 'mobile-layout': isMobile }">
       <!-- 左侧功能介绍 -->
-      <div class="features-section" v-if="!isMobile">
-        <h2 class="features-title">AI 平台能力</h2>
-        
+      <div v-if="!isMobile" class="features-section">
+        <h2 class="features-title">
+          AI 平台能力
+        </h2>
+
         <div v-for="(category, idx) in modelFeatures" :key="idx" class="feature-category">
           <div class="category-header">
-            <n-icon size="20" :component="category.icon" />
+            <NIcon size="20" :component="category.icon" />
             <span>{{ category.title }}</span>
           </div>
-          
+
           <div class="feature-items">
-            <n-tag 
-              v-for="(item, i) in category.items" 
+            <NTag
+              v-for="(item, i) in category.items"
               :key="i"
               type="info"
               size="medium"
               class="feature-tag"
             >
               {{ item }}
-            </n-tag>
+            </NTag>
           </div>
         </div>
-        
+
         <div class="feature-footer">
           <p>充值后即可解锁全部高级功能</p>
         </div>
       </div>
-      
+
       <!-- 右侧充值区域 -->
       <div class="payment-section">
-        <h2 class="recharge-title">{{ $t('setting.recharge') }}</h2>
-        
+        <h2 class="recharge-title">
+          {{ $t('setting.recharge') }}
+        </h2>
+
         <div class="amount-options">
-          <div 
-            v-for="(option, index) in defaultAmounts" 
+          <div
+            v-for="(option, index) in defaultAmounts"
             :key="index"
-            class="amount-option" 
+            class="amount-option"
             :class="{ active: selectedAmount === option.value && !isCustomAmount }"
             @click="selectedAmount = option.value; isCustomAmount = false"
           >
-            <div class="option-label">{{ option.label }}</div>
-            <div class="option-name">{{ option.name }}</div>
+            <div class="option-label">
+              {{ option.label }}
+            </div>
+            <div class="option-name">
+              {{ option.name }}
+            </div>
           </div>
-          <div 
-            class="amount-option custom-option" 
+          <div
+            class="amount-option custom-option"
             :class="{ active: isCustomAmount }"
             @click="isCustomAmount = true"
           >
-            <div class="option-label">自定义</div>
+            <div class="option-label">
+              自定义
+            </div>
           </div>
         </div>
-        
+
         <div v-if="isCustomAmount" class="custom-amount-input">
-          <n-input 
-            v-model:value="customAmount" 
-            type="text" 
-            placeholder="请输入充值金额" 
+          <NInput
+            v-model:value="customAmount"
+            type="text"
+            placeholder="请输入充值金额"
             clearable
           >
-            <template #prefix>¥</template>
-          </n-input>
+            <template #prefix>
+              ¥
+            </template>
+          </NInput>
         </div>
-        
+
         <div class="selected-amount">
           <span class="amount-label">充值金额：</span>
           <span class="amount-value">¥{{ currentAmount }}</span>
         </div>
-        
-        <n-button 
-          type="primary" 
-          block 
-          :loading="loading" 
-          @click="handleRecharge"
+
+        <NButton
+          type="primary"
+          block
+          :loading="loading"
           class="recharge-button"
+          @click="handleRecharge"
         >
           立即充值
-        </n-button>
-        
+        </NButton>
+
         <!-- 支付二维码区域 - 直接嵌入在右侧区域底部 -->
-   <div v-if="showPayModal" class="payment-qrcode-container">
-    <n-divider>支付方式</n-divider>
-    <div class="qrcode-wrapper">
-      <n-image width="200" height="200" object-fit="contain" :src="imageUrl" />
-    </div>
-    <p class="payment-instruction">请使用微信扫码支付{{ orderMoney }}元</p>
-    <p class="payment-note">支付完成后将自动为您开通服务</p>
-  </div>
+        <div v-if="showPayModal" class="payment-qrcode-container">
+          <NDivider>支付方式</NDivider>
+          <div class="qrcode-wrapper">
+            <NImage width="200" height="200" object-fit="contain" :src="imageUrl" />
+          </div>
+          <p class="payment-instruction">
+            请使用微信扫码支付{{ orderMoney }}元
+          </p>
+          <p class="payment-note">
+            支付完成后将自动为您开通服务
+          </p>
+        </div>
       </div>
     </div>
   </NModal>
@@ -470,15 +486,15 @@ const modelFeatures = [
   .amount-options {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .payment-qrcode-container {
     padding: 12px;
   }
-  
+
   .payment-instruction {
     font-size: 14px;
   }
-  
+
   .payment-note {
     font-size: 12px;
   }
