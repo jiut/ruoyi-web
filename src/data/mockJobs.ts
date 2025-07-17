@@ -1,4 +1,34 @@
-import type { JobPosting, JobStatus, Profession } from '@/types/talent/job'
+import type { JobPosting, JobStatus, JobBenefit } from '@/types/talent/job'
+import { BenefitCategory } from '@/types/talent/job'
+import type { Profession } from '@/types/talent/designer'
+
+// 合并企业福利和职位额外福利的帮助函数
+function mergeJobBenefits(job: JobPosting): JobBenefit[] {
+  const mergedBenefits: JobBenefit[] = []
+
+  // 如果使用企业福利，添加企业福利
+  if (job.useEnterpriseBenefits && job.enterprise?.benefits) {
+    mergedBenefits.push(...job.enterprise.benefits)
+  }
+
+  // 添加职位额外福利（可能会覆盖企业福利）
+  if (job.additionalBenefits) {
+    job.additionalBenefits.forEach(additionalBenefit => {
+      const existingIndex = mergedBenefits.findIndex(b =>
+        b.id === additionalBenefit.id || b.id === additionalBenefit.id.replace('_extra', '')
+      )
+      if (existingIndex !== -1) {
+        // 替换现有福利
+        mergedBenefits[existingIndex] = additionalBenefit
+      } else {
+        // 添加新福利
+        mergedBenefits.push(additionalBenefit)
+      }
+    })
+  }
+
+  return mergedBenefits
+}
 
 // 模拟岗位数据
 export const mockJobs: JobPosting[] = [
@@ -24,6 +54,25 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'INTERACTION_DESIGNER' as Profession,
     skillsRequired: '["figma", "sketch", "axure_rp", "interaction_design", "prototype_design", "user_experience", "user_research", "information_architecture"]',
+    useEnterpriseBenefits: true,
+    additionalBenefits: [
+      {
+        id: 'annual_leave_extra',
+        name: '年假20天',
+        icon: 'ri-calendar-check-line',
+        description: '高级设计师享受额外年假（覆盖企业标准15天）',
+        category: BenefitCategory.LEAVE,
+        color: 'purple',
+      },
+      {
+        id: 'design_conference',
+        name: '设计会议报销',
+        icon: 'ri-slideshow-line',
+        description: '年度设计会议参会费用报销',
+        category: BenefitCategory.TRAINING,
+        color: 'orange',
+      },
+    ],
     enterpriseId: 1,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-24',
@@ -43,6 +92,56 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@tencent.com',
       phone: '0755-86013388',
       userId: 101,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'annual_leave',
+          name: '年假15天',
+          icon: 'ri-calendar-check-line',
+          description: '带薪年假15天',
+          category: BenefitCategory.LEAVE,
+          color: 'purple',
+        },
+        {
+          id: 'year_end_bonus',
+          name: '年终奖金',
+          icon: 'ri-award-line',
+          description: '丰厚的年终奖金',
+          category: BenefitCategory.BONUS,
+          color: 'pink',
+        },
+        {
+          id: 'stock_options',
+          name: '股票期权',
+          icon: 'ri-stock-line',
+          description: '公司股票期权激励',
+          category: BenefitCategory.STOCK,
+          color: 'green',
+        },
+        {
+          id: 'free_meals',
+          name: '免费三餐',
+          icon: 'ri-restaurant-line',
+          description: '免费提供三餐',
+          category: BenefitCategory.MEAL,
+          color: 'red',
+        },
+        {
+          id: 'gym_membership',
+          name: '健身房会员',
+          icon: 'ri-run-line',
+          description: '健身房会员卡',
+          category: BenefitCategory.HEALTH,
+          color: 'cyan',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-24T10:00:00Z',
     },
@@ -69,6 +168,7 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'GRAPHIC_DESIGNER' as Profession,
     skillsRequired: '["photoshop", "illustrator", "sketch", "brand_design", "visual_system", "web_design", "mobile_design"]',
+    useEnterpriseBenefits: true,
     enterpriseId: 2,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-26',
@@ -88,6 +188,56 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@alibaba.com',
       phone: '0571-85022088',
       userId: 102,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'annual_leave',
+          name: '年假12天',
+          icon: 'ri-calendar-check-line',
+          description: '带薪年假12天',
+          category: BenefitCategory.LEAVE,
+          color: 'purple',
+        },
+        {
+          id: 'year_end_bonus',
+          name: '年终奖金',
+          icon: 'ri-award-line',
+          description: '丰厚的年终奖金',
+          category: BenefitCategory.BONUS,
+          color: 'pink',
+        },
+        {
+          id: 'flexible_hours',
+          name: '弹性工作时间',
+          icon: 'ri-time-line',
+          description: '灵活的工作时间安排',
+          category: BenefitCategory.WELFARE,
+          color: 'indigo',
+        },
+        {
+          id: 'training_budget',
+          name: '培训预算',
+          icon: 'ri-book-open-line',
+          description: '年度培训预算支持',
+          category: BenefitCategory.TRAINING,
+          color: 'orange',
+        },
+        {
+          id: 'free_meals',
+          name: '免费三餐',
+          icon: 'ri-restaurant-line',
+          description: '免费提供三餐',
+          category: BenefitCategory.MEAL,
+          color: 'red',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-26T09:00:00Z',
     },
@@ -114,6 +264,7 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'UI_DESIGNER' as Profession,
     skillsRequired: '["sketch", "figma", "ui_design", "design_system", "mobile_design", "visual_design"]',
+    useEnterpriseBenefits: true,
     enterpriseId: 3,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-25',
@@ -133,6 +284,48 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@bytedance.com',
       phone: '010-82600000',
       userId: 103,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'sick_leave',
+          name: '带薪病假',
+          icon: 'ri-user-heart-line',
+          description: '带薪病假保障',
+          category: BenefitCategory.HEALTH,
+          color: 'yellow',
+        },
+        {
+          id: 'flexible_hours',
+          name: '弹性工作时间',
+          icon: 'ri-time-line',
+          description: '灵活的工作时间安排',
+          category: BenefitCategory.WELFARE,
+          color: 'indigo',
+        },
+        {
+          id: 'remote_work',
+          name: '远程办公',
+          icon: 'ri-home-office-line',
+          description: '支持远程办公',
+          category: BenefitCategory.WELFARE,
+          color: 'teal',
+        },
+        {
+          id: 'training_budget',
+          name: '培训预算',
+          icon: 'ri-book-open-line',
+          description: '年度培训预算支持',
+          category: BenefitCategory.TRAINING,
+          color: 'orange',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-25T14:00:00Z',
     },
@@ -159,6 +352,7 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'GRAPHIC_DESIGNER' as Profession,
     skillsRequired: '["3d_max", "maya", "photoshop", "game_art", "character_design", "scene_design", "ui_design"]',
+    useEnterpriseBenefits: true,
     enterpriseId: 4,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-22',
@@ -178,6 +372,48 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@netease.com',
       phone: '020-85105163',
       userId: 104,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'annual_leave',
+          name: '年假10天',
+          icon: 'ri-calendar-check-line',
+          description: '带薪年假10天',
+          category: BenefitCategory.LEAVE,
+          color: 'purple',
+        },
+        {
+          id: 'year_end_bonus',
+          name: '年终奖金',
+          icon: 'ri-award-line',
+          description: '丰厚的年终奖金',
+          category: BenefitCategory.BONUS,
+          color: 'pink',
+        },
+        {
+          id: 'free_meals',
+          name: '免费三餐',
+          icon: 'ri-restaurant-line',
+          description: '免费提供三餐',
+          category: BenefitCategory.MEAL,
+          color: 'red',
+        },
+        {
+          id: 'gym_membership',
+          name: '健身房会员',
+          icon: 'ri-run-line',
+          description: '健身房会员卡',
+          category: BenefitCategory.HEALTH,
+          color: 'cyan',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-22T11:00:00Z',
     },
@@ -204,6 +440,17 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'PRODUCT_DESIGNER' as Profession,
     skillsRequired: '["figma", "sketch", "axure_rp", "product_design", "user_research", "prototype_design", "user_experience"]',
+    useEnterpriseBenefits: true,
+    additionalBenefits: [
+      {
+        id: 'annual_leave_extra',
+        name: '年假18天',
+        icon: 'ri-calendar-check-line',
+        description: '产品设计师享受额外年假（覆盖企业标准14天）',
+        category: BenefitCategory.LEAVE,
+        color: 'purple',
+      },
+    ],
     enterpriseId: 5,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-25',
@@ -223,6 +470,48 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@baidu.com',
       phone: '010-59928888',
       userId: 105,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'annual_leave',
+          name: '年假14天',
+          icon: 'ri-calendar-check-line',
+          description: '带薪年假14天',
+          category: BenefitCategory.LEAVE,
+          color: 'purple',
+        },
+        {
+          id: 'stock_options',
+          name: '股票期权',
+          icon: 'ri-stock-line',
+          description: '公司股票期权激励',
+          category: BenefitCategory.STOCK,
+          color: 'green',
+        },
+        {
+          id: 'training_budget',
+          name: '培训预算',
+          icon: 'ri-book-open-line',
+          description: '年度培训预算支持',
+          category: BenefitCategory.TRAINING,
+          color: 'orange',
+        },
+        {
+          id: 'flexible_hours',
+          name: '弹性工作时间',
+          icon: 'ri-time-line',
+          description: '灵活的工作时间安排',
+          category: BenefitCategory.WELFARE,
+          color: 'indigo',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-25T16:00:00Z',
     },
@@ -249,6 +538,17 @@ export const mockJobs: JobPosting[] = [
     educationRequired: '本科及以上',
     profession: 'MOTION_DESIGNER' as Profession,
     skillsRequired: '["after_effects", "cinema_4d", "lottie", "motion_design", "animation_design", "effects"]',
+    useEnterpriseBenefits: true,
+    additionalBenefits: [
+      {
+        id: 'annual_leave_extra',
+        name: '年假10天',
+        icon: 'ri-calendar-check-line',
+        description: '动效设计师享受额外年假（覆盖企业标准8天）',
+        category: BenefitCategory.LEAVE,
+        color: 'purple',
+      },
+    ],
     enterpriseId: 6,
     status: 'PUBLISHED' as JobStatus,
     publishDate: '2025-01-23',
@@ -268,6 +568,48 @@ export const mockJobs: JobPosting[] = [
       email: 'hr@xiaomi.com',
       phone: '010-60606666',
       userId: 106,
+      benefits: [
+        {
+          id: 'insurance',
+          name: '五险一金',
+          icon: 'ri-health-book-line',
+          description: '完善的社会保险和住房公积金',
+          category: BenefitCategory.INSURANCE,
+          color: 'blue',
+        },
+        {
+          id: 'annual_leave',
+          name: '年假8天',
+          icon: 'ri-calendar-check-line',
+          description: '带薪年假8天',
+          category: BenefitCategory.LEAVE,
+          color: 'purple',
+        },
+        {
+          id: 'sick_leave',
+          name: '带薪病假',
+          icon: 'ri-user-heart-line',
+          description: '带薪病假保障',
+          category: BenefitCategory.HEALTH,
+          color: 'yellow',
+        },
+        {
+          id: 'remote_work',
+          name: '远程办公',
+          icon: 'ri-home-office-line',
+          description: '支持远程办公',
+          category: BenefitCategory.WELFARE,
+          color: 'teal',
+        },
+        {
+          id: 'training_budget',
+          name: '培训预算',
+          icon: 'ri-book-open-line',
+          description: '年度培训预算支持',
+          category: BenefitCategory.TRAINING,
+          color: 'orange',
+        },
+      ],
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2025-01-23T13:00:00Z',
     },
@@ -306,8 +648,14 @@ export function getMockJobs(params?: {
   const startIndex = (pageNum - 1) * pageSize
   const endIndex = startIndex + pageSize
 
+    // 为每个job合并福利
+  const jobsWithMergedBenefits = filteredJobs.slice(startIndex, endIndex).map(job => ({
+    ...job,
+    benefits: mergeJobBenefits(job),
+  }))
+
   return {
-    rows: filteredJobs.slice(startIndex, endIndex),
+    rows: jobsWithMergedBenefits,
     total: filteredJobs.length,
     pageNum,
     pageSize,
@@ -316,5 +664,11 @@ export function getMockJobs(params?: {
 
 // 根据ID获取岗位详情
 export function getMockJobById(id: number) {
-  return mockJobs.find(job => job.id === id) || null
+  const job = mockJobs.find(job => job.id === id)
+  if (!job) return null
+
+  return {
+    ...job,
+    benefits: mergeJobBenefits(job),
+  }
 }

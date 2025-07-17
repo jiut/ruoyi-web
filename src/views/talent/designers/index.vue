@@ -9,6 +9,9 @@ import { useDesigner } from '@/composables/talent/useDesigner'
 import type { Designer, Profession, WorkStatus } from '@/types/talent/designer'
 import ProfessionUtils from '@/utils/professionUtils'
 import { getNameInitial } from '@/utils/styleGenerator'
+import { useUserStore } from '@/store/modules/user'
+import { getCurrentDesigner } from '@/api/talent/designer'
+import { useRoleCheck } from '@/composables/useRoleCheck'
 
 const router = useRouter()
 
@@ -430,6 +433,34 @@ onMounted(async () => {
 
   checkDevice()
   window.addEventListener('resize', handleResize)
+
+  // 路由自动跳转到当前设计师详情页（仅设计师角色）
+  if (router.currentRoute.value.path === '/talent/designers') {
+    const { isDesigner } = useRoleCheck()
+    // 等待角色信息加载完成
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    if (isDesigner.value) {
+      try {
+        // 优先用接口获取当前设计师id
+        const res = await getCurrentDesigner()
+        const designerId = res?.data?.id
+        if (designerId) {
+          await router.replace(`/talent/designers/${designerId}`)
+          return
+        }
+      } catch (e) {
+        // 忽略异常，降级处理
+      }
+      // 降级用userStore
+      const userStore = useUserStore()
+      const userId = userStore.userInfo?.userId
+      if (userId) {
+        await router.replace(`/talent/designers/${userId}`)
+        return
+      }
+    }
+  }
 
   // 初始化数据
   await fetchDesigners(true)

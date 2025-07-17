@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亿思AI设计联盟平台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#3B82F6',secondary:'#10B981'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .hero-gradient {
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.8) 50%, rgba(15, 23, 42, 0.5) 100%);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #3B82F6;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: scale(1.03);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="#" class="text-2xl font-['Pacifico'] text-primary mr-8">亿思</a>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#talent" class="text-gray-700 hover:text-primary font-medium transition-colors">人才资源池</a>
+                    <a href="#ai-resources" class="text-gray-700 hover:text-primary font-medium transition-colors">AI资源池</a>
+                    <a href="#tasks" class="text-gray-700 hover:text-primary font-medium transition-colors">任务交易系统</a>
+                    <a href="#dashboard" class="text-gray-700 hover:text-primary font-medium transition-colors">数据驾驶舱</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-gray-700 hover:text-primary px-3 py-2 rounded-button whitespace-nowrap">登录</a>
+                <a href="#" class="bg-primary text-white px-5 py-2 rounded-button hover:bg-blue-600 transition-colors whitespace-nowrap">免费注册</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative pt-20 min-h-screen flex items-center" style="background-image: url('https://readdy.ai/api/search-image?query=A%20modern%20tech%20workspace%20with%20a%20gradient%20blue%20background%2C%20showing%20a%20designer%20working%20with%20AI%20tools%2C%20abstract%20digital%20elements%20floating%20around%2C%20high-quality%203D%20rendering%20with%20soft%20lighting%2C%20creating%20a%20futuristic%20and%20professional%20atmosphere%2C%20perfect%20for%20a%20hero%20section%20of%20a%20design%20platform%20website&width=1920&height=1080&seq=hero1&orientation=landscape'); background-size: cover; background-position: center;">
+        <div class="hero-gradient absolute inset-0"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl md:text-6xl font-bold text-white leading-tight mb-6">连接 AI 与设计<br>创造无限可能</h1>
+                <p class="text-xl text-gray-100 mb-8">亿思AI设计联盟平台整合顶尖设计人才与前沿AI技术，打造设计行业新生态</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#talent" class="bg-primary text-white px-6 py-3 rounded-button hover:bg-blue-600 transition-colors whitespace-nowrap">探索人才库</a>
+                    <a href="#ai-resources" class="bg-white text-primary px-6 py-3 rounded-button hover:bg-gray-100 transition-colors whitespace-nowrap">AI 工具资源</a>
+                    <a href="#tasks" class="border border-white text-white px-6 py-3 rounded-button hover:bg-white/10 transition-colors whitespace-nowrap">任务大厅</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="talent" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">人才资源池</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">汇聚全球顶尖设计师与院校资源，为企业提供优质人才支持</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6 stat-card">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-building-4-line text-primary ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">院校数据库</h3>
+                    <p class="text-gray-600 mb-4">连接 187 所顶尖设计院校，整合教育资源</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">覆盖率</span>
+                        <span class="text-primary font-medium">92%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="bg-primary h-1.5 rounded-full" style="width: 92%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 stat-card">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-gallery-line text-green-600 ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">学生作品库</h3>
+                    <p class="text-gray-600 mb-4">收录 25,000+ 优秀学生作品，展示新锐设计力量</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">月增长率</span>
+                        <span class="text-green-600 font-medium">+8.3%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="bg-green-600 h-1.5 rounded-full" style="width: 83%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 stat-card">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-briefcase-4-line text-amber-600 ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">企业需求池</h3>
+                    <p class="text-gray-600 mb-4">汇集 3,400+ 企业实时设计需求，精准对接</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">对接成功率</span>
+                        <span class="text-amber-600 font-medium">78%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="bg-amber-600 h-1.5 rounded-full" style="width: 78%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 stat-card">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-user-star-line text-purple-600 ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">设计师档案</h3>
+                    <p class="text-gray-600 mb-4">12,800+ 专业设计师档案，全方位能力评估</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">活跃度</span>
+                        <span class="text-purple-600 font-medium">86%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="bg-purple-600 h-1.5 rounded-full" style="width: 86%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-16">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold">优秀设计师作品展示</h3>
+                    <div class="flex space-x-2">
+                        <button class="px-1 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-arrow-left-s-line ri-lg"></i>
+                            </div>
+                        </button>
+                        <button class="px-1 py-1 rounded-full bg-primary text-white hover:bg-blue-600 transition-colors">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-arrow-right-s-line ri-lg"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="rounded-lg overflow-hidden shadow-md card-hover">
+                        <div class="h-64 bg-gray-200 relative">
+                            <img src="https://readdy.ai/api/search-image?query=A%20modern%20UI%20design%20for%20a%20mobile%20app%20with%20clean%20minimalist%20interface%2C%20showing%20dashboard%20with%20analytics%2C%20professional%20design%20work%20sample%20with%20soft%20blue%20accent%20colors%20on%20white%20background%2C%20high%20quality%20portfolio%20piece&width=600&height=400&seq=design1&orientation=landscape" alt="UI设计作品" class="w-full h-full object-cover object-top">
+                            <div class="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-sm font-medium text-gray-700">UI/UX</div>
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-semibold text-lg mb-2">智能健康数据分析仪表盘</h4>
+                            <div class="flex items-center mb-3">
+                                <img src="https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20Asian%20female%20designer%20with%20short%20black%20hair%2C%20neutral%20background%2C%20professional%20lighting%2C%20looking%20confident%20and%20creative&width=100&height=100&seq=avatar1&orientation=squarish" alt="设计师头像" class="w-8 h-8 rounded-full mr-2">
+                                <span class="text-gray-700">林雨晴</span>
+                                <div class="ml-auto flex items-center text-amber-500">
+                                    <i class="ri-star-fill ri-sm mr-1"></i>
+                                    <span>4.9</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">移动应用</span>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">数据可视化</span>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">医疗科技</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg overflow-hidden shadow-md card-hover">
+                        <div class="h-64 bg-gray-200 relative">
+                            <img src="https://readdy.ai/api/search-image?query=A%20stunning%203D%20product%20visualization%20of%20a%20sleek%20modern%20smart%20speaker%20with%20ambient%20lighting%2C%20photorealistic%20rendering%20with%20studio%20lighting%2C%20professional%20product%20design%20portfolio%20piece%20with%20neutral%20background&width=600&height=400&seq=design2&orientation=landscape" alt="产品设计作品" class="w-full h-full object-cover object-top">
+                            <div class="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-sm font-medium text-gray-700">产品设计</div>
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-semibold text-lg mb-2">Nova 智能音箱概念设计</h4>
+                            <div class="flex items-center mb-3">
+                                <img src="https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20Chinese%20male%20designer%20with%20glasses%2C%20neutral%20background%2C%20professional%20lighting%2C%20looking%20creative%20and%20thoughtful&width=100&height=100&seq=avatar2&orientation=squarish" alt="设计师头像" class="w-8 h-8 rounded-full mr-2">
+                                <span class="text-gray-700">王志远</span>
+                                <div class="ml-auto flex items-center text-amber-500">
+                                    <i class="ri-star-fill ri-sm mr-1"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">3D建模</span>
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">工业设计</span>
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">智能家居</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg overflow-hidden shadow-md card-hover">
+                        <div class="h-64 bg-gray-200 relative">
+                            <img src="https://readdy.ai/api/search-image?query=A%20creative%20branding%20identity%20design%20for%20a%20modern%20coffee%20shop%20with%20logo%2C%20business%20cards%2C%20and%20packaging%20displayed%20on%20a%20clean%20mockup%2C%20professional%20graphic%20design%20portfolio%20piece%20with%20neutral%20background&width=600&height=400&seq=design3&orientation=landscape" alt="品牌设计作品" class="w-full h-full object-cover object-top">
+                            <div class="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-sm font-medium text-gray-700">品牌设计</div>
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-semibold text-lg mb-2">Aroma 咖啡品牌视觉系统</h4>
+                            <div class="flex items-center mb-3">
+                                <img src="https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20female%20designer%20with%20long%20brown%20hair%2C%20neutral%20background%2C%20professional%20lighting%2C%20looking%20confident%20and%20artistic&width=100&height=100&seq=avatar3&orientation=squarish" alt="设计师头像" class="w-8 h-8 rounded-full mr-2">
+                                <span class="text-gray-700">张梦琪</span>
+                                <div class="ml-auto flex items-center text-amber-500">
+                                    <i class="ri-star-fill ri-sm mr-1"></i>
+                                    <span>4.7</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">品牌标识</span>
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">包装设计</span>
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">视觉系统</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-600 to-primary rounded-xl p-8 text-white">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-6 md:mb-0 md:mr-8">
+                        <h3 class="text-2xl font-bold mb-3">寻找合适的设计人才？</h3>
+                        <p class="text-blue-100 max-w-lg">基于AI智能匹配算法，快速找到符合您需求的专业设计师</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#" class="bg-white text-primary px-6 py-3 rounded-button hover:bg-blue-50 transition-colors whitespace-nowrap">发布需求</a>
+                        <a href="#" class="border border-white text-white px-6 py-3 rounded-button hover:bg-white/10 transition-colors whitespace-nowrap">浏览人才库</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ai-resources" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">AI 资源池</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">整合前沿AI设计工具与行业资讯，赋能设计师创作</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="ri-tools-line text-primary ri-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">AI 工具库</h3>
+                        <p class="text-gray-600 mb-6">精选 120+ 设计相关AI工具，涵盖创意生成、图像处理、3D建模等多个领域</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-image-edit-line text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">智能图像生成</h4>
+                                    <p class="text-sm text-gray-500">32 款工具</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-layout-4-line text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">UI/UX 辅助工具</h4>
+                                    <p class="text-sm text-gray-500">28 款工具</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-3d-cube-line text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">3D 模型生成</h4>
+                                    <p class="text-sm text-gray-500">25 款工具</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="mt-6 inline-flex items-center text-primary hover:text-blue-700">
+                            查看全部工具
+                            <i class="ri-arrow-right-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="ri-newspaper-line text-amber-600 ri-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">行业资讯墙</h3>
+                        <p class="text-gray-600 mb-6">实时更新设计与AI交叉领域的前沿动态，洞察行业趋势</p>
+                        
+                        <div class="space-y-5">
+                            <div class="border-b border-gray-200 pb-4">
+                                <div class="flex items-center text-xs text-gray-500 mb-2">
+                                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full mr-2">新技术</span>
+                                    <span>2025-06-15</span>
+                                </div>
+                                <h4 class="font-medium mb-1">Adobe 发布全新AI设计助手，提升创意效率</h4>
+                                <p class="text-sm text-gray-600 line-clamp-2">最新版Creative Cloud集成了基于大型语言模型的设计助手，可根据文本描述生成多种设计方案...</p>
+                            </div>
+                            
+                            <div class="border-b border-gray-200 pb-4">
+                                <div class="flex items-center text-xs text-gray-500 mb-2">
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full mr-2">行业报告</span>
+                                    <span>2025-06-12</span>
+                                </div>
+                                <h4 class="font-medium mb-1">2025年AI设计工具使用趋势分析报告</h4>
+                                <p class="text-sm text-gray-600 line-clamp-2">报告显示，超过78%的设计师已将AI工具融入日常工作流程，提升效率平均达42%...</p>
+                            </div>
+                            
+                            <div class="pb-2">
+                                <div class="flex items-center text-xs text-gray-500 mb-2">
+                                    <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full mr-2">案例分享</span>
+                                    <span>2025-06-10</span>
+                                </div>
+                                <h4 class="font-medium mb-1">AI辅助设计如何重塑品牌视觉系统</h4>
+                                <p class="text-sm text-gray-600 line-clamp-2">通过AI生成的品牌元素如何与传统设计流程结合，创造出更具一致性和扩展性的品牌视觉...</p>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="mt-4 inline-flex items-center text-primary hover:text-blue-700">
+                            浏览更多资讯
+                            <i class="ri-arrow-right-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="ri-book-open-line text-green-600 ri-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">教学案例库</h3>
+                        <p class="text-gray-600 mb-6">精选AI设计实践案例，从入门到精通的系统学习资源</p>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3 text-white">
+                                        <i class="ri-number-1"></i>
+                                    </div>
+                                    <h4 class="font-medium">AI辅助UI设计基础</h4>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>8课时</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>12,450人学习</span>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex items-center text-amber-500 mr-2">
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-half-fill ri-sm"></i>
+                                    </div>
+                                    <span class="text-sm text-gray-500">4.8</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3 text-white">
+                                        <i class="ri-number-2"></i>
+                                    </div>
+                                    <h4 class="font-medium">Midjourney品牌视觉设计</h4>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>12课时</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>9,872人学习</span>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex items-center text-amber-500 mr-2">
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-line ri-sm"></i>
+                                    </div>
+                                    <span class="text-sm text-gray-500">4.6</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mr-3 text-white">
+                                        <i class="ri-number-3"></i>
+                                    </div>
+                                    <h4 class="font-medium">AI辅助3D产品渲染</h4>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>10课时</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>7,635人学习</span>
+                                </div>
+                                <div class="flex">
+                                    <div class="flex items-center text-amber-500 mr-2">
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                        <i class="ri-star-fill ri-sm"></i>
+                                    </div>
+                                    <span class="text-sm text-gray-500">4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="#" class="mt-4 inline-flex items-center text-primary hover:text-blue-700">
+                            浏览全部课程
+                            <i class="ri-arrow-right-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 p-8 md:p-12">
+                        <h3 class="text-2xl font-bold mb-4">每周精选AI工具推荐</h3>
+                        <p class="text-gray-600 mb-6">我们的AI专家团队每周精选最新、最实用的设计相关AI工具，助您提升创作效率</p>
+                        
+                        <div class="bg-gray-50 rounded-lg p-5 mb-6">
+                            <div class="flex items-start">
+                                <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="ri-brush-3-line text-primary ri-2x"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-lg mb-1">DesignGPT Pro</h4>
+                                    <p class="text-sm text-gray-600 mb-3">基于文本描述自动生成多种UI设计方案，支持组件级别的精细调整</p>
+                                    <div class="flex items-center text-sm">
+                                        <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full mr-2">本周新增</span>
+                                        <span class="text-gray-500">使用热度: 98%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form class="mb-6">
+                            <label class="block text-gray-700 font-medium mb-2">订阅每周AI工具推荐</label>
+                            <div class="flex">
+                                <input type="email" placeholder="您的邮箱地址" class="flex-1 px-4 py-2 border-none bg-gray-100 rounded-l-button focus:outline-none focus:ring-2 focus:ring-primary">
+                                <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-button hover:bg-blue-600 transition-colors whitespace-nowrap">订阅</button>
+                            </div>
+                        </form>
+                        
+                        <a href="#" class="inline-flex items-center text-primary hover:text-blue-700">
+                            查看历史推荐
+                            <i class="ri-arrow-right-line ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-100">
+                        <img src="https://readdy.ai/api/search-image?query=A%20designer%20working%20with%20AI%20tools%20on%20a%20computer%2C%20showing%20creative%20process%20with%20digital%20elements%20floating%20around%20the%20screen%2C%20professional%20lighting%2C%20modern%20workspace%20with%20blue%20accent%20colors%2C%20showing%20the%20integration%20of%20AI%20in%20design%20workflow&width=800&height=600&seq=ai-tools&orientation=landscape" alt="AI设计工具" class="w-full h-full object-cover object-top">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tasks" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">任务交易系统</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">高效连接设计需求与人才，打造透明、公平的设计任务交易平台</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">热门任务</h3>
+                        <div class="flex items-center">
+                            <div class="relative">
+                                <button class="flex items-center text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full text-sm">
+                                    <span>全部分类</span>
+                                    <i class="ri-arrow-down-s-line ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-medium text-lg">电商平台APP界面设计</h4>
+                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">¥15,000-20,000</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">需要设计一套完整的电商平台移动端UI界面，包含首页、分类、商品详情、购物车、个人中心等页面，要求风格现代简约，符合电商用户使用习惯。</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">UI设计</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">移动应用</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">电商</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>截止: 2025-07-15</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>已有 18 人投标</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-medium text-lg">企业品牌VI设计</h4>
+                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">¥30,000-50,000</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">为科技创业公司设计全套品牌视觉识别系统，包括logo、名片、办公用品、宣传物料等，要求体现科技感与创新精神。</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">品牌设计</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">VI设计</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">科技</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>截止: 2025-07-30</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>已有 12 人投标</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-medium text-lg">产品包装设计</h4>
+                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">¥8,000-12,000</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">为高端护肤品系列设计包装，包括瓶身、外盒及礼盒设计，要求体现产品的高端定位和自然成分特性。</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">包装设计</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">美妆</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">高端</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>截止: 2025-07-05</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>已有 24 人投标</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-primary transition-colors">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-medium text-lg">教育类网站设计</h4>
+                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">¥10,000-15,000</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">为在线教育平台设计网站界面，包括首页、课程列表、课程详情、学习中心等页面，要求风格专业友好，易于学生使用。</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">网页设计</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">教育</span>
+                                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">用户体验</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-time-line mr-1"></i>
+                                    <span>截止: 2025-07-20</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="ri-user-line mr-1"></i>
+                                    <span>已有 9 人投标</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <a href="#" class="text-primary hover:text-blue-700 inline-flex items-center">
+                            查看更多任务
+                            <i class="ri-arrow-right-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-6">任务交易流程</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-primary font-bold">01</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">任务发布</h4>
+                                <p class="text-gray-600">企业或个人发布设计需求，详细描述项目要求、预算范围、截止日期等信息</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-green-600 font-bold">02</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">智能匹配</h4>
+                                <p class="text-gray-600">AI系统根据任务要求和设计师能力评级，智能推荐最适合的设计师，提高匹配效率</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-purple-600 font-bold">03</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">能力评级</h4>
+                                <p class="text-gray-600">设计师根据历史项目完成质量、客户评价等多维度数据获得能力评级，确保服务质量</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-amber-600 font-bold">04</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">合同支付</h4>
+                                <p class="text-gray-600">平台提供标准化合同模板和安全支付系统，保障双方权益，支持分阶段付款</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <div class="bg-gray-50 rounded-lg p-5">
+                            <h4 class="font-semibold mb-3">平台交易保障</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                                        <i class="ri-shield-check-line text-primary"></i>
+                                    </div>
+                                    <span class="text-sm">资金安全托管</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-2">
+                                        <i class="ri-file-list-3-line text-green-600"></i>
+                                    </div>
+                                    <span class="text-sm">标准合同模板</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-2">
+                                        <i class="ri-scales-3-line text-amber-600"></i>
+                                    </div>
+                                    <span class="text-sm">知识产权保护</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-2">
+                                        <i class="ri-customer-service-2-line text-purple-600"></i>
+                                    </div>
+                                    <span class="text-sm">争议调解服务</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-bar-chart-grouped-line text-primary ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">任务成交统计</h3>
+                    <p class="text-gray-600 mb-4">平台已促成 5,280+ 设计任务成功交付</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm text-gray-600">UI/UX设计</span>
+                                <span class="text-sm font-medium">42%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-primary h-1.5 rounded-full" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm text-gray-600">品牌设计</span>
+                                <span class="text-sm font-medium">28%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-green-600 h-1.5 rounded-full" style="width: 28%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm text-gray-600">包装设计</span>
+                                <span class="text-sm font-medium">15%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-purple-600 h-1.5 rounded-full" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm text-gray-600">插画设计</span>
+                                <span class="text-sm font-medium">10%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-amber-600 h-1.5 rounded-full" style="width: 10%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm text-gray-600">其他类型</span>
+                                <span class="text-sm font-medium">5%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-gray-500 h-1.5 rounded-full" style="width: 5%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-time-line text-green-600 ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">任务响应时间</h3>
+                    <p class="text-gray-600 mb-4">平均任务响应时间仅需 2.5 小时</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">任务发布到首次响应</h4>
+                                <p class="text-sm text-gray-500">设计师平均响应速度</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-green-600">2.5h</span>
+                                <p class="text-xs text-gray-500">行业平均: 6h</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">需求确认到方案提交</h4>
+                                <p class="text-sm text-gray-500">初稿交付时间</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-amber-600">3.2d</span>
+                                <p class="text-xs text-gray-500">行业平均: 5d</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">修改反馈响应时间</h4>
+                                <p class="text-sm text-gray-500">设计师调整速度</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xl font-bold text-purple-600">12h</span>
+                                <p class="text-xs text-gray-500">行业平均: 24h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-star-line text-amber-600 ri-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">客户满意度</h3>
+                    <p class="text-gray-600 mb-4">平台设计师服务满意度高达 96%</p>
+                    
+                    <div class="flex items-center justify-center my-6">
+                        <div class="relative w-40 h-40">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-4xl font-bold text-amber-600">96%</span>
+                            </div>
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f1f5f9" stroke-width="3" />
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="96, 100" />
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="flex items-center text-amber-500 mr-2">
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                            </div>
+                            <span class="text-sm mr-2">5星</span>
+                            <div class="flex-1 h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-amber-500 rounded-full" style="width: 78%"></div>
+                            </div>
+                            <span class="text-sm ml-2">78%</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="flex items-center text-amber-500 mr-2">
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-line"></i>
+                            </div>
+                            <span class="text-sm mr-2">4星</span>
+                            <div class="flex-1 h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-amber-500 rounded-full" style="width: 18%"></div>
+                            </div>
+                            <span class="text-sm ml-2">18%</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="flex items-center text-amber-500 mr-2">
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-line"></i>
+                                <i class="ri-star-line"></i>
+                            </div>
+                            <span class="text-sm mr-2">3星</span>
+                            <div class="flex-1 h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-amber-500 rounded-full" style="width: 3%"></div>
+                            </div>
+                            <span class="text-sm ml-2">3%</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="flex items-center text-amber-500 mr-2">
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-line"></i>
+                                <i class="ri-star-line"></i>
+                                <i class="ri-star-line"></i>
+                            </div>
+                            <span class="text-sm mr-2">2星</span>
+                            <div class="flex-1 h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-amber-500 rounded-full" style="width: 1%"></div>
+                            </div>
+                            <span class="text-sm ml-2">1%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">数据驾驶舱</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">全方位数据可视化，洞察设计行业趋势与人才流动</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-6">人才流动热力图</h3>
+                    <div class="h-80 bg-gray-100 rounded-lg overflow-hidden">
+                        <div style="width: 100%; height: 100%; background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png'); background-size: cover; background-position: center;"></div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <h4 class="font-medium text-sm mb-1">热门人才聚集地</h4>
+                            <ol class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                                    北京 (24.6%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                                    上海 (18.3%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-blue-400 text-white rounded-full flex items-center justify-center text-xs mr-2">3</span>
+                                    深圳 (15.7%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-blue-300 text-white rounded-full flex items-center justify-center text-xs mr-2">4</span>
+                                    杭州 (12.4%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-blue-200 text-gray-700 rounded-full flex items-center justify-center text-xs mr-2">5</span>
+                                    广州 (8.9%)
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <h4 class="font-medium text-sm mb-1">人才需求增长最快</h4>
+                            <ol class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-600 text-white rounded-full flex items-center justify-center text-xs mr-2">1</span>
+                                    成都 (+42%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mr-2">2</span>
+                                    西安 (+38%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-400 text-white rounded-full flex items-center justify-center text-xs mr-2">3</span>
+                                    武汉 (+35%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-300 text-gray-700 rounded-full flex items-center justify-center text-xs mr-2">4</span>
+                                    南京 (+29%)
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-5 h-5 bg-green-200 text-gray-700 rounded-full flex items-center justify-center text-xs mr-2">5</span>
+                                    重庆 (+26%)
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-6">工具使用排行榜</h3>
+                    <div id="tools-chart" class="h-80"></div>
+                    <div class="mt-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-3">AI工具使用趋势分析</h4>
+                            <p class="text-sm text-gray-600 mb-3">2025年第二季度，AI辅助设计工具使用率同比增长87%，其中生成式AI工具增长最为显著。</p>
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-blue-600 rounded-full mr-1"></span>
+                                    <span class="text-xs text-gray-600">图像生成: +124%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
+                                    <span class="text-xs text-gray-600">UI自动化: +92%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-amber-500 rounded-full mr-1"></span>
+                                    <span class="text-xs text-gray-600">3D建模: +78%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-purple-500 rounded-full mr-1"></span>
+                                    <span class="text-xs text-gray-600">文案生成: +65%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 col-span-1 lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-6">需求响应效率看板</h3>
+                    <div id="efficiency-chart" class="h-80"></div>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                                    <i class="ri-time-line text-primary"></i>
+                                </div>
+                                <h4 class="font-medium">平均响应时间</h4>
+                            </div>
+                            <div class="flex items-end">
+                                <span class="text-2xl font-bold text-primary">2.5h</span>
+                                <span class="text-xs text-green-600 ml-2 mb-1">↓16%</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">较上季度缩短</p>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-2">
+                                    <i class="ri-check-double-line text-green-600"></i>
+                                </div>
+                                <h4 class="font-medium">需求满足率</h4>
+                            </div>
+                            <div class="flex items-end">
+                                <span class="text-2xl font-bold text-green-600">94.8%</span>
+                                <span class="text-xs text-green-600 ml-2 mb-1">↑3.2%</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">较上季度提升</p>
+                        </div>
+                        
+                        <div class="bg-amber-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-2">
+                                    <i class="ri-exchange-funds-line text-amber-600"></i>
+                                </div>
+                                <h4 class="font-medium">交付周期</h4>
+                            </div>
+                            <div class="flex items-end">
+                                <span class="text-2xl font-bold text-amber-600">5.2d</span>
+                                <span class="text-xs text-green-600 ml-2 mb-1">↓12%</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">较上季度缩短</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-6">设计师能力分布</h3>
+                    <div id="skills-chart" class="h-80"></div>
+                    <div class="mt-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">设计师技能趋势</h4>
+                            <div class="space-y-2">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">AI辅助设计能力</span>
+                                        <span class="text-xs font-medium text-green-600">+46%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1">
+                                        <div class="bg-green-600 h-1 rounded-full" style="width: 46%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">3D设计技能</span>
+                                        <span class="text-xs font-medium text-green-600">+38%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1">
+                                        <div class="bg-blue-600 h-1 rounded-full" style="width: 38%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">交互设计能力</span>
+                                        <span class="text-xs font-medium text-green-600">+32%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1">
+                                        <div class="bg-purple-600 h-1 rounded-full" style="width: 32%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-xs text-gray-600">数据可视化能力</span>
+                                        <span class="text-xs font-medium text-green-600">+29%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1">
+                                        <div class="bg-amber-600 h-1 rounded-full" style="width: 29%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-primary text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">加入亿思AI设计联盟，共创设计新未来</h2>
+            <p class="max-w-2xl mx-auto mb-8">连接全球设计师与企业，整合AI与设计资源，打造高效透明的设计生态系统</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#" class="bg-white text-primary px-6 py-3 rounded-button hover:bg-blue-50 transition-colors whitespace-nowrap">免费注册</a>
+                <a href="#" class="border border-white text-white px-6 py-3 rounded-button hover:bg-white/10 transition-colors whitespace-nowrap">了解更多</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+                <div class="lg:col-span-2">
+                    <a href="#" class="text-2xl font-['Pacifico'] text-white mb-4 inline-block">亿思</a>
+                    <p class="mb-6 text-gray-400">亿思AI设计联盟平台致力于连接设计师与企业，整合AI与设计资源，打造高效透明的设计生态系统</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="ri-wechat-line text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="ri-weibo-line text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="ri-linkedin-line text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="ri-behance-line text-white"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">平台服务</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#talent" class="hover:text-primary transition-colors">人才资源池</a></li>
+                        <li><a href="#ai-resources" class="hover:text-primary transition-colors">AI资源库</a></li>
+                        <li><a href="#tasks" class="hover:text-primary transition-colors">任务交易系统</a></li>
+                        <li><a href="#dashboard" class="hover:text-primary transition-colors">数据驾驶舱</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">企业定制服务</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">关于我们</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition-colors">平台介绍</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">团队成员</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">合作伙伴</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">媒体报道</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">加入我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="ri-map-pin-line mt-1 mr-2"></i>
+                            <span>北京市海淀区中关村创业大厦B座15层</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-mail-line mr-2"></i>
+                            <span>contact@yisi-design.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-phone-line mr-2"></i>
+                            <span>400-888-9999</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-sm mb-4 md:mb-0">© 2025 亿思AI设计联盟平台. 保留所有权利</p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-sm hover:text-primary transition-colors">服务条款</a>
+                        <a href="#" class="text-sm hover:text-primary transition-colors">隐私政策</a>
+                        <a href="#" class="text-sm hover:text-primary transition-colors">Cookie设置</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script id="tools-chart-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('tools-chart')) {
+                const toolsChart = echarts.init(document.getElementById('tools-chart'));
+                
+                const toolsOption = {
+                    animation: false,
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        textStyle: {
+                            color: '#1f2937'
+                        }
+                    },
+                    grid: {
+                        top: 10,
+                        right: 10,
+                        bottom: 30,
+                        left: 60
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['Figma', 'Midjourney', 'Adobe Firefly', 'Stable Diffusion', 'Blender AI', 'DesignGPT', 'Canva AI'],
+                        axisLabel: {
+                            color: '#1f2937',
+                            interval: 0,
+                            rotate: 30
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '使用率 (%)',
+                        nameTextStyle: {
+                            color: '#1f2937'
+                        },
+                        axisLabel: {
+                            color: '#1f2937'
+                        }
+                    },
+                    series: [
+                        {
+                            name: '使用率',
+                            type: 'bar',
+                            data: [86, 72, 68, 59, 48, 42, 38],
+                            itemStyle: {
+                                color: '#57b5e7',
+                                borderRadius: 6
+                            }
+                        }
+                    ]
+                };
+                
+                toolsChart.setOption(toolsOption);
+                
+                window.addEventListener('resize', function() {
+                    toolsChart.resize();
+                });
+            }
+        });
+    </script>
+    
+    <script id="efficiency-chart-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('efficiency-chart')) {
+                const efficiencyChart = echarts.init(document.getElementById('efficiency-chart'));
+                
+                const efficiencyOption = {
+                    animation: false,
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        textStyle: {
+                            color: '#1f2937'
+                        }
+                    },
+                    legend: {
+                        data: ['响应时间(小时)', '满足率(%)', '交付周期(天)'],
+                        bottom: 0,
+                        textStyle: {
+                            color: '#1f2937'
+                        }
+                    },
+                    grid: {
+                        top: 10,
+                        right: 10,
+                        bottom: 60,
+                        left: 60
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                        axisLabel: {
+                            color: '#1f2937'
+                        }
+                    },
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '时间',
+                            nameTextStyle: {
+                                color: '#1f2937'
+                            },
+                            axisLabel: {
+                                color: '#1f2937'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '百分比',
+                            nameTextStyle: {
+                                color: '#1f2937'
+                            },
+                            axisLabel: {
+                                color: '#1f2937'
+                            },
+                            min: 80,
+                            max: 100
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '响应时间(小时)',
+                            type: 'line',
+                            data: [4.2, 3.8, 3.5, 3.0, 2.7, 2.5],
+                            symbol: 'none',
+                            smooth: true,
+                            lineStyle: {
+                                width: 3
+                            },
+                            itemStyle: {
+                                color: '#57b5e7'
+                            },
+                            areaStyle: {
+                                color: {
+                                    type: 'linear',
+                                    x: 0,
+                                    y: 0,
+                                    x2: 0,
+                                    y2: 1,
+                                    colorStops: [
+                                        {
+                                            offset: 0,
+                                            color: 'rgba(87, 181, 231, 0.3)'
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: 'rgba(87, 181, 231, 0.1)'
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            name: '满足率(%)',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: [88, 89.5, 91, 92.5, 93.8, 94.8],
+                            symbol: 'none',
+                            smooth: true,
+                            lineStyle: {
+                                width: 3
+                            },
+                            itemStyle: {
+                                color: '#8dd3c7'
+                            }
+                        },
+                        {
+                            name: '交付周期(天)',
+                            type: 'line',
+                            data: [7.8, 7.2, 6.5, 6.0, 5.5, 5.2],
+                            symbol: 'none',
+                            smooth: true,
+                            lineStyle: {
+                                width: 3
+                            },
+                            itemStyle: {
+                                color: '#fbbf72'
+                            }
+                        }
+                    ]
+                };
+                
+                efficiencyChart.setOption(efficiencyOption);
+                
+                window.addEventListener('resize', function() {
+                    efficiencyChart.resize();
+                });
+            }
+        });
+    </script>
+    
+    <script id="skills-chart-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('skills-chart')) {
+                const skillsChart = echarts.init(document.getElementById('skills-chart'));
+                
+                const skillsOption = {
+                    animation: false,
+                    tooltip: {
+                        trigger: 'item',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        textStyle: {
+                            color: '#1f2937'
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: 10,
+                        top: 'center',
+                        textStyle: {
+                            color: '#1f2937'
+                        }
+                    },
+                    series: [
+                        {
+                            name: '设计师技能分布',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            center: ['40%', '50%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 8
+                            },
+                            label: {
+                                show: false
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '14',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: [
+                                { value: 35, name: 'UI/UX设计', itemStyle: { color: '#57b5e7' } },
+                                { value: 22, name: '品牌设计', itemStyle: { color: '#8dd3c7' } },
+                                { value: 18, name: '3D/产品设计', itemStyle: { color: '#fbbf72' } },
+                                { value: 15, name: '插画/动画', itemStyle: { color: '#fc8d62' } },
+                                { value: 10, name: '其他专业', itemStyle: { color: '#bebada' } }
+                            ]
+                        }
+                    ]
+                };
+                
+                skillsChart.setOption(skillsOption);
+                
+                window.addEventListener('resize', function() {
+                    skillsChart.resize();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

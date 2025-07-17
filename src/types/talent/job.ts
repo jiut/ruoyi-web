@@ -14,6 +14,9 @@ export interface JobPosting {
   educationRequired: string
   profession: Profession
   skillsRequired: string // JSON格式的技能要求
+  benefits?: JobBenefit[] // 职位福利（继承企业福利 + 额外福利）
+  additionalBenefits?: JobBenefit[] // 职位特有的额外福利
+  useEnterpriseBenefits?: boolean // 是否使用企业标准福利
   enterpriseId: number
   status: JobStatus
   publishDate: string
@@ -84,6 +87,7 @@ export interface Enterprise {
   email: string
   phone: string
   userId: number
+  benefits?: JobBenefit[] // 企业标准福利
   createdAt: string
   updatedAt: string
 }
@@ -155,3 +159,110 @@ export interface JobCardData {
   isUrgent?: boolean
   companyLogo?: string
 }
+
+// 福利待遇相关类型
+export interface JobBenefit {
+  id: string
+  name: string
+  icon: string
+  description?: string
+  category?: BenefitCategory
+  color?: string
+}
+
+export enum BenefitCategory {
+  INSURANCE = 'INSURANCE', // 保险类
+  LEAVE = 'LEAVE', // 假期类
+  BONUS = 'BONUS', // 奖金类
+  STOCK = 'STOCK', // 股权类
+  HEALTH = 'HEALTH', // 健康类
+  MEAL = 'MEAL', // 餐饮类
+  TRANSPORT = 'TRANSPORT', // 交通类
+  TRAINING = 'TRAINING', // 培训类
+  WELFARE = 'WELFARE', // 福利类
+  OTHER = 'OTHER', // 其他
+}
+
+// 预定义的福利待遇选项
+export const BENEFIT_OPTIONS: JobBenefit[] = [
+  {
+    id: 'insurance',
+    name: '五险一金',
+    icon: 'ri-health-book-line',
+    description: '完善的社会保险和住房公积金',
+    category: BenefitCategory.INSURANCE,
+    color: 'blue',
+  },
+  {
+    id: 'annual_leave',
+    name: '年假15天',
+    icon: 'ri-calendar-check-line',
+    description: '带薪年假15天',
+    category: BenefitCategory.LEAVE,
+    color: 'purple',
+  },
+  {
+    id: 'year_end_bonus',
+    name: '年终奖金',
+    icon: 'ri-award-line',
+    description: '丰厚的年终奖金',
+    category: BenefitCategory.BONUS,
+    color: 'pink',
+  },
+  {
+    id: 'stock_options',
+    name: '股票期权',
+    icon: 'ri-stock-line',
+    description: '公司股票期权激励',
+    category: BenefitCategory.STOCK,
+    color: 'green',
+  },
+  {
+    id: 'sick_leave',
+    name: '带薪病假',
+    icon: 'ri-user-heart-line',
+    description: '带薪病假保障',
+    category: BenefitCategory.HEALTH,
+    color: 'yellow',
+  },
+  {
+    id: 'free_meals',
+    name: '免费三餐',
+    icon: 'ri-restaurant-line',
+    description: '免费提供三餐',
+    category: BenefitCategory.MEAL,
+    color: 'red',
+  },
+  {
+    id: 'flexible_hours',
+    name: '弹性工作时间',
+    icon: 'ri-time-line',
+    description: '灵活的工作时间安排',
+    category: BenefitCategory.WELFARE,
+    color: 'indigo',
+  },
+  {
+    id: 'remote_work',
+    name: '远程办公',
+    icon: 'ri-home-office-line',
+    description: '支持远程办公',
+    category: BenefitCategory.WELFARE,
+    color: 'teal',
+  },
+  {
+    id: 'training_budget',
+    name: '培训预算',
+    icon: 'ri-book-open-line',
+    description: '年度培训预算支持',
+    category: BenefitCategory.TRAINING,
+    color: 'orange',
+  },
+  {
+    id: 'gym_membership',
+    name: '健身房会员',
+    icon: 'ri-run-line',
+    description: '健身房会员卡',
+    category: BenefitCategory.HEALTH,
+    color: 'cyan',
+  },
+]

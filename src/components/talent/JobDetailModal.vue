@@ -26,6 +26,11 @@ const skillTags = computed(() => {
   return parseSkillTags(props.job?.skillsRequired || '[]')
 })
 
+// 福利待遇（已在数据层合并）
+const benefits = computed(() => {
+  return props.job?.benefits || []
+})
+
 // 方法
 const getCompanyInitial = (companyName: string) => {
   return companyName.charAt(0).toUpperCase()
@@ -57,6 +62,22 @@ const closeModal = () => {
 const handleApply = () => {
   if (props.job)
     emit('apply', props.job)
+}
+
+const getBenefitIconClass = (color: string | undefined) => {
+  const colorMap: Record<string, string> = {
+    blue: 'bg-blue-500/20 text-blue-400',
+    purple: 'bg-purple-500/20 text-purple-400',
+    pink: 'bg-pink-500/20 text-pink-400',
+    green: 'bg-green-500/20 text-green-400',
+    yellow: 'bg-yellow-500/20 text-yellow-400',
+    red: 'bg-red-500/20 text-red-400',
+    indigo: 'bg-indigo-500/20 text-indigo-400',
+    teal: 'bg-teal-500/20 text-teal-400',
+    orange: 'bg-orange-500/20 text-orange-400',
+    cyan: 'bg-cyan-500/20 text-cyan-400',
+  }
+  return colorMap[color || 'gray'] || 'bg-gray-500/20 text-gray-400'
 }
 </script>
 
@@ -196,46 +217,22 @@ const handleApply = () => {
               </div>
 
               <!-- 福利待遇 -->
-              <div class="glass-card rounded-lg p-6 mb-8">
+              <div v-if="benefits.length > 0" class="glass-card rounded-lg p-6 mb-8">
                 <h3 class="text-lg font-bold mb-4">
                   福利待遇
                 </h3>
                 <div class="grid grid-cols-1 gap-4">
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/20 text-blue-400 mr-3">
-                      <i class="ri-health-book-line" />
+                  <div v-for="benefit in benefits" :key="benefit.id" class="flex items-center">
+                    <div
+                      class="w-8 h-8 flex items-center justify-center rounded-full mr-3"
+                      :class="getBenefitIconClass(benefit.color)"
+                    >
+                      <i :class="benefit.icon" />
                     </div>
-                    <span class="text-gray-300">五险一金</span>
-                  </div>
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-purple-500/20 text-purple-400 mr-3">
-                      <i class="ri-calendar-check-line" />
+                    <div>
+                      <span class="text-gray-300">{{ benefit.name }}</span>
+                      <p v-if="benefit.description" class="text-gray-500 text-xs mt-1">{{ benefit.description }}</p>
                     </div>
-                    <span class="text-gray-300">年假15天</span>
-                  </div>
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-pink-500/20 text-pink-400 mr-3">
-                      <i class="ri-award-line" />
-                    </div>
-                    <span class="text-gray-300">年终奖金</span>
-                  </div>
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-400 mr-3">
-                      <i class="ri-stock-line" />
-                    </div>
-                    <span class="text-gray-300">股票期权</span>
-                  </div>
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-yellow-500/20 text-yellow-400 mr-3">
-                      <i class="ri-user-heart-line" />
-                    </div>
-                    <span class="text-gray-300">带薪病假</span>
-                  </div>
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 mr-3">
-                      <i class="ri-restaurant-line" />
-                    </div>
-                    <span class="text-gray-300">免费三餐</span>
                   </div>
                 </div>
               </div>

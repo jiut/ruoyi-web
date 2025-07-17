@@ -47,7 +47,7 @@ const currentPageTitle = computed(() => {
     '/talent/jobs': '企业需求池',
     '/talent/designers': '设计师档案',
     '/talent/works': '学生作品库',
-    '/talent/schools': '院校数据库',
+    '/talent/schools': '院校数据库'
   }
   return routeMap[route.path] || '人才平台'
 })

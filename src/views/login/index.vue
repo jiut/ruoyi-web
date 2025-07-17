@@ -109,10 +109,10 @@ const brandSectionStyle = computed(() => {
         <div class="brand-section" :style="brandSectionStyle">
           <div class="brand-content">
             <h1 class="brand-title">
-              AI知识库系统
+              亿思AI设计联盟
             </h1>
             <p class="brand-description">
-              企业级智能知识管理平台，助力数字化转型
+              AI 赋能·创新未来
             </p>
           </div>
         </div>
