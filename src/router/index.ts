@@ -168,6 +168,13 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/aitools',
+    name: 'AITools',
+    component: () => import('@/views/aitools/index.vue'),
+    meta: { title: 'AI工具库' },
+  },
+
+  {
     path: '/role-selection',
     name: 'RoleSelection',
     component: () => import('@/views/role-selection/index.vue'),
@@ -223,24 +230,6 @@ const routes: RouteRecordRaw[] = [
         name: 'DesignerBasicProfile',
         component: () => import('@/views/profile/designer/basic.vue'),
         meta: { title: '基础信息' },
-      },
-      {
-        path: 'designer/portfolio',
-        name: 'DesignerPortfolio',
-        component: () => import('@/views/profile/designer/portfolio.vue'),
-        meta: { title: '作品集' },
-      },
-      {
-        path: 'designer/experience',
-        name: 'DesignerExperience',
-        component: () => import('@/views/profile/designer/experience.vue'),
-        meta: { title: '工作经历' },
-      },
-      {
-        path: 'designer/education',
-        name: 'DesignerEducation',
-        component: () => import('@/views/profile/designer/education.vue'),
-        meta: { title: '教育背景' },
       },
     ],
   },

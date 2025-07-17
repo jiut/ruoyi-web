@@ -13,6 +13,7 @@ import { isString } from '@/utils/is'
 import { getToken, removeToken } from '@/store/modules/auth/helper'
 import { getUserInfo, loginOut } from '@/api/user'
 import type { UserInfo } from '@/store/modules/user/helper'
+import PromptStore from '@/components/common/PromptStore/index.vue'
 import { defaultSetting } from '@/store/modules/user/helper'
 import { useAuthStore } from '@/store'
 import { getCurrentRole } from '@/utils/authUtils'
@@ -23,7 +24,6 @@ const message = useMessage()
 const authStore = useAuthStore()
 
 const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
-const PromptStore = defineAsyncComponent(() => import('@/components/common/PromptStore/index.vue'))
 const settingVisible = ref(false)
 const promptStoreVisible = ref(false)
 

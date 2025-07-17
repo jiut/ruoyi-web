@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NConfigProvider } from 'naive-ui'
 import { RouterView } from 'vue-router'
-import { NaiveProvider, RoleSelectionPrompt } from '@/components/common'
+import { NaiveProvider, RoleSelectionPrompt, TestVersionPrompt } from '@/components/common'
 import { useTheme } from '@/hooks/useTheme'
 import { useLanguage } from '@/hooks/useLanguage'
 
@@ -19,6 +19,7 @@ const { language } = useLanguage()
     <NaiveProvider>
       <RouterView />
       <RoleSelectionPrompt />
+      <TestVersionPrompt />
     </NaiveProvider>
   </NConfigProvider>
 </template>

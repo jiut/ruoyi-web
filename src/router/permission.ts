@@ -1,3 +1,7 @@
+import { useUserStore } from '@/store'
+import { getToken } from '@/store/modules/auth/helper'
+import { needsRoleSelection } from '@/utils/authUtils'
+
 // 直接使用 any 避免多版本 vue-router 类型冲突
 
 const whiteList = ['/login', '/regist', '/resetpassword', '/role-selection'] // 不重定向白名单
@@ -5,9 +9,6 @@ const whiteList = ['/login', '/regist', '/resetpassword', '/role-selection'] // 
 export function setupPageGuard(router: any) {
   router.beforeEach(async (to: any, from: any, next: any) => {
     // 获取用户store和token检查
-    const { useUserStore } = await import('@/store')
-    const { getToken } = await import('@/store/modules/auth/helper')
-
     const userStore = useUserStore()
     const token = getToken()
 
@@ -22,9 +23,6 @@ export function setupPageGuard(router: any) {
         console.error('初始化用户信息失败:', error)
       }
     }
-
-    // 检查用户是否需要选择角色
-    const { needsRoleSelection } = await import('@/utils/authUtils')
 
     // 如果用户需要选择角色且不在角色选择页面，则跳转到角色选择页面
     if (needsRoleSelection() && to.path !== '/role-selection') {

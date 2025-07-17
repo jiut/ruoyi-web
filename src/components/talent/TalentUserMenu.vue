@@ -15,6 +15,7 @@ import { getUserInfo, loginOut } from '@/api/user'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { defaultSetting } from '@/store/modules/user/helper'
 import { useAuthStore } from '@/store'
+import PromptStore from '@/components/common/PromptStore/index.vue'
 
 const router = useRouter()
 const userInfo = ref<UserInfo>(defaultSetting().userInfo)
@@ -22,7 +23,6 @@ const message = useMessage()
 const authStore = useAuthStore()
 
 const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
-const PromptStore = defineAsyncComponent(() => import('@/components/common/PromptStore/index.vue'))
 const settingVisible = ref(false)
 const promptStoreVisible = ref(false)
 const showUserMenu = ref(false)

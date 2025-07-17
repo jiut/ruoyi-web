@@ -838,7 +838,6 @@ export function useSchool(options?: {
       || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
 
     if (USE_MOCK_DATA) {
-      const { getMockSchoolById } = await import('@/data/mockSchools')
       return getMockSchoolById(schoolId)
     }
     else {

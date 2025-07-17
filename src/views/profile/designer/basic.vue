@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ProfileCompletenessGuide } from '@/components/common'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
 import SkillTagSelector from '@/components/common/SkillTagSelector/index.vue'
@@ -29,6 +29,7 @@ import ProfessionUtils from '@/utils/professionUtils'
 import { getProfileCompleteness } from '@/api/talent/registration'
 
 const router = useRouter()
+const route = useRoute()
 
 // 步骤定义
 const steps = [
@@ -39,8 +40,13 @@ const steps = [
   // { id: 'portfolio', title: '作品集', description: '上传设计作品' }, // 暂时隐藏，以后开发
 ]
 
-// 当前步骤
-const currentStep = ref('basic')
+// 当前步骤 - 支持从URL查询参数设置初始步骤
+const getInitialStep = () => {
+  const stepFromQuery = route.query.step as string
+  const validSteps = steps.map(s => s.id)
+  return stepFromQuery && validSteps.includes(stepFromQuery) ? stepFromQuery : 'basic'
+}
+const currentStep = ref(getInitialStep())
 const completedSteps = ref<string[]>([])
 
 // 加载状态

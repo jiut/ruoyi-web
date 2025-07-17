@@ -18,27 +18,27 @@ const talentMapChart = ref<HTMLElement | null>(null)
 // 学生作品数据
 const studentWorks = ref([
   {
-    src: '/src/assets/student-works/01.jpg',
+    src: '/student-works/01.jpg',
     alt: '现代洗衣房场景设计',
   },
   {
-    src: '/src/assets/student-works/02.jpg',
+    src: '/student-works/02.jpg',
     alt: '创意二维码设计',
   },
   {
-    src: '/src/assets/student-works/03.jpg',
+    src: '/student-works/03.jpg',
     alt: '时尚角色设计',
   },
   {
-    src: '/src/assets/student-works/04.jpg',
+    src: '/student-works/04.jpg',
     alt: '童话风格建筑设计',
   },
   {
-    src: '/src/assets/student-works/05.jpg',
+    src: '/student-works/05.jpg',
     alt: '奇幻角色设计',
   },
   {
-    src: '/src/assets/student-works/06.jpg',
+    src: '/student-works/06.jpg',
     alt: '森林魔法师角色设计',
   },
 ])
@@ -134,6 +134,9 @@ const navigateToJobs = () => {
 }
 const navigateToDesigners = () => {
   router.push('/talent/designers')
+}
+const navigateToAITools = () => {
+  router.push('/aitools')
 }
 // 登录状态
 const authStore = useAuthStore()
@@ -449,12 +452,14 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 					<div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
 						<a-button type="primary" size="large"
 							class="!rounded-button bg-blue-600 border-blue-600 hover:bg-blue-700 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
-							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }">
+							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }"
+							@click="navigateToSchools">
 							探索人才库
 						</a-button>
 						<a-button size="large"
 							class="!rounded-button text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
-							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }">
+							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }"
+							@click="navigateToAITools">
 							AI 工具资源
 						</a-button>
 					</div>
@@ -468,8 +473,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 							<p class="text-gray-600 text-sm lg:text-base xl:text-lg">体验前沿AI设计工具，释放创意潜能</p>
 						</div>
 
-						<div
-							class="grid grid-cols-3 gap-3 lg:gap-4 xl:gap-4 mb-6 lg:mb-7">
+						<div class="grid grid-cols-3 gap-3 lg:gap-4 xl:gap-4 mb-6 lg:mb-7">
 							<div v-for="(tool, index) in [
 									{ name: '豆包', icon: 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/logo-icon.png', desc: '字节跳动AI助手', category: '智能助手', url: 'https://www.doubao.com/' },
 									{ name: 'DeepSeek', icon: 'https://www.deepseek.com/favicon.ico', desc: '强大的AI编程助手', category: '智能助手', url: 'https://www.deepseek.com/' },
@@ -622,7 +626,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						<p class="text-gray-600 mb-4">
 							智能匹配设计需求与人才，提供全流程任务管理与支付保障
 						</p>
-						<router-link to="/talent/tasks" class="text-purple-600 hover:text-purple-700 flex items-center cursor-pointer">
+						<router-link to="/talent/tasks"
+							class="text-purple-600 hover:text-purple-700 flex items-center cursor-pointer">
 							<span>进入系统</span>
 							<i class="fas fa-arrow-right ml-2" />
 						</router-link>
@@ -712,7 +717,9 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
 					<!-- 院校数据库 -->
-					<div class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer" @click="navigateToSchools">
+					<div
+						class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+						@click="navigateToSchools">
 						<div class="flex items-center mb-6">
 							<div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
 								<i class="fas fa-university text-blue-600" />
@@ -756,7 +763,9 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						</div>
 					</div>
 					<!-- 企业需求池 -->
-					<div class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer" @click="navigateToJobs">
+					<div
+						class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+						@click="navigateToJobs">
 						<div class="flex items-center mb-6">
 							<div class="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center mr-4">
 								<i class="fas fa-briefcase text-amber-600" />
@@ -809,7 +818,9 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						</div>
 					</div>
 					<!-- 设计师档案 -->
-					<div class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer" @click="navigateToDesigners">
+					<div
+						class="bg-white rounded-xl p-6 shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+						@click="navigateToDesigners">
 						<div class="flex items-center mb-6">
 							<div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center mr-4">
 								<i class="fas fa-id-card text-purple-600" />
@@ -902,7 +913,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 									</div>
 								</div>
 								<div class="flex justify-end">
-									<button class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
+									<button
+										class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
 										开始学习
 									</button>
 								</div>
@@ -977,7 +989,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 											<p class="text-xs text-gray-600">权威认证 · 行业认可</p>
 										</div>
 									</div>
-									<button class="text-xs bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
+									<button
+										class="text-xs bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
 										了解详情
 									</button>
 								</div>
@@ -1017,7 +1030,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 									</div>
 								</div>
 								<div class="flex justify-end">
-									<button class="text-xs bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
+									<button
+										class="text-xs bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1 rounded !rounded-button cursor-pointer whitespace-nowrap">
 										立即报名
 									</button>
 								</div>
@@ -1112,9 +1126,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 							<div v-for="(news, index) in newsCategories[activeNewsTab]" :key="`news-${activeNewsTab}-${index}`"
 								class="bg-gray-50 rounded-lg p-6 hover:bg-blue-50 transition-colors duration-300 cursor-pointer transform hover:translate-x-1 transition-transform border border-gray-200">
 								<div class="flex justify-between items-start mb-3">
-									<span
-										class="text-xs px-2 py-1 rounded font-medium"
-										:class="{
+									<span class="text-xs px-2 py-1 rounded font-medium" :class="{
 											'bg-blue-100 text-blue-700': activeNewsTab === 'ai',
 											'bg-purple-100 text-purple-700': activeNewsTab === 'design',
 											'bg-green-100 text-green-700': activeNewsTab === 'material'
