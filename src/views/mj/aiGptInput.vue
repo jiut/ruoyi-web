@@ -290,6 +290,7 @@ const drOption = [
     key: 'asr',
   },
 ]
+
 const handleSelectASR = (key: string | number) => {
   if (key == 'asr')
     goASR()
@@ -480,6 +481,8 @@ function handleClear() {
                   />
                 </div>
               </NDropdown>
+
+
             </template>
             <template v-if="isMobile" #suffix>
               <div class="relative; w-[40px]">
@@ -525,7 +528,7 @@ function handleClear() {
               <span>模型:{{
                 nGptStore.modelLabel
                   ? truncateText(nGptStore.modelLabel, 20)
-                  : "deepseek/deepseek-r1"
+		: "AI设计助理"
               }}
                 {{
                   nGptStore.kid
@@ -557,6 +560,8 @@ function handleClear() {
               <IconSvg icon="voice" width="19px" height="19px" />
             </div>
           </NDropdown>
+
+
           <NTooltip trigger="hover">
             <template #trigger>
               <SvgIcon

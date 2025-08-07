@@ -833,11 +833,7 @@ export function useSchool(options?: {
 
   // 获取院校详情
   const fetchSchoolDetail = async (schoolId: number) => {
-    // 环境配置
-    const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
-      || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
-
-    if (USE_MOCK_DATA) {
+    if (shouldUseMockData()) {
       return getMockSchoolById(schoolId)
     }
     else {

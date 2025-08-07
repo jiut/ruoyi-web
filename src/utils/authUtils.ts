@@ -84,9 +84,22 @@ export function getCurrentRole() {
 
 /**
  * 检查用户是否需要选择角色
+ * @param {boolean} silent 是否静默模式，静默模式下不会触发用户信息获取
  * @returns {boolean} 是否需要选择角色
  */
-export function needsRoleSelection(): boolean {
+export function needsRoleSelection(silent = false): boolean {
+  const token = getToken()
+  if (!token) return false
+
+  // 静默模式下，如果用户信息未加载，直接返回false避免触发API请求
+  if (silent) {
+    const userStore = useUserStore()
+    // 检查用户信息是否已经加载
+    if (!userStore.userInfo?.userId || userStore.userInfo.name === '熊猫助手') {
+      return false // 信息未加载时，暂不判断是否需要角色选择
+    }
+  }
+
   return isLoggedIn() && isNormalRole() && !hasProfessionalRole()
 }
 
@@ -104,6 +117,10 @@ export function shouldUseMockData(): boolean {
   if (import.meta.env.VITE_USE_MOCK_DATA === 'false')
     return false
 
-  // 默认情况下，根据登录状态决定：未登录使用mock，登录后使用API
-  return !isLoggedIn()
+  // 如果环境变量设置为auto，根据登录状态决定：未登录使用mock，登录后使用API
+  if (import.meta.env.VITE_USE_MOCK_DATA === 'auto')
+    return !isLoggedIn()
+
+  // 默认情况下（未设置或其他值），使用开发环境配置
+  return import.meta.env.DEV
 }

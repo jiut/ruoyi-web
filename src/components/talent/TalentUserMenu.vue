@@ -16,11 +16,13 @@ import type { UserInfo } from '@/store/modules/user/helper'
 import { defaultSetting } from '@/store/modules/user/helper'
 import { useAuthStore } from '@/store'
 import PromptStore from '@/components/common/PromptStore/index.vue'
+import { useRoleCheck } from '@/composables/useRoleCheck'
 
 const router = useRouter()
 const userInfo = ref<UserInfo>(defaultSetting().userInfo)
 const message = useMessage()
 const authStore = useAuthStore()
+const { isDesigner, isEnterprise, isSchool } = useRoleCheck()
 
 const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
 const settingVisible = ref(false)
@@ -35,6 +37,20 @@ const isLoggedIn = computed(() => {
   const token = getToken()
   const hasValidUser = userInfo.value.name && userInfo.value.name !== '熊猫助手'
   return !!token && hasValidUser
+})
+
+// 计算账户设置跳转路径
+const accountSettingsPath = computed(() => {
+  if (isDesigner.value) {
+    return '/profile/designer/basic'
+  } else if (isEnterprise.value) {
+    return '/profile/enterprise/basic'
+  } else if (isSchool.value) {
+    return '/profile/school/basic'
+  } else {
+    // 默认跳转到设计师页面
+    return '/profile/designer/basic'
+  }
 })
 
 onMounted(async () => {
@@ -265,7 +281,7 @@ const getUserInitial = () => {
           </div>
         </div>
         <div class="py-2">
-          <router-link to="/settings" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
+          <router-link :to="accountSettingsPath" class="flex items-center px-4 py-2 text-sm hover:bg-gray-800/50">
             <i class="ri-settings-3-line mr-3" />
             账户设置
           </router-link>

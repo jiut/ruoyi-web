@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { computed, defineAsyncComponent, h, onMounted, ref } from 'vue'
-import { NAvatar, NIcon, NMenu, NPopover, NTooltip } from 'naive-ui'
+import { NAvatar, NIcon, NMenu, NPopover } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import to from 'await-to-js'
 import {
@@ -61,7 +61,6 @@ async function getLoginUserInfo() {
     userInfo.value.name = newUserInfo.data.user.nickName
     userInfo.value.userBalance = newUserInfo.data.user.userBalance
     userInfo.value.userName = newUserInfo.data.user.userName
-    isLogin.value = true
   }
 }
 
@@ -108,100 +107,120 @@ const handleSelect = (key: string) => {
   else if (key === 'buy')
     show.value = true
 }
+
+function openComfyLink() {
+  window.open('https://comfylink.com/author/apps/681b28beed6fb6f2bc2dd7bc', '_blank')
+}
 </script>
 
 <template>
-  <div v-if="!isMobile" class="flex-shrink-0 w-[70px] z-[1000]  h-full" data-tauri-drag-region>
+  <div v-if="!isMobile" class="flex-shrink-0 w-[90px] z-[1000]  h-full" data-tauri-drag-region>
     <div
       class="flex h-full select-none flex-col items-center justify-between bg-[#e8eaf1] px-2 pt-4 pb-8 dark:bg-[#25272d]"
     >
-      <div class="flex flex-col space-y-4 flex-1 " data-tauri-drag-region>
-        <a
-          class="router-link-active router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="st.active = 'chat'; urouter.push(`/chat`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div
-                class="flex h-full justify-center items-center py-1 flex-col "
-                :class="[goHome == 'Chat' ? 'active' : '']"
-              >
-                <SvgIcon icon="ri:wechat-line" class="text-2xl  flex-1" />
-              </div>
-            </template>
-            对话
-          </NTooltip>
-        </a>
+      <div class="flex flex-col space-y-3 flex-1 " data-tauri-drag-region>
+        <!-- 返回首页按钮 -->
+        <div class="flex flex-col items-center">
+          <a
+            class="router-link-active router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push('/')"
+          >
+            <div
+              class="flex h-full justify-center items-center py-1 flex-col "
+              :class="[goHome == 'Home' ? 'active' : '']"
+            >
+              <SvgIcon icon="ri:home-4-line" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">首页</span>
+        </div>
 
-        <a
-          class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="urouter.push(`/knowledge`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div class="flex h-full justify-center items-center   py-1 flex-col">
-                <SvgIcon icon="garden:knowledge-base-26" class="text-2xl flex-1" />
-              </div>
-            </template>
-            知识库
-          </NTooltip>
-        </a>
+        <div class="flex flex-col items-center">
+          <a
+            class="router-link-active router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="st.active = 'chat'; urouter.push(`/chat`)"
+          >
+            <div
+              class="flex h-full justify-center items-center py-1 flex-col "
+              :class="[goHome == 'Chat' ? 'active' : '']"
+            >
+              <SvgIcon icon="ri:wechat-line" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">对话</span>
+        </div>
 
-        <a
-          class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="urouter.push(`/draw`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div class="flex h-full justify-center items-center   py-1 flex-col">
-                <SvgIcon icon="material-symbols:draw-rounded" class="text-2xl flex-1" />
-              </div>
-            </template>
-            绘画
-          </NTooltip>
-        </a>
+        <!-- <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push(`/knowledge`)"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="garden:knowledge-base-26" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">知识库</span>
+        </div> -->
 
-        <a
-          class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="urouter.push(`/music`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div class="flex h-full justify-center items-center   py-1 flex-col">
-                <SvgIcon icon="mingcute:music-line" class="text-2xl flex-1" />
-              </div>
-            </template>
-            音乐
-          </NTooltip>
-        </a>
+        <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="openComfyLink"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="ic:outline-palette" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">AI绘图</span>
+        </div>
 
-        <a
-          class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="urouter.push(`/video`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div class="flex h-full justify-center items-center   py-1 flex-col">
-                <SvgIcon icon="mynaui:video" class="text-2xl flex-1" />
-              </div>
-            </template>
-            视频
-          </NTooltip>
-        </a>
+        <!-- <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push(`/draw`)"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="material-symbols:draw-rounded" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">绘画</span>
+        </div> -->
 
-        <a
-          class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
-          @click="urouter.push(`/ppt`)"
-        >
-          <NTooltip placement="right" trigger="hover">
-            <template #trigger>
-              <div class="flex h-full justify-center items-center   py-1 flex-col">
-                <SvgIcon icon="icon-park-outline:ppt" class="text-2xl flex-1" />
-              </div>
-            </template>
-            PPT
-          </NTooltip>
-        </a>
+        <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push(`/music`)"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="mingcute:music-line" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">音乐</span>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push(`/video`)"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="mynaui:video" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">视频</span>
+        </div>
+
+        <!-- <div class="flex flex-col items-center">
+          <a
+            class=" router-link-exact-active h-10 w-10 cursor-pointer rounded-xl bg-white duration-300 dark:bg-[#34373c] hover:bg-[#bbb] dark:hover:bg-[#555]"
+            @click="urouter.push(`/ppt`)"
+          >
+            <div class="flex h-full justify-center items-center py-1 flex-col">
+              <SvgIcon icon="icon-park-outline:ppt" class="text-2xl flex-1" />
+            </div>
+          </a>
+          <span class="text-xs mt-1 text-center text-gray-600 dark:text-gray-300">PPT</span>
+        </div> -->
       </div>
 
       <div class="flex flex-col  space-y-2 ">

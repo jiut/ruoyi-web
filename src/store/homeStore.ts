@@ -53,7 +53,7 @@ const getGptInt = (): gptConfigType => {
 }
 
 const getDefault = () => {
-  const amodel = homeStore.myData.session.amodel ?? 'deepseek/deepseek-r1'
+  const amodel = homeStore.myData.session.amodel ?? '7529356576499499059'
   const v: gptConfigType = {
     model: amodel,
     modelLabel: '',

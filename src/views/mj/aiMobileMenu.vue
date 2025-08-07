@@ -18,6 +18,10 @@ function drawSent(e: any) {
   homeStore.setMyData({ act: 'draw', actData: e })
 }
 
+function openComfyLink() {
+  window.open('https://comfylink.com/author/apps/681b28beed6fb6f2bc2dd7bc', '_blank')
+}
+
 watch(() => homeStore.myData.act, (n: string) => {
   if (n == 'showChat')
     router.push('/chat')
@@ -45,8 +49,14 @@ watch(() => homeStore.myData.act, (n: string) => {
         GPTs
       </div>
     </div>
+    <div class="flex items-center justify-center flex-col " @click="openComfyLink">
+      <SvgIcon icon="ic:outline-palette" class="text-3xl" />
+      <div class="text-[13px]">
+        AI绘图
+      </div>
+    </div>
 
-    <div class="flex items-center justify-center flex-col " :class="[goHome == 'draw' ? 'active' : '']" @click="homeStore.setMyData({ act: 'showDraw' }) ">
+    <!-- <div class="flex items-center justify-center flex-col " :class="[goHome == 'draw' ? 'active' : '']" @click="homeStore.setMyData({ act: 'showDraw' }) ">
       <SvgIcon icon="ic:outline-palette" class="text-3xl" />
       <div class="text-[13px]">
         {{ $t('mjtab.draw') }}
@@ -57,7 +67,7 @@ watch(() => homeStore.myData.act, (n: string) => {
       <div class="text-[13px]">
         {{ $t('mjtab.gallery') }}
       </div>
-    </div>
+    </div> -->
   </div>
 
   <NDrawer v-if="goHome == 'draw'" v-model:show="st.show" class="!h-[90vh] !max-h-[660px]" placement="bottom">

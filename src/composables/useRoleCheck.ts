@@ -19,7 +19,7 @@ export function useRoleCheck() {
   // 计算属性
   const isNormalUser = computed(() => isNormalRole())
   const hasProfessional = computed(() => hasProfessionalRole())
-  const shouldSelectRole = computed(() => needsRoleSelection())
+  const shouldSelectRole = computed(() => needsRoleSelection(true))
 
   // 检查角色状态
   const checkRoleStatus = async () => {
@@ -31,7 +31,7 @@ export function useRoleCheck() {
 
       // 更新状态
       currentRole.value = getCurrentRole()
-      needsSelection.value = needsRoleSelection()
+      needsSelection.value = needsRoleSelection() // 这里可以使用正常模式，因为用户信息已经获取
     }
     catch (error) {
       console.error('检查角色状态失败:', error)

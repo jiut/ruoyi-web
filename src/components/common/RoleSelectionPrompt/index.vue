@@ -12,7 +12,7 @@ const dismissed = ref(false)
 
 // 计算是否显示提示
 const showPrompt = computed(() => {
-  return needsRoleSelection() && !dismissed.value
+  return needsRoleSelection(true) && !dismissed.value
 })
 
 // 跳转到角色选择页面

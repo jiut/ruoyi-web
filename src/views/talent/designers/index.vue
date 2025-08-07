@@ -12,6 +12,8 @@ import { getNameInitial } from '@/utils/styleGenerator'
 import { useUserStore } from '@/store/modules/user'
 import { getCurrentDesigner } from '@/api/talent/designer'
 import { useRoleCheck } from '@/composables/useRoleCheck'
+import { isStatusActive } from '@/utils/statusUtils'
+import { isLoggedIn } from '@/utils/authUtils'
 
 const router = useRouter()
 
@@ -87,6 +89,9 @@ const cities = computed(() => {
 
 const filteredDesigners = computed(() => {
   let filtered = [...designers.value]
+
+  // 首先过滤掉停用状态的设计师
+  filtered = filtered.filter(designer => isStatusActive(designer.status || '0'))
 
   // 职业筛选
   if (selectedProfessions.value.length > 0)
@@ -429,6 +434,7 @@ onMounted(async () => {
   console.log('🔍 环境变量调试信息:', {
     VITE_USE_MOCK_DATA: import.meta.env.VITE_USE_MOCK_DATA,
     实际使用Mock模式: import.meta.env.VITE_USE_MOCK_DATA === 'true',
+    auto模式下使用Mock: import.meta.env.VITE_USE_MOCK_DATA === 'auto' && !isLoggedIn(),
   })
 
   checkDevice()
@@ -966,14 +972,14 @@ onUnmounted(() => {
             </ul>
           </div>
           <div>
-            <h3 class="text-lg font-bold mb-4">
+            <h4 class="font-bold mb-4 text-white">
               关于我们
-            </h3>
+            </h4>
             <ul class="space-y-2">
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">公司介绍</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">加入我们</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">合作伙伴</a></li>
-              <li><a href="#" class="text-gray-400 text-sm hover:text-blue-400">联系我们</a></li>
+              <li>
+                <router-link to="/"
+                  class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">公司介绍</router-link>
+              </li>
             </ul>
           </div>
           <div>
@@ -982,13 +988,13 @@ onUnmounted(() => {
             </h3>
             <ul class="space-y-2">
               <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-mail-line mr-2" /> contact@xinghairencai.com
+                <i class="ri-mail-line mr-2" /> 1151386302@qq.com
               </li>
               <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-phone-line mr-2" /> 400-888-9999
+                <i class="ri-phone-line mr-2" /> 150-7240-0560
               </li>
               <li class="flex items-center text-gray-400 text-sm">
-                <i class="ri-map-pin-line mr-2" /> 北京市海淀区中关村大街 18 号
+                <i class="ri-map-pin-line mr-2" /> 湖北省武汉市洪山区
               </li>
             </ul>
           </div>
@@ -996,7 +1002,7 @@ onUnmounted(() => {
         <div class="section-divider mb-8" />
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-400 text-sm mb-4 md:mb-0">
-            © 2025 星海人才. 保留所有权利
+            © 2025 亿思（湖北省）科技有限公司. 保留所有权利
           </p>
           <div class="flex space-x-4">
             <a

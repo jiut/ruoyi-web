@@ -86,6 +86,7 @@ export const useUserStore = defineStore('user-store', {
             userGrade: res.data.user.userGrade || '0',
             userName: res.data.user.userName || '',
             userId: res.data.user.userId, // 保存userId
+            phone: res.data.user.phonenumber || res.data.user.phone || '', // 获取手机号
             roles: res.data.user.roles || [],
           })
         }

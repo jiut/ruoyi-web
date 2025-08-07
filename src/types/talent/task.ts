@@ -1,4 +1,14 @@
 // 智图工厂任务相关类型定义
+import {
+  TaskStatus,
+  ApplicationStatus,
+  ReviewStatus,
+  DeliverableStatus,
+  PaymentStatus,
+  ReviewMode,
+  Designer
+} from './taskFactory'
+
 export interface Task {
   id: number
   title: string
@@ -139,36 +149,9 @@ export enum ExperienceLevel {
   EXPERT = '10年以上'
 }
 
-export enum TaskStatus {
-  PUBLISHED = 'published',
-  IN_PROGRESS = 'in-progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  EXPIRED = 'expired'
-}
 
-export enum ApplicationStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  WITHDRAWN = 'withdrawn'
-}
 
-export enum DeliverableStatus {
-  DRAFT = 'draft',
-  SUBMITTED = 'submitted',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  REVISION_REQUESTED = 'revision-requested'
-}
 
-export enum PaymentStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  REFUNDED = 'refunded'
-}
 
 export enum PaymentMethod {
   ALIPAY = 'alipay',

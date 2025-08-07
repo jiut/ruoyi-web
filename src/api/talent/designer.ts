@@ -16,11 +16,12 @@ import {
   mockWorkExperience,
   mockWorks,
 } from '@/data/mockDesigners'
+import { isStatusActive } from '@/utils/statusUtils'
+
+import { shouldUseMockData } from '@/utils/authUtils'
 
 // 环境配置：可以通过环境变量控制是否使用模拟数据
-// 默认在开发环境使用mock数据，生产环境使用API
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
-  || (import.meta.env.VITE_USE_MOCK_DATA === undefined && import.meta.env.DEV)
+const USE_MOCK_DATA = shouldUseMockData()
 
 console.log('🔍 设计师API环境变量调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
@@ -35,6 +36,9 @@ export function listDesigner(query: DesignerQueryParams) {
 
     // 模拟筛选逻辑
     let filtered = [...mockDesigners]
+
+    // 首先过滤掉停用状态的设计师
+    filtered = filtered.filter(d => isStatusActive(d.status || '0'))
 
     // 按职业筛选
     if (query.profession)
@@ -95,7 +99,7 @@ export function listDesigner(query: DesignerQueryParams) {
 export function getDesigner(id: number) {
   if (USE_MOCK_DATA) {
     console.log('🔧 使用模拟数据 - 设计师详情')
-    const designer = mockDesigners.find(d => d.id === id)
+    const designer = mockDesigners.find(d => d.id === id && isStatusActive(d.status || '0'))
     return Promise.resolve({
       data: designer || null,
     })
@@ -147,7 +151,7 @@ export function delDesigner(ids: number[]) {
 // 按职业查询设计师
 export function getDesignersByProfession(profession: Profession) {
   if (USE_MOCK_DATA) {
-    const filtered = mockDesigners.filter(d => d.profession === profession)
+    const filtered = mockDesigners.filter(d => d.profession === profession && isStatusActive(d.status || '0'))
     return Promise.resolve({
       data: filtered,
     })
@@ -164,6 +168,7 @@ export function getDesignersByProfession(profession: Profession) {
 export function getDesignersBySkills(skillTags: SkillTag[]) {
   if (USE_MOCK_DATA) {
     const filtered = mockDesigners.filter((d) => {
+      if (!isStatusActive(d.status || '0')) return false
       const designerSkills = JSON.parse(d.skillTags || '[]')
       return skillTags.some(tag => designerSkills.includes(tag))
     })
@@ -317,8 +322,10 @@ export function getRegions() {
 export function searchDesigners(keyword: string) {
   if (USE_MOCK_DATA) {
     const filteredDesigners = mockDesigners.filter(designer =>
-      designer.designerName.includes(keyword)
-      || designer.description?.includes(keyword),
+      isStatusActive(designer.status || '0') && (
+        designer.designerName.includes(keyword)
+        || designer.description?.includes(keyword)
+      ),
     )
     return Promise.resolve({
       data: filteredDesigners,
@@ -518,7 +525,7 @@ export function getDesignerComplete(designerId: number | string): Promise<{ data
 
     // 确保ID比较时类型一致
     const numericId = typeof designerId === 'string' ? Number(designerId) : designerId
-    const designer = mockDesigners.find(d => d.id === numericId)
+    const designer = mockDesigners.find(d => d.id === numericId && isStatusActive(d.status || '0'))
     const works = mockWorks.filter(w => w.designerId === numericId)
     const workExp = mockWorkExperience.filter(w => w.designerId === numericId)
       .sort((a: WorkExperience, b: WorkExperience) =>

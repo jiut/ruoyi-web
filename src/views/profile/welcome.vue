@@ -2,8 +2,10 @@
 import { useRouter } from 'vue-router'
 import { ProfileCompletenessGuide } from '@/components/common'
 import TalentHeader from '@/components/talent/TalentHeader.vue'
+import { useRoleCheck } from '@/composables/useRoleCheck'
 
 const router = useRouter()
+const { isDesigner, isEnterprise, isSchool } = useRoleCheck()
 
 // 跳转到人才模块
 const goToTalent = () => {
@@ -13,8 +15,16 @@ const goToTalent = () => {
 // 跳转到资料完善页面
 const goToProfile = () => {
   // 根据用户角色跳转到对应的资料完善页面
-  // 这里可以根据用户的角色信息动态决定跳转路径
-  router.push('/profile/designer/basic')
+  if (isDesigner.value) {
+    router.push('/profile/designer/basic')
+  } else if (isEnterprise.value) {
+    router.push('/profile/enterprise/basic')
+  } else if (isSchool.value) {
+    router.push('/profile/school/basic')
+  } else {
+    // 如果没有明确角色，默认跳转到设计师页面
+    router.push('/profile/designer/basic')
+  }
 }
 
 // 跳转到帮助页面

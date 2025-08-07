@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia'
 import {
   NAutoComplete,
   NButton,
+  NDropdown,
   NInput,
   useDialog,
   useMessage,
@@ -33,6 +34,7 @@ import {
   mlog,
 } from '@/api'
 import { t } from '@/locales'
+import { useIconRender } from '@/hooks/useIconRender'
 
 let controller = new AbortController()
 
@@ -47,6 +49,7 @@ const chatStore = useChatStore()
 const { isMobile } = useBasicLayout()
 const { updateChat, updateChatSome } = useChat()
 const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
+const { iconRender } = useIconRender()
 
 const { uuid } = route.params as { uuid: string }
 
@@ -326,9 +329,9 @@ const buttonDisabled = computed(() => {
 })
 
 const footerClass = computed(() => {
-  let classes = ['p-4']
+  let classes: string[] = []
   if (isMobile.value)
-    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pr-3'] // , 'overflow-hidden'
+    classes = ['sticky', 'left-0', 'bottom-0', 'right-0'] // , 'overflow-hidden'
   return classes
 })
 
@@ -377,6 +380,63 @@ const ychat = computed(() => {
 
   return { text, dateTime: t('chat.preview') } as Chat.Chat
 })
+
+// 添加设计助手选项
+const designAssistantOptions = computed(() => [
+  {
+    label: '建筑设计助手',
+    key: 'architecture',
+    icon: iconRender({ icon: 'ri:building-line' }),
+    disabled: false,
+  },
+  {
+    label: '软装设计助手',
+    key: 'soft-decoration',
+    icon: iconRender({ icon: 'ri:sofa-line' }),
+    disabled: false,
+  },
+  {
+    label: '室内设计助手',
+    key: 'interior',
+    icon: iconRender({ icon: 'ri:home-line' }),
+    disabled: false,
+  },
+])
+
+// 当前选择的设计助手
+const selectedDesignAssistant = ref('architecture') // 默认选择建筑设计助手
+
+// 获取当前选择的设计助手标签
+const selectedDesignAssistantLabel = computed(() => {
+  const selected = designAssistantOptions.value.find(item => item.key === selectedDesignAssistant.value)
+  return selected ? selected.label : '设计助手'
+})
+
+// 获取当前选择的设计助手图标
+const selectedDesignAssistantIcon = computed(() => {
+  const selected = designAssistantOptions.value.find(item => item.key === selectedDesignAssistant.value)
+  return selected ? getIconName(selected.key) : 'ri:palette-line'
+})
+
+// 根据设计助手类型获取图标名称
+const getIconName = (key: string) => {
+  switch (key) {
+    case 'architecture':
+      return 'ri:building-line'
+    case 'soft-decoration':
+      return 'ri:sofa-line'
+    case 'interior':
+      return 'ri:home-line'
+    default:
+      return 'ri:palette-line'
+  }
+}
+
+// 添加设计助手选择处理函数
+const handleSelectDesignAssistant = (key: string | number) => {
+  selectedDesignAssistant.value = key as string
+  console.log('选择了设计助手:', key)
+}
 </script>
 
 <template>
@@ -447,7 +507,24 @@ const ychat = computed(() => {
 
     <footer v-if="local !== 'draw'" :class="footerClass" class="footer-content">
       <!-- max-w-screen-xl -->
-      <div class="w-full max-w-[1100px] m-auto">
+      <div class="w-full max-w-[1100px] m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
+        <!-- 设计助手下拉菜单 - 对话框上方左侧 -->
+        <div class="flex items-center mb-2" :style="[isMobile ? {} : { 'margin-left': '40px' }]">
+          <NDropdown
+            trigger="hover"
+            :options="designAssistantOptions"
+            @select="handleSelectDesignAssistant"
+          >
+            <NButton size="small" type="info" ghost>
+              <template #icon>
+                <SvgIcon :icon="selectedDesignAssistantIcon" />
+              </template>
+              {{ selectedDesignAssistantLabel }}
+              <SvgIcon icon="ri:arrow-down-s-line" class="ml-1" />
+            </NButton>
+          </NDropdown>
+        </div>
+
         <aiGptInput
           v-if="['gpt-4o-mini', 'gpt-3.5-turbo-16k'].indexOf(gptConfigStore.myData.model) > -1 || st.inputme" v-model:model-value="prompt"
           :disabled="buttonDisabled"

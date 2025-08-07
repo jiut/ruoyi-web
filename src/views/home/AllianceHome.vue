@@ -15,6 +15,10 @@ const router = useRouter()
 const mobileMenuOpen = ref(false)
 const talentMapChart = ref<HTMLElement | null>(null)
 
+// 联系方式悬浮按钮控制
+const contactVisible = ref(false)
+const contactExpanded = ref(false)
+
 // 学生作品数据
 const studentWorks = ref([
   {
@@ -114,6 +118,10 @@ const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
+// 切换联系方式悬浮按钮
+const toggleContact = () => {
+  contactExpanded.value = !contactExpanded.value
+}
 
 const openAITool = (url: string) => {
   if (url) {
@@ -147,11 +155,8 @@ const scrollToSection = (id: string) => {
     el.scrollIntoView({ behavior: 'smooth' })
 }
 onMounted(() => {
-  // 检查是否需要角色选择
-  if (needsRoleSelection()) {
-    router.push('/role-selection')
-    return
-  }
+  // 显示联系方式悬浮按钮
+  contactVisible.value = true
 
   // AI工具使用分布图
   if (talentMapChart.value) {
@@ -354,9 +359,9 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 		<header class="fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-md shadow-sm">
 			<div class="container mx-auto px-6 py-2 flex justify-between items-center">
 				<div class="flex items-center">
-					<div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500">
-						亿思AI设计联盟
-					</div>
+					<router-link to="/" class="flex items-center hover:opacity-80 transition-all duration-300 cursor-pointer">
+						<img src="/亿思logo.png" alt="亿思AI" class="h-10">
+					</router-link>
 				</div>
 				<div class="flex items-center space-x-8">
 					<nav class="hidden md:flex space-x-8">
@@ -365,25 +370,27 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 							title="探索全球设计人才资源，寻找合适的设计师或工作机会">
 							星海人才
 						</router-link>
-						<a class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
-							title="探索AI设计教育课程与认证体系" @click="scrollToSection('ai-education')">
+						<router-link to="/ai-education"
+							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
+							title="探索AI设计教育课程与认证体系">
 							AI教育
-						</a>
+						</router-link>
 						<router-link to="/aitools"
 							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
 							title="返回AI工具库首页，体验全球领先的AI设计工具">AI工具库</router-link>
 						<a class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
 							title="获取行业资讯与教学案例" @click="scrollToSection('ai-resources')">公共资讯</a>
-						<router-link to="/talent/tasks"
+						<router-link to="/tasks"
 							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
 							title="发布或接取设计任务，智能匹配需求">智图工厂</router-link>
 						<!-- <a @click="scrollToSection('data-dashboard')"
 							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
 							title="实时监控行业数据，把握市场动向">AIGC驾驶舱</a> -->
-						<!-- <router-link to="/chat"
-							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium" title="智能对话">
+						<router-link to="/chat"
+							class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer whitespace-nowrap font-medium"
+							title="智能对话">
 							AIGC驾驶舱
-						</router-link> -->
+						</router-link>
 					</nav>
 					<div class="flex items-center space-x-4">
 						<template v-if="!isLogin">
@@ -409,7 +416,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 				</div>
 			</div>
 			<!-- 移动端菜单 -->
-			<div v-if="mobileMenuOpen" class="md:hidden bg-white py-3 px-6 shadow-lg">
+			<div v-if="mobileMenuOpen" class="md:hidden bg-white py-3 px-6 shadow-lg border-t border-gray-100">
 				<div class="flex flex-col space-y-4">
 					<!-- <a @click="scrollToSection('talent-pool'); mobileMenuOpen = false"
 						class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer">星海人才</a> -->
@@ -418,14 +425,15 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						@click="mobileMenuOpen = false">
 						星海人才
 					</router-link>
-					<a class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
-						@click="scrollToSection('ai-education'); mobileMenuOpen = false">AI教育</a>
+					<router-link to="/ai-education"
+						class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
+						@click="mobileMenuOpen = false">AI教育</router-link>
 					<router-link to="/aitools"
 						class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
 						@click="mobileMenuOpen = false">AI工具库</router-link>
 					<a class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
 						@click="scrollToSection('ai-resources'); mobileMenuOpen = false">AI资讯</a>
-					<router-link to="/talent/tasks"
+					<router-link to="/tasks"
 						class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
 						@click="mobileMenuOpen = false">智图工厂</router-link>
 					<a class="text-gray-700 hover:text-blue-600 transition-colors duration-300 cursor-pointer"
@@ -434,7 +442,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 			</div>
 		</header>
 		<!-- Hero Section -->
-		<section class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-blue-50 to-white">
+		<section
+			class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-blue-50 to-white pt-16 md:pt-20 pb-12 md:pb-8 lg:pb-0">
 			<div class="absolute inset-0 z-0">
 				<div class="w-full h-full bg-gradient-to-r from-blue-600/10 to-blue-500/5"></div>
 			</div>
@@ -450,17 +459,17 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 					</h1>
 
 					<div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
+						<router-link to="/chat" class="w-full sm:w-auto">
+							<a-button size="large"
+								class="!rounded-button text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center w-full"
+								:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }">
+								设计师助手
+							</a-button>
+						</router-link>
 						<a-button type="primary" size="large"
-							class="!rounded-button bg-blue-600 border-blue-600 hover:bg-blue-700 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
-							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }"
-							@click="navigateToSchools">
-							探索人才库
-						</a-button>
-						<a-button size="large"
-							class="!rounded-button text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center"
-							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }"
-							@click="navigateToAITools">
-							AI 工具资源
+							class="!rounded-button bg-blue-600 border-blue-600 hover:bg-blue-700 transition-colors duration-300 cursor-pointer whitespace-nowrap flex items-center justify-center w-full sm:w-auto"
+							:style="{ fontSize: '1.2rem', padding: '1rem 2rem', height: 'auto' }" @click="navigateToAITools">
+							AI 工具库
 						</a-button>
 					</div>
 				</div>
@@ -539,7 +548,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						五大核心功能模块
 					</h2>
 					<p class="text-gray-600 max-w-2xl mx-auto">
-						亿思AI设计联盟平台围绕人才、教育、工具、资讯、任务五大核心模块，构建完整设计生态系统
+						亿思AI围绕人才、教育、工具、资讯、任务五大核心模块，构建完整设计生态系统
 					</p>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
@@ -573,11 +582,10 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						<p class="text-gray-600 mb-4">
 							构建完整的AI设计教育体系，提供专业课程与认证，培养未来设计人才
 						</p>
-						<a class="text-red-600 hover:text-red-700 flex items-center cursor-pointer"
-							@click="scrollToSection('ai-education')">
+						<router-link to="/ai-education" class="text-red-600 hover:text-red-700 flex items-center cursor-pointer">
 							<span>立即探索</span>
 							<i class="fas fa-arrow-right ml-2" />
-						</a>
+						</router-link>
 					</div>
 					<!-- AI工具库 -->
 					<div
@@ -626,8 +634,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						<p class="text-gray-600 mb-4">
 							智能匹配设计需求与人才，提供全流程任务管理与支付保障
 						</p>
-						<router-link to="/talent/tasks"
-							class="text-purple-600 hover:text-purple-700 flex items-center cursor-pointer">
+						<router-link to="/tasks" class="text-purple-600 hover:text-purple-700 flex items-center cursor-pointer">
 							<span>进入系统</span>
 							<i class="fas fa-arrow-right ml-2" />
 						</router-link>
@@ -1044,24 +1051,24 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 					<div class="text-center mb-8">
 						<h3 class="text-2xl font-bold mb-4">AI教育成果展示</h3>
 						<p class="text-purple-100 max-w-2xl mx-auto">
-							累计培养数千名AI设计人才，就业率与薪资水平显著提升
+							致力于培养AI设计人才，提升就业率与薪资水平
 						</p>
 					</div>
 					<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 						<div class="text-center">
-							<div class="text-4xl font-bold mb-2">5,000+</div>
+							<div class="text-4xl font-bold mb-2">X,XXX+</div>
 							<div class="text-purple-100">累计学员</div>
 						</div>
 						<div class="text-center">
-							<div class="text-4xl font-bold mb-2">95%</div>
+							<div class="text-4xl font-bold mb-2">XX%</div>
 							<div class="text-purple-100">就业率</div>
 						</div>
 						<div class="text-center">
-							<div class="text-4xl font-bold mb-2">40%</div>
+							<div class="text-4xl font-bold mb-2">XX%</div>
 							<div class="text-purple-100">平均薪资提升</div>
 						</div>
 						<div class="text-center">
-							<div class="text-4xl font-bold mb-2">200+</div>
+							<div class="text-4xl font-bold mb-2">XXX+</div>
 							<div class="text-purple-100">合作企业</div>
 						</div>
 					</div>
@@ -1073,7 +1080,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 			<div class="container mx-auto px-6">
 				<div class="text-center mb-16">
 					<h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-						AI资讯
+						公共资讯
 					</h2>
 					<p class="text-gray-600 max-w-2xl mx-auto">
 						整合前沿AI设计工具与资源，赋能设计师创作
@@ -1174,13 +1181,13 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								设计任务交易平台
 							</h3>
 							<p class="text-gray-700 mb-8">
-								亿思AI设计联盟平台提供业内领先的智图工厂，连接企业需求与设计人才，实现高效精准匹配。
+								亿思AI提供业内领先的智图工厂，连接企业需求与设计人才，实现高效精准匹配。
 								通过AI智能推荐、标准化流程与安全支付，为双方创造无忧的合作体验。
 							</p>
 							<div class="grid grid-cols-2 gap-6 mb-8">
 								<div class="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
 									<div class="text-3xl font-bold text-blue-600 mb-2">
-										5000+
+										XXX+
 									</div>
 									<div class="text-sm text-gray-700">
 										月活跃任务
@@ -1188,7 +1195,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								</div>
 								<div class="bg-purple-50 rounded-lg p-4 text-center border border-purple-200">
 									<div class="text-3xl font-bold text-purple-600 mb-2">
-										98%
+										XX%
 									</div>
 									<div class="text-sm text-gray-700">
 										满意度评分
@@ -1196,7 +1203,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								</div>
 								<div class="bg-cyan-50 rounded-lg p-4 text-center border border-cyan-200">
 									<div class="text-3xl font-bold text-cyan-600 mb-2">
-										2小时
+										X小时
 									</div>
 									<div class="text-sm text-gray-700">
 										平均响应时间
@@ -1204,7 +1211,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								</div>
 								<div class="bg-green-50 rounded-lg p-4 text-center border border-green-200">
 									<div class="text-3xl font-bold text-green-600 mb-2">
-										100%
+										XX%
 									</div>
 									<div class="text-sm text-gray-700">
 										资金安全保障
@@ -1212,7 +1219,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								</div>
 							</div>
 							<div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-								<router-link to="/talent/tasks">
+								<router-link to="/tasks">
 									<a-button type="primary" size="large"
 										class="!rounded-button bg-gradient-to-r from-blue-600 to-purple-600 border-none hover:opacity-90 transition-opacity duration-300 cursor-pointer whitespace-nowrap">
 										进入任务系统
@@ -1598,7 +1605,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 					<div class="flex flex-col md:flex-row items-center">
 						<div class="md:w-1/2 mb-8 md:mb-0">
 							<h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-								加入亿思AI设计联盟
+								加入亿思AI
 							</h2>
 							<p class="text-gray-600 mb-6">
 								无论您是设计师、企业还是院校，加入我们的生态系统，共同探索AI与设计的无限可能
@@ -1619,7 +1626,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								<div
 									class="bg-blue-50 rounded-xl p-4 text-center transform hover:scale-105 transition-transform border border-blue-200">
 									<div class="text-3xl font-bold text-blue-600 mb-2">
-										500+
+										XXX+
 									</div>
 									<div class="text-sm text-gray-700">
 										合作院校
@@ -1628,7 +1635,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								<div
 									class="bg-purple-50 rounded-xl p-4 text-center transform hover:scale-105 transition-transform border border-purple-200">
 									<div class="text-3xl font-bold text-purple-600 mb-2">
-										10,000+
+										X,XXX+
 									</div>
 									<div class="text-sm text-gray-700">
 										注册设计师
@@ -1637,7 +1644,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								<div
 									class="bg-cyan-50 rounded-xl p-4 text-center transform hover:scale-105 transition-transform border border-cyan-200">
 									<div class="text-3xl font-bold text-cyan-600 mb-2">
-										2,000+
+										X,XXX+
 									</div>
 									<div class="text-sm text-gray-700">
 										企业客户
@@ -1646,7 +1653,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								<div
 									class="bg-green-50 rounded-xl p-4 text-center transform hover:scale-105 transition-transform border border-green-200">
 									<div class="text-3xl font-bold text-green-600 mb-2">
-										50+
+										XX+
 									</div>
 									<div class="text-sm text-gray-700">
 										AI工具集成
@@ -1663,8 +1670,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 			<div class="container mx-auto px-6">
 				<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 					<div>
-						<h3 class="text-xl font-bold mb-4">
-							亿思AI设计联盟平台
+						<h3 class="text-xl font-bold mb-4 text-white">
+							亿思AI
 						</h3>
 						<p class="text-gray-400 mb-4">
 							连接设计师、AI与企业，打造全球领先的设计生态系统
@@ -1685,7 +1692,7 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 						</div>
 					</div>
 					<div>
-						<h4 class="font-bold mb-4">
+						<h4 class="font-bold mb-4 text-white">
 							快速链接
 						</h4>
 						<ul class="space-y-2">
@@ -1696,8 +1703,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								</router-link>
 							</li>
 							<li>
-								<a class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer"
-									@click="scrollToSection('ai-education')">AI教育</a>
+								<router-link to="/ai-education"
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AI教育</router-link>
 							</li>
 							<li>
 								<router-link to="/aitools"
@@ -1707,52 +1714,36 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 							</li>
 							<li>
 								<a class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer"
-									@click="scrollToSection('ai-resources')">AI资讯</a>
+									@click="scrollToSection('services')">公共资讯</a>
 							</li>
 							<li>
-								<router-link to="/talent/tasks"
+								<router-link to="/tasks"
 									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">
 									智图工厂
 								</router-link>
 							</li>
 							<li>
-								<a class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer"
-									@click="scrollToSection('data-dashboard')">AIGC驾驶舱</a>
+								<router-link to="/chat"
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">AIGC驾驶舱</router-link>
 							</li>
 						</ul>
 					</div>
 					<div>
-						<h4 class="font-bold mb-4">
+						<h4 class="font-bold mb-4 text-white">
 							关于我们
 						</h4>
 						<ul class="space-y-2">
 							<li>
-								<a href="#"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">公司介绍</a>
-							</li>
-							<li>
-								<a href="#"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">团队成员</a>
-							</li>
-							<li>
-								<a href="#"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">加入我们</a>
-							</li>
-							<li>
-								<a href="#"
-									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">联系方式</a>
+								<router-link to="/"
+									class="text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer">公司介绍</router-link>
 							</li>
 						</ul>
 					</div>
 					<div>
-						<h4 class="font-bold mb-4">
+						<h4 class="font-bold mb-4 text-white">
 							联系我们
 						</h4>
 						<ul class="space-y-2">
-							<li class="flex items-center text-gray-400">
-								<i class="fas fa-map-marker-alt mr-2" />
-								<span>湖北省武汉市洪山区和成中心</span>
-							</li>
 							<li class="flex items-center text-gray-400">
 								<i class="fas fa-phone mr-2" />
 								<span>150-7240-0560</span>
@@ -1761,12 +1752,16 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								<i class="fas fa-envelope mr-2" />
 								<span>1151386302@qq.com</span>
 							</li>
+							<li class="flex items-center text-gray-400">
+								<i class="fas fa-clock mr-2" />
+								<span>周一至周六 9:00-18:00</span>
+							</li>
 						</ul>
 					</div>
 				</div>
 				<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
 					<div class="text-gray-400 text-sm mb-4 md:mb-0">
-						&copy; 2025 亿思AI设计联盟平台. 保留所有权利.
+						&copy; 2025 亿思（湖北省）科技有限公司. 保留所有权利
 					</div>
 					<div class="flex space-x-4">
 						<a href="#"
@@ -1779,6 +1774,33 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 				</div>
 			</div>
 		</footer>
+
+		<!-- 联系方式悬浮按钮 -->
+		<div v-if="contactVisible" class="fixed bottom-6 right-6 z-50">
+			<!-- 展开的联系方式 -->
+			<div v-if="contactExpanded" class="absolute bottom-16 right-0 space-y-3">
+				<div class="bg-white rounded-lg shadow-lg p-4 transform transition-all duration-300 animate-slideUp w-40">
+					<div class="text-center">
+						<img src="@/assets/二维码.png" alt="客服微信" class="w-28 h-28 mx-auto mb-2 rounded-lg object-contain" />
+						<p class="text-sm text-gray-700 font-medium mb-0">客服微信</p>
+					</div>
+				</div>
+				<div class="bg-white rounded-lg shadow-lg p-4 transform transition-all duration-300 animate-slideUp w-40">
+					<div class="text-center">
+						<img src="@/assets/公众号.jpg" alt="公众号" class="w-28 h-28 mx-auto mb-2 rounded-lg object-contain" />
+						<p class="text-sm text-gray-700 font-medium mb-0">公众号</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 主按钮 -->
+			<button @click="toggleContact"
+				class="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full shadow-lg flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110"
+				:class="{ 'rotate-45': contactExpanded }">
+				<i class="fab fa-weixin text-2xl" />
+			</button>
+		</div>
+
 		<!-- 智图工厂弹窗 -->
 		<a-modal v-model:visible="taskSystemVisible" :footer="null" width="90%" :body-style="{ padding: '0' }"
 			:mask-closable="false">
@@ -1914,7 +1936,8 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 								:row-key="(record: any) => record.id">
 								<template #bodyCell="{ column, record }: { column: any; record: any }">
 									<template v-if="column.key === 'status'">
-										<a-tag :color="record.status === '进行中' ? 'blue' : record.status === '已完成' ? 'green' : 'orange'">
+										<a-tag
+											:color="record.status === '进行中' ? 'blue' : record.status === '已完成' ? 'green' : record.status === '已发布' ? 'orange' : record.status === '草稿' ? 'default' : record.status === '已取消' ? 'red' : 'orange'">
 											{{ record.status }}
 										</a-tag>
 									</template>
@@ -2059,11 +2082,11 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 										账户余额
 									</h4>
 									<div class="text-3xl font-bold mb-4">
-										¥25,680.00
+										¥X,XXX.XX
 									</div>
 									<div class="flex justify-between text-sm">
 										<span>可提现金额</span>
-										<span>¥20,680.00</span>
+										<span>¥X,XXX.XX</span>
 									</div>
 								</div>
 								<div class="bg-gray-800 rounded-lg p-6">
@@ -2071,11 +2094,11 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 										本月收入
 									</h4>
 									<div class="text-3xl font-bold text-green-400 mb-4">
-										¥12,500.00
+										¥X,XXX.XX
 									</div>
 									<div class="flex justify-between text-sm">
 										<span>较上月</span>
-										<span class="text-green-400">+15%</span>
+										<span class="text-green-400">+XX%</span>
 									</div>
 								</div>
 								<div class="bg-gray-800 rounded-lg p-6">
@@ -2083,11 +2106,11 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 										待结算
 									</h4>
 									<div class="text-3xl font-bold text-yellow-400 mb-4">
-										¥5,000.00
+										¥X,XXX.XX
 									</div>
 									<div class="flex justify-between text-sm">
 										<span>预计到账时间</span>
-										<span>3天内</span>
+										<span>X天内</span>
 									</div>
 								</div>
 							</div>
@@ -2119,6 +2142,17 @@ const designerRoles = ['UI/UX设计师', '品牌设计师', '插画师', '交互
 </template>
 
 <style scoped>
+/* 确保页面内容不被固定顶栏遮挡 */
+.min-h-screen {
+	min-height: calc(100vh - 64px);
+}
+
+@media (min-width: 768px) {
+	.min-h-screen {
+		min-height: calc(100vh - 80px);
+	}
+}
+
 /* 自定义滚动条 */
 ::-webkit-scrollbar {
 	width: 6px;
@@ -2222,6 +2256,22 @@ body {
 .stat-card:hover {
   transform: scale(1.03);
   box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+}
+
+/* 联系方式悬浮按钮动画 */
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 覆盖全局段落样式 */

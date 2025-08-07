@@ -9,6 +9,7 @@ export interface UserInfo {
   userGrade: string
   userName: string
   userId?: string | number // 添加userId字段
+  phone?: string // 添加手机号字段
   roles?: Array<{
     roleId: string
     roleName: string
@@ -29,6 +30,7 @@ export function defaultSetting(): UserState {
       userGrade: '0',
       userName: '',
       userId: undefined, // 添加userId字段
+      phone: undefined, // 添加手机号字段
       roles: [],
     },
   }

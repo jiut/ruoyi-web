@@ -220,25 +220,30 @@ enum PaymentStatus {
 }
 ```
 
-### 5. 环境变量配置
+### 5. 动态配置管理
 
 ```typescript
-// .env 配置文件
-VITE_TASK_REVIEW_MODE=DUAL  // 双重审核模式
-// VITE_TASK_REVIEW_MODE=ENTERPRISE  // 企业自主审核模式
+// 后端配置服务（TaskConfigService）
+@Component
+public class TaskConfigService {
+  private ReviewMode currentReviewMode = ReviewMode.DUAL;
 
-// 配置工具类
-export class TaskConfigService {
-  static getReviewMode(): ReviewMode {
-    return import.meta.env.VITE_TASK_REVIEW_MODE || 'DUAL'
+  public ReviewMode getReviewMode() {
+    return currentReviewMode;
   }
 
-  static isDualReviewMode(): boolean {
-    return this.getReviewMode() === 'DUAL'
+  public boolean isDualReviewMode() {
+    return ReviewMode.DUAL.equals(currentReviewMode);
   }
 
-  static isEnterpriseReviewMode(): boolean {
-    return this.getReviewMode() === 'ENTERPRISE'
+  public boolean isEnterpriseReviewMode() {
+    return ReviewMode.ENTERPRISE.equals(currentReviewMode);
+  }
+
+  // 动态更新审核模式（测试专用）
+  public boolean updateReviewMode(ReviewMode reviewMode) {
+    this.currentReviewMode = reviewMode;
+    return true;
   }
 }
 ```
@@ -259,9 +264,13 @@ DELETE /designer/task/{ids}             # 删除任务（仅企业管理员）
 GET    /designer/enterprise/tasks/list       # 获取当前企业的任务列表
 POST   /designer/enterprise/tasks           # 企业发布任务
 PUT    /designer/enterprise/tasks/{id}      # 企业修改任务
-DELETE /designer/enterprise/tasks/{id}      # 企业删除任务
+DELETE /designer/enterprise/tasks/{id}      # 企业逻辑删除任务（软删除）
 POST   /designer/enterprise/tasks/{id}/publish # 发布任务
 POST   /designer/enterprise/tasks/{id}/cancel  # 取消任务
+
+// 系统管理员专用任务管理接口
+POST   /designer/enterprise/tasks/{id}/restore  # 恢复已删除任务（仅系统管理员）
+GET    /designer/enterprise/tasks/recycle      # 查询回收站任务（仅系统管理员）
 ```
 
 ### 2. 双重审核接口
@@ -279,11 +288,48 @@ POST   /designer/task-application/{id}/enterprise-review # 企业管理员审核
 GET    /designer/task-application/admin/pending        # 系统管理员待审核列表
 GET    /designer/task-application/enterprise/pending   # 企业管理员待审核列表
 
-// 审核模式查询接口
-GET    /designer/task-application/review-mode   # 获取当前审核模式
 ```
 
-### 3. 交付管理接口
+### 3. 动态配置接口
+
+```typescript
+// 任务配置管理接口
+GET    /designer/task-config/info               # 获取当前任务配置信息
+POST   /designer/task-config/review-mode/{mode} # 动态切换审核模式
+POST   /designer/task-config/reset              # 重置配置为默认值
+GET    /designer/task-config/review-modes       # 获取支持的审核模式列表
+```
+
+#### 动态配置接口示例：
+
+```bash
+# 查看当前配置
+GET /designer/task-config/info
+
+Response:
+{
+  "code": 200,
+  "data": {
+    "reviewMode": "DUAL",
+    "reviewModeName": "双重审核模式",
+    "reviewModeDescription": "系统管理员→企业管理员",
+    "isDualReviewMode": true,
+    "isEnterpriseReviewMode": false,
+    "configSummary": "审核模式: 双重审核模式, 系统管理员超时: 24小时..."
+  }
+}
+
+# 切换审核模式
+POST /designer/task-config/review-mode/ENTERPRISE
+
+Response:
+{
+  "code": 200,
+  "msg": "审核模式已更新为: 企业自主审核模式"
+}
+```
+
+### 4. 交付管理接口
 
 ```typescript
 // 交付物管理接口
@@ -306,7 +352,74 @@ Content-Type: application/json
 }
 ```
 
-### 4. 双重审核接口示例
+### 5. 任务恢复与回收站管理接口
+
+```typescript
+// 任务恢复与回收站管理接口（仅系统管理员）
+POST   /designer/enterprise/tasks/{id}/restore   # 恢复已删除任务
+GET    /designer/enterprise/tasks/recycle        # 查询回收站任务列表
+```
+
+#### 任务恢复接口示例：
+```bash
+# 恢复已删除的任务
+POST /designer/enterprise/tasks/123/restore
+Authorization: Bearer {admin_token}
+
+Response:
+{
+  "code": 200,
+  "msg": "任务恢复成功",
+  "data": {
+    "taskId": 123,
+    "taskTitle": "LOGO设计项目",
+    "status": "PUBLISHED",
+    "restoreTime": "2025-01-27 14:30:00"
+  }
+}
+```
+
+#### 回收站查询接口示例：
+```bash
+# 查询所有已删除任务
+GET /designer/enterprise/tasks/recycle?pageNum=1&pageSize=10
+Authorization: Bearer {admin_token}
+
+# 查询指定企业的已删除任务
+GET /designer/enterprise/tasks/recycle?enterpriseId=123&pageNum=1&pageSize=10
+Authorization: Bearer {admin_token}
+
+Response:
+{
+  "code": 200,
+  "data": {
+    "rows": [
+      {
+        "taskId": 123,
+        "taskTitle": "LOGO设计项目",
+        "enterpriseId": 123,
+        "enterpriseName": "ABC设计公司",
+        "taskType": "LOGO_DESIGN",
+        "budgetMin": 2000,
+        "budgetMax": 5000,
+        "deleteTime": "2025-01-27 10:00:00",
+        "deleteBy": 456
+      }
+    ],
+    "total": 1,
+    "pageNum": 1,
+    "pageSize": 10
+  }
+}
+```
+
+#### 权限要求说明：
+- **恢复权限**：`designer:task:restore`（仅系统管理员）
+- **回收站查询权限**：`designer:task:recycle`（仅系统管理员）
+- **角色要求**：必须具有 `admin` 角色
+- **数据范围**：系统管理员可以查看和恢复所有企业的已删除任务
+
+### 6. 双重审核接口示例
 
 #### 系统管理员审核接口：
 ```bash
@@ -345,7 +458,7 @@ Response:
 }
 ```
 
-### 5. 企业管理员专用API设计
+### 6. 企业管理员专用API设计
 
 #### 严格隐藏系统管理员信息的企业管理员API
 
@@ -1105,7 +1218,9 @@ const taskPermissions = {
   'designer:task:detail',      // 查看任务详情
   'designer:task:add',         // 创建任务（仅企业管理员）
   'designer:task:edit',        // 编辑任务（仅企业管理员）
-  'designer:task:delete',      // 删除任务（仅企业管理员）
+  'designer:task:delete',      // 逻辑删除任务（仅企业管理员）
+  'designer:task:restore',     // 恢复已删除任务（仅系统管理员）
+  'designer:task:recycle',     // 查看回收站任务（仅系统管理员）
 
   // 申请管理权限
   'designer:task-application:apply',    // 申请任务（仅设计师）
@@ -1133,6 +1248,9 @@ const taskPermissions = {
 | 浏览任务广场 | ✓ | ✓ | ✓ | ✓ |
 | 查看任务详情 | ✓ | ✓ | ✓ | ✓ |
 | 发布任务 | ✗ | ✓ | ✗ | ✓ |
+| 逻辑删除任务 | ✗ | ✓(自己的任务) | ✗ | ✓ |
+| **恢复已删除任务** | ✗ | ✗ | ✗ | **✓** |
+| **查看回收站任务** | ✗ | ✗ | ✗ | **✓** |
 | 申请任务 | ✓ | ✗ | ✗ | ✓ |
 | **系统管理员一级审核** | ✗ | ✗ | ✗ | **✓** |
 | **企业管理员二级审核** | ✗ | **✓**(自己的任务) | ✗ | ✓ |
@@ -1165,6 +1283,12 @@ export class TaskPermissionController {
       case 'admin-review':
         return userRole.roleKey === 'admin' &&
                TaskConfigService.isDualReviewMode()
+
+      case 'restore':
+        return userRole.roleKey === 'admin'
+
+      case 'recycle':
+        return userRole.roleKey === 'admin'
 
       default:
         return false
@@ -1311,30 +1435,36 @@ GitHub发布包：https://github.com/user/project/releases/tag/v1.0
 - 如果需要修改文字，请注意保持字体层次结构
 ```
 
-### 2. 环境变量配置：简化的审核模式管理
+### 2. 动态接口配置：灵活的审核模式管理
 
-智图工厂采用环境变量配置审核模式，简化了系统配置管理：
+智图工厂采用动态接口配置审核模式，提供实时的配置管理能力：
 
 #### ✅ 核心特性
-- **环境变量配置**：在.env文件中直接配置`VITE_TASK_REVIEW_MODE`
+- **动态接口配置**：通过REST API实时切换审核模式
 - **两种模式**：`DUAL`（双重审核）和`ENTERPRISE`（企业自主审核）
-- **开发友好**：配置简单，无需复杂的数据库配置表
-- **部署灵活**：不同环境可以使用不同的审核模式
+- **测试友好**：无需重启服务，支持快速模式切换
+- **运行时控制**：支持在测试过程中动态调整测试场景
 
-#### 🎯 配置示例
+#### 🎯 接口示例
 ```bash
-# 开发环境 - 使用双重审核模式
-VITE_TASK_REVIEW_MODE=DUAL
+# 查看当前审核模式
+GET /designer/task-config/info
 
-# 生产环境 - 使用企业自主审核模式
-VITE_TASK_REVIEW_MODE=ENTERPRISE
+# 切换到双重审核模式
+POST /designer/task-config/review-mode/DUAL
+
+# 切换到企业自主审核模式  
+POST /designer/task-config/review-mode/ENTERPRISE
+
+# 获取支持的审核模式列表
+GET /designer/task-config/review-modes
 ```
 
 #### 📊 技术优势
-- **配置简单**：无需复杂的配置管理界面
-- **部署便捷**：通过环境变量快速切换模式
-- **维护方便**：减少数据库表和接口复杂度
-- **开发高效**：配置变更无需重启服务
+- **无需重启**：实时切换审核模式，测试效率更高
+- **快速切换**：一个API调用即可改变系统行为
+- **状态清晰**：随时查询当前配置状态
+- **测试高效**：适合自动化测试和手动测试
 
 ## 🔄 双重审核机制设计
 
@@ -1884,8 +2014,8 @@ describe('企业管理员透明性测试', () => {
   })
 
   test('企业管理员在双重审核模式下看到的状态统一', async () => {
-    // 模拟双重审核模式
-    process.env.VITE_TASK_REVIEW_MODE = 'DUAL'
+    // 设置为双重审核模式
+    await taskConfigApi.updateReviewMode('DUAL')
 
     const applications = await enterpriseApplicationApi.getApplications()
 
@@ -1912,7 +2042,7 @@ describe('企业管理员透明性测试', () => {
 
 ### Phase 3: 双重审核机制（2周）
 - ✅ **扩展申请表结构**：添加双重审核字段
-- ✅ **环境变量配置**：在.env中配置审核模式
+- ✅ **动态接口配置**：通过REST API实时配置审核模式
 - ✅ **系统管理员审核接口**：实现一级审核功能
 - ✅ **企业管理员审核接口**：实现二级审核功能
 - ❌ **系统管理员审核页面**：实现审核管理界面（待实施）
@@ -2144,6 +2274,64 @@ const trendOptions = {
 - ✅ 快捷键操作流畅
 - ✅ 错误提示友好
 
+## 🧪 动态配置测试指南
+
+### 快速测试流程
+
+#### 1. 查看当前配置
+```bash
+curl -X GET http://localhost:6039/designer/task-config/info
+```
+
+#### 2. 测试双重审核模式
+```bash
+# 设置为双重审核模式
+curl -X POST http://localhost:6039/designer/task-config/review-mode/DUAL
+
+# 测试申请流程（需要经过系统管理员 → 企业管理员两级审核）
+curl -X POST http://localhost:6039/designer/task-application/apply \
+  -H "Content-Type: application/json" \
+  -d '{"taskId": 1, "proposal": "测试申请", "proposedPrice": 3000}'
+
+# 系统管理员一级审核
+curl -X POST http://localhost:6039/designer/task-application/1/admin-review \
+  -H "Content-Type: application/json" \
+  -d '{"status": "APPROVED", "feedback": "申请通过"}'
+
+# 企业管理员二级审核
+curl -X POST http://localhost:6039/designer/task-application/1/enterprise-review \
+  -H "Content-Type: application/json" \
+  -d '{"status": "APPROVED", "feedback": "同意合作"}'
+```
+
+#### 3. 测试企业自主审核模式
+```bash
+# 设置为企业自主审核模式
+curl -X POST http://localhost:6039/designer/task-config/review-mode/ENTERPRISE
+
+# 测试申请流程（直接企业管理员审核，跳过系统管理员）
+curl -X POST http://localhost:6039/designer/task-application/apply \
+  -H "Content-Type: application/json" \
+  -d '{"taskId": 2, "proposal": "测试申请", "proposedPrice": 3000}'
+
+# 企业管理员直接审核（无需系统管理员审核）
+curl -X POST http://localhost:6039/designer/task-application/2/enterprise-review \
+  -H "Content-Type: application/json" \
+  -d '{"status": "APPROVED", "feedback": "同意合作"}'
+```
+
+#### 4. 获取支持的审核模式
+```bash
+curl -X GET http://localhost:6039/designer/task-config/review-modes
+```
+
+### 测试验证要点
+
+- **透明性验证**：企业管理员和设计师在两种模式下看到的界面和流程完全一致
+- **状态一致性**：申请状态在两种模式下对用户呈现统一
+- **反馈统一性**：设计师收到的反馈信息不区分来源
+- **动态切换**：模式切换无需重启服务，立即生效
+
 ## 📋 总结
 
 智图工厂基于现有的企业管理员和设计师角色体系，通过扩展任务管理功能，实现了：
@@ -2158,7 +2346,7 @@ const trendOptions = {
 
 2. **创新的双重审核机制**：
    - 平台早期由系统管理员统一审核，确保质量
-   - 通过环境变量简单配置审核模式
+   - 通过动态接口实时配置审核模式
    - 完整的审核统计和分析系统
    - 支持根据平台成熟度动态切换
 
@@ -2182,6 +2370,8 @@ const trendOptions = {
 - **透明性保障**：通过数据过滤和权限控制确保审核透明性
 - **反馈统一性**：设计师看到的反馈完全统一，不区分来源
 - **智能路由**：后端自动处理不同审核模式的业务逻辑
+- **动态配置**：支持运行时实时切换审核模式，无需重启服务
+- **数据安全保障**：逻辑删除机制确保数据安全，系统管理员集中管理数据恢复
 
 ### 🚀 业务价值
 
@@ -2191,6 +2381,7 @@ const trendOptions = {
 - **智能质量管控**：双重审核机制确保平台早期质量
 - **透明用户体验**：企业管理员和设计师无需学习新流程
 - **无感知升级**：系统功能升级和模式切换对用户透明
+- **数据安全保护**：逻辑删除防止误操作造成的数据永久丢失，提供数据恢复能力
 
 智图工厂将成为企业管理员和设计师之间高效协作的重要平台，为设计行业的项目化合作提供完整的技术支撑。
 

@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/home/AllianceHome.vue'),
+    component: () => import('@/views/about/index.vue'),
   },
   // Chat 模块
   {
@@ -168,10 +168,59 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/bind-phone',
+    name: 'BindPhone',
+    redirect: '/',
+    meta: { title: '绑定手机号' },
+  },
+
+  {
+    path: '/sms-login',
+    name: 'SmsLogin',
+    component: () => import('@/views/login/sms-login.vue'),
+    meta: { title: '短信登录' },
+  },
+
+  {
+    path: '/test-phone-binding',
+    name: 'TestPhoneBinding',
+    component: () => import('@/views/test-phone-binding.vue'),
+    meta: { title: '手机号绑定测试' },
+  },
+
+  {
+    path: '/demo-user-info',
+    name: 'DemoUserInfo',
+    component: () => import('@/views/demo-user-info.vue'),
+    meta: { title: '用户信息监控' },
+  },
+
+  {
     path: '/aitools',
     name: 'AITools',
     component: () => import('@/views/aitools/index.vue'),
     meta: { title: 'AI工具库' },
+  },
+
+  {
+    path: '/tasks',
+    name: 'Tasks',
+    component: () => import('@/views/task/index.vue'),
+    meta: { title: '智图工厂' },
+  },
+
+  {
+    path: '/ai-education',
+    name: 'AIEducation',
+    component: () => import('@/views/ai-education/index.vue'),
+    meta: { title: 'AI教育' },
+  },
+
+  {
+    path: '/introduction',
+    name: 'Introduction',
+    component: () => import('@/views/home/AllianceHome.vue'),
+    meta: { title: '亿思AI介绍' },
   },
 
   {
@@ -229,7 +278,19 @@ const routes: RouteRecordRaw[] = [
         path: 'designer/basic',
         name: 'DesignerBasicProfile',
         component: () => import('@/views/profile/designer/basic.vue'),
-        meta: { title: '基础信息' },
+        meta: { title: '设计师档案' },
+      },
+      {
+        path: 'enterprise/basic',
+        name: 'EnterpriseBasicProfile',
+        component: () => import('@/views/profile/enterprise/basic.vue'),
+        meta: { title: '企业档案' },
+      },
+      {
+        path: 'demo',
+        name: 'ProfileDemo',
+        component: () => import('@/views/profile/demo.vue'),
+        meta: { title: '档案演示' },
       },
     ],
   },

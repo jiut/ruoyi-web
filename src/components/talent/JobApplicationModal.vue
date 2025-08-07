@@ -139,7 +139,7 @@ const handleSubmit = async () => {
   <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center" @click="handleBackdropClick">
     <div class="absolute inset-0 bg-black/70" />
     <div
-      class="job-detail-modal relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl p-8 m-4"
+      class="modal glass-card relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg p-8 m-4"
       @click.stop
     >
       <button
@@ -388,13 +388,7 @@ const handleSubmit = async () => {
 <style scoped>
 @import '@/styles/talent.css';
 
-.job-detail-modal {
-  background: rgba(28, 28, 30, 0.95);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(99, 99, 102, 0.2);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-}
+
 
 .bg-primary {
   background-color: #0a84ff;

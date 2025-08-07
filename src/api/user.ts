@@ -48,6 +48,39 @@ export function getVerificationCode(username: string) {
 }
 
 /**
+ * 获取短信验证码
+ */
+export function getSmsCode(phonenumber: string, scene?: string) {
+  return request({
+    url: '/resource/sms/code',
+    method: 'get',
+    params: { phonenumber, scene },
+  })
+}
+
+/**
+ * 短信验证码登录
+ */
+export function smsLogin(phonenumber: string, smsCode: string, tenantId: string = '000000') {
+  return request({
+    url: '/auth/smsLogin',
+    method: 'post',
+    data: { phonenumber, smsCode, tenantId },
+  })
+}
+
+/**
+ * 绑定手机号
+ */
+export function bindPhone(phonenumber: string, smsCode: string) {
+  return request({
+    url: '/system/user/bind/phone',
+    method: 'post',
+    data: { phonenumber, smsCode },
+  })
+}
+
+/**
  * 获取用户登录信息
  */
 export function getUserInfo() {

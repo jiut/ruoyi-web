@@ -7,6 +7,7 @@ import ProfessionUtils from '@/utils/professionUtils'
 import SkillTagUtils from '@/utils/skillTagUtils'
 import { shouldUseMockData } from '@/utils/authUtils'
 import { useUserStore } from '@/store/modules/user'
+import { isStatusActive } from '@/utils/statusUtils'
 
 console.log('🔍 设计师Composable调试信息:')
 console.log('  VITE_USE_MOCK_DATA:', import.meta.env.VITE_USE_MOCK_DATA)
@@ -27,7 +28,7 @@ export function useDesigner() {
   const searchKeyword = ref('')
 
   // Mock数据状态
-  const mockDesignerList = ref(mockDesigners)
+  const mockDesignerList = ref(mockDesigners.filter(d => isStatusActive(d.status || '0')))
   const mockLoading = ref(false)
   const mockTotal = computed(() => mockDesignerList.value.length)
 
@@ -43,6 +44,9 @@ export function useDesigner() {
 
         // 应用筛选逻辑
         let filtered = [...mockDesigners]
+
+        // 首先过滤掉停用状态的设计师
+        filtered = filtered.filter(d => isStatusActive(d.status || '0'))
 
         // 按职业筛选
         if (queryParams.profession)
@@ -116,7 +120,7 @@ export function useDesigner() {
     searchKeyword.value = ''
 
     if (shouldUseMockData()) {
-      mockDesignerList.value = [...mockDesigners]
+      mockDesignerList.value = mockDesigners.filter(d => isStatusActive(d.status || '0'))
     }
     else {
       store.resetDesigners()
@@ -148,7 +152,8 @@ export function useDesigner() {
 
   // 从mock数据动态获取筛选选项
   const getProfessions = () => {
-    const uniqueProfessions = [...new Set(mockDesigners.map(d => d.profession))]
+    const activeDesigners = mockDesigners.filter(d => isStatusActive(d.status || '0'))
+    const uniqueProfessions = [...new Set(activeDesigners.map(d => d.profession))]
     return uniqueProfessions.map(profession => ({
       value: profession,
       label: ProfessionUtils.getDisplayName(profession),
@@ -157,7 +162,8 @@ export function useDesigner() {
 
   const getSkillTags = () => {
     const allSkills = new Set<string>()
-    mockDesigners.forEach((designer) => {
+    const activeDesigners = mockDesigners.filter(d => isStatusActive(d.status || '0'))
+    activeDesigners.forEach((designer) => {
       try {
         const skills = SkillTagUtils.parseSkillTags(designer.skillTags)
         skills.forEach(skill => allSkills.add(skill))
@@ -170,7 +176,8 @@ export function useDesigner() {
   }
 
   const getRegions = () => {
-    const uniqueCities = [...new Set(mockDesigners
+    const activeDesigners = mockDesigners.filter(d => isStatusActive(d.status || '0'))
+    const uniqueCities = [...new Set(activeDesigners
       .map(d => d.location)
       .filter((location): location is string => !!location)
       .map(location => `${location.split('市')[0]}市`),
@@ -190,7 +197,8 @@ export function useDesigner() {
 
   // 从API数据动态获取筛选选项
   const getApiProfessions = () => {
-    const uniqueProfessions = [...new Set(store.designers.map(d => d.profession))]
+    const activeDesigners = store.designers.filter(d => isStatusActive(d.status || '0'))
+    const uniqueProfessions = [...new Set(activeDesigners.map(d => d.profession))]
     return uniqueProfessions.map(profession => ({
       value: profession,
       label: ProfessionUtils.getDisplayName(profession),
@@ -199,7 +207,8 @@ export function useDesigner() {
 
   const getApiSkillTags = () => {
     const allSkills = new Set<string>()
-    store.designers.forEach((designer) => {
+    const activeDesigners = store.designers.filter(d => isStatusActive(d.status || '0'))
+    activeDesigners.forEach((designer) => {
       try {
         const skills = SkillTagUtils.parseSkillTags(designer.skillTags)
         skills.forEach(skill => allSkills.add(skill))
@@ -212,7 +221,8 @@ export function useDesigner() {
   }
 
   const getApiRegions = () => {
-    const uniqueCities = [...new Set(store.designers
+    const activeDesigners = store.designers.filter(d => isStatusActive(d.status || '0'))
+    const uniqueCities = [...new Set(activeDesigners
       .map(d => d.location)
       .filter((location): location is string => !!location)
       .map(location => `${location.split('市')[0]}市`),
